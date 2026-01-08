@@ -1,6 +1,7 @@
 ﻿#ifndef __RTDB_H__
 #define __RTDB_H__
 
+/*
 #if defined(WIN32) || defined(_WIN32) || defined(_WIN64)
 #ifdef RTDBAPI_EXPORTS
 #  define RTDBAPI extern "C" __declspec(dllexport)
@@ -12,6 +13,25 @@
 #else
 #define RTDBAPI extern "C" __attribute__ ((visibility ("default")))
 #define RTDBAPI_CALLRULE
+#endif
+*/
+
+#ifdef __cplusplus
+#define RTDBAPI_EXTERN extern "C"
+#else
+#define RTDBAPI_EXTERN extern
+#endif
+
+#if defined(_WIN32) || defined(WIN32)
+  #ifdef RTDBAPI_EXPORTS
+    #define RTDBAPI RTDBAPI_EXTERN __declspec(dllexport)
+  #else
+    #define RTDBAPI RTDBAPI_EXTERN __declspec(dllimport)
+  #endif
+  #define RTDBAPI_CALLRULE _stdcall
+#else
+  #define RTDBAPI RTDBAPI_EXTERN __attribute__ ((visibility ("default")))
+  #define RTDBAPI_CALLRULE
 #endif
 
 #ifdef __cplusplus
@@ -196,7 +216,7 @@ typedef rtdb_int8 rtdb_precision_type;          //时间戳精度类型，0秒�
 * \ingroup denum
 * \brief 0x0200 以内的系统定义质量码.
 */
-enum RTDB_QUALITY
+typedef enum _RTDB_QUALITY
 {
   RTDB_Q_GOOD = 0,              //!< 正常
   RTDB_Q_NODATA = 1,            //!< 无数据
@@ -208,22 +228,22 @@ enum RTDB_QUALITY
   RTDB_Q_REMOVED = 7,           //!< 已被删除
   RTDB_Q_OPC = 256,             //!< 从0x0100至0x01FF为OPC质量码
   RTDB_Q_USER = 512             //!< 此质量码（含）之后为用户自定义
-};
+} RTDB_QUALITY;
 
 /**
 * \ingroup denum
 * \brief 订阅选项
 */
-enum RTDB_OPTION
+typedef enum _RTDB_OPTION
 {
   RTDB_O_AUTOCONN = 1,           //!< 自动重连
-};
+} RTDB_OPTION;
 
 /**
 * \ingroup denum
 * \brief 订阅事件
 */
-enum RTDB_EVENT_TYPE
+typedef enum _RTDB_EVENT_TYPE
 {
   RTDB_E_DATA       = 0,        //!< 数据
   RTDB_E_DISCONNECT = 1,        //!< 连接断开
@@ -231,7 +251,7 @@ enum RTDB_EVENT_TYPE
   RTDB_E_SWITCHING  = 3,        //!< 双活模式，快照订阅，开始切换连接
   RTDB_E_SWITCHED   = 4,        //!< 双活模式，快照订阅，切换连接完毕
   RTDB_E_CHANGED    = 5,        //!< 订阅信息发生变化
-};
+} RTDB_EVENT_TYPE;
 
 /**
 * \ingroup dmacro
@@ -316,7 +336,7 @@ enum RTDB_EVENT_TYPE
 * \ingroup denum
 * \brief 系统常数定义.
 */
-enum RTDB_CONST
+typedef enum _RTDB_CONST
 {
   RTDB_TAG_SIZE = 80,                                 //!< 标签点名称占用字节数。
   RTDB_DESC_SIZE = 100,                               //!< 标签点描述占用字节数。
@@ -355,7 +375,7 @@ enum RTDB_CONST
   RTDB_OUTPUT_PLUGIN_NAME_LENGTH = 0xFF,              /// 输入输出适配器插件名长度      255 Bytes
   RTDB_OUTPUT_PLUGIN_DIR_LENGTH = 0xFF,               /// 输入输出适配器路径长度        255 Bytes
   RTDB_PER_OF_USEFUL_MEM_SIZE = 10,					  /// 历史数据缓存/补历史数据缓存/blob补历史数据缓存/内存大小上限占可用内存百分比值占用的字节数
-};
+} RTDB_CONST;
 
 
 typedef char rtdb_tag_string[RTDB_TAG_SIZE];
@@ -374,7 +394,7 @@ typedef char rtdb_json_string[RTDB_MAX_JSON_SIZE];
 * \ingroup denum
 * \brief 标签点数值类型，决定了标签点数值所占用的存储字节数。
 */
-enum RTDB_TYPE
+typedef enum _RTDB_TYPE
 {
   RTDB_BOOL = 0,        //!< 布尔类型，0值或1值。
   RTDB_UINT8 = 1,       //!< 无符号8位整数，占用1字节。
@@ -396,7 +416,7 @@ enum RTDB_TYPE
   RTDB_FP16 = 17,       //!< 定点数
   RTDB_FP32 = 18,       //!< 定点数
   RTDB_FP64 = 19,       //!< 定点数
-};
+} RTDB_TYPE;
 
 #define RTDB_TYPE_COUNT (RTDB_FP64 + 1)
 
@@ -413,13 +433,13 @@ enum RTDB_TYPE
 * \ingroup denum
 * \brief 标签点类别，决定了标签点具有哪些扩展属性。标签点可以同时具备多个类别，最多可以定义33个标签点类别。.
 */
-enum RTDB_CLASS
+typedef enum _RTDB_CLASS
 {
   RTDB_BASE = 0,    //!< 基本标签点，所有类别标签点均在基本标签点的属性集上扩展自己的属性集。
   RTDB_SCAN = 1,    //!< 采集标签点。
   RTDB_CALC = 2,    //!< 计算标签点。
   RTDB_ALARM = 4,   //!< 报警标签点。
-};
+} RTDB_CLASS;
 
 /**
 * \ingroup dmacro
@@ -452,41 +472,41 @@ enum RTDB_CLASS
 * \ingroup denum
 * \brief 计算标签点触发机制.
 */
-enum RTDB_TRIGGER
+typedef enum _RTDB_TRIGGER
 {
   RTDB_NULL_TRIGGER,        //!< 无触发
   RTDB_EVENT_TRIGGER,       //!< 事件触发
   RTDB_TIMER_TRIGGER,       //!< 周期触发
   RTDB_FIXTIME_TRIGGER,     //!< 定时触发
-};
+} RTDB_TRIGGER;
 
 /**
 * \ingroup denum
 * \brief 计算结果时间戳参考.
 */
-enum RTDB_TIME_COPY
+typedef enum _RTDB_TIME_COPY
 {
   RTDB_CALC_TIME,             //!< 采用计算时间
   RTDB_LATEST_TIME,           //!< 采用最晚标签点时间
   RTDB_EARLIEST_TIME,         //!< 采用最早标签点时间
-};
+} RTDB_TIME_COPY;
 
 /**
 * \ingroup denum
 * \brief 标签点搜索结果排序方式.
 */
-enum RTDB_SEARCH_SORT
+typedef enum _RTDB_SEARCH_SORT
 {
   RTDB_SORT_BY_TABLE,     //!< 首先按所属表排序，同一个表内的标签点之间按标签点名称排序
   RTDB_SORT_BY_TAG,       //!< 以标签点名称排序
   RTDB_SORT_BY_ID,        //!< 以标签点ID排序
-};
+} RTDB_SEARCH_SORT;
 
 /**
 * \ingroup denum
 * \brief 历史数据搜索方式.
 */
-enum RTDB_HIS_MODE
+typedef enum _RTDB_HIS_MODE
 {
   RTDB_NEXT,            //!< 寻找下一个最近的数据；
   RTDB_PREVIOUS,        //!< 寻找上一个最近的数据；
@@ -495,13 +515,13 @@ enum RTDB_HIS_MODE
   RTDB_EXACT_OR_NEXT,   //!< 取指定时间的数据，如果没有则取下一条数据。如果都没有数据则返回错误 \b RtE_DATA_NOT_FOUND;
   RTDB_EXACT_OR_PREV,   //!< 取指定时间的数据，如果没有则取上一条数据。如果都没有数据则返回错误 \b RtE_DATA_NOT_FOUND;
   RTDB_INTER_OR_NEXT,   //!< 取指定时间的内插值数据, 如果没有则取下一条数据。如果都没有数据则返回错误 \b RtE_DATA_NOT_FOUND;
-};
+} RTDB_SEARCH_SORT;
 
 /**
 * \ingroup denum
 * \brief 搜索标签点所指定的属性集合
 */
-enum RTDB_SEARCH_MASK
+typedef enum _RTDB_SEARCH_MASK
 {
   RTDB_SEARCH_NULL,                               //!< 不使用任何标签点属性作为搜索条件
   RTDB_SEARCH_COMPDEV,                            //!< 使用压缩偏差作为搜索条件
@@ -546,14 +566,14 @@ enum RTDB_SEARCH_MASK
   RTDB_SEARCH_TIMECOPY,                           //!< 计算结果时间戳参考
   RTDB_SEARCH_PERIOD,                             //!< 计算周期
   RTDB_SEARCH_CALC_END,                           //!< 辅助作用，不能作为搜索条件
-};
+} RTDB_SEARCH_SORT;
 
 /**
 * \ingroup denum
 * \brief 用于设置API的工作模式的参数选项
 * \see rtdb_set_option
 */
-enum RTDB_API_OPTION
+typedef enum _RTDB_API_OPTION
 {
   RTDB_API_AUTO_RECONN,       //!< api 在连接中断后是否自动重连, 0 不重连；1 重连。默认为 0 不重连
   RTDB_API_CONN_TIMEOUT,      //!< api 连接超时值设置（单位：毫秒）,0 阻塞模式，无限等待，默认为1000
@@ -562,26 +582,26 @@ enum RTDB_API_OPTION
   RTDB_API_USER_TIMEOUT,	  //!< api TCP_USER_TIMEOUT超时值设置（单位：毫秒），默认为10000，Linux内核2.6.37以上有效
   RTDB_API_DEFAULT_PRECISION, //!< api 默认的时间戳精度，当使用旧版相关的api，以及新版api中未设置时间戳精度时，则使用此默认时间戳精度。 默认为毫秒精度
   RTDB_API_SERVER_PRECISION,  //!< api 连接3.0数据库时，设置3.0数据库的时间戳精度，0表示毫秒精度，非0表示纳秒精度，默认为毫秒精度
-};
+} RTDB_API_OPTION;
 
 /**
 * \ingroup denum
 * \brief 数据库对应的服务
 */
-enum RTDB_PROCESS_NAME
+typedef enum _RTDB_PROCESS_NAME
 {
   RTDB_PROCESS_FIRST = 1,                         //!< 计数作用
   RTDB_PROCESS_HISTORIAN = RTDB_PROCESS_FIRST,    //!< 历史服务
   RTDB_PROCESS_EQUATION,                          //!< 方程式服务
   RTDB_PROCESS_BASE,                              //!< 标签点服务
   RTDB_PROCESS_LAST,                              //!< 计数作用
-};
+} RTDB_PROCESS_NAME;
 
 /**
 * \ingroup denum
 * \brief 数据库对应服务的大任务，每个服务最多同时执行一个大任务
 */
-enum RTDB_BIG_JOB_NAME
+typedef enum _RTDB_BIG_JOB_NAME
 {
   /// 历史数据服务
   RTDB_MERGE = 1,               //!< 合并附属文件到主文件
@@ -598,7 +618,7 @@ enum RTDB_BIG_JOB_NAME
   /// 标签点信息服务
   RTDB_UPDATE_TABLE = 21,       //!< 修改表名称
   RTDB_REMOVE_TABLE = 22,       //!< 删除表
-};
+} RTDB_BIG_JOB_NAME;
 
 /**
 * \ingroup ddatatype
@@ -606,13 +626,13 @@ enum RTDB_BIG_JOB_NAME
 * \brief 标签点镜像属性
 * \see _RTDB_TABLE
 */
-enum RTDB_POINT_MIRROR
+typedef enum _RTDB_POINT_MIRROR
 {
 	RTDB_POINT_OFF = 0,		    //!<镜像关闭
 	RTDB_POINT_SEND_RECV = 1,   //!<镜像收发
 	RTDB_POINT_RECV = 2,		//!<镜像接收
 	RTDB_POINT_SEND = 3		    //!<镜像发送
-};
+} RTDB_POINT_MIRROR;
 
 /**
 * \ingroup ddatatype
@@ -1101,32 +1121,32 @@ typedef union _RTDB_TAG_FACTION
 * \brief 操作系统类型
 * \see rtdb_get_linked_ostype
 */
-enum RTDB_OS_TYPE
+typedef enum _RTDB_OS_TYPE
 {
   RTDB_OS_WINDOWS,        //!< Windows 操作系统
   RTDB_OS_LINUX,          //!< Linux 操作系统
   RTDB_OS_INVALID = 50,   //!< 无效的操作系统
-};
+} RTDB_OS_TYPE;
 
 
 /**
 * \ingroup denum
 * \brief 用户权限.
 */
-enum RTDB_PRIV_GROUP
+typedef enum _RTDB_PRIV_GROUP
 {
   RTDB_RO,      //!< 只读
   RTDB_DW,      //!< 数据记录
   RTDB_TA,      //!< 标签点表管理员
   RTDB_SA,      //!< 数据库管理员
-};
+} RTDB_PRIV_GROUP;
 
 /**
 * \ingroup denum
 * \brief 标签点变更原因，用于标签点订阅
 * \see rtdbb_tags_change_event rtdbb_subscribe_tags
 */
-enum RTDB_TAG_CHANGE_REASON
+typedef enum _RTDB_TAG_CHANGE_REASON
 {
   RTDB_TAG_CREATED = 1,  //!< 标签点被创建
   RTDB_TAG_UPDATED,      //!< 标签点属性被更新
@@ -1135,7 +1155,7 @@ enum RTDB_TAG_CHANGE_REASON
   RTDB_TAG_PURGED,       //!< 标签点被清除
   RTDB_TAB_UPDATED,      //!< 标签点表被重命名
   RTDB_TAB_REMOVED,      //!< 标签点表被删除
-};
+} RTDB_TAG_CHANGE_REASON;
 
 /**
 * \ingroup dmacro
@@ -1148,23 +1168,23 @@ enum RTDB_TAG_CHANGE_REASON
 * \ingroup denum
 * \brief 存档文件管理状态
 */
-enum RTDB_ARCHIVE_MANAGE_TYPE
+typedef enum _RTDB_ARCHIVE_MANAGE_TYPE
 {
   GAMT_NORMAL = 0,			//!< 正常状态，不做处理
   GAMT_NOT_MANAGED = 1,     //!< 未被管理(已解列)
   GAMT_MANAGED = 2,			//!< 被管理状态
-};
+} RTDB_ARCHIVE_MANAGE_TYPE;
 
 /*
 * \ingroup denum
 * \brief 存档文件压缩类型
 */
-enum RTDB_ARCHIVE_COMPRESS_TYPE
+typedef enum _RTDB_ARCHIVE_COMPRESS_TYPE
 {
     GACT_NORMAL = 0,				//!< 未压缩，定长数据块
     GACT_COMPRESS = 1,				//!< 无损压缩，不定长数据块
     GACT_COMPRESS_TWO_STAGE = 2,	//!< 无损压缩，不定长数据块，两阶段压缩
-};
+} RTDB_ARCHIVE_COMPRESS_TYPE;
 
 /**
 * \ingroup ddatatype
@@ -1230,7 +1250,7 @@ typedef struct _RTDB_USER_INFO
   char user[RTDB_USER_SIZE];
   rtdb_int32 length;
   rtdb_int32 privilege;
-  bool islocked;
+  rtdb_int8 islocked;
   char reserve_1[15];
 } RTDB_USER_INFO;         // 44 bytes
 
@@ -1320,31 +1340,31 @@ typedef struct _RTDB_GRAPH_DATA
 * \ingroup denum
 * \brief 标签点拓扑图类型.
 */
-enum RTDB_GRAPH_FLAG
+typedef enum _RTDB_GRAPH_FLAG
 {
   RTDB_GRAPH_BEGIN = -1,
   RTDB_GRAPH_ALL,       //!< 任何有关联的标签的关系图
   RTDB_GRAPH_DIRECT,    //!< 有直接关系的关系图
   RTDB_GRAPH_END,
-};
+} RTDB_GRAPH_FLAG;
 
 /**
 * \ingroup denum
 * \brief 历史存档文件状态.
 */
-enum RTDB_ARCHIVE_STATE
+typedef enum _RTDB_ARCHIVE_STATE
 {
   RTDB_INVALID_ARCHIVE, //!< 0:无效
   RTDB_ACTIVED_ARCHIVE, //!< 1:活动
   RTDB_NORMAL_ARCHIVE,  //!< 2:普通
   RTDB_READONLY_ARCHIVE //!< 3:只读
-};
+} RTDB_ARCHIVE_STATE;
 
 /**
 * \ingroup denum
 * \brief 查询系统参数时对应的索引
 */
-enum RTDB_DB_PARAM_INDEX
+typedef enum _RTDB_DB_PARAM_INDEX
 {
 	/// string parameter.
 	RTDB_PARAM_STR_FIRST = 0x0,
@@ -1535,16 +1555,16 @@ enum RTDB_DB_PARAM_INDEX
 	RTDB_PARAM_EXP_INT_FIRST = 0x2000,
 	RTDB_PARAM_MAX_BLOB_SIZE = RTDB_PARAM_EXP_INT_FIRST,   // blob、str类型数据在数据库中允许的最大长度
 	RTDB_PARAM_EXP_INT_LAST,
-};
+} RTDB_DB_PARAM_INDEX;
 
 //表名称枚举
-enum RTDB_TABLE_ID
+typedef enum _RTDB_TABLE_ID
 {
   RTDB_TABLE_BASE = 1,
   RTDB_TABLE_SCAN = 2,
   RTDB_TABLE_CALC = 4,
   RTDB_TABLE_ALARM = 8,
-};
+} RTDB_TABLE_ID;
 #define RTDB_TABLE_ID_CONTAIN_BASE(TABLEID) (TABLEID & RTDB_TABLE_BASE)
 #define RTDB_TABLE_ID_CONTAIN_SCAN(TABLEID) (TABLEID & RTDB_TABLE_SCAN)
 #define RTDB_TABLE_ID_CONTAIN_CALC(TABLEID) (TABLEID & RTDB_TABLE_CALC)
@@ -1561,7 +1581,7 @@ typedef struct TAG_RTDB_TAG_FIELD
 	char column_type[RTDB_TAG_FIELD_TYPE_LENGTH];             // 字段类型
 } RTDB_TAG_FIELD;
 
-enum RTDB_TAG_FIELD_INDEX
+typedef enum _RTDB_TAG_FIELD_INDEX
 {
   RTDB_TAG_INDEX_BASE_FIRST = 0x0,
   RTDB_TAG_INDEX_TAG = RTDB_TAG_INDEX_BASE_FIRST,   //!< tag
@@ -1625,24 +1645,24 @@ enum RTDB_TAG_FIELD_INDEX
   RTDB_TAG_INDEX_VALUE,                                         //!< snapshot value
   RTDB_TAG_INDEX_QUALITY,                                       //!< snapshot quality
   RTDB_TAG_INDEX_SNAPSHOT_LAST,
-};
+} RTDB_TAG_FIELD_INDEX;
 
 /**
 * \ingroup denum
 * \brief 标签点排序的标志
 */
-enum RTDB_TAG_SORT_FLAG
+typedef enum _RTDB_TAG_SORT_FLAG
 {
   RTDB_SORT_FLAG_DESCEND = 0x0001,        //!< 降序
   RTDB_SORT_FLAG_CASE_SENSITIVE = 0x0002, //!< 大小写敏感
   RTDB_SORT_FLAG_RECYCLED = 0x0004,       //!< 用于回收站标签点排序
-};
+} RTDB_TAG_SORT_FLAG;
 
 /**
 * \ingroup denum
 * \brief 性能计数点的ID
 */
-enum RTDB_PERF_TAG_ID
+typedef enum _RTDB_PERF_TAG_ID
 {
   PFT_CPU_USAGE_OF_LOGGER,            //!< 日志服务CPU使用
   PFT_MEM_BYTES_OF_LOGGER,            //!< 日志服务内存
@@ -1787,7 +1807,7 @@ enum RTDB_PERF_TAG_ID
   PFT_SERVER_NETWORK_WRITE_BYTES,                   //!< 网络服务网络 IO 每秒写入字节数
 
   PFT_END,                            //!< 信息数量
-};
+} RTDB_PERF_TAG_ID;
 
 /// 性能计数点的信息
 typedef struct  _RTDB_PERF_TAG_INFO
@@ -1822,7 +1842,7 @@ typedef struct _RTDB_DATA_TYPE_FIELD
 * \ingroup denum
 * \brief 将标签点属性加载到内存中的标志
 */
-enum RTDB_TAG_LOAD_MEMORY_FLAG
+typedef enum _RTDB_TAG_LOAD_MEMORY_FLAG
 {
   RTDB_LOAD_EMPTY_POINT = 0x0, //!< 什么也不加载
 
@@ -1857,7 +1877,7 @@ enum RTDB_TAG_LOAD_MEMORY_FLAG
   RTDB_LOAD_BASE_POINT = RTDB_LOAD_TABLE_DOT_TAG | RTDB_LOAD_DESC | RTDB_LOAD_UNIT | RTDB_LOAD_CHANGER | RTDB_LOAD_CREATOR | RTDB_LOAD_LOWLIMIT | RTDB_LOAD_HIGHLIMIT | RTDB_LOAD_TYPICAL | RTDB_LOAD_CHANGEDATE | RTDB_LOAD_CREATEDATE | RTDB_LOAD_DIGITS | RTDB_LOAD_COMPDEVPERCENT | RTDB_LOAD_EXCDEVPERCENT,                          //!< base 属性合集
   RTDB_LOAD_SCAN_POINT = RTDB_LOAD_SOURCE | RTDB_LOAD_SCAN | RTDB_LOAD_INSTRUMENT | RTDB_LOAD_LOCATION1 | RTDB_LOAD_LOCATION2 | RTDB_LOAD_LOCATION3 | RTDB_LOAD_LOCATION4 | RTDB_LOAD_LOCATION5 | RTDB_LOAD_USERINT1 | RTDB_LOAD_USERINT2 | RTDB_LOAD_USERREAL1 | RTDB_LOAD_USERREAL2, //!< scan 属性合集
   RTDB_LOAD_ALL_POINT = RTDB_LOAD_BASE_POINT | RTDB_LOAD_SCAN_POINT,  //!< 所有属性合集
-};
+} RTDB_TAG_LOAD_MEMORY_FLAG;
 
 #define RTDB_GET_FROM_FLAG(FLAG, BIT) (((FLAG) & (BIT)) ? 1 : 0)
 #define RTDB_SET_FROM_FLAG(FLAG, BIT, VALUE) {if (VALUE) (FLAG) |= (BIT); else (FLAG) &= (~(BIT));}
@@ -1871,19 +1891,19 @@ enum RTDB_TAG_LOAD_MEMORY_FLAG
 * \ingroup denum
 * \brief 数据归档策略
 */
-enum RTDB_ARCHIVED_POLICY
+typedef enum _RTDB_ARCHIVED_POLICY
 {
   RTDB_ARCHIVED_SNAPSHOT_FIRST,           //!< 快照数据优先归档
   RTDB_ARCHIVED_ARCHIVEX_FIRST,           //!< 补写数据优先归档
   RTDB_ARCHIVED_AUTO,                     //!< 自动判断快照数据和补写数据的优先级
   RTDB_ARCHIVED_PAUSE,                    //!< 暂停归档
-};
+} RTDB_ARCHIVED_POLICY;
 
 /**
 * \ingroup denum
 * \brief API类别
 */
-enum API_CATEGORY
+typedef enum _API_CATEGORY
 {
   API_SERVER,    //!< 网络服务API
   API_BASE,      //!< 标签点服务API
@@ -1895,7 +1915,7 @@ enum API_CATEGORY
   API_PERF,      //!< 性能计数服务API
   API_DISPATCH,  //!< 转发服务API
   API_MEMORYDB,  //!< 内存库服务API
-};
+} API_CATEGORY;
 
 /**
 * \ingroup ddatatype
@@ -2257,26 +2277,26 @@ typedef rtdb_error(RTDBAPI_CALLRULE *rtdb_connect_event_ex)(
 * \ingroup denum
 * \brief 元数据同步角色
 */
-enum RTDB_SYNC_ROLE
+typedef enum _RTDB_SYNC_ROLE
 {
     RTDB_SYNC_ROLE_OFFLINE = 0,           //!< 离线
     RTDB_SYNC_ROLE_UNSYNCED = 1,          //!< 未同步
     RTDB_SYNC_ROLE_SYNCING = 2,           //!< 同步中
     RTDB_SYNC_ROLE_SLAVE = 3,             //!< 备库
     RTDB_SYNC_ROLE_MASTER = 4             //!< 主库
-};
+} RTDB_SYNC_ROLE;
 
 /**
 * \ingroup denum
 * \brief 元数据同步状态
 */
-enum RTDB_SYNC_STATUS
+typedef enum _RTDB_SYNC_STATUS
 {
     RTDB_SYNC_STATUS_INIT = 0,            //!< 正常
     RTDB_SYNC_STATUS_START = 1,           //!< 启动同步
     RTDB_SYNC_STATUS_FILE = 2,            //!< 同步文件
     RTDB_SYNC_STATUS_CACHE = 3            //!< 同步缓存
-};
+} RTDB_SYNC_STATUS;
 
 /**
 * \ingroup dstruct
@@ -2297,12 +2317,12 @@ typedef struct _RTDB_SYNC_INFO
 * \ingroup denum
 * \brief 元数据同步状态
 */
-enum RTDB_SUBSCRIBE_CHANGE_TYPE
+typedef enum _RTDB_SUBSCRIBE_CHANGE_TYPE
 {
     RTDB_SUBSCRIBE_ADD,           //!< 增加订阅
     RTDB_SUBSCRIBE_UPDATE,        //!< 更新订阅信息
     RTDB_SUBSCRIBE_REMOVE,        //!< 移除订阅
-};
+} RTDB_SUBSCRIBE_CHANGE_TYPE;
 
 typedef struct _RTDB_SUMMARY_DATA
 {
@@ -2337,13 +2357,13 @@ typedef struct _RTDB_SUMMARY_DATA
 * \ingroup denum
 * \brief 时间戳精度
 */
-enum RTDB_TIME_PRECISION_TYPE
+typedef enum _RTDB_TIME_PRECISION_TYPE
 {
     RTP_SECOND,     //!< 秒
     RTP_MILLI,      //!< 毫秒
     RTP_MICRO,      //!< 微秒
     RTP_NANO,       //!< 纳秒
-};
+} RTDB_TIME_PRECISION_TYPE;
 
 typedef struct _RTDB_HANDLE_INFO
 {

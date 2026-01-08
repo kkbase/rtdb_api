@@ -47,13 +47,14 @@ rtdb_set_option(
 /**@}*/
 
 
+/*备注： rtdb_datagram_handle* handle , 本身是 rtdb_datagram_handle& handle , go无法编译修改成 * 的*/
 RTDBAPI
 rtdb_error
 RTDBAPI_CALLRULE
 rtdb_create_datagram_handle(
   rtdb_int32 port,
   const char* remotehost,
-  rtdb_datagram_handle& handle
+  rtdb_datagram_handle* handle
   );
 
 RTDBAPI
@@ -63,12 +64,13 @@ rtdb_remove_datagram_handle(
   rtdb_datagram_handle handle
   );
 
+/*备注： rtdb_int32* message_len 本身是  rtdb_int32& message_len, go无法编译因此修改成 * */
 RTDBAPI
 rtdb_error
 RTDBAPI_CALLRULE
 rtdb_recv_datagram(
   char* message,
-  rtdb_int32& message_len,
+  rtdb_int32* message_len,
   rtdb_datagram_handle handle,
   char* remote_addr,
   rtdb_int32 timeout GAPI_DEFAULT_VALUE(-1)
