@@ -88,6 +88,79 @@ rtdb_set_option_warp(
     return fn(type, value);
 }
 
+
+/**
+* \brief 创建数据流
+* \param [in] in 端口
+* \param [out] remotehost 对端地址
+* \param [out] handle 数据流句柄
+* \return rtdb_error
+* \remark 创建数据流
+*/
+rtdb_error RTDBAPI_CALLRULE
+rtdb_create_datagram_handle_warp(
+    rtdb_int32 port,
+    const char* remotehost,
+    rtdb_datagram_handle* handle
+) {
+    typedef rtdb_error (RTDBAPI_CALLRULE *rtdb_create_datagram_handle_fn)(
+        rtdb_int32 port,
+        const char* remotehost,
+        rtdb_datagram_handle* handle
+    );
+    rtdb_create_datagram_handle_fn fn = (rtdb_create_datagram_handle_fn)get_function("rtdb_create_datagram_handle");
+    return fn(port, remotehost, handle);
+}
+
+
+/**
+* \brief 删除数据流
+* \param [in] handle 数据流句柄
+* \return rtdb_error
+* \remark 删除数据流
+*/
+rtdb_error RTDBAPI_CALLRULE
+rtdb_remove_datagram_handle_warp(
+    rtdb_datagram_handle handle
+) {
+    typedef  rtdb_error (RTDBAPI_CALLRULE *rtdb_remove_datagram_handle_fn)(
+        rtdb_datagram_handle handle
+    );
+    rtdb_remove_datagram_handle_fn fn = (rtdb_remove_datagram_handle_fn)get_function("rtdb_remove_datagram_handle");
+    return fn(handle);
+}
+
+
+/**
+* \brief 接收数据流
+* \param [in] message 消息
+* \param [in] message_len 消息长度
+* \param [in] handle 数据流句柄
+* \param [in] remote_addr 对端地址
+* \param [in] timeout 超时时间
+* \return rtdb_error
+* \remark 接收数据流
+*/
+rtdb_error RTDBAPI_CALLRULE
+rtdb_recv_datagram_warp(
+    char* message,
+    rtdb_int32* message_len,
+    rtdb_datagram_handle handle,
+    char* remote_addr,
+    rtdb_int32 timeout
+) {
+    typedef rtdb_error (RTDBAPI_CALLRULE *rtdb_recv_datagram_fn)(
+        char* message,
+        rtdb_int32* message_len,
+        rtdb_datagram_handle handle,
+        char* remote_addr,
+        rtdb_int32 timeout
+    );
+    rtdb_recv_datagram_fn fn = (rtdb_recv_datagram_fn)get_function("rtdb_recv_datagram");
+    return fn(message, message_len, handle, remote_addr, timeout);
+}
+
+
 #ifdef __cplusplus
 }
 #endif

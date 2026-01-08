@@ -2,6 +2,7 @@ package rtdb_api
 
 // #cgo CFLAGS: -DPNG_DEBUG=1 -I./cinclude
 // #cgo CXXFLAGS: -std=c++11
+// #include <stdlib.h>
 // #include "api.h"
 import "C"
 import (
@@ -9,6 +10,7 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"unsafe"
 )
 
 //go:embed clibrary/linux_amd64/librtdbapi.so
@@ -45,7 +47,9 @@ func init() {
 	}
 
 	// 加载动态库
-	C.load_library(C.CString(path))
+	cPath := C.CString(path)
+	defer C.free(unsafe.Pointer(cPath))
+	C.load_library(cPath)
 }
 
 type RtdbError uint32
@@ -1892,4 +1896,47 @@ func RtdbGetApiVersionWarp() (int32, int32, int32, RtdbError) {
 func RtdbSetOptionWarp(optionType RtdbApiOption, value int32) RtdbError {
 	err := C.rtdb_set_option_warp(C.rtdb_int32(optionType), C.rtdb_int32(value))
 	return RtdbError(err)
+}
+
+type DatagramHandle struct {
+	handle C.rtdb_datagram_handle
+}
+
+// RtdbCreateDatagramHandleWarp 创建数据流
+// * \param [in] in 端口
+// * \param [out] remotehost 对端地址
+// * \param [out] handle 数据流句柄
+// * \return rtdb_error
+// * \remark 创建数据流 (备注：C代码中没文档，Go这边补的)
+func RtdbCreateDatagramHandleWarp(port int32, remoteHost string) (DatagramHandle, RtdbError) {
+	var handle C.rtdb_datagram_handle
+	cRemoteHost := C.CString(remoteHost)
+	defer C.free(unsafe.Pointer(cRemoteHost))
+	err := C.rtdb_create_datagram_handle_warp(C.rtdb_int32(port), cRemoteHost, &handle)
+	return DatagramHandle{handle: handle}, RtdbError(err)
+}
+
+// RtdbRemoveDatagramHandleWarp 删除数据流
+// * \param [in] handle 数据流句柄
+// * \return rtdb_error
+// * \remark 删除数据流 (备注：C代码中没文档，Go这边补的)
+func RtdbRemoveDatagramHandleWarp(handle DatagramHandle) RtdbError {
+	err := C.rtdb_remove_datagram_handle_warp(handle.handle)
+	return RtdbError(err)
+}
+
+// RtdbRecvDatagramWarp 接收数据流
+// * \param [in] cacheLen 缓存大小(会分配一个[]byte)
+// * \param [in] handle 数据流句柄
+// * \param [in] remote_addr 对端地址
+// * \param [in] timeout 超时时间
+// * \return rtdb_error
+// * \remark 接收数据流 (备注：C代码中没文档，Go这边补的)
+func RtdbRecvDatagramWarp(cacheLen int32, handle DatagramHandle, remoteAddr string, timeout int32) ([]byte, RtdbError) {
+	message := make([]byte, cacheLen)
+	messageLen := C.rtdb_int32(cacheLen)
+	cRemoteAddr := C.CString(remoteAddr)
+	defer C.free(unsafe.Pointer(cRemoteAddr))
+	err := C.rtdb_recv_datagram_warp((*C.char)(unsafe.Pointer(&message[0])), &messageLen, handle.handle, cRemoteAddr, C.rtdb_int32(timeout))
+	return message[0:messageLen], RtdbError(err)
 }
