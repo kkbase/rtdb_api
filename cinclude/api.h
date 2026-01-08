@@ -30,10 +30,12 @@ void load_library(char *path) {
     LIB = LOAD_LIBRARY(path);
 }
 
+
 // 释放动态库
 void free_library() {
     FREE_LIBRARY(LIB);
 }
+
 
 // 从动态库获取函数
 void* get_function(char *name) {
@@ -50,7 +52,7 @@ void* get_function(char *name) {
 * \remark 如果返回的版本号与 rtdb.h 中定义的不匹配(RTDB_API_XXX_VERSION)，则应用程序使用了错误的库。
 *      应输出一条错误信息并退出，否则可能在调用某些 api 时会导致崩溃
 */
-RTDBAPI rtdb_error RTDBAPI_CALLRULE
+rtdb_error RTDBAPI_CALLRULE
 rtdb_get_api_version_warp(
     rtdb_int32 *major,
     rtdb_int32 *minor,
@@ -73,7 +75,7 @@ rtdb_get_api_version_warp(
 * \return rtdb_error
 * \remark 选项设置后在下一次调用 api 时才生效
 */
-RTDBAPI rtdb_error RTDBAPI_CALLRULE
+rtdb_error RTDBAPI_CALLRULE
 rtdb_set_option_warp(
     rtdb_int32 type,
     rtdb_int32 value
