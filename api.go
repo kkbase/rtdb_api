@@ -62,7 +62,12 @@ func RtdbGetApiVersionWarp() (int32, int32, int32, RtdbError) {
 	return int32(major), int32(minor), int32(beta), RtdbError(err)
 }
 
-func RtdbSetOptionWarp(type_ int32, value int32) RtdbError {
-	err := C.rtdb_set_option_warp(C.rtdb_int32(type_), C.rtdb_int32(value))
+// RtdbSetOptionWarp 配置 api 行为参数，参见枚举 \ref RtdbApiOption
+// \param [in] type  选项类别
+// \param [in] value 选项值
+// \return rtdb_error
+// \remark 选项设置后在下一次调用 api 时才生效
+func RtdbSetOptionWarp(optionType RtdbApiOption, value int32) RtdbError {
+	err := C.rtdb_set_option_warp(C.rtdb_int32(optionType), C.rtdb_int32(value))
 	return RtdbError(err)
 }

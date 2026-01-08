@@ -5,6 +5,8 @@ package rtdb_api
 // #include "api.h"
 import "C"
 
+// RtdbApiOption 用于设置API的工作模式的参数选项
+// \see RtdbSetOptionWarp
 type RtdbApiOption uint32
 
 const (
