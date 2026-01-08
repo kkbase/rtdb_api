@@ -1,4 +1,4 @@
-package rtdb_api
+package enums
 
 // #cgo CFLAGS: -DPNG_DEBUG=1 -I./cinclude
 // #cgo CXXFLAGS: -std=c++11

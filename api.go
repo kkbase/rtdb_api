@@ -6,6 +6,7 @@ package rtdb_api
 import "C"
 import (
 	_ "embed"
+	"github.com/kkbase/rtdb_api/enums"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -56,10 +57,10 @@ func init() {
 // \remark 如果返回的版本号与 rtdb.h 中定义的不匹配(RTDB_API_XXX_VERSION)，则应用程序使用了错误的库。
 //
 //	应输出一条错误信息并退出，否则可能在调用某些 api 时会导致崩溃
-func RtdbGetApiVersionWarp() (int32, int32, int32, RtdbError) {
+func RtdbGetApiVersionWarp() (int32, int32, int32, enums.RtdbError) {
 	major, minor, beta := C.rtdb_int32(0), C.rtdb_int32(0), C.rtdb_int32(0)
 	err := C.rtdb_get_api_version_warp(&major, &minor, &beta)
-	return int32(major), int32(minor), int32(beta), RtdbError(err)
+	return int32(major), int32(minor), int32(beta), enums.RtdbError(err)
 }
 
 // RtdbSetOptionWarp 配置 api 行为参数，参见枚举 \ref RtdbApiOption
@@ -67,7 +68,7 @@ func RtdbGetApiVersionWarp() (int32, int32, int32, RtdbError) {
 // \param [in] value 选项值
 // \return rtdb_error
 // \remark 选项设置后在下一次调用 api 时才生效
-func RtdbSetOptionWarp(optionType RtdbApiOption, value int32) RtdbError {
+func RtdbSetOptionWarp(optionType enums.RtdbApiOption, value int32) enums.RtdbError {
 	err := C.rtdb_set_option_warp(C.rtdb_int32(optionType), C.rtdb_int32(value))
-	return RtdbError(err)
+	return enums.RtdbError(err)
 }

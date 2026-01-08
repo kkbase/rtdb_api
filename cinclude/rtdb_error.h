@@ -13,7 +13,7 @@
 * \enum  RTDB_ERROR_CODE
 * \brief 数据库中可能错误的错误信息
 */
-enum RTDB_ERROR_CODE
+typedef enum _RTDB_ERROR_CODE
 {
   RtE_UNKNOWN_ERROR                                                         = 0xFFFFFFFF,  //!< 未知错误
   RtE_OK                                                                    = 0x00000000,  //!< 操作成功完成
@@ -626,7 +626,7 @@ enum RTDB_ERROR_CODE
   RtE_IPC_ERROR                                                             = 0xFFFFC000,  //!< ipc error begin
   RtE_IPC_ERROR_END                                                         = 0xFFFFC09F,  //!< ipc error end
 
-};
+} RTDB_ERROR_CODE;
 /**@}*/
 
 #endif /* __RTDB_ERROR_H__ */
