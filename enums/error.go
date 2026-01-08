@@ -10,8 +10,11 @@ type RtdbError uint32
 const (
 	// RteUnknownError 未知错误
 	RteUnknownError = RtdbError(C.RtE_UNKNOWN_ERROR)
+
+	// RteOk 操作成功完成
+	RteOk = RtdbError(C.RtE_OK)
+
 	/*
-	   RtE_OK                                                                   = 0x00000000,  //!< 操作成功完成
 	   RtE_WINDOWS_ERROR                                                        = 0xFFF00000,  //!< Windows操作系统错误的起始值
 	   RtE_WINDOWS_ERROR_MAX                                                    = 0xFFFF0000,  //!< Windows操作系统错误的结束值
 	   RtE_INVALID_OPENMODE                                                     = 0xFFFF0001,  //!< 无效的文件打开方式
