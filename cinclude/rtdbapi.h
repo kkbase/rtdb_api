@@ -47,7 +47,7 @@ rtdb_set_option(
 /**@}*/
 
 
-/*备注： rtdb_datagram_handle* handle , 本身是 rtdb_datagram_handle& handle , go无法编译修改成 * 的*/
+/*备注： rtdb_datagram_handle* handle , 本身是 rtdb_datagram_handle& handle , go无法编译修改成 *指针 的*/
 RTDBAPI
 rtdb_error
 RTDBAPI_CALLRULE
@@ -64,7 +64,7 @@ rtdb_remove_datagram_handle(
   rtdb_datagram_handle handle
   );
 
-/*备注： rtdb_int32* message_len 本身是  rtdb_int32& message_len, go无法编译因此修改成 * */
+/*备注： rtdb_int32* message_len 本身是  rtdb_int32& message_len, go无法编译因此修改成 *指针 */
 RTDBAPI
 rtdb_error
 RTDBAPI_CALLRULE
