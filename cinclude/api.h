@@ -52,8 +52,7 @@ void* get_function(char *name) {
 * \remark 如果返回的版本号与 rtdb.h 中定义的不匹配(RTDB_API_XXX_VERSION)，则应用程序使用了错误的库。
 *      应输出一条错误信息并退出，否则可能在调用某些 api 时会导致崩溃
 */
-rtdb_error RTDBAPI_CALLRULE
-rtdb_get_api_version_warp(
+rtdb_error RTDBAPI_CALLRULE rtdb_get_api_version_warp(
     rtdb_int32 *major,
     rtdb_int32 *minor,
     rtdb_int32 *beta
@@ -75,8 +74,7 @@ rtdb_get_api_version_warp(
 * \return rtdb_error
 * \remark 选项设置后在下一次调用 api 时才生效
 */
-rtdb_error RTDBAPI_CALLRULE
-rtdb_set_option_warp(
+rtdb_error RTDBAPI_CALLRULE rtdb_set_option_warp(
     rtdb_int32 type,
     rtdb_int32 value
 ) {
@@ -97,8 +95,7 @@ rtdb_set_option_warp(
 * \return rtdb_error
 * \remark 创建数据流
 */
-rtdb_error RTDBAPI_CALLRULE
-rtdb_create_datagram_handle_warp(
+rtdb_error RTDBAPI_CALLRULE rtdb_create_datagram_handle_warp(
     rtdb_int32 port,
     const char* remotehost,
     rtdb_datagram_handle* handle
@@ -119,8 +116,7 @@ rtdb_create_datagram_handle_warp(
 * \return rtdb_error
 * \remark 删除数据流
 */
-rtdb_error RTDBAPI_CALLRULE
-rtdb_remove_datagram_handle_warp(
+rtdb_error RTDBAPI_CALLRULE rtdb_remove_datagram_handle_warp(
     rtdb_datagram_handle handle
 ) {
     typedef  rtdb_error (RTDBAPI_CALLRULE *rtdb_remove_datagram_handle_fn)(
@@ -141,8 +137,7 @@ rtdb_remove_datagram_handle_warp(
 * \return rtdb_error
 * \remark 接收数据流
 */
-rtdb_error RTDBAPI_CALLRULE
-rtdb_recv_datagram_warp(
+rtdb_error RTDBAPI_CALLRULE rtdb_recv_datagram_warp(
     char* message,
     rtdb_int32* message_len,
     rtdb_datagram_handle handle,
@@ -158,6 +153,48 @@ rtdb_recv_datagram_warp(
     );
     rtdb_recv_datagram_fn fn = (rtdb_recv_datagram_fn)get_function("rtdb_recv_datagram");
     return fn(message, message_len, handle, remote_addr, timeout);
+}
+
+
+// TODO
+// RTDBAPI
+// rtdb_error
+// RTDBAPI_CALLRULE
+// rtdb_subscribe_connect_ex(
+// rtdb_int32 handle,
+// rtdb_uint32 options,
+// void* param,
+// rtdb_connect_event_ex callback
+// );
+//
+// RTDBAPI
+// rtdb_error
+// RTDBAPI_CALLRULE
+// rtdb_cancel_subscribe_connect(
+// rtdb_int32 handle
+// );
+
+
+/**
+* \brief 建立同 RTDB 数据库的网络连接
+* \param [in] hostname     RTDB 数据平台服务器的网络地址或机器名
+* \param [in] port         连接断开，缺省值 6327
+* \param [out]  handle  连接句柄
+* \return rtdb_error
+* \remark 在调用所有的接口函数之前，必须先调用本函数建立同Rtdb服务器的连接
+ */
+rtdb_error RTDBAPI_CALLRULE rtdb_connect_warp(
+    const char *hostname,
+    rtdb_int32 port,
+    rtdb_int32 *handle
+) {
+    typedef rtdb_error (RTDBAPI_CALLRULE *rtdb_connect_fn)(
+        const char *hostname,
+        rtdb_int32 port,
+        rtdb_int32 *handle
+    );
+    rtdb_connect_fn fn = (rtdb_connect_fn)get_function("rtdb_connect");
+    return fn(hostname, port, handle);
 }
 
 
