@@ -1,17 +1,20 @@
 package rtdb_api
 
-import "C"
-
 // windows,amd64 LDFLAGS: -L./clibrary/windows_amd64 -lrtdbapi -lstdc++
 // linux,amd64 LDFLAGS: -L./clibrary/linux_amd64 -lrtdbapi -lstdc++ -Wl,-rpath,'$ORIGIN/clibrary/linux_amd64'
 // linux,arm64 LDFLAGS: -L./clibrary/linux_arm64 -lrtdbapi -lstdc++ -Wl,-rpath,'$ORIGIN/clibrary/linux_arm64'
 
 // #cgo CFLAGS: -DPNG_DEBUG=1 -I./cinclude
 // #cgo CXXFLAGS: -std=c++11
+// #include "dylib.h"
 // #include "rtdb.h"
 // #include "rtdbapi.h"
 // #include "rtdb_error.h"
 import "C"
+
+func init() {
+
+}
 
 type RtdbError int32
 
