@@ -379,7 +379,7 @@ RTDBAPI_CALLRULE
 rtdb_lock_user(
   rtdb_int32 handle,
   const char *user,
-  bool lock
+  rtdb_int8 lock
   );
 
 
@@ -1211,7 +1211,7 @@ RTDBAPI
 rtdb_error
 RTDBAPI_CALLRULE
 rtdb_judge_connect_status(rtdb_int32 handle,
-    bool* change_connection GAPI_DEFAULT_VALUE(0),
+    rtdb_int8* change_connection GAPI_DEFAULT_VALUE(0),
     char* current_ip_addr GAPI_DEFAULT_VALUE(0),
     rtdb_int32 size GAPI_DEFAULT_VALUE(0));
 

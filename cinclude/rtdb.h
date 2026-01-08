@@ -515,7 +515,7 @@ typedef enum _RTDB_HIS_MODE
   RTDB_EXACT_OR_NEXT,   //!< 取指定时间的数据，如果没有则取下一条数据。如果都没有数据则返回错误 \b RtE_DATA_NOT_FOUND;
   RTDB_EXACT_OR_PREV,   //!< 取指定时间的数据，如果没有则取上一条数据。如果都没有数据则返回错误 \b RtE_DATA_NOT_FOUND;
   RTDB_INTER_OR_NEXT,   //!< 取指定时间的内插值数据, 如果没有则取下一条数据。如果都没有数据则返回错误 \b RtE_DATA_NOT_FOUND;
-} RTDB_SEARCH_SORT;
+} RTDB_HIS_MODE;
 
 /**
 * \ingroup denum
@@ -566,7 +566,7 @@ typedef enum _RTDB_SEARCH_MASK
   RTDB_SEARCH_TIMECOPY,                           //!< 计算结果时间戳参考
   RTDB_SEARCH_PERIOD,                             //!< 计算周期
   RTDB_SEARCH_CALC_END,                           //!< 辅助作用，不能作为搜索条件
-} RTDB_SEARCH_SORT;
+} RTDB_SEARCH_MASK;
 
 /**
 * \ingroup denum
