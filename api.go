@@ -48,10 +48,21 @@ func init() {
 	C.load_library(C.CString(path))
 }
 
-type RtdbError int32
-
-func RtdbGetApiVersion() (int32, int32, int32, RtdbError) {
+// RtdbGetApiVersionWarp 取得 rtdbapi 库的版本号
+// \param [out]  major   主版本号
+// \param [out]  minor   次版本号
+// \param [out]  beta    发布版本号
+// \return rtdb_error
+// \remark 如果返回的版本号与 rtdb.h 中定义的不匹配(RTDB_API_XXX_VERSION)，则应用程序使用了错误的库。
+//
+//	应输出一条错误信息并退出，否则可能在调用某些 api 时会导致崩溃
+func RtdbGetApiVersionWarp() (int32, int32, int32, RtdbError) {
 	major, minor, beta := C.rtdb_int32(0), C.rtdb_int32(0), C.rtdb_int32(0)
 	err := C.rtdb_get_api_version_warp(&major, &minor, &beta)
 	return int32(major), int32(minor), int32(beta), RtdbError(err)
+}
+
+func RtdbSetOptionWarp(type_ int32, value int32) RtdbError {
+	err := C.rtdb_set_option_warp(C.rtdb_int32(type_), C.rtdb_int32(value))
+	return RtdbError(err)
 }
