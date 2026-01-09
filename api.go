@@ -3187,161 +3187,129 @@ func RawRtdbConnectionCountWarp(handle ConnectHandle, nodeNumber int32) (int32, 
 	return int32(count), RtdbError(err).GoError()
 }
 
-/**
-* \brief 列出 RTDB 服务器的所有连接句柄
-* \param [in] handle       连接句柄
-* \param [in] node_number   双活模式下，指定节点编号，1为rtdb_connect中第1个IP，2为rtdb_connect中第2个IP
-* \param [out] sockets    整形数组，所有连接的套接字句柄
-* \param [in,out]  count   输入时表示sockets的长度，输出时表示返回的连接个数
-* \return rtdb_error
-* \remark 用户须保证分配给 sockets 的空间与 count 相符。如果输入的 count 小于输出的 count，则只返回部分连接
-rtdb_error RTDBAPI_CALLRULE rtdb_get_connections_warp(rtdb_int32 handle, rtdb_int32 node_number, rtdb_int32 *sockets, rtdb_int32 *count)
-*/
+// * \brief 列出 RTDB 服务器的所有连接句柄
+// * \param [in] handle       连接句柄
+// * \param [in] node_number   双活模式下，指定节点编号，1为rtdb_connect中第1个IP，2为rtdb_connect中第2个IP
+// * \param [out] sockets    整形数组，所有连接的套接字句柄
+// * \param [in,out]  count   输入时表示sockets的长度，输出时表示返回的连接个数
+// * \return rtdb_error
+// * \remark 用户须保证分配给 sockets 的空间与 count 相符。如果输入的 count 小于输出的 count，则只返回部分连接
+// rtdb_error RTDBAPI_CALLRULE rtdb_get_connections_warp(rtdb_int32 handle, rtdb_int32 node_number, rtdb_int32 *sockets, rtdb_int32 *count)
 
-/**
- * 命名：rtdb_get_own_connection
- * 功能：获取当前连接的socket句柄
- * 参数：
- * \param [in] handle       连接句柄
- * \param [in] node_number   双活模式下，指定节点编号，1为rtdb_connect中第1个IP，2为rtdb_connect中第2个IP
- * \param [out] sockets    整形数组，所有连接的套接字句柄
-rtdb_error RTDBAPI_CALLRULE rtdb_get_own_connection_warp(rtdb_int32 handle, rtdb_int32 node_number, rtdb_int32* socket)
-*/
+//  * 命名：rtdb_get_own_connection
+//  * 功能：获取当前连接的socket句柄
+//  * 参数：
+//  * \param [in] handle       连接句柄
+//  * \param [in] node_number   双活模式下，指定节点编号，1为rtdb_connect中第1个IP，2为rtdb_connect中第2个IP
+//  * \param [out] sockets    整形数组，所有连接的套接字句柄
+// rtdb_error RTDBAPI_CALLRULE rtdb_get_own_connection_warp(rtdb_int32 handle, rtdb_int32 node_number, rtdb_int32* socket)
 
-/**
- * \brief 获取 RTDB 服务器指定连接的信息
- * \param [in] handle          连接句柄，参见 \ref rtdb_connect
- * \param [in] node_number   双活模式下，指定节点编号，1为rtdb_connect中第1个IP，2为rtdb_connect中第2个IP
- * \param [in] socket          指定的连接
- * \param [out] info          与连接相关的信息，参见 \ref RTDB_HOST_CONNECT_INFO
- * \return rtdb_error
-rtdb_error RTDBAPI_CALLRULE rtdb_get_connection_info_warp(rtdb_int32 handle, rtdb_int32 node_number, rtdb_int32 socket, RTDB_HOST_CONNECT_INFO *info)
-*/
+//  * \brief 获取 RTDB 服务器指定连接的信息
+//  * \param [in] handle          连接句柄，参见 \ref rtdb_connect
+//  * \param [in] node_number   双活模式下，指定节点编号，1为rtdb_connect中第1个IP，2为rtdb_connect中第2个IP
+//  * \param [in] socket          指定的连接
+//  * \param [out] info          与连接相关的信息，参见 \ref RTDB_HOST_CONNECT_INFO
+//  * \return rtdb_error
+// rtdb_error RTDBAPI_CALLRULE rtdb_get_connection_info_warp(rtdb_int32 handle, rtdb_int32 node_number, rtdb_int32 socket, RTDB_HOST_CONNECT_INFO *info)
 
-/**
- * \brief 获取 RTDB 服务器指定连接的ipv6版本
- * \param [in] handle          连接句柄，参见 \ref rtdb_connect
- * \param [in] node_number     双活模式下，指定节点编号，1为rtdb_connect中第1个IP，2为rtdb_connect中第2个IP，双活模式仅支持ipv4
- * \param [in] socket          指定的连接
- * \param [out] info           与连接相关的信息，参见 \ref RTDB_HOST_CONNECT_INFO_IPV6
- * \return rtdb_error
-rtdb_error RTDBAPI_CALLRULE rtdb_get_connection_info_ipv6_warp(rtdb_int32 handle, rtdb_int32 node_number, rtdb_int32 socket, RTDB_HOST_CONNECT_INFO_IPV6* info)
-*/
+//  * \brief 获取 RTDB 服务器指定连接的ipv6版本
+//  * \param [in] handle          连接句柄，参见 \ref rtdb_connect
+//  * \param [in] node_number     双活模式下，指定节点编号，1为rtdb_connect中第1个IP，2为rtdb_connect中第2个IP，双活模式仅支持ipv4
+//  * \param [in] socket          指定的连接
+//  * \param [out] info           与连接相关的信息，参见 \ref RTDB_HOST_CONNECT_INFO_IPV6
+//  * \return rtdb_error
+// rtdb_error RTDBAPI_CALLRULE rtdb_get_connection_info_ipv6_warp(rtdb_int32 handle, rtdb_int32 node_number, rtdb_int32 socket, RTDB_HOST_CONNECT_INFO_IPV6* info)
 
-/**
- * \brief 断开同 RTDB 数据平台的连接
- * \param handle  连接句柄
- * \return rtdb_error
- * \remark 完成对 RTDB 的访问后调用本函数断开连接。连接一旦断开，则需要重新连接后才能调用其他的接口函数。
-rtdb_error RTDBAPI_CALLRULE rtdb_disconnect_warp(rtdb_int32 handle)
-*/
+//  * \brief 断开同 RTDB 数据平台的连接
+//  * \param handle  连接句柄
+//  * \return rtdb_error
+//  * \remark 完成对 RTDB 的访问后调用本函数断开连接。连接一旦断开，则需要重新连接后才能调用其他的接口函数。
+// rtdb_error RTDBAPI_CALLRULE rtdb_disconnect_warp(rtdb_int32 handle)
 
-/**
-* \brief 以有效帐户登录
-* \param handle          连接句柄
-* \param user            登录帐户
-* \param password        帐户口令
-* \param [out] priv     账户权限， 枚举 \ref RTDB_PRIV_GROUP 的值之一
-* \return rtdb_error
-rtdb_error RTDBAPI_CALLRULE rtdb_login_warp(rtdb_int32 handle, const char *user, const char *password, rtdb_int32 *priv)
-*/
+// * \brief 以有效帐户登录
+// * \param handle          连接句柄
+// * \param user            登录帐户
+// * \param password        帐户口令
+// * \param [out] priv     账户权限， 枚举 \ref RTDB_PRIV_GROUP 的值之一
+// * \return rtdb_error
+// rtdb_error RTDBAPI_CALLRULE rtdb_login_warp(rtdb_int32 handle, const char *user, const char *password, rtdb_int32 *priv)
 
-/**
- * \brief 获取连接句柄所连接的服务器操作系统类型
- * \param     handle          连接句柄
- * \param     ostype   操作系统类型 枚举 \ref RTDB_OS_TYPE 的值之一
- * \return    rtdb_error
- * \remark 如句柄未链接任何服务器，返回RTDB_OS_INVALID(当前支持操作系统类型：windows、linux)。
-rtdb_error RTDBAPI_CALLRULE rtdb_get_linked_ostype_warp(rtdb_int32 handle, RTDB_OS_TYPE* ostype)
-*/
+//  * \brief 获取连接句柄所连接的服务器操作系统类型
+//  * \param     handle          连接句柄
+//  * \param     ostype   操作系统类型 枚举 \ref RTDB_OS_TYPE 的值之一
+//  * \return    rtdb_error
+//  * \remark 如句柄未链接任何服务器，返回RTDB_OS_INVALID(当前支持操作系统类型：windows、linux)。
+// rtdb_error RTDBAPI_CALLRULE rtdb_get_linked_ostype_warp(rtdb_int32 handle, RTDB_OS_TYPE* ostype)
 
-/**
- * \brief 获取连接句柄所连接的服务器相关信息
- * \param     handle          连接句柄
- * \param     handle_info   服务器相关信息
- * \return    rtdb_error
- * \remark 如句柄未链接任何服务器，返回RTDB_OS_INVALID(当前支持操作系统类型：windows、linux)。
-rtdb_error RTDBAPI_CALLRULE rtdb_get_handle_info_warp(rtdb_int32 handle, RTDB_HANDLE_INFO* info)
-*/
+//  * \brief 获取连接句柄所连接的服务器相关信息
+//  * \param     handle          连接句柄
+//  * \param     handle_info   服务器相关信息
+//  * \return    rtdb_error
+//  * \remark 如句柄未链接任何服务器，返回RTDB_OS_INVALID(当前支持操作系统类型：windows、linux)。
+// rtdb_error RTDBAPI_CALLRULE rtdb_get_handle_info_warp(rtdb_int32 handle, RTDB_HANDLE_INFO* info)
 
-/**
-* \brief 修改用户帐户口令
-* \param handle    连接句柄
-* \param user      已有帐户
-* \param password  帐户新口令
-* \return rtdb_error
-* \remark 只有系统管理员可以修改其它用户的密码
-rtdb_error RTDBAPI_CALLRULE rtdb_change_password_warp(rtdb_int32 handle, const char *user, const char *password)
-*/
+// * \brief 修改用户帐户口令
+// * \param handle    连接句柄
+// * \param user      已有帐户
+// * \param password  帐户新口令
+// * \return rtdb_error
+// * \remark 只有系统管理员可以修改其它用户的密码
+// rtdb_error RTDBAPI_CALLRULE rtdb_change_password_warp(rtdb_int32 handle, const char *user, const char *password)
 
-/**
-* \brief 用户修改自己帐户口令
-* \param handle  连接句柄
-* \param old_pwd 帐户原口令
-* \param new_pwd 帐户新口令
-* \return rtdb_error
-rtdb_error RTDBAPI_CALLRULE rtdb_change_my_password_warp(rtdb_int32 handle, const char *old_pwd, const char *new_pwd)
-*/
+// * \brief 用户修改自己帐户口令
+// * \param handle  连接句柄
+// * \param old_pwd 帐户原口令
+// * \param new_pwd 帐户新口令
+// * \return rtdb_error
+// rtdb_error RTDBAPI_CALLRULE rtdb_change_my_password_warp(rtdb_int32 handle, const char *old_pwd, const char *new_pwd)
 
-/**
- * \brief 获取连接权限
- * \param handle          连接句柄
- * \param [out] priv  帐户权限， 枚举 \ref RTDB_PRIV_GROUP 的值之一
- * \return rtdb_error
- * \remark 如果还未登陆或不在服务器信任连接中，对应权限为-1，表示没有任何权限
-rtdb_error RTDBAPI_CALLRULE rtdb_get_priv_warp(rtdb_int32 handle, rtdb_int32 *priv)
-*/
+//  * \brief 获取连接权限
+//  * \param handle          连接句柄
+//  * \param [out] priv  帐户权限， 枚举 \ref RTDB_PRIV_GROUP 的值之一
+//  * \return rtdb_error
+//  * \remark 如果还未登陆或不在服务器信任连接中，对应权限为-1，表示没有任何权限
+// rtdb_error RTDBAPI_CALLRULE rtdb_get_priv_warp(rtdb_int32 handle, rtdb_int32 *priv)
 
-/**
-* \brief 修改用户帐户权限
-* \param handle  连接句柄
-* \param user    已有帐户
-* \param priv    帐户权限， 枚举 \ref RTDB_PRIV_GROUP 的值之一
-* \return rtdb_error
-* \remark 只有管理员有修改权限
-rtdb_error RTDBAPI_CALLRULE rtdb_change_priv_warp(rtdb_int32 handle, const char *user, rtdb_int32 priv)
-*/
+// * \brief 修改用户帐户权限
+// * \param handle  连接句柄
+// * \param user    已有帐户
+// * \param priv    帐户权限， 枚举 \ref RTDB_PRIV_GROUP 的值之一
+// * \return rtdb_error
+// * \remark 只有管理员有修改权限
+// rtdb_error RTDBAPI_CALLRULE rtdb_change_priv_warp(rtdb_int32 handle, const char *user, rtdb_int32 priv)
 
-/**
-* \brief 添加用户帐户
-* \param handle    连接句柄
-* \param user      帐户
-* \param password  帐户初始口令
-* \param priv      帐户权限， 枚举 \ref RTDB_PRIV_GROUP 的值之一
-* \return rtdb_error
-* \remark 只有管理员有添加用户权限
-rtdb_error RTDBAPI_CALLRULE rtdb_add_user_warp(rtdb_int32 handle, const char *user, const char *password, rtdb_int32 priv)
-*/
+// * \brief 添加用户帐户
+// * \param handle    连接句柄
+// * \param user      帐户
+// * \param password  帐户初始口令
+// * \param priv      帐户权限， 枚举 \ref RTDB_PRIV_GROUP 的值之一
+// * \return rtdb_error
+// * \remark 只有管理员有添加用户权限
+// rtdb_error RTDBAPI_CALLRULE rtdb_add_user_warp(rtdb_int32 handle, const char *user, const char *password, rtdb_int32 priv)
 
-/**
-* \brief 删除用户帐户
-* \param handle  连接句柄
-* \param user    帐户
-* \return rtdb_error
-* \remark 只有管理员有删除用户权限
-rtdb_error RTDBAPI_CALLRULE rtdb_remove_user_warp(rtdb_int32 handle, const char *user)
-*/
+// * \brief 删除用户帐户
+// * \param handle  连接句柄
+// * \param user    帐户
+// * \return rtdb_error
+// * \remark 只有管理员有删除用户权限
+// rtdb_error RTDBAPI_CALLRULE rtdb_remove_user_warp(rtdb_int32 handle, const char *user)
 
-/**
-* \brief 启用或禁用用户
-* \param     handle    连接句柄
-* \param     user      字符串，输入，帐户名
-* \param     lock      布尔，输入，是否禁用
-* \return    rtdb_error
-* \remark 只有管理员有启用禁用权限
-rtdb_error RTDBAPI_CALLRULE rtdb_lock_user_warp(rtdb_int32 handle, const char *user, rtdb_int8 lock)
-*/
+// * \brief 启用或禁用用户
+// * \param     handle    连接句柄
+// * \param     user      字符串，输入，帐户名
+// * \param     lock      布尔，输入，是否禁用
+// * \return    rtdb_error
+// * \remark 只有管理员有启用禁用权限
+// rtdb_error RTDBAPI_CALLRULE rtdb_lock_user_warp(rtdb_int32 handle, const char *user, rtdb_int8 lock)
 
-/**
- * \brief 获得所有用户
- * \param handle          连接句柄
- * \param [in,out]  count 输入时表示 users、privs 的长度，即用户个数；输出时表示成功返回的用户信息个数
- * \param [out] users     字符串指针数组，用户名称
- * \param [out] privs    整型数组，用户权限，枚举 \ref RTDB_PRIV_GROUP 的值之一
- * \return rtdb_error
- * \remark 用户须保证分配给 users, privs 的空间与 count 相符，如果输入的 count 小于总的用户数，则只返回部分用户信息。且每个指针指向的字符串缓冲区尺寸不小于 \ref RTDB_USER_SIZE。
-rtdb_error RTDBAPI_CALLRULE rtdb_get_users_warp(rtdb_int32 handle, rtdb_int32 *count, RTDB_USER_INFO *infos)
-*/
+//  * \brief 获得所有用户
+//  * \param handle          连接句柄
+//  * \param [in,out]  count 输入时表示 users、privs 的长度，即用户个数；输出时表示成功返回的用户信息个数
+//  * \param [out] users     字符串指针数组，用户名称
+//  * \param [out] privs    整型数组，用户权限，枚举 \ref RTDB_PRIV_GROUP 的值之一
+//  * \return rtdb_error
+//  * \remark 用户须保证分配给 users, privs 的空间与 count 相符，如果输入的 count 小于总的用户数，则只返回部分用户信息。且每个指针指向的字符串缓冲区尺寸不小于 \ref RTDB_USER_SIZE。
+// rtdb_error RTDBAPI_CALLRULE rtdb_get_users_warp(rtdb_int32 handle, rtdb_int32 *count, RTDB_USER_INFO *infos)
 
 /**
 * \brief 添加连接黑名单项
@@ -6521,8 +6489,8 @@ rtdb_error RTDBAPI_CALLRULE rtdbe_get_equation_graph_count_warp(rtdb_int32 handl
   *      [id]       整型，输入，标签点标识
   *      [flag]     枚举，输入，获取的拓扑图的关系
   *      [count]    整型，输出
-                      输入时，表示拓扑图键值对数量
-                      输出时，表示实际获取到的拓扑图键值对数量
+  *                   输入时，表示拓扑图键值对数量
+  *                   输出时，表示实际获取到的拓扑图键值对数量
   *      [graph]    输出，GOLDE_GRAPH数据结构，拓扑图键值对信息
   * 备注：键值对为数据结构，存储方程式涉及到的各标签点ID、及其父ID等
 rtdb_error RTDBAPI_CALLRULE rtdbe_get_equation_graph_datas_warp(rtdb_int32 handle, rtdb_int32 id, RTDB_GRAPH_FLAG flag, rtdb_int32 *count, RTDB_GRAPH *graph)
@@ -6543,9 +6511,9 @@ rtdb_error RTDBAPI_CALLRULE rtdbp_get_perf_tags_count_warp(rtdb_int32 handle, in
   * 参数：
   *      [handle]   连接句柄
   *      [count]    整型，输入，输出
-                      输入时，表示想要获取的性能计数点信息的数量，也表示tags_info，errors等的长度
-                      输出时，表示实际获取到的性能计数点信息的数量
-         [errors] 无符号整型数组，输出，获取性能计数点信息的返回值列表，参考rtdb_error.h
+  *                   输入时，表示想要获取的性能计数点信息的数量，也表示tags_info，errors等的长度
+  *                   输出时，表示实际获取到的性能计数点信息的数量
+  *      [errors] 无符号整型数组，输出，获取性能计数点信息的返回值列表，参考rtdb_error.h
   * 备注：用户须保证分配给 tags_info，errors 的空间与 count 相符
 rtdb_error RTDBAPI_CALLRULE rtdbp_get_perf_tags_info_warp(rtdb_int32 handle, rtdb_int32* count, RTDB_PERF_TAG_INFO* tags_info, rtdb_error* errors)
 */
