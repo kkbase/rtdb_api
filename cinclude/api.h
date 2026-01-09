@@ -52,16 +52,8 @@ void* get_function(char *name) {
 * \remark 如果返回的版本号与 rtdb.h 中定义的不匹配(RTDB_API_XXX_VERSION)，则应用程序使用了错误的库。
 *      应输出一条错误信息并退出，否则可能在调用某些 api 时会导致崩溃
 */
-rtdb_error RTDBAPI_CALLRULE rtdb_get_api_version_warp(
-    rtdb_int32 *major,
-    rtdb_int32 *minor,
-    rtdb_int32 *beta
-) {
-    typedef rtdb_error (RTDBAPI_CALLRULE *rtdb_get_api_version_fn)(
-        rtdb_int32 *major,
-        rtdb_int32 *minor,
-        rtdb_int32 *beta
-    );
+rtdb_error RTDBAPI_CALLRULE rtdb_get_api_version_warp(rtdb_int32 *major, rtdb_int32 *minor, rtdb_int32 *beta) {
+    typedef rtdb_error (RTDBAPI_CALLRULE *rtdb_get_api_version_fn)(rtdb_int32 *major, rtdb_int32 *minor, rtdb_int32 *beta);
     rtdb_get_api_version_fn fn = (rtdb_get_api_version_fn)get_function("rtdb_get_api_version");
     return fn(major, minor, beta);
 }
@@ -74,14 +66,8 @@ rtdb_error RTDBAPI_CALLRULE rtdb_get_api_version_warp(
 * \return rtdb_error
 * \remark 选项设置后在下一次调用 api 时才生效
 */
-rtdb_error RTDBAPI_CALLRULE rtdb_set_option_warp(
-    rtdb_int32 type,
-    rtdb_int32 value
-) {
-    typedef rtdb_error (RTDBAPI_CALLRULE *rtdb_set_option_fn)(
-        rtdb_int32 type,
-        rtdb_int32 value
-    );
+rtdb_error RTDBAPI_CALLRULE rtdb_set_option_warp(rtdb_int32 type, rtdb_int32 value) {
+    typedef rtdb_error (RTDBAPI_CALLRULE *rtdb_set_option_fn)(rtdb_int32 type, rtdb_int32 value);
     rtdb_set_option_fn fn = (rtdb_set_option_fn)get_function("rtdb_set_option");
     return fn(type, value);
 }
@@ -95,16 +81,8 @@ rtdb_error RTDBAPI_CALLRULE rtdb_set_option_warp(
 * \return rtdb_error
 * \remark 创建数据流
 */
-rtdb_error RTDBAPI_CALLRULE rtdb_create_datagram_handle_warp(
-    rtdb_int32 port,
-    const char* remotehost,
-    rtdb_datagram_handle* handle
-) {
-    typedef rtdb_error (RTDBAPI_CALLRULE *rtdb_create_datagram_handle_fn)(
-        rtdb_int32 port,
-        const char* remotehost,
-        rtdb_datagram_handle* handle
-    );
+rtdb_error RTDBAPI_CALLRULE rtdb_create_datagram_handle_warp(rtdb_int32 port, const char* remotehost, rtdb_datagram_handle* handle) {
+    typedef rtdb_error (RTDBAPI_CALLRULE *rtdb_create_datagram_handle_fn)(rtdb_int32 port, const char* remotehost, rtdb_datagram_handle* handle);
     rtdb_create_datagram_handle_fn fn = (rtdb_create_datagram_handle_fn)get_function("rtdb_create_datagram_handle");
     return fn(port, remotehost, handle);
 }
@@ -116,12 +94,8 @@ rtdb_error RTDBAPI_CALLRULE rtdb_create_datagram_handle_warp(
 * \return rtdb_error
 * \remark 删除数据流
 */
-rtdb_error RTDBAPI_CALLRULE rtdb_remove_datagram_handle_warp(
-    rtdb_datagram_handle handle
-) {
-    typedef  rtdb_error (RTDBAPI_CALLRULE *rtdb_remove_datagram_handle_fn)(
-        rtdb_datagram_handle handle
-    );
+rtdb_error RTDBAPI_CALLRULE rtdb_remove_datagram_handle_warp(rtdb_datagram_handle handle) {
+    typedef  rtdb_error (RTDBAPI_CALLRULE *rtdb_remove_datagram_handle_fn)(rtdb_datagram_handle handle);
     rtdb_remove_datagram_handle_fn fn = (rtdb_remove_datagram_handle_fn)get_function("rtdb_remove_datagram_handle");
     return fn(handle);
 }
@@ -137,20 +111,8 @@ rtdb_error RTDBAPI_CALLRULE rtdb_remove_datagram_handle_warp(
 * \return rtdb_error
 * \remark 接收数据流
 */
-rtdb_error RTDBAPI_CALLRULE rtdb_recv_datagram_warp(
-    char* message,
-    rtdb_int32* message_len,
-    rtdb_datagram_handle handle,
-    char* remote_addr,
-    rtdb_int32 timeout
-) {
-    typedef rtdb_error (RTDBAPI_CALLRULE *rtdb_recv_datagram_fn)(
-        char* message,
-        rtdb_int32* message_len,
-        rtdb_datagram_handle handle,
-        char* remote_addr,
-        rtdb_int32 timeout
-    );
+rtdb_error RTDBAPI_CALLRULE rtdb_recv_datagram_warp(char* message, rtdb_int32* message_len, rtdb_datagram_handle handle, char* remote_addr, rtdb_int32 timeout) {
+    typedef rtdb_error (RTDBAPI_CALLRULE *rtdb_recv_datagram_fn)(char* message, rtdb_int32* message_len, rtdb_datagram_handle handle, char* remote_addr, rtdb_int32 timeout);
     rtdb_recv_datagram_fn fn = (rtdb_recv_datagram_fn)get_function("rtdb_recv_datagram");
     return fn(message, message_len, handle, remote_addr, timeout);
 }
@@ -194,16 +156,8 @@ rtdb_error RTDBAPI_CALLRULE rtdb_cancel_subscribe_connect_warp(rtdb_int32 handle
 * \return rtdb_error
 * \remark 在调用所有的接口函数之前，必须先调用本函数建立同Rtdb服务器的连接
  */
-rtdb_error RTDBAPI_CALLRULE rtdb_connect_warp(
-    const char *hostname,
-    rtdb_int32 port,
-    rtdb_int32 *handle
-) {
-    typedef rtdb_error (RTDBAPI_CALLRULE *rtdb_connect_fn)(
-        const char *hostname,
-        rtdb_int32 port,
-        rtdb_int32 *handle
-    );
+rtdb_error RTDBAPI_CALLRULE rtdb_connect_warp(const char *hostname, rtdb_int32 port, rtdb_int32 *handle) {
+    typedef rtdb_error (RTDBAPI_CALLRULE *rtdb_connect_fn)(const char *hostname, rtdb_int32 port, rtdb_int32 *handle);
     rtdb_connect_fn fn = (rtdb_connect_fn)get_function("rtdb_connect");
     return fn(hostname, port, handle);
 }
@@ -216,16 +170,8 @@ rtdb_error RTDBAPI_CALLRULE rtdb_connect_warp(
 * \param [out]  count 返回当前主机的连接个数
 * \return rtdb_error
 */
-rtdb_error RTDBAPI_CALLRULE rtdb_connection_count_warp(
-    rtdb_int32 handle,
-    rtdb_int32 node_number,
-    rtdb_int32 *count
-) {
-    typedef rtdb_error (RTDBAPI_CALLRULE *rtdb_connection_count_fn)(
-        rtdb_int32 handle,
-        rtdb_int32 node_number,
-        rtdb_int32 *count
-    );
+rtdb_error RTDBAPI_CALLRULE rtdb_connection_count_warp(rtdb_int32 handle, rtdb_int32 node_number, rtdb_int32 *count) {
+    typedef rtdb_error (RTDBAPI_CALLRULE *rtdb_connection_count_fn)(rtdb_int32 handle, rtdb_int32 node_number, rtdb_int32 *count);
     rtdb_connection_count_fn fn = (rtdb_connection_count_fn)get_function("rtdb_connection_count");
     return fn(handle, node_number, count);
 }
@@ -240,18 +186,8 @@ rtdb_error RTDBAPI_CALLRULE rtdb_connection_count_warp(
 * \return rtdb_error
 * \remark 用户须保证分配给 sockets 的空间与 count 相符。如果输入的 count 小于输出的 count，则只返回部分连接
 */
-rtdb_error RTDBAPI_CALLRULE rtdb_get_connections_warp(
-    rtdb_int32 handle,
-    rtdb_int32 node_number,
-    rtdb_int32 *sockets,
-    rtdb_int32 *count
-) {
-    typedef rtdb_error (RTDBAPI_CALLRULE *rtdb_get_connections_fn)(
-        rtdb_int32 handle,
-        rtdb_int32 node_number,
-        rtdb_int32 *sockets,
-        rtdb_int32 *count
-    );
+rtdb_error RTDBAPI_CALLRULE rtdb_get_connections_warp(rtdb_int32 handle, rtdb_int32 node_number, rtdb_int32 *sockets, rtdb_int32 *count) {
+    typedef rtdb_error (RTDBAPI_CALLRULE *rtdb_get_connections_fn)(rtdb_int32 handle, rtdb_int32 node_number, rtdb_int32 *sockets, rtdb_int32 *count);
     rtdb_get_connections_fn fn = (rtdb_get_connections_fn)get_function("rtdb_get_connections");
     return fn(handle, node_number, sockets, count);
 }
@@ -264,16 +200,8 @@ rtdb_error RTDBAPI_CALLRULE rtdb_get_connections_warp(
 * \param [in] node_number   双活模式下，指定节点编号，1为rtdb_connect中第1个IP，2为rtdb_connect中第2个IP
 * \param [out] sockets    整形数组，所有连接的套接字句柄
 */
-rtdb_error RTDBAPI_CALLRULE rtdb_get_own_connection_warp(
-    rtdb_int32 handle,
-    rtdb_int32 node_number,
-    rtdb_int32* socket
-) {
-    typedef rtdb_error (RTDBAPI_CALLRULE *rtdb_get_own_connection_fn)(
-        rtdb_int32 handle,
-        rtdb_int32 node_number,
-        rtdb_int32* socket
-    );
+rtdb_error RTDBAPI_CALLRULE rtdb_get_own_connection_warp(rtdb_int32 handle, rtdb_int32 node_number, rtdb_int32* socket) {
+    typedef rtdb_error (RTDBAPI_CALLRULE *rtdb_get_own_connection_fn)(rtdb_int32 handle, rtdb_int32 node_number, rtdb_int32* socket);
     rtdb_get_own_connection_fn fn = (rtdb_get_own_connection_fn)get_function("rtdb_get_own_connection");
     return fn(handle, node_number, socket);
 }
