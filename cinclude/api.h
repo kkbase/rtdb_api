@@ -4488,6 +4488,132 @@ rtdb_error RTDBAPI_CALLRULE rtdbh_put_archived_named_type_values64_warp(rtdb_int
     return fn(handle, count, ids, datetimes, subtimes, objects, lengths, qualities, errors);
 }
 
+/**
+*
+* \brief 重算或补算批量计算标签点历史数据
+*
+* \param handle        连接句柄
+* \param count         整型，输入/输出，
+*                        输入时表示 ids、errors 的长度，
+*                        即标签点个数；输出时返回成功开始计算的标签点个数
+* \param flag          短整型，输入，不为 0 表示进行重算，删除时间范围内已经存在历史数据；
+*                        为 0 表示补算，保留时间范围内已经存在历史数据，覆盖同时刻的计算值。
+* \param datetime1     整型，输入，表示起始时间秒数。
+* \param ms1           短整型，输入，如果 id 指定的标签点时间精度为纳秒，表示起始时间对应的纳秒；否则忽略
+* \param datetime2     整型，输入，表示结束时间秒数。如果为 0，表示计算直至存档中数据的最后时间
+* \param ms2           短整型，输入，如果 id 指定的标签点时间精度为纳秒，表示结束时间对应的纳秒；否则忽略
+* \param ids           整型数组，输入，标签点标识
+* \param errors        无符号整型数组，输出，计算历史数据的返回值列表，参考rtdb_error.h
+* \remark 用户须保证 ids、errors 的长度与 count 一致，本接口仅对带有计算扩展属性的标签点有效。
+*        由 datetime1、ms1 表示的时间可以大于 datetime2、ms2 表示的时间，
+*        此时前者表示结束时间，后者表示起始时间。
+*/
+rtdb_error RTDBAPI_CALLRULE rtdbe_compute_history64_warp(rtdb_int32 handle, rtdb_int32* count, rtdb_int16 flag, rtdb_timestamp_type datetime1, rtdb_subtime_type subtime1, rtdb_timestamp_type datetime2, rtdb_subtime_type subtime2, const rtdb_int32* ids, rtdb_error* errors)
+{
+    typedef rtdb_error (RTDBAPI_CALLRULE *rtdbe_compute_history64_fn)(rtdb_int32 handle, rtdb_int32* count, rtdb_int16 flag, rtdb_timestamp_type datetime1, rtdb_subtime_type subtime1, rtdb_timestamp_type datetime2, rtdb_subtime_type subtime2, const rtdb_int32* ids, rtdb_error* errors);
+    rtdbe_compute_history64_fn fn = (rtdbe_compute_history64_fn)get_function("rtdbe_compute_history64");
+    return fn(handle, count, flag, datetime1, subtime1, datetime2, subtime2, ids, errors);
+}
+
+/**
+* 命名：rtdbe_get_equation_graph_count
+* 功能：根据标签点 id 获取相关联方程式键值对数量
+* 参数：
+*      [handle]   连接句柄
+*      [id]       整型，输入，标签点标识
+*      [flag]     枚举，输入，获取的拓扑图的关系
+*      [count]    整型，输入，拓扑图键值对数量
+* 备注：键值对为数据结构，存储方程式涉及到的各标签点ID、及其父ID等
+*		具体参考rtdbe_get_equation_graph_datas
+*/
+rtdb_error RTDBAPI_CALLRULE rtdbe_get_equation_graph_count_warp(rtdb_int32 handle, rtdb_int32 id, RTDB_GRAPH_FLAG flag, rtdb_int32 *count)
+{
+    typedef rtdb_error (RTDBAPI_CALLRULE *rtdbe_get_equation_graph_count_fn)(rtdb_int32 handle, rtdb_int32 id, RTDB_GRAPH_FLAG flag, rtdb_int32 *count);
+    rtdbe_get_equation_graph_count_fn fn = (rtdbe_get_equation_graph_count_fn)get_function("rtdbe_get_equation_graph_count");
+    return fn(handle, id, flag, count);
+}
+
+/**
+* 命名：rtdbe_get_equation_graph_datas
+* 功能：根据标签点 id 获取相关联方程式键值对数据
+* 参数：
+*      [handle]   连接句柄
+*      [id]       整型，输入，标签点标识
+*      [flag]     枚举，输入，获取的拓扑图的关系
+*      [count]    整型，输出
+                    输入时，表示拓扑图键值对数量
+                    输出时，表示实际获取到的拓扑图键值对数量
+*      [graph]    输出，GOLDE_GRAPH数据结构，拓扑图键值对信息
+* 备注：键值对为数据结构，存储方程式涉及到的各标签点ID、及其父ID等
+*/
+rtdb_error RTDBAPI_CALLRULE rtdbe_get_equation_graph_datas_warp(rtdb_int32 handle, rtdb_int32 id, RTDB_GRAPH_FLAG flag, rtdb_int32 *count, RTDB_GRAPH *graph)
+{
+    typedef rtdb_error (RTDBAPI_CALLRULE *rtdbe_get_equation_graph_datas_fn)(rtdb_int32 handle, rtdb_int32 id, RTDB_GRAPH_FLAG flag, rtdb_int32 *count, RTDB_GRAPH *graph);
+    rtdbe_get_equation_graph_datas_fn fn = (rtdbe_get_equation_graph_datas_fn)get_function("rtdbe_get_equation_graph_datas");
+    return fn(handle, id, flag, count, graph);
+}
+
+/**
+* 命名：rtdbp_get_perf_tags_count
+* 功能：获取Perf服务中支持的性能计数点的数量
+* 参数：
+*      [handle]   连接句柄
+*      [count]    整型，输出，表示实际获取到的Perf服务中支持的性能计数点的数量
+*/
+rtdb_error RTDBAPI_CALLRULE rtdbp_get_perf_tags_count_warp(rtdb_int32 handle, int* count)
+{
+    typedef rtdb_error (RTDBAPI_CALLRULE *rtdbp_get_perf_tags_count_fn)(rtdb_int32 handle, int* count);
+    rtdbp_get_perf_tags_count_fn fn = (rtdbp_get_perf_tags_count_fn)get_function("rtdbp_get_perf_tags_count");
+    return fn(handle, count);
+}
+
+/**
+* 命名：rtdbp_get_perf_tags_info
+* 功能：根据性能计数点ID获取相关的性能计数点信息
+* 参数：
+*      [handle]   连接句柄
+*      [count]    整型，输入，输出
+                    输入时，表示想要获取的性能计数点信息的数量，也表示tags_info，errors等的长度
+                    输出时，表示实际获取到的性能计数点信息的数量
+       [errors] 无符号整型数组，输出，获取性能计数点信息的返回值列表，参考rtdb_error.h
+* 备注：用户须保证分配给 tags_info，errors 的空间与 count 相符
+*/
+rtdb_error RTDBAPI_CALLRULE rtdbp_get_perf_tags_info_warp(rtdb_int32 handle, rtdb_int32* count, RTDB_PERF_TAG_INFO* tags_info, rtdb_error* errors)
+{
+    typedef rtdb_error (RTDBAPI_CALLRULE *rtdbp_get_perf_tags_info_fn)(rtdb_int32 handle, rtdb_int32* count, RTDB_PERF_TAG_INFO* tags_info, rtdb_error* errors);
+    rtdbp_get_perf_tags_info_fn fn = (rtdbp_get_perf_tags_info_fn)get_function("rtdbp_get_perf_tags_info");
+    return fn(handle, count, tags_info, errors);
+}
+
+/**
+* 命名：rtdbp_get_perf_values
+* 功能：批量读取性能计数点的当前快照数值
+* 参数：
+*        [handle]    连接句柄
+*        [count]     整型，输入/输出，性能点个数，
+*                    输入时表示 perf_ids、datetimes、ms、values、states、qualities、errors 的长度，
+*                    输出时表示成功获取实时值的性能计数点个数
+*        [perf_ids]  整型数组，输入，性能计数点标识列表，参考RTDB_PERF_TAG_ID
+*        [datetimes] 整型数组，输出，实时数值时间列表,
+*                    表示距离1970年1月1日08:00:00的秒数
+*        [ms]        短整型数组，输出，实时数值时间列表，
+*                    对于时间精度为纳秒的标签点，返回相应的纳秒值；否则为 0
+*        [values]    双精度浮点型数组，输出，实时浮点型数值列表，
+*                    对于数据类型为 RTDB_REAL16、RTDB_REAL32、RTDB_REAL64 的标签点，返回相应的快照值；否则为 0
+*        [states]    64 位整型数组，输出，实时整型数值列表，
+*                    对于数据类型为 RTDB_BOOL、RTDB_UINT8、RTDB_INT8、RTDB_CHAR、RTDB_UINT16、RTDB_INT16、
+*                    RTDB_UINT32、RTDB_INT32、RTDB_INT64 的标签点，返回相应的快照值；否则为 0
+*        [qualities] 短整型数组，输出，实时数值品质列表，数据库预定义的品质参见枚举 RTDB_QUALITY
+*        [errors]    无符号整型数组，输出，读取实时数据的返回值列表，参考rtdb_error.h
+* 备注：用户须保证 ids、datetimes、ms、values、states、qualities、errors 的长度与 count 一致。
+*/
+rtdb_error RTDBAPI_CALLRULE rtdbp_get_perf_values64_warp(rtdb_int32 handle, rtdb_int32* count, int* perf_ids, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float64* values, rtdb_int64* states, rtdb_int16* qualities, rtdb_error* errors)
+{
+    typedef rtdb_error (RTDBAPI_CALLRULE *rtdbp_get_perf_values64_fn)(rtdb_int32 handle, rtdb_int32* count, int* perf_ids, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float64* values, rtdb_int64* states, rtdb_int16* qualities, rtdb_error* errors);
+    rtdbp_get_perf_values64_fn fn = (rtdbp_get_perf_values64_fn)get_function("rtdbp_get_perf_values64");
+    return fn(handle, count, perf_ids, datetimes, subtimes, values, states, qualities, errors);
+}
+
 #ifdef __cplusplus
 }
 #endif
