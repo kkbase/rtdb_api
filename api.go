@@ -3096,7 +3096,7 @@ type DatagramHandle struct {
 	handle C.rtdb_datagram_handle
 }
 
-// RtdbGetApiVersionWarp 取得 rtdbapi 库的版本号
+// RawRtdbGetApiVersionWarp 取得 rtdbapi 库的版本号
 // \param [out]  major   主版本号
 // \param [out]  minor   次版本号
 // \param [out]  beta    发布版本号
@@ -3104,29 +3104,29 @@ type DatagramHandle struct {
 // \remark 如果返回的版本号与 rtdb.h 中定义的不匹配(RTDB_API_XXX_VERSION)，则应用程序使用了错误的库。
 //
 //	应输出一条错误信息并退出，否则可能在调用某些 api 时会导致崩溃
-func RtdbGetApiVersionWarp() (int32, int32, int32, error) {
+func RawRtdbGetApiVersionWarp() (int32, int32, int32, error) {
 	major, minor, beta := C.rtdb_int32(0), C.rtdb_int32(0), C.rtdb_int32(0)
 	err := C.rtdb_get_api_version_warp(&major, &minor, &beta)
 	return int32(major), int32(minor), int32(beta), RtdbError(err).GoError()
 }
 
-// RtdbSetOptionWarp 配置 api 行为参数，参见枚举 \ref RTDB_API_OPTION
+// RawRtdbSetOptionWarp 配置 api 行为参数，参见枚举 \ref RTDB_API_OPTION
 // \param [in] type  选项类别
 // \param [in] value 选项值
 // \return rtdb_error
 // \remark 选项设置后在下一次调用 api 时才生效
-func RtdbSetOptionWarp(optionType RtdbApiOption, value int32) error {
+func RawRtdbSetOptionWarp(optionType RtdbApiOption, value int32) error {
 	err := C.rtdb_set_option_warp(C.rtdb_int32(optionType), C.rtdb_int32(value))
 	return RtdbError(err).GoError()
 }
 
-// RtdbCreateDatagramHandleWarp 创建数据流
+// RawRtdbCreateDatagramHandleWarp 创建数据流
 // * \param [in] in 端口
 // * \param [out] remotehost 对端地址
 // * \param [out] handle 数据流句柄
 // * \return rtdb_error
 // * \remark 创建数据流 (备注：C代码中没文档，Go这边补的)
-func RtdbCreateDatagramHandleWarp(port int32, remoteHost string) (DatagramHandle, error) {
+func RawRtdbCreateDatagramHandleWarp(port int32, remoteHost string) (DatagramHandle, error) {
 	var handle C.rtdb_datagram_handle
 	cRemoteHost := C.CString(remoteHost)
 	defer C.free(unsafe.Pointer(cRemoteHost))
@@ -3134,23 +3134,23 @@ func RtdbCreateDatagramHandleWarp(port int32, remoteHost string) (DatagramHandle
 	return DatagramHandle{handle: handle}, RtdbError(err).GoError()
 }
 
-// RtdbRemoveDatagramHandleWarp 删除数据流
+// RawRtdbRemoveDatagramHandleWarp 删除数据流
 // * \param [in] handle 数据流句柄
 // * \return rtdb_error
 // * \remark 删除数据流 (备注：C代码中没文档，Go这边补的)
-func RtdbRemoveDatagramHandleWarp(handle DatagramHandle) error {
+func RawRtdbRemoveDatagramHandleWarp(handle DatagramHandle) error {
 	err := C.rtdb_remove_datagram_handle_warp(handle.handle)
 	return RtdbError(err).GoError()
 }
 
-// RtdbRecvDatagramWarp 接收数据流
+// RawRtdbRecvDatagramWarp 接收数据流
 // * \param [in] cacheLen 缓存大小(会分配一个[]byte)
 // * \param [in] handle 数据流句柄
 // * \param [in] remote_addr 对端地址
 // * \param [in] timeout 超时时间
 // * \return rtdb_error
 // * \remark 接收数据流 (备注：C代码中没文档，Go这边补的)
-func RtdbRecvDatagramWarp(cacheLen int32, handle DatagramHandle, remoteAddr string, timeout int32) ([]byte, error) {
+func RawRtdbRecvDatagramWarp(cacheLen int32, handle DatagramHandle, remoteAddr string, timeout int32) ([]byte, error) {
 	message := make([]byte, cacheLen)
 	messageLen := C.rtdb_int32(cacheLen)
 	cRemoteAddr := C.CString(remoteAddr)
@@ -3161,13 +3161,13 @@ func RtdbRecvDatagramWarp(cacheLen int32, handle DatagramHandle, remoteAddr stri
 
 type ConnectHandle int32
 
-// RtdbConnectWarp 建立同 RTDB 数据库的网络连接
+// RawRtdbConnectWarp 建立同 RTDB 数据库的网络连接
 // * \param [in] hostname     RTDB 数据平台服务器的网络地址或机器名
 // * \param [in] port         连接断开，缺省值 6327
 // * \param [out]  handle  连接句柄
 // * \return rtdb_error
 // * \remark 在调用所有的接口函数之前，必须先调用本函数建立同Rtdb服务器的连接
-func RtdbConnectWarp(hostname string, port int32) (ConnectHandle, error) {
+func RawRtdbConnectWarp(hostname string, port int32) (ConnectHandle, error) {
 	cHostname := C.CString(hostname)
 	defer C.free(unsafe.Pointer(cHostname))
 	cPort := C.rtdb_int32(port)
@@ -3176,12 +3176,12 @@ func RtdbConnectWarp(hostname string, port int32) (ConnectHandle, error) {
 	return ConnectHandle(cHandle), RtdbError(err).GoError()
 }
 
-// RtdbConnectionCountWarp 获取 RTDB 服务器当前连接个数
+// RawRtdbConnectionCountWarp 获取 RTDB 服务器当前连接个数
 // * \param [in] handle   连接句柄 参见 \ref rtdb_connect
 // * \param [in] node_number   双活模式下，指定节点编号，1为rtdb_connect中第1个IP，2为rtdb_connect中第2个IP
 // * \param [out]  count 返回当前主机的连接个数
 // * \return rtdb_error
-func RtdbConnectionCountWarp(handle ConnectHandle, nodeNumber int32) (int32, error) {
+func RawRtdbConnectionCountWarp(handle ConnectHandle, nodeNumber int32) (int32, error) {
 	count := C.rtdb_int32(0)
 	err := C.rtdb_connection_count_warp(C.rtdb_int32(handle), C.rtdb_int32(nodeNumber), &count)
 	return int32(count), RtdbError(err).GoError()
