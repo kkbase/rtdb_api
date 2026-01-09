@@ -3164,3 +3164,14 @@ func RtdbConnectWarp(hostname string, port int32) (ConnectHandle, RtdbError) {
 	err := C.rtdb_connect_warp(cHostname, cPort, &cHandle)
 	return ConnectHandle(cHandle), RtdbError(err)
 }
+
+// RtdbConnectionCountWarp 获取 RTDB 服务器当前连接个数
+// * \param [in] handle   连接句柄 参见 \ref rtdb_connect
+// * \param [in] node_number   双活模式下，指定节点编号，1为rtdb_connect中第1个IP，2为rtdb_connect中第2个IP
+// * \param [out]  count 返回当前主机的连接个数
+// * \return rtdb_error
+func RtdbConnectionCountWarp(handle ConnectHandle, nodeNumber int32) (int32, RtdbError) {
+	count := C.rtdb_int32(0)
+	err := C.rtdb_connection_count_warp(C.rtdb_int32(handle), C.rtdb_int32(nodeNumber), &count)
+	return int32(count), RtdbError(err)
+}

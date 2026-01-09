@@ -198,6 +198,28 @@ rtdb_error RTDBAPI_CALLRULE rtdb_connect_warp(
 }
 
 
+/**
+* \brief 获取 RTDB 服务器当前连接个数
+* \param [in] handle   连接句柄 参见 \ref rtdb_connect
+* \param [in] node_number   双活模式下，指定节点编号，1为rtdb_connect中第1个IP，2为rtdb_connect中第2个IP
+* \param [out]  count 返回当前主机的连接个数
+* \return rtdb_error
+*/
+rtdb_error RTDBAPI_CALLRULE rtdb_connection_count_warp(
+    rtdb_int32 handle,
+    rtdb_int32 node_number,
+    rtdb_int32 *count
+) {
+    typedef rtdb_error (RTDBAPI_CALLRULE *rtdb_connection_count_fn)(
+        rtdb_int32 handle,
+        rtdb_int32 node_number,
+        rtdb_int32 *count
+    );
+    rtdb_connection_count_fn fn = (rtdb_connection_count_fn)get_function("rtdb_connection_count");
+    return fn(handle, node_number, count);
+}
+
+
 #ifdef __cplusplus
 }
 #endif

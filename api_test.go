@@ -18,3 +18,17 @@ func TestRtdbConnectWarp(t *testing.T) {
 	}
 	fmt.Println(handle)
 }
+
+func TestRtdbConnectionCountWarp(t *testing.T) {
+	handle, err := RtdbConnectWarp("localhost", 6327)
+	if !err.IsOk() {
+		t.Error("创建连接失败", err.Error())
+		return
+	}
+	count, err := RtdbConnectionCountWarp(handle, 0)
+	if !err.IsOk() {
+		t.Error("获取Count失败", err.Error())
+		return
+	}
+	fmt.Println("Connect Count: ", count)
+}
