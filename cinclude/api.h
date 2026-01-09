@@ -220,6 +220,32 @@ rtdb_error RTDBAPI_CALLRULE rtdb_connection_count_warp(
 }
 
 
+/**
+* \brief 列出 RTDB 服务器的所有连接句柄
+* \param [in] handle       连接句柄
+* \param [in] node_number   双活模式下，指定节点编号，1为rtdb_connect中第1个IP，2为rtdb_connect中第2个IP
+* \param [out] sockets    整形数组，所有连接的套接字句柄
+* \param [in,out]  count   输入时表示sockets的长度，输出时表示返回的连接个数
+* \return rtdb_error
+* \remark 用户须保证分配给 sockets 的空间与 count 相符。如果输入的 count 小于输出的 count，则只返回部分连接
+*/
+rtdb_error RTDBAPI_CALLRULE rtdb_get_connections_warp(
+    rtdb_int32 handle,
+    rtdb_int32 node_number,
+    rtdb_int32 *sockets,
+    rtdb_int32 *count
+) {
+    typedef rtdb_error (RTDBAPI_CALLRULE *rtdb_get_connections_fn)(
+        rtdb_int32 handle,
+        rtdb_int32 node_number,
+        rtdb_int32 *sockets,
+        rtdb_int32 *count
+    );
+    rtdb_get_connections_fn fn = (rtdb_get_connections_fn)get_function("rtdb_get_connections");
+    return fn(handle, node_number, sockets, count);
+}
+
+
 #ifdef __cplusplus
 }
 #endif
