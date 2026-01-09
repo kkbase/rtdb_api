@@ -171,3 +171,7 @@ rtdb_cancel_subscribe_connect(
 		fmt.Println(CFunc(ff))
 	}
 }
+
+func TestHello(t *testing.T) {
+	fmt.Println("333")
+}

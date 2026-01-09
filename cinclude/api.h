@@ -1104,8 +1104,8 @@ void RTDBAPI_CALLRULE rtdb_format_ipaddr_warp(rtdb_uint32 ip, char* ip_addr, rtd
 *      [handle]   连接句柄
 *      [file_name] 输入，字符串，方程式路径
 *      [equation]  输出，返回的方程式长度最长为RTDB_MAX_EQUATION_SIZE-1
-*/
 *备注：用户调用时为equation分配的空间不得小于RTDB_MAX_EQUATION_SIZE
+*/
 rtdb_error RTDBAPI_CALLRULE rtdbb_get_equation_by_file_name_warp(rtdb_int32 handle, const char* file_name, char equation[RTDB_MAX_EQUATION_SIZE])
 {
     typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_get_equation_by_file_name_fn)(rtdb_int32 handle, const char* file_name, char equation[RTDB_MAX_EQUATION_SIZE]);
@@ -2017,7 +2017,7 @@ rtdb_error RTDBAPI_CALLRULE rtdbb_create_named_type_warp(rtdb_int32 handle, cons
 {
     typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_create_named_type_fn)(rtdb_int32 handle, const char* name, rtdb_int32 field_count, const RTDB_DATA_TYPE_FIELD* fields, char desc[RTDB_DESC_SIZE]);
     rtdbb_create_named_type_fn fn = (rtdbb_create_named_type_fn)get_function("rtdbb_create_named_type");
-    return fn(handle, name, field_count, fields, desc[RTDB_DESC_SIZE]);
+    return fn(handle, name, field_count, fields, desc);
 }
 
 /**
@@ -2049,7 +2049,7 @@ rtdb_error RTDBAPI_CALLRULE rtdbb_get_all_named_types_warp(rtdb_int32 handle, rt
 {
     typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_get_all_named_types_fn)(rtdb_int32 handle, rtdb_int32* count, char* name[RTDB_TYPE_NAME_SIZE], rtdb_int32* field_counts);
     rtdbb_get_all_named_types_fn fn = (rtdbb_get_all_named_types_fn)get_function("rtdbb_get_all_named_types");
-    return fn(handle, count, name[RTDB_TYPE_NAME_SIZE], field_counts);
+    return fn(handle, count, name, field_counts);
 }
 
 /**
@@ -2069,7 +2069,7 @@ rtdb_error RTDBAPI_CALLRULE rtdbb_get_named_type_warp(rtdb_int32 handle, const c
 {
     typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_get_named_type_fn)(rtdb_int32 handle, const char* name, rtdb_int32* field_count, RTDB_DATA_TYPE_FIELD* fields, rtdb_int32* type_size, char desc[RTDB_DESC_SIZE]);
     rtdbb_get_named_type_fn fn = (rtdbb_get_named_type_fn)get_function("rtdbb_get_named_type");
-    return fn(handle, name, field_count, fields, type_size, desc[RTDB_DESC_SIZE]);
+    return fn(handle, name, field_count, fields, type_size, desc);
 }
 
 /**
