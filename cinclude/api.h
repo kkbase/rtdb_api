@@ -156,23 +156,34 @@ rtdb_error RTDBAPI_CALLRULE rtdb_recv_datagram_warp(
 }
 
 
-// TODO
-// RTDBAPI
-// rtdb_error
-// RTDBAPI_CALLRULE
-// rtdb_subscribe_connect_ex(
-// rtdb_int32 handle,
-// rtdb_uint32 options,
-// void* param,
-// rtdb_connect_event_ex callback
-// );
-//
-// RTDBAPI
-// rtdb_error
-// RTDBAPI_CALLRULE
-// rtdb_cancel_subscribe_connect(
-// rtdb_int32 handle
-// );
+/**
+* \brief 创建订阅连接
+* \param [in] handle 连接句柄
+* \param [in] options 选项
+* \param [in] param 参数
+* \param [in] callback 回调函数
+* \return rtdb_error
+* \remark 创建订阅连接
+*/
+rtdb_error RTDBAPI_CALLRULE rtdb_subscribe_connect_ex_warp(rtdb_int32 handle, rtdb_uint32 options, void* param, rtdb_connect_event_ex callback)
+{
+    typedef rtdb_error (RTDBAPI_CALLRULE *rtdb_subscribe_connect_ex_fn)(rtdb_int32 handle, rtdb_uint32 options, void* param, rtdb_connect_event_ex callback);
+    rtdb_subscribe_connect_ex_fn fn = (rtdb_subscribe_connect_ex_fn)get_function("rtdb_subscribe_connect_ex");
+    return fn(handle, options, param, callback);
+}
+
+/**
+* \brief 关闭订阅链接
+* \param [in] handle 连接句柄
+* \return rtdb_error
+* \remark 关闭订阅链接
+*/
+rtdb_error RTDBAPI_CALLRULE rtdb_cancel_subscribe_connect_warp(rtdb_int32 handle)
+{
+    typedef rtdb_error (RTDBAPI_CALLRULE *rtdb_cancel_subscribe_connect_fn)(rtdb_int32 handle);
+    rtdb_cancel_subscribe_connect_fn fn = (rtdb_cancel_subscribe_connect_fn)get_function("rtdb_cancel_subscribe_connect");
+    return fn(handle);
+}
 
 
 /**
@@ -1067,7 +1078,7 @@ rtdb_error RTDBAPI_CALLRULE rtdb_judge_connect_status_warp(rtdb_int32 handle, rt
 {
     typedef rtdb_error (RTDBAPI_CALLRULE *rtdb_judge_connect_status_fn)(rtdb_int32 handle, rtdb_int8* change_connection GAPI_DEFAULT_VALUE(0), char* current_ip_addr GAPI_DEFAULT_VALUE(0), rtdb_int32 size GAPI_DEFAULT_VALUE(0));
     rtdb_judge_connect_status_fn fn = (rtdb_judge_connect_status_fn)get_function("rtdb_judge_connect_status");
-    return fn(handle, GAPI_DEFAULT_VALUE(0), GAPI_DEFAULT_VALUE(0), GAPI_DEFAULT_VALUE(0));
+    return fn(handle, change_connection, current_ip_addr, size);
 }
 
 /**
@@ -1084,6 +1095,1107 @@ void RTDBAPI_CALLRULE rtdb_format_ipaddr_warp(rtdb_uint32 ip, char* ip_addr, rtd
     typedef void (RTDBAPI_CALLRULE *rtdb_format_ipaddr_fn)(rtdb_uint32 ip, char* ip_addr, rtdb_int32 size);
     rtdb_format_ipaddr_fn fn = (rtdb_format_ipaddr_fn)get_function("rtdb_format_ipaddr");
     return fn(ip, ip_addr, size);
+}
+
+/**
+* 命名：rtdbb_get_equation_by_file_name
+* 功能：根据文件名获取方程式
+* 参数：
+*      [handle]   连接句柄
+*      [file_name] 输入，字符串，方程式路径
+*      [equation]  输出，返回的方程式长度最长为RTDB_MAX_EQUATION_SIZE-1
+*/
+*备注：用户调用时为equation分配的空间不得小于RTDB_MAX_EQUATION_SIZE
+rtdb_error RTDBAPI_CALLRULE rtdbb_get_equation_by_file_name_warp(rtdb_int32 handle, const char* file_name, char equation[RTDB_MAX_EQUATION_SIZE])
+{
+    typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_get_equation_by_file_name_fn)(rtdb_int32 handle, const char* file_name, char equation[RTDB_MAX_EQUATION_SIZE]);
+    rtdbb_get_equation_by_file_name_fn fn = (rtdbb_get_equation_by_file_name_fn)get_function("rtdbb_get_equation_by_file_name");
+    return fn(handle, file_name, equation);
+}
+
+/**
+* 命名：rtdbb_get_equation_by_id
+* 功能：根ID径获取方程式
+* 参数：
+*      [handle]   连接句柄
+*      [id]				输入，整型，方程式ID
+*      [equation] 输出，返回的方程式长度最长为RTDB_MAX_EQUATION_SIZE-1
+*
+*备注：用户调用时为equation分配的空间不得小于RTDB_MAX_EQUATION_SIZE
+*/
+rtdb_error RTDBAPI_CALLRULE rtdbb_get_equation_by_id_warp(rtdb_int32 handle, rtdb_int32 id, char equation[RTDB_MAX_EQUATION_SIZE])
+{
+    typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_get_equation_by_id_fn)(rtdb_int32 handle, rtdb_int32 id, char equation[RTDB_MAX_EQUATION_SIZE]);
+    rtdbb_get_equation_by_id_fn fn = (rtdbb_get_equation_by_id_fn)get_function("rtdbb_get_equation_by_id");
+    return fn(handle, id, equation);
+}
+
+/**
+*
+* \brief 添加新表
+*
+* \param handle   连接句柄
+* \param field    RTDB_TABLE 结构，输入/输出，表信息。
+*                 在输入时，type、name、desc 字段有效；
+*                 输出时，id 字段由系统自动分配并返回给用户。
+*/
+rtdb_error RTDBAPI_CALLRULE rtdbb_append_table_warp(rtdb_int32 handle, RTDB_TABLE *field)
+{
+    typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_append_table_fn)(rtdb_int32 handle, RTDB_TABLE *field);
+    rtdbb_append_table_fn fn = (rtdbb_append_table_fn)get_function("rtdbb_append_table");
+    return fn(handle, field);
+}
+
+/**
+*
+* \brief 取得标签点表总数
+*
+* \param handle   连接句柄
+* \param count    整型，输出，标签点表总数
+*/
+rtdb_error RTDBAPI_CALLRULE rtdbb_tables_count_warp(rtdb_int32 handle, rtdb_int32 *count)
+{
+    typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_tables_count_fn)(rtdb_int32 handle, rtdb_int32 *count);
+    rtdbb_tables_count_fn fn = (rtdbb_tables_count_fn)get_function("rtdbb_tables_count");
+    return fn(handle, count);
+}
+
+/**
+*
+* \brief 取得所有标签点表的ID
+*
+* \param handle   连接句柄
+* \param ids      整型数组，输出，标签点表的id
+* \param count    整型，输入/输出，
+*                 输入表示 ids 的长度，输出表示标签点表个数
+* \remark 用户须保证分配给 ids 的空间与 count 相符
+*      如果输入的 count 小于输出的 count，则只返回部分表id
+*/
+rtdb_error RTDBAPI_CALLRULE rtdbb_get_tables_warp(rtdb_int32 handle, rtdb_int32 *ids, rtdb_int32 *count)
+{
+    typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_get_tables_fn)(rtdb_int32 handle, rtdb_int32 *ids, rtdb_int32 *count);
+    rtdbb_get_tables_fn fn = (rtdbb_get_tables_fn)get_function("rtdbb_get_tables");
+    return fn(handle, ids, count);
+}
+
+/**
+*
+* \brief 根据表 id 获取表中包含的标签点数量
+*
+* \param handle   连接句柄
+* \param id       整型，输入，表ID
+* \param size     整型，输出，表中标签点数量
+*/
+rtdb_error RTDBAPI_CALLRULE rtdbb_get_table_size_by_id_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32 *size)
+{
+    typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_get_table_size_by_id_fn)(rtdb_int32 handle, rtdb_int32 id, rtdb_int32 *size);
+    rtdbb_get_table_size_by_id_fn fn = (rtdbb_get_table_size_by_id_fn)get_function("rtdbb_get_table_size_by_id");
+    return fn(handle, id, size);
+}
+
+/**
+*
+* \brief 根据表名称获取表中包含的标签点数量
+*
+* \param handle   连接句柄
+* \param name     字符串，输入，表名称
+* \param size     整型，输出，表中标签点数量
+*/
+rtdb_error RTDBAPI_CALLRULE rtdbb_get_table_size_by_name_warp(rtdb_int32 handle, const char *name, rtdb_int32 *size)
+{
+    typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_get_table_size_by_name_fn)(rtdb_int32 handle, const char *name, rtdb_int32 *size);
+    rtdbb_get_table_size_by_name_fn fn = (rtdbb_get_table_size_by_name_fn)get_function("rtdbb_get_table_size_by_name");
+    return fn(handle, name, size);
+}
+
+/**
+*
+* \brief 根据表 id 获取表中实际包含的标签点数量
+*
+* \param handle   连接句柄
+* \param id       整型，输入，表ID
+* \param size     整型，输出，表中标签点数量
+* 注意：通过此API获取标签点数量，然后搜索此表中的标签点得到的数量可能会不一致，这是由于服务内部批量建点采取了异步的方式。
+*       一般情况下请使用rtdbb_get_table_size_by_id来获取表中的标签点数量。
+*/
+rtdb_error RTDBAPI_CALLRULE rtdbb_get_table_real_size_by_id_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32 *size)
+{
+    typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_get_table_real_size_by_id_fn)(rtdb_int32 handle, rtdb_int32 id, rtdb_int32 *size);
+    rtdbb_get_table_real_size_by_id_fn fn = (rtdbb_get_table_real_size_by_id_fn)get_function("rtdbb_get_table_real_size_by_id");
+    return fn(handle, id, size);
+}
+
+/**
+*
+* \brief 根据标签点表 id 获取表属性
+*
+* \param handle 连接句柄
+* \param field  RTDB_TABLE 结构，输入/输出，标签点表属性，
+*               输入时指定 id 字段，输出时返回 type、name、desc 字段。
+*/
+rtdb_error RTDBAPI_CALLRULE rtdbb_get_table_property_by_id_warp(rtdb_int32 handle, RTDB_TABLE *field)
+{
+    typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_get_table_property_by_id_fn)(rtdb_int32 handle, RTDB_TABLE *field);
+    rtdbb_get_table_property_by_id_fn fn = (rtdbb_get_table_property_by_id_fn)get_function("rtdbb_get_table_property_by_id");
+    return fn(handle, field);
+}
+
+/**
+*
+* \brief 根据表名获取标签点表属性
+*
+* \param handle 连接句柄
+* \param field  RTDB_TABLE 结构，输入/输出，标签点表属性
+*               输入时指定 name 字段，输出时返回 id、type、desc 字段。
+*/
+rtdb_error RTDBAPI_CALLRULE rtdbb_get_table_property_by_name_warp(rtdb_int32 handle, RTDB_TABLE *field)
+{
+    typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_get_table_property_by_name_fn)(rtdb_int32 handle, RTDB_TABLE *field);
+    rtdbb_get_table_property_by_name_fn fn = (rtdbb_get_table_property_by_name_fn)get_function("rtdbb_get_table_property_by_name");
+    return fn(handle, field);
+}
+
+/**
+*
+* \brief 使用完整的属性集来创建单个标签点
+*
+* \param handle 连接句柄
+* \param base RTDB_POINT 结构，输入/输出，
+*      输入除 id, createdate, creator, changedate, changer 字段外的其它字段，输出 id 字段。
+* \param scan RTDB_SCAN_POINT 结构，输入，采集标签点扩展属性集。
+* \param calc RTDB_CALC_POINT 结构，输入，计算标签点扩展属性集。
+* \remark 如果新建的标签点没有对应的扩展属性集，可置为空指针。
+*/
+rtdb_error RTDBAPI_CALLRULE rtdbb_insert_point_warp(rtdb_int32 handle, RTDB_POINT *base, RTDB_SCAN_POINT *scan, RTDB_CALC_POINT *calc)
+{
+    typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_insert_point_fn)(rtdb_int32 handle, RTDB_POINT *base, RTDB_SCAN_POINT *scan, RTDB_CALC_POINT *calc);
+    rtdbb_insert_point_fn fn = (rtdbb_insert_point_fn)get_function("rtdbb_insert_point");
+    return fn(handle, base, scan, calc);
+}
+
+/**
+* 命名：rtdbb_insert_max_point
+* 功能：使用最大长度的完整属性集来创建单个标签点
+* 参数：
+*      [handle] 连接句柄
+*      [base] RTDB_POINT 结构，输入/输出，
+*      输入除 id, createdate, creator, changedate, changer 字段外的其它字段，输出 id 字段。
+*      [scan] RTDB_SCAN_POINT 结构，输入，采集标签点扩展属性集。
+*      [calc] RTDB_MAX_CALC_POINT 结构，输入，计算标签点扩展属性集。
+* 备注：如果新建的标签点没有对应的扩展属性集，可置为空指针。
+*/
+rtdb_error RTDBAPI_CALLRULE rtdbb_insert_max_point_warp(rtdb_int32 handle, RTDB_POINT *base, RTDB_SCAN_POINT *scan, RTDB_MAX_CALC_POINT *calc)
+{
+    typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_insert_max_point_fn)(rtdb_int32 handle, RTDB_POINT *base, RTDB_SCAN_POINT *scan, RTDB_MAX_CALC_POINT *calc);
+    rtdbb_insert_max_point_fn fn = (rtdbb_insert_max_point_fn)get_function("rtdbb_insert_max_point");
+    return fn(handle, base, scan, calc);
+}
+
+/**
+* 命名：rtdbb_insert_max_points
+* 功能：使用最大长度的完整属性集来批量创建标签点
+* 参数：
+*      [handle] 连接句柄
+*	   [count] count, 输入，base/scan/calc数组的长度；输出，成功的个数
+*      [bases] RTDB_POINT 数组，输入/输出，
+*      输入除 id, createdate, creator, changedate, changer 字段外的其它字段，输出 id 字段。
+*      [scans] RTDB_SCAN_POINT 数组，输入，采集标签点扩展属性集。
+*      [calcs] RTDB_MAX_CALC_POINT 数组，输入，计算标签点扩展属性集。
+*	   [errors] rtdb_error数组，输出，对应每个标签点的结果
+* 备注：如果新建的标签点没有对应的扩展属性集，可置为空指针。
+*/
+rtdb_error RTDBAPI_CALLRULE rtdbb_insert_max_points_warp(rtdb_int32 handle, rtdb_int32* count, RTDB_POINT* bases, RTDB_SCAN_POINT* scans, RTDB_MAX_CALC_POINT* calcs, rtdb_error* errors)
+{
+    typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_insert_max_points_fn)(rtdb_int32 handle, rtdb_int32* count, RTDB_POINT* bases, RTDB_SCAN_POINT* scans, RTDB_MAX_CALC_POINT* calcs, rtdb_error* errors);
+    rtdbb_insert_max_points_fn fn = (rtdbb_insert_max_points_fn)get_function("rtdbb_insert_max_points");
+    return fn(handle, count, bases, scans, calcs, errors);
+}
+
+/**
+*
+* 功能  使用最小的属性集来创建单个标签点
+*
+* \param handle     连接句柄
+* \param tag        字符串，输入，标签点名称
+* \param type       整型，输入，标签点数据类型，取值 RTDB_BOOL、RTDB_UINT8、RTDB_INT8、
+*                   RTDB_CHAR、RTDB_UINT16、RTDB_UINT32、RTDB_INT32、RTDB_INT64、
+*                   RTDB_REAL16、RTDB_REAL32、RTDB_REAL64、RTDB_COOR、RTDB_STRING、RTDB_BLOB 之一。
+* \param table_id   整型，输入，标签点所属表 id
+* \param use_ms     短整型，输入，标签点时间戳精度，0 为秒；1 为纳秒。
+* \param point_id   整型，输出，标签点 id
+* \remark 标签点的其余属性将取默认值。
+*/
+rtdb_error RTDBAPI_CALLRULE rtdbb_insert_base_point_warp(rtdb_int32 handle, const char *tag, rtdb_int32 type, rtdb_int32 table_id, rtdb_int16 use_ms, rtdb_int32 *point_id)
+{
+    typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_insert_base_point_fn)(rtdb_int32 handle, const char *tag, rtdb_int32 type, rtdb_int32 table_id, rtdb_int16 use_ms, rtdb_int32 *point_id);
+    rtdbb_insert_base_point_fn fn = (rtdbb_insert_base_point_fn)get_function("rtdbb_insert_base_point");
+    return fn(handle, tag, type, table_id, use_ms, point_id);
+}
+
+/**
+* 命名：rtdbb_insert_named_type_point
+* 功能：使用完整的属性集来创建单个自定义数据类型标签点
+* 参数：
+*      [handle] 连接句柄
+*      [base] RTDB_POINT 结构，输入/输出，
+*      输入除 id, createdate, creator, changedate, changer 字段外的其它字段，输出 id 字段。
+*      [scan] RTDB_SCAN_POINT 结构，输入，采集标签点扩展属性集。
+*      [name] 字符串，输入，自定义数据类型的名字。
+* 备注：如果新建的标签点没有对应的扩展属性集，可置为空指针。
+*/
+rtdb_error RTDBAPI_CALLRULE rtdbb_insert_named_type_point_warp(rtdb_int32 handle, RTDB_POINT *base, RTDB_SCAN_POINT *scan, const char* name)
+{
+    typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_insert_named_type_point_fn)(rtdb_int32 handle, RTDB_POINT *base, RTDB_SCAN_POINT *scan, const char* name);
+    rtdbb_insert_named_type_point_fn fn = (rtdbb_insert_named_type_point_fn)get_function("rtdbb_insert_named_type_point");
+    return fn(handle, base, scan, name);
+}
+
+/**
+*
+* \brief 根据 id 删除单个标签点
+*
+* \param handle 连接句柄
+* \param id     整型，输入，标签点标识
+* \remark 通过本接口删除的标签点为可回收标签点，
+*        可以通过 rtdbb_recover_point 接口恢复。
+*/
+rtdb_error RTDBAPI_CALLRULE rtdbb_remove_point_by_id_warp(rtdb_int32 handle, rtdb_int32 id)
+{
+    typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_remove_point_by_id_fn)(rtdb_int32 handle, rtdb_int32 id);
+    rtdbb_remove_point_by_id_fn fn = (rtdbb_remove_point_by_id_fn)get_function("rtdbb_remove_point_by_id");
+    return fn(handle, id);
+}
+
+/**
+*
+* \brief 根据标签点全名删除单个标签点
+* \param handle        连接句柄
+* \param table_dot_tag  字符串，输入，标签点全名称："表名.标签点名"
+* \remark 通过本接口删除的标签点为可回收标签点，
+*        可以通过 rtdbb_recover_point 接口恢复。
+*/
+rtdb_error RTDBAPI_CALLRULE rtdbb_remove_point_by_name_warp(rtdb_int32 handle, const char *table_dot_tag)
+{
+    typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_remove_point_by_name_fn)(rtdb_int32 handle, const char *table_dot_tag);
+    rtdbb_remove_point_by_name_fn fn = (rtdbb_remove_point_by_name_fn)get_function("rtdbb_remove_point_by_name");
+    return fn(handle, table_dot_tag);
+}
+
+/**
+* 命名：rtdbb_move_point_by_id
+* 功能：根据 id 移动单个标签点到其他表
+* 参数：
+*      [handle] 连接句柄
+*      [id]     整型，输入，标签点标识
+*	   [dest_table_name] 字符串，输入，移动的目标表名称
+* 备注：通过本接口移动标签点后不改变标签点的id，且快照
+*       和历史数据都不受影响
+*/
+rtdb_error RTDBAPI_CALLRULE rtdbb_move_point_by_id_warp(rtdb_int32 handle, rtdb_int32 id, const char* dest_table_name)
+{
+    typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_move_point_by_id_fn)(rtdb_int32 handle, rtdb_int32 id, const char* dest_table_name);
+    rtdbb_move_point_by_id_fn fn = (rtdbb_move_point_by_id_fn)get_function("rtdbb_move_point_by_id");
+    return fn(handle, id, dest_table_name);
+}
+
+/**
+*
+* \brief 批量获取标签点属性
+*
+* \param handle 连接句柄
+* \param count  整数，输入，表示标签点个数。
+* \param base   RTDB_POINT 结构数组，输入/输出，标签点基本属性列表，
+*                 输入时，id 字段指定需要得到属性的标签点，输出时，其它字段返回标签点属性值。
+* \param scan   RTDB_SCAN_POINT 结构数组，输出，采集标签点扩展属性列表
+* \param calc   RTDB_CALC_POINT 结构数组，输出，计算标签点扩展属性列表
+* \param errors 无符号整型数组，输出，获取标签属性的返回值列表，参考rtdb_error.h
+* \remark 用户须保证分配给 base、scan、calc、errors 的空间与 count 相符，
+*        扩展属性集 scan、calc 可为空指针，此时将不返回对应的扩展属性集。
+*/
+rtdb_error RTDBAPI_CALLRULE rtdbb_get_points_property_warp(rtdb_int32 handle, rtdb_int32 count, RTDB_POINT *base, RTDB_SCAN_POINT *scan, RTDB_CALC_POINT *calc, rtdb_error *errors)
+{
+    typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_get_points_property_fn)(rtdb_int32 handle, rtdb_int32 count, RTDB_POINT *base, RTDB_SCAN_POINT *scan, RTDB_CALC_POINT *calc, rtdb_error *errors);
+    rtdbb_get_points_property_fn fn = (rtdbb_get_points_property_fn)get_function("rtdbb_get_points_property");
+    return fn(handle, count, base, scan, calc, errors);
+}
+
+/**
+* 命名：rtdbb_get_max_points_property
+* 功能：按最大长度批量获取标签点属性
+* 参数：
+*        [handle] 连接句柄
+*        [count]  整数，输入，表示标签点个数。
+*        [base]   RTDB_POINT 结构数组，输入/输出，标签点基本属性列表，
+*                 输入时，id 字段指定需要得到属性的标签点，输出时，其它字段返回标签点属性值。
+*        [scan]   RTDB_SCAN_POINT 结构数组，输出，采集标签点扩展属性列表
+*        [calc]   RTDB_MAX_CALC_POINT 结构数组，输出，计算标签点扩展属性列表
+*        [errors] 无符号整型数组，输出，获取标签属性的返回值列表，参考rtdb_error.h
+* 备注：用户须保证分配给 base、scan、calc、errors 的空间与 count 相符，
+*        扩展属性集 scan、calc 可为空指针，此时将不返回对应的扩展属性集。
+*/
+rtdb_error RTDBAPI_CALLRULE rtdbb_get_max_points_property_warp(rtdb_int32 handle, rtdb_int32 count, RTDB_POINT *base, RTDB_SCAN_POINT *scan, RTDB_MAX_CALC_POINT *calc, rtdb_error *errors)
+{
+    typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_get_max_points_property_fn)(rtdb_int32 handle, rtdb_int32 count, RTDB_POINT *base, RTDB_SCAN_POINT *scan, RTDB_MAX_CALC_POINT *calc, rtdb_error *errors);
+    rtdbb_get_max_points_property_fn fn = (rtdbb_get_max_points_property_fn)get_function("rtdbb_get_max_points_property");
+    return fn(handle, count, base, scan, calc, errors);
+}
+
+/**
+*
+* \brief 搜索符合条件的标签点，使用标签点名时支持通配符
+*
+* \param handle        连接句柄
+* \param tagmask       字符串，输入，标签点名称掩码，支持"*"和"?"通配符，缺省设置为"*"，长度不得超过 RTDB_TAG_SIZE，支持多个搜索条件，以空格分隔。
+* \param tablemask     字符串，输入，标签点表名称掩码，支持"*"和"?"通配符，缺省设置为"*"，长度不得超过 RTDB_TAG_SIZE，支持多个搜索条件，以空格分隔。
+* \param source        字符串，输入，数据源集合，字符串中的每个字符均表示一个数据源，
+*                        空字符串表示不用数据源作搜索条件，缺省设置为空，长度不得超过 RTDB_DESC_SIZE。
+* \param unit          字符串，输入，标签点工程单位的子集，工程单位中包含该参数的标签点均满足条件，
+*                        空字符串表示不用工程单位作搜索条件，缺省设置为空，长度不得超过 RTDB_UNIT_SIZE。
+* \param desc          字符串，输入，标签点描述的子集，描述中包含该参数的标签点均满足条件，
+*                        空字符串表示不用描述作搜索条件，缺省设置为空，长度不得超过 RTDB_SOURCE_SIZE。
+* \param instrument    字符串，输入参数，标签点设备名称。缺省设置为空，长度不得超过 RTDB_INSTRUMENT_SIZE。
+* \param mode          整型，RTDB_SORT_BY_TABLE、RTDB_SORT_BY_TAG、RTDB_SORT_BY_ID 之一，
+*                        搜索结果的排序模式，输入，缺省值为RTDB_SORT_BY_TABLE
+* \param ids           整型数组，输出，返回搜索到的标签点标识列表
+* \param count         整型，输入/输出，输入时表示 ids 的长度，输出时表示搜索到的标签点个数
+* \remark 用户须保证分配给 ids 的空间与 count 相符，各参数中包含的搜索条件之间的关系为"与"的关系，
+*        用包含通配符的标签点名称作搜索条件时，如果第一个字符不是通配符(如"ai67*")，会得到最快的搜索速度。
+*        如果 tagmask、tablemask 为空指针，则表示使用缺省设置"*",
+*        多个搜索条件可以通过空格分隔，比如"demo_*1 demo_*2"，会将满足demo_*1或者demo_*2条件的标签点搜索出来。
+*/
+rtdb_error RTDBAPI_CALLRULE rtdbb_search_warp(rtdb_int32 handle, const char *tagmask, const char *tablemask, const char *source, const char *unit, const char *desc, const char *instrument, rtdb_int32 mode, rtdb_int32 *ids, rtdb_int32 *count)
+{
+    typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_search_fn)(rtdb_int32 handle, const char *tagmask, const char *tablemask, const char *source, const char *unit, const char *desc, const char *instrument, rtdb_int32 mode, rtdb_int32 *ids, rtdb_int32 *count);
+    rtdbb_search_fn fn = (rtdbb_search_fn)get_function("rtdbb_search");
+    return fn(handle, tagmask, tablemask, source, unit, desc, instrument, mode, ids, count);
+}
+
+/**
+*
+* \brief 分批继续搜索符合条件的标签点，使用标签点名时支持通配符
+*
+* \param handle        连接句柄
+* \param start         整型，输入，搜索起始位置。
+* \param tagmask       字符串，输入，标签点名称掩码，支持"*"和"?"通配符，缺省设置为"*"，长度不得超过 RTDB_TAG_SIZE，支持多个搜索条件，以空格分隔。
+* \param tablemask     字符串，输入，标签点表名称掩码，支持"*"和"?"通配符，缺省设置为"*"，长度不得超过 RTDB_TAG_SIZE，支持多个搜索条件，以空格分隔。
+* \param source        字符串，输入，数据源集合，字符串中的每个字符均表示一个数据源，
+*                        空字符串表示不用数据源作搜索条件，缺省设置为空，长度不得超过 RTDB_DESC_SIZE。
+* \param unit          字符串，输入，标签点工程单位的子集，工程单位中包含该参数的标签点均满足条件，
+*                        空字符串表示不用工程单位作搜索条件，缺省设置为空，长度不得超过 RTDB_UNIT_SIZE。
+* \param desc          字符串，输入，标签点描述的子集，描述中包含该参数的标签点均满足条件，
+*                        空字符串表示不用描述作搜索条件，缺省设置为空，长度不得超过 RTDB_SOURCE_SIZE。
+* \param instrument    字符串，输入参数，标签点设备名称。缺省设置为空，长度不得超过 RTDB_INSTRUMENT_SIZE。
+* \param mode          整型，RTDB_SORT_BY_TABLE、RTDB_SORT_BY_TAG、RTDB_SORT_BY_ID 之一，
+*                        搜索结果的排序模式，输入，缺省值为RTDB_SORT_BY_TABLE
+* \param ids           整型数组，输出，返回搜索到的标签点标识列表
+* \param count         整型，输入/输出，输入时表示 ids 的长度，输出时表示搜索到的标签点个数
+* \remark 用户须保证分配给 ids 的空间与 count 相符，各参数中包含的搜索条件之间的关系为"与"的关系，
+*        用包含通配符的标签点名称作搜索条件时，如果第一个字符不是通配符(如"ai67*")，会得到最快的搜索速度。
+*        如果 tagmask、tablemask 为空指针，则表示使用缺省设置"*"。
+*        当搜索到的标签点数比提供的要小时，表示这是最后一批符合条件的标签点 (即全部搜索完毕),
+*        多个搜索条件可以通过空格分隔，比如"demo_*1 demo_*2"，会将满足demo_*1或者demo_*2条件的标签点搜索出来。
+*/
+rtdb_error RTDBAPI_CALLRULE rtdbb_search_in_batches_warp(rtdb_int32 handle, rtdb_int32 start, const char *tagmask, const char *tablemask, const char *source, const char *unit, const char *desc, const char *instrument, rtdb_int32 mode, rtdb_int32 *ids, rtdb_int32 *count)
+{
+    typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_search_in_batches_fn)(rtdb_int32 handle, rtdb_int32 start, const char *tagmask, const char *tablemask, const char *source, const char *unit, const char *desc, const char *instrument, rtdb_int32 mode, rtdb_int32 *ids, rtdb_int32 *count);
+    rtdbb_search_in_batches_fn fn = (rtdbb_search_in_batches_fn)get_function("rtdbb_search_in_batches");
+    return fn(handle, start, tagmask, tablemask, source, unit, desc, instrument, mode, ids, count);
+}
+
+/**
+*
+* \brief 搜索符合条件的标签点，使用标签点名时支持通配符
+*
+* \param handle        连接句柄
+* \param tagmask       字符串，输入，标签点名称掩码，支持"*"和"?"通配符，缺省设置为"*"，长度不得超过 RTDB_TAG_SIZE，支持多个搜索条件，以空格分隔。
+* \param tablemask     字符串，输入，标签点表名称掩码，支持"*"和"?"通配符，缺省设置为"*"，长度不得超过 RTDB_TAG_SIZE，支持多个搜索条件，以空格分隔。
+* \param source        字符串，输入，数据源集合，字符串中的每个字符均表示一个数据源，
+*                        空字符串表示不用数据源作搜索条件，缺省设置为空，长度不得超过 RTDB_DESC_SIZE。
+* \param unit          字符串，输入，标签点工程单位的子集，工程单位中包含该参数的标签点均满足条件，
+*                        空字符串表示不用工程单位作搜索条件，缺省设置为空，长度不得超过 RTDB_UNIT_SIZE。
+* \param desc          字符串，输入，标签点描述的子集，描述中包含该参数的标签点均满足条件，
+*                        空字符串表示不用描述作搜索条件，缺省设置为空，长度不得超过 RTDB_SOURCE_SIZE。
+* \param instrument    字符串，输入参数，标签点设备名称。缺省设置为空，长度不得超过 RTDB_INSTRUMENT_SIZE。
+* \param typemask      字符串，输入参数，标签点类型名称。缺省设置为空，长度不得超过 RTDB_TYPE_NAME_SIZE,
+*                        内置的普通数据类型可以使用 bool、uint8、datetime等字符串表示，不区分大小写，支持模糊搜索。
+* \param classofmask   整型，输入参数，标签点的类别，缺省设置为-1，表示可以是任意类型的标签点，
+*                        当使用标签点类型作为搜索条件时，必须是RTDB_CLASS枚举中的一项或者多项的组合。
+* \param timeunitmask  整型，输入参数，标签点的时间戳精度，缺省设置为-1，表示可以是任意时间戳精度，
+*                        当使用此时间戳精度作为搜索条件时，timeunitmask的值可以为0或1，0表示时间戳精度为秒，1表示纳秒
+* \param othertypemask 整型，输入参数，使用其他标签点属性作为搜索条件，缺省设置为0，表示不作为搜索条件，
+*                        当使用此参数作为搜索条件时，othertypemaskvalue作为对应的搜索值，
+*                        此参数的取值可以参考rtdb.h文件中的RTDB_SEARCH_MASK。
+* \param othertypemaskvalue
+*                        字符串，输入参数，当使用其他标签点属性作为搜索条件时，此参数作为对应的搜索值，缺省设置为0，表示不作为搜索条件，
+*                        如果othertypemask的值为0，或者RTDB_SEARCH_NULL，则此参数被忽略,
+*                        当othertypemask对应的标签点属性为数值类型时，此搜索值只支持相等判断，
+*                        当othertypemask对应的标签点属性为字符串类型时，此搜索值支持模糊搜索。
+* \param mode          整型，RTDB_SORT_BY_TABLE、RTDB_SORT_BY_TAG、RTDB_SORT_BY_ID 之一，
+*                        搜索结果的排序模式，输入，缺省值为RTDB_SORT_BY_TABLE
+* \param ids           整型数组，输出，返回搜索到的标签点标识列表
+* \param count         整型，输入/输出，输入时表示 ids 的长度，输出时表示搜索到的标签点个数
+* \remark 用户须保证分配给 ids 的空间与 count 相符，各参数中包含的搜索条件之间的关系为"与"的关系，
+*        用包含通配符的标签点名称作搜索条件时，如果第一个字符不是通配符(如"ai67*")，会得到最快的搜索速度。
+*        如果 tagmask、tablemask 为空指针，则表示使用缺省设置"*",
+*        多个搜索条件可以通过空格分隔，比如"demo_*1 demo_*2"，会将满足demo_*1或者demo_*2条件的标签点搜索出来。
+*/
+rtdb_error RTDBAPI_CALLRULE rtdbb_search_ex_warp(rtdb_int32 handle, const char *tagmask, const char *tablemask, const char *source, const char *unit, const char *desc, const char *instrument, const char *typemask, rtdb_int32 classofmask, rtdb_int32 timeunitmask, rtdb_int32 othertypemask, const char *othertypemaskvalue, rtdb_int32 mode, rtdb_int32 *ids, rtdb_int32 *count)
+{
+    typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_search_ex_fn)(rtdb_int32 handle, const char *tagmask, const char *tablemask, const char *source, const char *unit, const char *desc, const char *instrument, const char *typemask, rtdb_int32 classofmask, rtdb_int32 timeunitmask, rtdb_int32 othertypemask, const char *othertypemaskvalue, rtdb_int32 mode, rtdb_int32 *ids, rtdb_int32 *count);
+    rtdbb_search_ex_fn fn = (rtdbb_search_ex_fn)get_function("rtdbb_search_ex");
+    return fn(handle, tagmask, tablemask, source, unit, desc, instrument, typemask, classofmask, timeunitmask, othertypemask, othertypemaskvalue, mode, ids, count);
+}
+
+/**
+*
+* \brief 搜索符合条件的标签点，使用标签点名时支持通配符
+*
+* \param handle        连接句柄
+* \param tagmask       字符串，输入，标签点名称掩码，支持"*"和"?"通配符，缺省设置为"*"，长度不得超过 RTDB_TAG_SIZE，支持多个搜索条件，以空格分隔。
+* \param tablemask     字符串，输入，标签点表名称掩码，支持"*"和"?"通配符，缺省设置为"*"，长度不得超过 RTDB_TAG_SIZE，支持多个搜索条件，以空格分隔。
+* \param source        字符串，输入，数据源集合，字符串中的每个字符均表示一个数据源，
+*                        空字符串表示不用数据源作搜索条件，缺省设置为空，长度不得超过 RTDB_DESC_SIZE。
+* \param unit          字符串，输入，标签点工程单位的子集，工程单位中包含该参数的标签点均满足条件，
+*                        空字符串表示不用工程单位作搜索条件，缺省设置为空，长度不得超过 RTDB_UNIT_SIZE。
+* \param desc          字符串，输入，标签点描述的子集，描述中包含该参数的标签点均满足条件，
+*                        空字符串表示不用描述作搜索条件，缺省设置为空，长度不得超过 RTDB_SOURCE_SIZE。
+* \param instrument    字符串，输入参数，标签点设备名称。缺省设置为空，长度不得超过 RTDB_INSTRUMENT_SIZE。
+* \param typemask      字符串，输入参数，标签点类型名称。缺省设置为空，长度不得超过 RTDB_TYPE_NAME_SIZE,
+*                        内置的普通数据类型可以使用 bool、uint8、datetime等字符串表示，不区分大小写，支持模糊搜索。
+* \param classofmask   整型，输入参数，标签点的类别，缺省设置为-1，表示可以是任意类型的标签点，
+*                        当使用标签点类型作为搜索条件时，必须是RTDB_CLASS枚举中的一项或者多项的组合。
+* \param timeunitmask  整型，输入参数，标签点的时间戳精度，缺省设置为-1，表示可以是任意时间戳精度，
+*                        当使用此时间戳精度作为搜索条件时，timeunitmask的值可以为0或1，0表示时间戳精度为秒，1表示纳秒
+* \param othertypemask 整型，输入参数，使用其他标签点属性作为搜索条件，缺省设置为0，表示不作为搜索条件，
+*                        当使用此参数作为搜索条件时，othertypemaskvalue作为对应的搜索值，
+*                        此参数的取值可以参考rtdb.h文件中的RTDB_SEARCH_MASK。
+* \param othertypemaskvalue
+*                        字符串，输入参数，当使用其他标签点属性作为搜索条件时，此参数作为对应的搜索值，缺省设置为0，表示不作为搜索条件，
+*                        如果othertypemask的值为0，或者RTDB_SEARCH_NULL，则此参数被忽略,
+*                        当othertypemask对应的标签点属性为数值类型时，此搜索值只支持相等判断，
+*                        当othertypemask对应的标签点属性为字符串类型时，此搜索值支持模糊搜索。
+* \param count         整型，输出，表示搜索到的标签点个数
+* \remark  各参数中包含的搜索条件之间的关系为"与"的关系，
+*        用包含通配符的标签点名称作搜索条件时，如果第一个字符不是通配符(如"ai67*")，会得到最快的搜索速度。
+*        如果 tagmask、tablemask 为空指针，则表示使用缺省设置"*",
+*        多个搜索条件可以通过空格分隔，比如"demo_*1 demo_*2"，会将满足demo_*1或者demo_*2条件的标签点搜索出来。
+*/
+rtdb_error RTDBAPI_CALLRULE rtdbb_search_points_count_warp(rtdb_int32 handle, const char *tagmask, const char *tablemask, const char *source, const char *unit, const char *desc, const char *instrument, const char *typemask, rtdb_int32 classofmask, rtdb_int32 timeunitmask, rtdb_int32 othertypemask, const char *othertypemaskvalue, rtdb_int32 *count)
+{
+    typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_search_points_count_fn)(rtdb_int32 handle, const char *tagmask, const char *tablemask, const char *source, const char *unit, const char *desc, const char *instrument, const char *typemask, rtdb_int32 classofmask, rtdb_int32 timeunitmask, rtdb_int32 othertypemask, const char *othertypemaskvalue, rtdb_int32 *count);
+    rtdbb_search_points_count_fn fn = (rtdbb_search_points_count_fn)get_function("rtdbb_search_points_count");
+    return fn(handle, tagmask, tablemask, source, unit, desc, instrument, typemask, classofmask, timeunitmask, othertypemask, othertypemaskvalue, count);
+}
+
+/**
+* 命名：rtdbb_remove_table_by_id
+* \brief 根据表 id 删除表及表中标签点
+*
+* \param handle        连接句柄
+* \param id            整型，输入，表 id
+* \remark 删除的表不可恢复，删除的标签点可以通过 rtdbb_recover_point 接口恢复。
+*/
+rtdb_error RTDBAPI_CALLRULE rtdbb_remove_table_by_id_warp(rtdb_int32 handle, rtdb_int32 id)
+{
+    typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_remove_table_by_id_fn)(rtdb_int32 handle, rtdb_int32 id);
+    rtdbb_remove_table_by_id_fn fn = (rtdbb_remove_table_by_id_fn)get_function("rtdbb_remove_table_by_id");
+    return fn(handle, id);
+}
+
+/**
+*
+* \brief 根据表名删除表及表中标签点
+*
+* \param handle        连接句柄
+* \param name          字符串，输入，表名称
+* \remark 删除的表不可恢复，删除的标签点可以通过 rtdbb_recover_point 接口恢复。
+*/
+rtdb_error RTDBAPI_CALLRULE rtdbb_remove_table_by_name_warp(rtdb_int32 handle, const char *name)
+{
+    typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_remove_table_by_name_fn)(rtdb_int32 handle, const char *name);
+    rtdbb_remove_table_by_name_fn fn = (rtdbb_remove_table_by_name_fn)get_function("rtdbb_remove_table_by_name");
+    return fn(handle, name);
+}
+
+/**
+*
+* \brief 更新单个标签点属性
+*
+* \param handle        连接句柄
+* \param base RTDB_POINT 结构，输入，基本标签点属性集。
+* \param scan RTDB_SCAN_POINT 结构，输入，采集标签点扩展属性集。
+* \param calc RTDB_CALC_POINT 结构，输入，计算标签点扩展属性集。
+* \remark 标签点由 base 参数的 id 字段指定，其中 id、table、type、millisecond 字段不能修改，
+*      changedate、changer、createdate、creator 字段由系统维护，其余字段均可修改，
+*      包括 classof 字段。输入参数中 scan、calc 可为空指针，对应的扩展属性将保持不变。
+*/
+rtdb_error RTDBAPI_CALLRULE rtdbb_update_point_property_warp(rtdb_int32 handle, const RTDB_POINT *base, const RTDB_SCAN_POINT *scan, const RTDB_CALC_POINT *calc)
+{
+    typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_update_point_property_fn)(rtdb_int32 handle, const RTDB_POINT *base, const RTDB_SCAN_POINT *scan, const RTDB_CALC_POINT *calc);
+    rtdbb_update_point_property_fn fn = (rtdbb_update_point_property_fn)get_function("rtdbb_update_point_property");
+    return fn(handle, base, scan, calc);
+}
+
+/**
+* 命名：rtdbb_update_max_point_property
+* 功能：按最大长度更新单个标签点属性
+* 参数：
+*        [handle]        连接句柄
+*        [base] RTDB_POINT 结构，输入，基本标签点属性集。
+*        [scan] RTDB_SCAN_POINT 结构，输入，采集标签点扩展属性集。
+*        [calc] RTDB_MAX_CALC_POINT 结构，输入，计算标签点扩展属性集。
+* 备注：标签点由 base 参数的 id 字段指定，其中 id、table、type、millisecond 字段不能修改，
+*      changedate、changer、createdate、creator 字段由系统维护，其余字段均可修改，
+*      包括 classof 字段。输入参数中 scan、calc 可为空指针，对应的扩展属性将保持不变。
+*/
+rtdb_error RTDBAPI_CALLRULE rtdbb_update_max_point_property_warp(rtdb_int32 handle, const RTDB_POINT *base, const RTDB_SCAN_POINT *scan, const RTDB_MAX_CALC_POINT *calc)
+{
+    typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_update_max_point_property_fn)(rtdb_int32 handle, const RTDB_POINT *base, const RTDB_SCAN_POINT *scan, const RTDB_MAX_CALC_POINT *calc);
+    rtdbb_update_max_point_property_fn fn = (rtdbb_update_max_point_property_fn)get_function("rtdbb_update_max_point_property");
+    return fn(handle, base, scan, calc);
+}
+
+/**
+*
+* \brief 根据 "表名.标签点名" 格式批量获取标签点标识
+*
+* \param handle           连接句柄
+* \param count            整数，输入/输出，输入时表示标签点个数
+*                           (即table_dot_tags、ids、types、classof、use_ms 的长度)，
+*                           输出时表示找到的标签点个数
+* \param table_dot_tags   字符串指针数组，输入，"表名.标签点名" 列表
+* \param ids              整型数组，输出，标签点标识列表, 返回 0 表示未找到
+* \param types            整型数组，输出，标签点数据类型
+* \param classof          整型数组，输出，标签点类别
+* \param use_ms           短整型数组，输出，时间戳精度，
+*                           返回 1 表示时间戳精度为纳秒， 为 0 表示为秒。
+* \remark 用户须保证分配给 table_dot_tags、ids、types、classof、use_ms 的空间与count相符，
+*        其中 types、classof、use_ms 可为空指针，对应的字段将不再返回。
+*/
+rtdb_error RTDBAPI_CALLRULE rtdbb_find_points_warp(rtdb_int32 handle, rtdb_int32 *count, const char* const* table_dot_tags, rtdb_int32 *ids, rtdb_int32 *types, rtdb_int32 *classof, rtdb_int16 *use_ms)
+{
+    typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_find_points_fn)(rtdb_int32 handle, rtdb_int32 *count, const char* const* table_dot_tags, rtdb_int32 *ids, rtdb_int32 *types, rtdb_int32 *classof, rtdb_int16 *use_ms);
+    rtdbb_find_points_fn fn = (rtdbb_find_points_fn)get_function("rtdbb_find_points");
+    return fn(handle, count, table_dot_tags, ids, types, classof, use_ms);
+}
+
+/**
+*
+* \brief 根据 "表名.标签点名" 格式批量获取标签点标识
+*
+* \param handle           连接句柄
+* \param count            整数，输入/输出，输入时表示标签点个数
+*                           (即table_dot_tags、ids、types、classof、use_ms 的长度)，
+*                           输出时表示找到的标签点个数
+* \param table_dot_tags   字符串指针数组，输入，"表名.标签点名" 列表
+* \param ids              整型数组，输出，标签点标识列表, 返回 0 表示未找到
+* \param types            整型数组，输出，标签点数据类型
+* \param classof          整型数组，输出，标签点类别
+* \param precisions       数组，输出，时间戳精度，
+*                           0表示秒，1表示毫秒，2表示微秒，3纳秒。
+* \param errors           无符号整型数组，输出，表示每个标签点的查询结果的错误码
+* \remark 用户须保证分配给 table_dot_tags、ids、types、classof、precisions、errors 的空间与count相符，
+*        其中 types、classof、precisions、errors 可为空指针，对应的字段将不再返回。
+*/
+rtdb_error RTDBAPI_CALLRULE rtdbb_find_points_ex_warp(rtdb_int32 handle, rtdb_int32* count, const char* const* table_dot_tags, rtdb_int32* ids, rtdb_int32* types, rtdb_int32* classof, rtdb_precision_type* precisions, rtdb_error* errors)
+{
+    typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_find_points_ex_fn)(rtdb_int32 handle, rtdb_int32* count, const char* const* table_dot_tags, rtdb_int32* ids, rtdb_int32* types, rtdb_int32* classof, rtdb_precision_type* precisions, rtdb_error* errors);
+    rtdbb_find_points_ex_fn fn = (rtdbb_find_points_ex_fn)get_function("rtdbb_find_points_ex");
+    return fn(handle, count, table_dot_tags, ids, types, classof, precisions, errors);
+}
+
+/**
+*
+* \brief 根据标签属性字段对标签点标识进行排序
+*
+* \param handle           连接句柄
+* \param count            整数，输入，表示标签点个数, 即 ids 的长度
+* \param ids              整型数组，输入，标签点标识列表
+* \param index            整型，输入，属性字段枚举，参见 RTDB_TAG_FIELD_INDEX，
+*                           将根据该字段对 ID 进行排序。
+* \param flag             整型，输入，标志位组合，参见 RTDB_TAG_SORT_FLAG 枚举，其中
+*                           RTDB_SORT_FLAG_DESCEND             表示降序排序，不设置表示升序排列；
+*                           RTDB_SORT_FLAG_CASE_SENSITIVE      表示进行字符串类型字段比较时大小写敏感，不设置表示不区分大小写；
+*                           RTDB_SORT_FLAG_RECYCLED            表示对可回收标签进行排序，不设置表示对正常标签排序，
+*                           不同的标志位可通过"或"运算连接在一起，
+*                           当对可回收标签排序时，以下字段索引不可使用：
+*                               RTDB_TAG_INDEX_TIMESTAMP
+*                               RTDB_TAG_INDEX_VALUE
+*                               RTDB_TAG_INDEX_QUALITY
+* \remark 用户须保证分配给 ids 的空间与 count 相符, 如果 ID 指定的标签并不存在，
+*        或标签不具备要求排序的字段 (如对非计算点进行方程式排序)，它们将被放置在数组的尾部。
+*/
+rtdb_error RTDBAPI_CALLRULE rtdbb_sort_points_warp(rtdb_int32 handle, rtdb_int32 count, rtdb_int32 *ids, rtdb_int32 index, rtdb_int32 flag)
+{
+    typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_sort_points_fn)(rtdb_int32 handle, rtdb_int32 count, rtdb_int32 *ids, rtdb_int32 index, rtdb_int32 flag);
+    rtdbb_sort_points_fn fn = (rtdbb_sort_points_fn)get_function("rtdbb_sort_points");
+    return fn(handle, count, ids, index, flag);
+}
+
+/**
+*
+* \brief 根据表 ID 更新表名称。
+*
+* \param handle    连接句柄
+* \param tab_id    整型，输入，要修改表的标识
+* \param name      字符串，输入，新的标签点表名称。
+*/
+rtdb_error RTDBAPI_CALLRULE rtdbb_update_table_name_warp(rtdb_int32 handle, rtdb_int32 tab_id, const char *name)
+{
+    typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_update_table_name_fn)(rtdb_int32 handle, rtdb_int32 tab_id, const char *name);
+    rtdbb_update_table_name_fn fn = (rtdbb_update_table_name_fn)get_function("rtdbb_update_table_name");
+    return fn(handle, tab_id, name);
+}
+
+/**
+*
+* \brief 根据表 ID 更新表描述。
+*
+* \param handle    连接句柄
+* \param tab_id    整型，输入，要修改表的标识
+* \param desc      字符串，输入，新的表描述。
+*/
+rtdb_error RTDBAPI_CALLRULE rtdbb_update_table_desc_by_id_warp(rtdb_int32 handle, rtdb_int32 tab_id, const char *desc)
+{
+    typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_update_table_desc_by_id_fn)(rtdb_int32 handle, rtdb_int32 tab_id, const char *desc);
+    rtdbb_update_table_desc_by_id_fn fn = (rtdbb_update_table_desc_by_id_fn)get_function("rtdbb_update_table_desc_by_id");
+    return fn(handle, tab_id, desc);
+}
+
+/**
+*
+* \brief 根据表名称更新表描述。
+*
+* \param handle    连接句柄
+* \param name      字符串，输入，要修改表的名称。
+* \param desc      字符串，输入，新的表描述。
+*/
+rtdb_error RTDBAPI_CALLRULE rtdbb_update_table_desc_by_name_warp(rtdb_int32 handle, const char *name, const char *desc)
+{
+    typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_update_table_desc_by_name_fn)(rtdb_int32 handle, const char *name, const char *desc);
+    rtdbb_update_table_desc_by_name_fn fn = (rtdbb_update_table_desc_by_name_fn)get_function("rtdbb_update_table_desc_by_name");
+    return fn(handle, name, desc);
+}
+
+/**
+*
+* \brief 恢复已删除标签点
+*
+* \param handle    连接句柄
+* \param table_id  整型，输入，要将标签点恢复到的表标识
+* \param point_id  整型，输入，待恢复的标签点标识
+* 备注: 本接口只对可回收标签点(通过接口rtdbb_remove_point_by_id/rtdbb_remove_point_by_tag)有效，
+*        对正常的标签点没有作用。
+*/
+rtdb_error RTDBAPI_CALLRULE rtdbb_recover_point_warp(rtdb_int32 handle, rtdb_int32 table_id, rtdb_int32 point_id)
+{
+    typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_recover_point_fn)(rtdb_int32 handle, rtdb_int32 table_id, rtdb_int32 point_id);
+    rtdbb_recover_point_fn fn = (rtdbb_recover_point_fn)get_function("rtdbb_recover_point");
+    return fn(handle, table_id, point_id);
+}
+
+/**
+*
+* \brief 清除标签点
+*
+* \param handle    连接句柄
+* \param id        整数，输入，要清除的标签点标识
+* 备注: 本接口仅对可回收标签点(通过接口rtdbb_remove_point_by_id/rtdbb_remove_point_by_name)有效，
+*      对正常的标签点没有作用。
+*/
+rtdb_error RTDBAPI_CALLRULE rtdbb_purge_point_warp(rtdb_int32 handle, rtdb_int32 id)
+{
+    typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_purge_point_fn)(rtdb_int32 handle, rtdb_int32 id);
+    rtdbb_purge_point_fn fn = (rtdbb_purge_point_fn)get_function("rtdbb_purge_point");
+    return fn(handle, id);
+}
+
+/**
+*
+* \brief 获取可回收标签点数量
+*
+* \param handle    连接句柄
+* \param count     整型，输出，可回收标签点的数量
+*/
+rtdb_error RTDBAPI_CALLRULE rtdbb_get_recycled_points_count_warp(rtdb_int32 handle, rtdb_int32 *count)
+{
+    typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_get_recycled_points_count_fn)(rtdb_int32 handle, rtdb_int32 *count);
+    rtdbb_get_recycled_points_count_fn fn = (rtdbb_get_recycled_points_count_fn)get_function("rtdbb_get_recycled_points_count");
+    return fn(handle, count);
+}
+
+/**
+*
+* \brief 获取可回收标签点 id 列表
+*
+* \param handle    连接句柄
+* \param ids       整型数组，输出，可回收标签点 id
+* \param count     整型，输入/输出，标签点个数，
+*                    输入时表示 ids 的长度，
+*                    输出时表示成功获取标签点的个数。
+* \remark 用户须保证 ids 的长度与 count 一致
+*/
+rtdb_error RTDBAPI_CALLRULE rtdbb_get_recycled_points_warp(rtdb_int32 handle, rtdb_int32 *ids, rtdb_int32 *count)
+{
+    typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_get_recycled_points_fn)(rtdb_int32 handle, rtdb_int32 *ids, rtdb_int32 *count);
+    rtdbb_get_recycled_points_fn fn = (rtdbb_get_recycled_points_fn)get_function("rtdbb_get_recycled_points");
+    return fn(handle, ids, count);
+}
+
+/**
+* 命名：rtdbb_search_recycled_points
+* 功能：搜索符合条件的可回收标签点，使用标签点名时支持通配符
+* 参数：
+*        [handle]        连接句柄
+*        [tagmask]       字符串，输入，标签点名称掩码，支持"*"和"?"通配符，缺省设置为"*"，长度不得超过 RTDB_TAG_SIZE。
+*        [tablemask]     字符串，输入，标签点表名称掩码，支持"*"和"?"通配符，缺省设置为"*"，长度不得超过 RTDB_TAG_SIZE。
+*        [source]        字符串，输入，数据源集合，字符串中的每个字符均表示一个数据源，
+*                        空字符串表示不用数据源作搜索条件，缺省设置为空，长度不得超过 RTDB_DESC_SIZE。
+*        [unit]          字符串，输入，标签点工程单位的子集，工程单位中包含该参数的标签点均满足条件，
+*                        空字符串表示不用工程单位作搜索条件，缺省设置为空，长度不得超过 RTDB_UNIT_SIZE。
+*        [desc]          字符串，输入，标签点描述的子集，描述中包含该参数的标签点均满足条件，
+*                        空字符串表示不用描述作搜索条件，缺省设置为空，长度不得超过 RTDB_SOURCE_SIZE。
+*        [instrument]    字符串，输入参数，标签点设备名称。缺省设置为空，长度不得超过 RTDB_INSTRUMENT_SIZE。
+*        [mode]          整型，RTDB_SORT_BY_TABLE、RTDB_SORT_BY_TAG、RTDB_SORT_BY_ID 之一，
+*                        搜索结果的排序模式，输入，缺省值为RTDB_SORT_BY_TABLE
+*        [ids]           整型数组，输出，返回搜索到的标签点标识列表
+*        [count]         整型，输入/输出，输入时表示 ids 的长度，输出时表示搜索到的标签点个数
+* 备注：用户须保证分配给 ids 的空间与 count 相符，各参数中包含的搜索条件之间的关系为"与"的关系，
+*        用包含通配符的标签点名称作搜索条件时，如果第一个字符不是通配符(如"ai67*")，会得到最快的搜索速度。
+*        如果 tagmask、fullmask 为空指针，则表示使用缺省设置"*"
+*/
+rtdb_error RTDBAPI_CALLRULE rtdbb_search_recycled_points_warp(rtdb_int32 handle, const char *tagmask, const char *fullmask, const char *source, const char *unit, const char *desc, const char *instrument, rtdb_int32 mode, rtdb_int32 *ids, rtdb_int32 *count)
+{
+    typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_search_recycled_points_fn)(rtdb_int32 handle, const char *tagmask, const char *fullmask, const char *source, const char *unit, const char *desc, const char *instrument, rtdb_int32 mode, rtdb_int32 *ids, rtdb_int32 *count);
+    rtdbb_search_recycled_points_fn fn = (rtdbb_search_recycled_points_fn)get_function("rtdbb_search_recycled_points");
+    return fn(handle, tagmask, fullmask, source, unit, desc, instrument, mode, ids, count);
+}
+
+/**
+*
+* \brief 分批搜索符合条件的可回收标签点，使用标签点名时支持通配符
+*
+* \param handle        连接句柄
+* \param start         整型，输入，搜索的起始位置。
+* \param tagmask       字符串，输入，标签点名称掩码，支持"*"和"?"通配符，缺省设置为"*"，长度不得超过 RTDB_TAG_SIZE。
+* \param tablemask     字符串，输入，标签点表名称掩码，支持"*"和"?"通配符，缺省设置为"*"，长度不得超过 RTDB_TAG_SIZE。
+* \param source        字符串，输入，数据源集合，字符串中的每个字符均表示一个数据源，
+*                        空字符串表示不用数据源作搜索条件，缺省设置为空，长度不得超过 RTDB_DESC_SIZE。
+* \param unit          字符串，输入，标签点工程单位的子集，工程单位中包含该参数的标签点均满足条件，
+*                        空字符串表示不用工程单位作搜索条件，缺省设置为空，长度不得超过 RTDB_UNIT_SIZE。
+* \param desc          字符串，输入，标签点描述的子集，描述中包含该参数的标签点均满足条件，
+*                        空字符串表示不用描述作搜索条件，缺省设置为空，长度不得超过 RTDB_SOURCE_SIZE。
+* \param instrument    字符串，输入参数，标签点设备名称。缺省设置为空，长度不得超过 RTDB_INSTRUMENT_SIZE。
+* \param mode          整型，RTDB_SORT_BY_TABLE、RTDB_SORT_BY_TAG、RTDB_SORT_BY_ID 之一，
+*                        搜索结果的排序模式，输入，缺省值为RTDB_SORT_BY_TABLE
+* \param ids           整型数组，输出，返回搜索到的标签点标识列表
+* \param count         整型，输入/输出，输入时表示 ids 的长度，输出时表示搜索到的标签点个数
+* \remark 用户须保证分配给 ids 的空间与 count 相符，各参数中包含的搜索条件之间的关系为"与"的关系，
+*        用包含通配符的标签点名称作搜索条件时，如果第一个字符不是通配符(如"ai67*")，会得到最快的搜索速度。
+*        如果 tagmask、fullmask 为空指针，则表示使用缺省设置"*"
+*        当搜索到的标签点数比提供的要小时，表示这是最后一批符合条件的标签点 (即全部搜索完毕)。
+*/
+rtdb_error RTDBAPI_CALLRULE rtdbb_search_recycled_points_in_batches_warp(rtdb_int32 handle, rtdb_int32 start, const char *tagmask, const char *fullmask, const char *source, const char *unit, const char *desc, const char *instrument, rtdb_int32 mode, rtdb_int32 *ids, rtdb_int32 *count)
+{
+    typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_search_recycled_points_in_batches_fn)(rtdb_int32 handle, rtdb_int32 start, const char *tagmask, const char *fullmask, const char *source, const char *unit, const char *desc, const char *instrument, rtdb_int32 mode, rtdb_int32 *ids, rtdb_int32 *count);
+    rtdbb_search_recycled_points_in_batches_fn fn = (rtdbb_search_recycled_points_in_batches_fn)get_function("rtdbb_search_recycled_points_in_batches");
+    return fn(handle, start, tagmask, fullmask, source, unit, desc, instrument, mode, ids, count);
+}
+
+/**
+*
+* \brief 获取可回收标签点的属性
+*
+* \param handle   连接句柄
+* \param base     RTDB_POINT 结构，输入/输出，标签点基本属性。
+输入时，由 id 字段指定要取得的可回收标签点。
+* \param scan     RTDB_SCAN_POINT 结构，输出，标签点采集扩展属性
+* \param calc     RTDB_CALC_POINT 结构，输出，标签点计算扩展属性
+* \remark scan、calc 可为空指针，对应的扩展信息将不返回。
+*/
+rtdb_error RTDBAPI_CALLRULE rtdbb_get_recycled_point_property_warp(rtdb_int32 handle, RTDB_POINT *base, RTDB_SCAN_POINT *scan, RTDB_CALC_POINT *calc)
+{
+    typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_get_recycled_point_property_fn)(rtdb_int32 handle, RTDB_POINT *base, RTDB_SCAN_POINT *scan, RTDB_CALC_POINT *calc);
+    rtdbb_get_recycled_point_property_fn fn = (rtdbb_get_recycled_point_property_fn)get_function("rtdbb_get_recycled_point_property");
+    return fn(handle, base, scan, calc);
+}
+
+/**
+
+* 命名：rtdbb_get_recycled_max_point_property
+* 功能：按最大长度获取可回收标签点的属性
+* 参数：
+*        [handle]   连接句柄
+*        [base]     RTDB_POINT 结构，输入/输出，标签点基本属性。
+                    输入时，由 id 字段指定要取得的可回收标签点。
+*        [scan]     RTDB_SCAN_POINT 结构，输出，标签点采集扩展属性
+*        [calc]     RTDB_MAX_CALC_POINT 结构，输出，标签点计算扩展属性
+* 备注：scan、calc 可为空指针，对应的扩展信息将不返回。
+*/
+rtdb_error RTDBAPI_CALLRULE rtdbb_get_recycled_max_point_property_warp(rtdb_int32 handle, RTDB_POINT* base, RTDB_SCAN_POINT* scan, RTDB_MAX_CALC_POINT* calc)
+{
+    typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_get_recycled_max_point_property_fn)(rtdb_int32 handle, RTDB_POINT* base, RTDB_SCAN_POINT* scan, RTDB_MAX_CALC_POINT* calc);
+    rtdbb_get_recycled_max_point_property_fn fn = (rtdbb_get_recycled_max_point_property_fn)get_function("rtdbb_get_recycled_max_point_property");
+    return fn(handle, base, scan, calc);
+}
+
+/**
+*
+* \brief 清空标签点回收站
+*
+* \param handle   连接句柄
+*/
+rtdb_error RTDBAPI_CALLRULE rtdbb_clear_recycler_warp(rtdb_int32 handle)
+{
+    typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_clear_recycler_fn)(rtdb_int32 handle);
+    rtdbb_clear_recycler_fn fn = (rtdbb_clear_recycler_fn)get_function("rtdbb_clear_recycler");
+    return fn(handle);
+}
+
+/**
+* 命名：rtdbb_subscribe_tags_ex
+* 功能：标签点属性更改通知订阅
+* 参数：
+*        [handle]    连接句柄
+*        [options]   整型，输入，订阅选项，参见枚举RTDB_OPTION
+*                    RTDB_O_AUTOCONN 订阅客户端与数据库服务器网络中断后自动重连并订阅
+*        [param]     输入，用户参数，
+*                    作为rtdbb_tags_change_ex的param参数
+*        [callback]  rtdbb_tags_change_ex 类型回调接口，输入，当回掉函数返回非RtE_OK时退出订阅
+*                    当未设置options为RTDB_O_AUTOCONN时，订阅断开后使用RTDB_E_DISCONNECT
+*                    作为event_type取值调用回掉函数后退出订阅。
+*                    当设置options为RTDB_O_AUTOCONN时，订阅断开后使用RTDB_E_DISCONNECT
+*                    作为event_type取值调用回掉函数直到连接恢复或回掉函数返回非RtE_OK，
+*                    网络中断期间回掉函数调用频率为最少3秒
+*                    event_type参数值含义如下：
+*                      RTDB_E_DATA        标签点属性发生更改
+*                      RTDB_E_DISCONNECT  订阅客户端与数据库网络断开
+*                      RTDB_E_RECOVERY    订阅客户端与数据库网络及订阅恢复
+*                    handle 产生订阅回掉的连接句柄，调用rtdbb_subscribe_tags_ex时的handle参数
+*                    param  用户自定义参数，调用rtdbb_subscribe_tags_ex时的param参数
+*                    count  event_type为RTDB_E_DATA时表示ids的数量
+*                           event_type为其它值时，count值为0
+*                    ids    event_type为RTDB_E_DATA时表示属性更改的标签点ID，数量由count指定
+*                           event_type为其它值时，ids值为NULL
+*                    what   event_type为RTDB_E_DATA时表示属性变更原因，参考RTDB_TAG_CHANGE_REASON
+*                           event_type为其它值时，what时值为0
+* 备注：用于订阅测点的连接句柄必需是独立的，不能再用来调用其它 api，
+*       否则返回 RtE_OTHER_SDK_DOING 错误。
+*/
+rtdb_error RTDBAPI_CALLRULE rtdbb_subscribe_tags_ex_warp(rtdb_int32 handle, rtdb_uint32 options, void* param, rtdbb_tags_change_event_ex callback)
+{
+    typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_subscribe_tags_ex_fn)(rtdb_int32 handle, rtdb_uint32 options, void* param, rtdbb_tags_change_event_ex callback);
+    rtdbb_subscribe_tags_ex_fn fn = (rtdbb_subscribe_tags_ex_fn)get_function("rtdbb_subscribe_tags_ex");
+    return fn(handle, options, param, callback);
+}
+
+/**
+*
+* \brief 取消标签点属性更改通知订阅
+*
+* \param handle    连接句柄
+*/
+rtdb_error RTDBAPI_CALLRULE rtdbb_cancel_subscribe_tags_warp(rtdb_int32 handle)
+{
+    typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_cancel_subscribe_tags_fn)(rtdb_int32 handle);
+    rtdbb_cancel_subscribe_tags_fn fn = (rtdbb_cancel_subscribe_tags_fn)get_function("rtdbb_cancel_subscribe_tags");
+    return fn(handle);
+}
+
+/**
+* 命名：rtdbb_create_named_type
+* 功能：创建自定义类型
+* 参数：
+*        [handle]      连接句柄，输入参数
+*        [name]        自定义类型的名称，类型的唯一标示,不能重复，长度不能超过RTDB_TYPE_NAME_SIZE，输入参数
+*        [field_count]    自定义类型中包含的字段的个数,输入参数
+*        [fields]      自定义类型中包含的字段的属性，RTDB_DATA_TYPE_FIELD结构的数组，个数与field_count相等，输入参数
+*              RTDB_DATA_TYPE_FIELD中的length只对type为str或blob类型的数据有效。其他类型忽略
+* 备注：自定义类型的大小必须要小于数据页大小(小于数据页大小的2/3，即需要合理定义字段的个数及每个字段的长度)。
+*/
+rtdb_error RTDBAPI_CALLRULE rtdbb_create_named_type_warp(rtdb_int32 handle, const char* name, rtdb_int32 field_count, const RTDB_DATA_TYPE_FIELD* fields, char desc[RTDB_DESC_SIZE])
+{
+    typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_create_named_type_fn)(rtdb_int32 handle, const char* name, rtdb_int32 field_count, const RTDB_DATA_TYPE_FIELD* fields, char desc[RTDB_DESC_SIZE]);
+    rtdbb_create_named_type_fn fn = (rtdbb_create_named_type_fn)get_function("rtdbb_create_named_type");
+    return fn(handle, name, field_count, fields, desc[RTDB_DESC_SIZE]);
+}
+
+/**
+* 命名：rtdbb_get_named_types_count
+* 功能：获取所有的自定义类型的总数
+* 参数：
+*        [handle]      连接句柄，输入参数
+*        [count]      返回所有的自定义类型的总数，输入/输出参数
+*/
+rtdb_error RTDBAPI_CALLRULE rtdbb_get_named_types_count_warp(rtdb_int32 handle, rtdb_int32* count)
+{
+    typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_get_named_types_count_fn)(rtdb_int32 handle, rtdb_int32* count);
+    rtdbb_get_named_types_count_fn fn = (rtdbb_get_named_types_count_fn)get_function("rtdbb_get_named_types_count");
+    return fn(handle, count);
+}
+
+/**
+* 命名：rtdbb_get_all_named_types
+* 功能：获取所有的自定义类型
+* 参数：
+*        [handle]      连接句柄，输入参数
+*        [count]      返回所有的自定义类型的总数，输入/输出参数，输入:为name,field_counts数组的长度，输出:获取的实际自定义类型的个数
+*        [name]        返回所有的自定义类型的名称的数组，每个自定义类型的名称的长度不超过RTDB_TYPE_NAME_SIZE，输入/输出参数
+*              输入：name数组长度要等于count.输出：实际获取的自定义类型名称的数组
+*        [field_counts]    返回所有的自定义类型所包含字段个数的数组，输入/输出参数
+*              输入：field_counts数组长度要等于count。输出:实际每个自定义类型所包含的字段的个数的数组
+*/
+rtdb_error RTDBAPI_CALLRULE rtdbb_get_all_named_types_warp(rtdb_int32 handle, rtdb_int32* count, char* name[RTDB_TYPE_NAME_SIZE], rtdb_int32* field_counts)
+{
+    typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_get_all_named_types_fn)(rtdb_int32 handle, rtdb_int32* count, char* name[RTDB_TYPE_NAME_SIZE], rtdb_int32* field_counts);
+    rtdbb_get_all_named_types_fn fn = (rtdbb_get_all_named_types_fn)get_function("rtdbb_get_all_named_types");
+    return fn(handle, count, name[RTDB_TYPE_NAME_SIZE], field_counts);
+}
+
+/**
+* 命名：rtdbb_get_named_type
+* 功能：获取自定义类型的所有字段
+* 参数：
+*        [handle]         连接句柄，输入参数
+*        [name]           自定义类型的名称，输入参数
+*        [field_count]    返回name指定的自定义类型的字段个数，输入/输出参数
+*                         输入：指定fields数组长度.输出：实际的name自定义类型的字段的个数
+*        [fields]         返回由name所指定的自定义类型所包含字段RTDB_DATA_TYPE_FIELD结构的数组，输入/输出参数
+*                         输入：fields数组长度要等于count。输出:RTDB_DATA_TYPE_FIELD结构的数组
+*        [type_size]      所有自定义类型fields结构中长度字段的累加和，输出参数
+*        [desc]           自定义类型的描述，输出参数
+*/
+rtdb_error RTDBAPI_CALLRULE rtdbb_get_named_type_warp(rtdb_int32 handle, const char* name, rtdb_int32* field_count, RTDB_DATA_TYPE_FIELD* fields, rtdb_int32* type_size, char desc[RTDB_DESC_SIZE])
+{
+    typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_get_named_type_fn)(rtdb_int32 handle, const char* name, rtdb_int32* field_count, RTDB_DATA_TYPE_FIELD* fields, rtdb_int32* type_size, char desc[RTDB_DESC_SIZE]);
+    rtdbb_get_named_type_fn fn = (rtdbb_get_named_type_fn)get_function("rtdbb_get_named_type");
+    return fn(handle, name, field_count, fields, type_size, desc[RTDB_DESC_SIZE]);
+}
+
+/**
+* 命名：rtdbb_remove_named_type
+* 功能：删除自定义类型
+* 参数：
+*        [handle]      连接句柄，输入参数
+*        [name]        自定义类型的名称，输入参数
+*        [reserved]      保留字段,暂时不用
+*/
+rtdb_error RTDBAPI_CALLRULE rtdbb_remove_named_type_warp(rtdb_int32 handle, const char* name, rtdb_int32 reserved GAPI_DEFAULT_VALUE(0))
+{
+    typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_remove_named_type_fn)(rtdb_int32 handle, const char* name, rtdb_int32 reserved GAPI_DEFAULT_VALUE(0));
+    rtdbb_remove_named_type_fn fn = (rtdbb_remove_named_type_fn)get_function("rtdbb_remove_named_type");
+    return fn(handle, name, reserved);
+}
+
+/**
+* 命名：rtdbb_get_named_type_names_property
+* 功能：根据标签点id查询标签点所对应的自定义类型的名字和字段总数
+* 参数：
+*        [handle]           连接句柄
+*        [count]            输入/输出，标签点个数，
+*                           输入时表示 ids、named_type_names、field_counts、errors 的长度，
+*                           输出时表示成功获取自定义类型名字的标签点个数
+*        [ids]              整型数组，输入，标签点标识列表
+*        [named_type_names] 字符串数组，输出，标签点自定义类型的名字
+*        [field_counts]     整型数组，输出，标签点自定义类型的字段个数
+*        [errors]           无符号整型数组，输出，获取自定义类型名字的返回值列表，参考rtdb_error.h
+* 备注：用户须保证 ids、named_type_names、field_counts、errors 的长度与 count 一致。
+*        本接口只对数据类型为 RTDB_NAMED_T 的标签点有效。
+*/
+rtdb_error RTDBAPI_CALLRULE rtdbb_get_named_type_names_property_warp(rtdb_int32 handle, rtdb_int32 *count, rtdb_int32 *ids, char* const *named_type_names, rtdb_int32 *field_counts, rtdb_error *errors)
+{
+    typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_get_named_type_names_property_fn)(rtdb_int32 handle, rtdb_int32 *count, rtdb_int32 *ids, char* const *named_type_names, rtdb_int32 *field_counts, rtdb_error *errors);
+    rtdbb_get_named_type_names_property_fn fn = (rtdbb_get_named_type_names_property_fn)get_function("rtdbb_get_named_type_names_property");
+    return fn(handle, count, ids, named_type_names, field_counts, errors);
+}
+
+/**
+* 命名：rtdbb_get_recycled_named_type_names_property
+* 功能：根据回收站标签点id查询标签点所对应的自定义类型的名字和字段总数
+* 参数：
+*        [handle]           连接句柄
+*        [count]            输入/输出，标签点个数，
+*                           输入时表示 ids、named_type_names、field_counts、errors 的长度，
+*                           输出时表示成功获取自定义类型名字的标签点个数
+*        [ids]              整型数组，输入，回收站标签点标识列表
+*        [named_type_names] 字符串数组，输出，标签点自定义类型的名字
+*        [field_counts]     整型数组，输出，标签点自定义类型的字段个数
+*        [errors]           无符号整型数组，输出，获取自定义类型名字的返回值列表，参考rtdb_error.h
+* 备注：用户须保证 ids、named_type_names、field_counts、errors 的长度与 count 一致。
+*        本接口只对数据类型为 RTDB_NAMED_T 的标签点有效。
+*/
+rtdb_error RTDBAPI_CALLRULE rtdbb_get_recycled_named_type_names_property_warp(rtdb_int32 handle, rtdb_int32 *count, rtdb_int32 *ids, char* const *named_type_names, rtdb_int32 *field_counts, rtdb_error *errors)
+{
+    typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_get_recycled_named_type_names_property_fn)(rtdb_int32 handle, rtdb_int32 *count, rtdb_int32 *ids, char* const *named_type_names, rtdb_int32 *field_counts, rtdb_error *errors);
+    rtdbb_get_recycled_named_type_names_property_fn fn = (rtdbb_get_recycled_named_type_names_property_fn)get_function("rtdbb_get_recycled_named_type_names_property");
+    return fn(handle, count, ids, named_type_names, field_counts, errors);
+}
+
+/**
+* 命名：rtdbb_get_named_type_points_count
+* 功能：获取该自定义类型的所有标签点个数
+* 参数：
+*        [handle]           连接句柄，输入参数
+*        [name]             自定义类型的名称，输入参数
+*        [points_count]     返回name指定的自定义类型的标签点个数，输入参数
+*/
+rtdb_error RTDBAPI_CALLRULE rtdbb_get_named_type_points_count_warp(rtdb_int32 handle, const char* name, rtdb_int32 *points_count)
+{
+    typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_get_named_type_points_count_fn)(rtdb_int32 handle, const char* name, rtdb_int32 *points_count);
+    rtdbb_get_named_type_points_count_fn fn = (rtdbb_get_named_type_points_count_fn)get_function("rtdbb_get_named_type_points_count");
+    return fn(handle, name, points_count);
+}
+
+/**
+*
+* \brief 获取该内置的基本类型的所有标签点个数
+*
+* \param handle           整型，输入参数，连接句equation[RTDB_MAX_EQUATION_SIZE]柄
+* \param type             整型，输入参数，内置的基本类型，参数的值可以是除RTDB_NAME_T以外的所有RTDB_TYPE枚举值
+* \param points_count     整型，输入参数，返回type指定的内置基本类型的标签点个数
+*/
+rtdb_error RTDBAPI_CALLRULE rtdbb_get_base_type_points_count_warp(rtdb_int32 handle, rtdb_int32 type, rtdb_int32 *points_count)
+{
+    typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_get_base_type_points_count_fn)(rtdb_int32 handle, rtdb_int32 type, rtdb_int32 *points_count);
+    rtdbb_get_base_type_points_count_fn fn = (rtdbb_get_base_type_points_count_fn)get_function("rtdbb_get_base_type_points_count");
+    return fn(handle, type, points_count);
+}
+
+/**
+* 命名：rtdbb_modify_named_type
+* 功能：修改自定义类型名称,描述,字段名称,字段描述
+* 参数：
+*        [handle]             连接句柄，输入参数
+*        [name]               自定义类型的名称，输入参数
+*        [modify_name]        要修改的自定义类型名称，输入参数
+*        [modify_desc]        要修改的自定义类型的描述，输入参数
+*        [modify_field_name]  要修改的自定义类型字段的名称，输入参数
+*        [modify_field_desc]  要修改的自定义类型字段的描述，输入参数
+*        [field_count]        自定义类型字段的个数，输入参数
+*/
+rtdb_error RTDBAPI_CALLRULE rtdbb_modify_named_type_warp(rtdb_int32 handle, const char* name, const char* modify_name, const char* modify_desc, const char* modify_field_name[RTDB_TYPE_NAME_SIZE], const char* modify_field_desc[RTDB_DESC_SIZE], rtdb_int32 field_count)
+{
+    typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_modify_named_type_fn)(rtdb_int32 handle, const char* name, const char* modify_name, const char* modify_desc, const char* modify_field_name[RTDB_TYPE_NAME_SIZE], const char* modify_field_desc[RTDB_DESC_SIZE], rtdb_int32 field_count);
+    rtdbb_modify_named_type_fn fn = (rtdbb_modify_named_type_fn)get_function("rtdbb_modify_named_type");
+    return fn(handle, name, modify_name, modify_desc, modify_field_name, modify_field_desc, field_count);
+}
+
+/**
+*
+* \brief 获取元数据同步信息
+*
+* \param handle           整型，输入参数，连接句柄
+* \param node_number      整型，输入参数，双活节点id，1表示第一个节点，2表示第二个节点。0表示所有节点
+* \param count            整型，输入参数，sync_infos参数的数量
+*                              输出参数，输出实际获取到的sync_infos的个数
+* \param sync_infos       RTDB_SYNC_INFO数组，输出参数，输出实际获取到的同步信息
+* \param errors           rtdb_error数组，输出参数，输出对应节点的错误信息
+*/
+rtdb_error RTDBAPI_CALLRULE rtdbb_get_meta_sync_info_warp(rtdb_int32 handle, rtdb_int32 node_number, rtdb_int32* count, RTDB_SYNC_INFO* sync_infos, rtdb_error* errors)
+{
+    typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_get_meta_sync_info_fn)(rtdb_int32 handle, rtdb_int32 node_number, rtdb_int32* count, RTDB_SYNC_INFO* sync_infos, rtdb_error* errors);
+    rtdbb_get_meta_sync_info_fn fn = (rtdbb_get_meta_sync_info_fn)get_function("rtdbb_get_meta_sync_info");
+    return fn(handle, node_number, count, sync_infos, errors);
 }
 
 #ifdef __cplusplus
