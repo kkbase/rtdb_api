@@ -3195,11 +3195,7 @@ func RawRtdbConnectionCountWarp(handle ConnectHandle, nodeNumber int32) (int32, 
 * \param [in,out]  count   输入时表示sockets的长度，输出时表示返回的连接个数
 * \return rtdb_error
 * \remark 用户须保证分配给 sockets 的空间与 count 相符。如果输入的 count 小于输出的 count，则只返回部分连接
-rtdb_error RTDBAPI_CALLRULE rtdb_get_connections_warp(rtdb_int32 handle, rtdb_int32 node_number, rtdb_int32 *sockets, rtdb_int32 *count) {
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdb_get_connections_fn)(rtdb_int32 handle, rtdb_int32 node_number, rtdb_int32 *sockets, rtdb_int32 *count);
-rtdb_get_connections_fn fn = (rtdb_get_connections_fn)get_function("rtdb_get_connections");
-return fn(handle, node_number, sockets, count);
-}
+rtdb_error RTDBAPI_CALLRULE rtdb_get_connections_warp(rtdb_int32 handle, rtdb_int32 node_number, rtdb_int32 *sockets, rtdb_int32 *count)
 */
 
 /**
@@ -3209,11 +3205,7 @@ return fn(handle, node_number, sockets, count);
  * \param [in] handle       连接句柄
  * \param [in] node_number   双活模式下，指定节点编号，1为rtdb_connect中第1个IP，2为rtdb_connect中第2个IP
  * \param [out] sockets    整形数组，所有连接的套接字句柄
-rtdb_error RTDBAPI_CALLRULE rtdb_get_own_connection_warp(rtdb_int32 handle, rtdb_int32 node_number, rtdb_int32* socket) {
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdb_get_own_connection_fn)(rtdb_int32 handle, rtdb_int32 node_number, rtdb_int32* socket);
-rtdb_get_own_connection_fn fn = (rtdb_get_own_connection_fn)get_function("rtdb_get_own_connection");
-return fn(handle, node_number, socket);
-}
+rtdb_error RTDBAPI_CALLRULE rtdb_get_own_connection_warp(rtdb_int32 handle, rtdb_int32 node_number, rtdb_int32* socket)
 */
 
 /**
@@ -3224,11 +3216,6 @@ return fn(handle, node_number, socket);
  * \param [out] info          与连接相关的信息，参见 \ref RTDB_HOST_CONNECT_INFO
  * \return rtdb_error
 rtdb_error RTDBAPI_CALLRULE rtdb_get_connection_info_warp(rtdb_int32 handle, rtdb_int32 node_number, rtdb_int32 socket, RTDB_HOST_CONNECT_INFO *info)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdb_get_connection_info_fn)(rtdb_int32 handle, rtdb_int32 node_number, rtdb_int32 socket, RTDB_HOST_CONNECT_INFO *info);
-rtdb_get_connection_info_fn fn = (rtdb_get_connection_info_fn)get_function("rtdb_get_connection_info");
-return fn(handle, node_number, socket, info);
-}
 */
 
 /**
@@ -3239,11 +3226,6 @@ return fn(handle, node_number, socket, info);
  * \param [out] info           与连接相关的信息，参见 \ref RTDB_HOST_CONNECT_INFO_IPV6
  * \return rtdb_error
 rtdb_error RTDBAPI_CALLRULE rtdb_get_connection_info_ipv6_warp(rtdb_int32 handle, rtdb_int32 node_number, rtdb_int32 socket, RTDB_HOST_CONNECT_INFO_IPV6* info)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdb_get_connection_info_ipv6_fn)(rtdb_int32 handle, rtdb_int32 node_number, rtdb_int32 socket, RTDB_HOST_CONNECT_INFO_IPV6* info);
-rtdb_get_connection_info_ipv6_fn fn = (rtdb_get_connection_info_ipv6_fn)get_function("rtdb_get_connection_info_ipv6");
-return fn(handle, node_number, socket, info);
-}
 */
 
 /**
@@ -3252,11 +3234,6 @@ return fn(handle, node_number, socket, info);
  * \return rtdb_error
  * \remark 完成对 RTDB 的访问后调用本函数断开连接。连接一旦断开，则需要重新连接后才能调用其他的接口函数。
 rtdb_error RTDBAPI_CALLRULE rtdb_disconnect_warp(rtdb_int32 handle)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdb_disconnect_fn)(rtdb_int32 handle);
-rtdb_disconnect_fn fn = (rtdb_disconnect_fn)get_function("rtdb_disconnect");
-return fn(handle);
-}
 */
 
 /**
@@ -3267,11 +3244,6 @@ return fn(handle);
 * \param [out] priv     账户权限， 枚举 \ref RTDB_PRIV_GROUP 的值之一
 * \return rtdb_error
 rtdb_error RTDBAPI_CALLRULE rtdb_login_warp(rtdb_int32 handle, const char *user, const char *password, rtdb_int32 *priv)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdb_login_fn)(rtdb_int32 handle, const char *user, const char *password, rtdb_int32 *priv);
-rtdb_login_fn fn = (rtdb_login_fn)get_function("rtdb_login");
-return fn(handle, user, password, priv);
-}
 */
 
 /**
@@ -3281,11 +3253,6 @@ return fn(handle, user, password, priv);
  * \return    rtdb_error
  * \remark 如句柄未链接任何服务器，返回RTDB_OS_INVALID(当前支持操作系统类型：windows、linux)。
 rtdb_error RTDBAPI_CALLRULE rtdb_get_linked_ostype_warp(rtdb_int32 handle, RTDB_OS_TYPE* ostype)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdb_get_linked_ostype_fn)(rtdb_int32 handle, RTDB_OS_TYPE* ostype);
-rtdb_get_linked_ostype_fn fn = (rtdb_get_linked_ostype_fn)get_function("rtdb_get_linked_ostype");
-return fn(handle, ostype);
-}
 */
 
 /**
@@ -3295,11 +3262,6 @@ return fn(handle, ostype);
  * \return    rtdb_error
  * \remark 如句柄未链接任何服务器，返回RTDB_OS_INVALID(当前支持操作系统类型：windows、linux)。
 rtdb_error RTDBAPI_CALLRULE rtdb_get_handle_info_warp(rtdb_int32 handle, RTDB_HANDLE_INFO* info)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdb_get_handle_info_fn)(rtdb_int32 handle, RTDB_HANDLE_INFO* info);
-rtdb_get_handle_info_fn fn = (rtdb_get_handle_info_fn)get_function("rtdb_get_handle_info");
-return fn(handle, info);
-}
 */
 
 /**
@@ -3310,11 +3272,6 @@ return fn(handle, info);
 * \return rtdb_error
 * \remark 只有系统管理员可以修改其它用户的密码
 rtdb_error RTDBAPI_CALLRULE rtdb_change_password_warp(rtdb_int32 handle, const char *user, const char *password)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdb_change_password_fn)(rtdb_int32 handle, const char *user, const char *password);
-rtdb_change_password_fn fn = (rtdb_change_password_fn)get_function("rtdb_change_password");
-return fn(handle, user, password);
-}
 */
 
 /**
@@ -3324,11 +3281,6 @@ return fn(handle, user, password);
 * \param new_pwd 帐户新口令
 * \return rtdb_error
 rtdb_error RTDBAPI_CALLRULE rtdb_change_my_password_warp(rtdb_int32 handle, const char *old_pwd, const char *new_pwd)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdb_change_my_password_fn)(rtdb_int32 handle, const char *old_pwd, const char *new_pwd);
-rtdb_change_my_password_fn fn = (rtdb_change_my_password_fn)get_function("rtdb_change_my_password");
-return fn(handle, old_pwd, new_pwd);
-}
 */
 
 /**
@@ -3338,11 +3290,6 @@ return fn(handle, old_pwd, new_pwd);
  * \return rtdb_error
  * \remark 如果还未登陆或不在服务器信任连接中，对应权限为-1，表示没有任何权限
 rtdb_error RTDBAPI_CALLRULE rtdb_get_priv_warp(rtdb_int32 handle, rtdb_int32 *priv)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdb_get_priv_fn)(rtdb_int32 handle, rtdb_int32 *priv);
-rtdb_get_priv_fn fn = (rtdb_get_priv_fn)get_function("rtdb_get_priv");
-return fn(handle, priv);
-}
 */
 
 /**
@@ -3353,11 +3300,6 @@ return fn(handle, priv);
 * \return rtdb_error
 * \remark 只有管理员有修改权限
 rtdb_error RTDBAPI_CALLRULE rtdb_change_priv_warp(rtdb_int32 handle, const char *user, rtdb_int32 priv)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdb_change_priv_fn)(rtdb_int32 handle, const char *user, rtdb_int32 priv);
-rtdb_change_priv_fn fn = (rtdb_change_priv_fn)get_function("rtdb_change_priv");
-return fn(handle, user, priv);
-}
 */
 
 /**
@@ -3369,11 +3311,6 @@ return fn(handle, user, priv);
 * \return rtdb_error
 * \remark 只有管理员有添加用户权限
 rtdb_error RTDBAPI_CALLRULE rtdb_add_user_warp(rtdb_int32 handle, const char *user, const char *password, rtdb_int32 priv)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdb_add_user_fn)(rtdb_int32 handle, const char *user, const char *password, rtdb_int32 priv);
-rtdb_add_user_fn fn = (rtdb_add_user_fn)get_function("rtdb_add_user");
-return fn(handle, user, password, priv);
-}
 */
 
 /**
@@ -3383,11 +3320,6 @@ return fn(handle, user, password, priv);
 * \return rtdb_error
 * \remark 只有管理员有删除用户权限
 rtdb_error RTDBAPI_CALLRULE rtdb_remove_user_warp(rtdb_int32 handle, const char *user)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdb_remove_user_fn)(rtdb_int32 handle, const char *user);
-rtdb_remove_user_fn fn = (rtdb_remove_user_fn)get_function("rtdb_remove_user");
-return fn(handle, user);
-}
 */
 
 /**
@@ -3398,11 +3330,6 @@ return fn(handle, user);
 * \return    rtdb_error
 * \remark 只有管理员有启用禁用权限
 rtdb_error RTDBAPI_CALLRULE rtdb_lock_user_warp(rtdb_int32 handle, const char *user, rtdb_int8 lock)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdb_lock_user_fn)(rtdb_int32 handle, const char *user, rtdb_int8 lock);
-rtdb_lock_user_fn fn = (rtdb_lock_user_fn)get_function("rtdb_lock_user");
-return fn(handle, user, lock);
-}
 */
 
 /**
@@ -3414,11 +3341,6 @@ return fn(handle, user, lock);
  * \return rtdb_error
  * \remark 用户须保证分配给 users, privs 的空间与 count 相符，如果输入的 count 小于总的用户数，则只返回部分用户信息。且每个指针指向的字符串缓冲区尺寸不小于 \ref RTDB_USER_SIZE。
 rtdb_error RTDBAPI_CALLRULE rtdb_get_users_warp(rtdb_int32 handle, rtdb_int32 *count, RTDB_USER_INFO *infos)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdb_get_users_fn)(rtdb_int32 handle, rtdb_int32 *count, RTDB_USER_INFO *infos);
-rtdb_get_users_fn fn = (rtdb_get_users_fn)get_function("rtdb_get_users");
-return fn(handle, count, infos);
-}
 */
 
 /**
@@ -3434,11 +3356,6 @@ return fn(handle, count, infos);
 * 有效的子网掩码的所有 1 位于 0 左侧，例如："255.255.254.0"。
 * 当全部为 1 时，表示该子网中只有 addr 一个地址；但不能全部为 0。
 rtdb_error RTDBAPI_CALLRULE rtdb_add_blacklist_warp(rtdb_int32 handle, const char *addr, const char *mask, const char *desc)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdb_add_blacklist_fn)(rtdb_int32 handle, const char *addr, const char *mask, const char *desc);
-rtdb_add_blacklist_fn fn = (rtdb_add_blacklist_fn)get_function("rtdb_add_blacklist");
-return fn(handle, addr, mask, desc);
-}
 */
 
 /**
@@ -3450,11 +3367,6 @@ return fn(handle, addr, mask, desc);
 * \param mask_new  新的阻止连接段子网掩码
 * \param desc      新的阻止连接段的说明，超过 511 字符将被截断
 rtdb_error RTDBAPI_CALLRULE rtdb_update_blacklist_warp(rtdb_int32 handle, const char *addr, const char *mask, const char *addr_new, const char *mask_new, const char *desc)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdb_update_blacklist_fn)(rtdb_int32 handle, const char *addr, const char *mask, const char *addr_new, const char *mask_new, const char *desc);
-rtdb_update_blacklist_fn fn = (rtdb_update_blacklist_fn)get_function("rtdb_update_blacklist");
-return fn(handle, addr, mask, addr_new, mask_new, desc);
-}
 */
 
 /**
@@ -3464,11 +3376,6 @@ return fn(handle, addr, mask, addr_new, mask_new, desc);
 * \param mask    阻止连接段子网掩码
 * \remark 只有 addr 与 mask 完全相同才视为同一个阻止连接段
 rtdb_error RTDBAPI_CALLRULE rtdb_remove_blacklist_warp(rtdb_int32 handle, const char *addr, const char *mask)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdb_remove_blacklist_fn)(rtdb_int32 handle, const char *addr, const char *mask);
-rtdb_remove_blacklist_fn fn = (rtdb_remove_blacklist_fn)get_function("rtdb_remove_blacklist");
-return fn(handle, addr, mask);
-}
 */
 
 /**
@@ -3483,11 +3390,6 @@ return fn(handle, addr, mask);
  *      addrs, masks 中每个字符串指针所指缓冲区尺寸不得小于 32 字节，
  *      descs 中每个字符串指针所指缓冲区尺寸不得小于 512 字节。
 rtdb_error RTDBAPI_CALLRULE rtdb_get_blacklist_warp(rtdb_int32 handle, char* const* addrs, char* const* masks, char* const* descs, rtdb_int32 *count)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdb_get_blacklist_fn)(rtdb_int32 handle, char* const* addrs, char* const* masks, char* const* descs, rtdb_int32 *count);
-rtdb_get_blacklist_fn fn = (rtdb_get_blacklist_fn)get_function("rtdb_get_blacklist");
-return fn(handle, addrs, masks, descs, count);
-}
 */
 
 /**
@@ -3506,11 +3408,6 @@ return fn(handle, addrs, masks, descs, count);
 *        表示该子网中只有 addr 一个地址；
 *        但不能全部为 0。
 rtdb_error RTDBAPI_CALLRULE rtdb_add_authorization_warp(rtdb_int32 handle, const char *addr, const char *mask, rtdb_int32 priv, const char *desc)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdb_add_authorization_fn)(rtdb_int32 handle, const char *addr, const char *mask, rtdb_int32 priv, const char *desc);
-rtdb_add_authorization_fn fn = (rtdb_add_authorization_fn)get_function("rtdb_add_authorization");
-return fn(handle, addr, mask, priv, desc);
-}
 */
 
 /**
@@ -3523,11 +3420,6 @@ return fn(handle, addr, mask, priv, desc);
 * \param priv      整数，输入，新的信任连接段拥有的用户权限。
 * \param desc      字符串，输入，新的信任连接段的说明，超过 511 字符将被截断。
 rtdb_error RTDBAPI_CALLRULE rtdb_update_authorization_warp(rtdb_int32 handle, const char *addr, const char *mask, const char *addr_new, const char *mask_new, rtdb_int32 priv, const char *desc)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdb_update_authorization_fn)(rtdb_int32 handle, const char *addr, const char *mask, const char *addr_new, const char *mask_new, rtdb_int32 priv, const char *desc);
-rtdb_update_authorization_fn fn = (rtdb_update_authorization_fn)get_function("rtdb_update_authorization");
-return fn(handle, addr, mask, addr_new, mask_new, priv, desc);
-}
 */
 
 /**
@@ -3537,11 +3429,6 @@ return fn(handle, addr, mask, addr_new, mask_new, priv, desc);
 * \param mask    字符串，输入，信任连接段子网掩码。
 * \remark 只有 addr 与 mask 完全相同才视为同一个信任连接段
 rtdb_error RTDBAPI_CALLRULE rtdb_remove_authorization_warp(rtdb_int32 handle, const char *addr, const char *mask)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdb_remove_authorization_fn)(rtdb_int32 handle, const char *addr, const char *mask);
-rtdb_remove_authorization_fn fn = (rtdb_remove_authorization_fn)get_function("rtdb_remove_authorization");
-return fn(handle, addr, mask);
-}
 */
 
 /**
@@ -3557,11 +3444,6 @@ return fn(handle, addr, mask);
  *        addrs, masks 中每个字符串指针所指缓冲区尺寸不得小于 32 字节，
  *        descs 中每个字符串指针所指缓冲区尺寸不得小于 512 字节。
 rtdb_error RTDBAPI_CALLRULE rtdb_get_authorizations_warp(rtdb_int32 handle, char* const* addrs, char* const* masks, rtdb_int32 *privs, char* const* descs, rtdb_int32 *count)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdb_get_authorizations_fn)(rtdb_int32 handle, char* const* addrs, char* const* masks, rtdb_int32 *privs, char* const* descs, rtdb_int32 *count);
-rtdb_get_authorizations_fn fn = (rtdb_get_authorizations_fn)get_function("rtdb_get_authorizations");
-return fn(handle, addrs, masks, privs, descs, count);
-}
 */
 
 /**
@@ -3571,11 +3453,6 @@ return fn(handle, addrs, masks, privs, descs, count);
  * \param hosttime     整型，输出，Rtdb服务器的当前UTC时间，
  *                     表示距离1970年1月1日08:00:00的秒数。
 rtdb_error RTDBAPI_CALLRULE rtdb_host_time_warp(rtdb_int32 handle, rtdb_int32 *hosttime)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdb_host_time_fn)(rtdb_int32 handle, rtdb_int32 *hosttime);
-rtdb_host_time_fn fn = (rtdb_host_time_fn)get_function("rtdb_host_time");
-return fn(handle, hosttime);
-}
 */
 
 /**
@@ -3585,11 +3462,6 @@ return fn(handle, hosttime);
  * \param hosttime     整型，输出，Rtdb服务器的当前UTC时间，
  *                     表示距离1970年1月1日08:00:00的秒数。
 rtdb_error RTDBAPI_CALLRULE rtdb_host_time64_warp(rtdb_int32 handle, rtdb_timestamp_type* hosttime)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdb_host_time64_fn)(rtdb_int32 handle, rtdb_timestamp_type* hosttime);
-rtdb_host_time64_fn fn = (rtdb_host_time64_fn)get_function("rtdb_host_time64");
-return fn(handle, hosttime);
-}
 */
 
 /**
@@ -3601,11 +3473,6 @@ return fn(handle, hosttime);
  * \param timespan     整型，输入，要处理的时间跨度秒数。
  * \remark 字符串缓冲区大小不应小于 32 字节。
 rtdb_error RTDBAPI_CALLRULE rtdb_format_timespan_warp(char *str, rtdb_int32 timespan)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdb_format_timespan_fn)(char *str, rtdb_int32 timespan);
-rtdb_format_timespan_fn fn = (rtdb_format_timespan_fn)get_function("rtdb_format_timespan");
-return fn(str, timespan);
-}
 */
 
 /**
@@ -3626,11 +3493,6 @@ return fn(str, timespan);
 *
 * \param timespan     整型，输出，返回解析得到的时间跨度秒数。
 rtdb_error RTDBAPI_CALLRULE rtdb_parse_timespan_warp(const char *str, rtdb_int32 *timespan)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdb_parse_timespan_fn)(const char *str, rtdb_int32 *timespan);
-rtdb_parse_timespan_fn fn = (rtdb_parse_timespan_fn)get_function("rtdb_parse_timespan");
-return fn(str, timespan);
-}
 */
 
 /**
@@ -3670,11 +3532,6 @@ return fn(str, timespan);
 * \param ms           短整型，输出，返回解析得到的时间毫秒值。
 *  备注：ms 可以为空指针，相应的毫秒信息将不再返回。
 rtdb_error RTDBAPI_CALLRULE rtdb_parse_time_warp(const char *str, rtdb_int64 *datetime, rtdb_int16 *ms)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdb_parse_time_fn)(const char *str, rtdb_int64 *datetime, rtdb_int16 *ms);
-rtdb_parse_time_fn fn = (rtdb_parse_time_fn)get_function("rtdb_parse_time");
-return fn(str, datetime, ms);
-}
 */
 
 /**
@@ -3687,11 +3544,6 @@ return fn(str, datetime, ms);
  * \remark 用户须保证分配给 message， name 的空间与 size 相符,
  *      name 或 message 可以为空指针，对应的信息将不再返回。
 void RTDBAPI_CALLRULE rtdb_format_message_warp(rtdb_error ecode, char *message, char *name, rtdb_int32 size)
-{
-typedef void (RTDBAPI_CALLRULE *rtdb_format_message_fn)(rtdb_error ecode, char *message, char *name, rtdb_int32 size);
-rtdb_format_message_fn fn = (rtdb_format_message_fn)get_function("rtdb_format_message");
-return fn(ecode, message, name, size);
-}
 */
 
 /**
@@ -3704,11 +3556,6 @@ return fn(ecode, message, name, size);
  * \remark 用户须保证分配给 desc、name 的空间与 size 相符，
  *      name 或 message 可以为空指针，对应的信息将不再返回。
 void RTDBAPI_CALLRULE rtdb_job_message_warp(rtdb_int32 job_id, char *desc, char *name, rtdb_int32 size)
-{
-typedef void (RTDBAPI_CALLRULE *rtdb_job_message_fn)(rtdb_int32 job_id, char *desc, char *name, rtdb_int32 size);
-rtdb_job_message_fn fn = (rtdb_job_message_fn)get_function("rtdb_job_message");
-return fn(job_id, desc, name, size);
-}
 */
 
 /**
@@ -3718,11 +3565,6 @@ return fn(job_id, desc, name, size);
  * \param socket   整型，输入，要设置超时时间的连接
  * \param timeout  整型，输入，超时时间，单位为秒，0 表示始终保持
 rtdb_error RTDBAPI_CALLRULE rtdb_set_timeout_warp(rtdb_int32 handle, rtdb_int32 socket, rtdb_int32 timeout)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdb_set_timeout_fn)(rtdb_int32 handle, rtdb_int32 socket, rtdb_int32 timeout);
-rtdb_set_timeout_fn fn = (rtdb_set_timeout_fn)get_function("rtdb_set_timeout");
-return fn(handle, socket, timeout);
-}
 */
 
 /**
@@ -3732,11 +3574,6 @@ return fn(handle, socket, timeout);
  * \param socket   整型，输入，要获取超时时间的连接
  * \param timeout  整型，输出，超时时间，单位为秒，0 表示始终保持
 rtdb_error RTDBAPI_CALLRULE rtdb_get_timeout_warp(rtdb_int32 handle, rtdb_int32 socket, rtdb_int32 *timeout)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdb_get_timeout_fn)(rtdb_int32 handle, rtdb_int32 socket, rtdb_int32 *timeout);
-rtdb_get_timeout_fn fn = (rtdb_get_timeout_fn)get_function("rtdb_get_timeout");
-return fn(handle, socket, timeout);
-}
 */
 
 /**
@@ -3745,11 +3582,6 @@ return fn(handle, socket, timeout);
  * \param handle    连接句柄
  * \param socket    整型，输入，要断开的连接
 rtdb_error RTDBAPI_CALLRULE rtdb_kill_connection_warp(rtdb_int32 handle, rtdb_int32 socket)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdb_kill_connection_fn)(rtdb_int32 handle, rtdb_int32 socket);
-rtdb_kill_connection_fn fn = (rtdb_kill_connection_fn)get_function("rtdb_kill_connection");
-return fn(handle, socket);
-}
 */
 
 /**
@@ -3761,11 +3593,6 @@ return fn(handle, socket);
  * \param size      整型，输入，字符串缓冲区尺寸。
  * \remark 本接口只接受 [RTDB_PARAM_STR_FIRST, RTDB_PARAM_STR_LAST) 范围之内参数索引。
 rtdb_error RTDBAPI_CALLRULE rtdb_get_db_info1_warp(rtdb_int32 handle, rtdb_int32 index, char *str, rtdb_int32 size)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdb_get_db_info1_fn)(rtdb_int32 handle, rtdb_int32 index, char *str, rtdb_int32 size);
-rtdb_get_db_info1_fn fn = (rtdb_get_db_info1_fn)get_function("rtdb_get_db_info1");
-return fn(handle, index, str, size);
-}
 */
 
 /**
@@ -3776,11 +3603,6 @@ return fn(handle, index, str, size);
  * \param value     无符号整型，输出，存放取得的整型参数值。
  * \remark 本接口只接受 [RTDB_PARAM_INT_FIRST, RTDB_PARAM_INT_LAST) 范围之内参数索引。
 rtdb_error RTDBAPI_CALLRULE rtdb_get_db_info2_warp(rtdb_int32 handle, rtdb_int32 index, rtdb_uint32 *value)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdb_get_db_info2_fn)(rtdb_int32 handle, rtdb_int32 index, rtdb_uint32 *value);
-rtdb_get_db_info2_fn fn = (rtdb_get_db_info2_fn)get_function("rtdb_get_db_info2");
-return fn(handle, index, value);
-}
 */
 
 /**
@@ -3794,11 +3616,6 @@ return fn(handle, index, value);
  * \param str       字符串型，输入，新的参数值。
  * \remark 如果修改了启动参数，将返回 RtE_DATABASE_NEED_RESTART 提示码。
 rtdb_error RTDBAPI_CALLRULE rtdb_set_db_info1_warp(rtdb_int32 handle, rtdb_int32 index, const char *str)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdb_set_db_info1_fn)(rtdb_int32 handle, rtdb_int32 index, const char *str);
-rtdb_set_db_info1_fn fn = (rtdb_set_db_info1_fn)get_function("rtdb_set_db_info1");
-return fn(handle, index, str);
-}
 */
 
 /**
@@ -3834,11 +3651,6 @@ return fn(handle, index, str);
  * \param value     无符号整型，输入，新的参数值。
  * \remark 如果修改了启动参数，将返回 RtE_DATABASE_NEED_RESTART 提示码。
 rtdb_error RTDBAPI_CALLRULE rtdb_set_db_info2_warp(rtdb_int32 handle, rtdb_int32 index, rtdb_uint32 value)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdb_set_db_info2_fn)(rtdb_int32 handle, rtdb_int32 index, rtdb_uint32 value);
-rtdb_set_db_info2_fn fn = (rtdb_set_db_info2_fn)get_function("rtdb_set_db_info2");
-return fn(handle, index, value);
-}
 */
 
 /**
@@ -3849,11 +3661,6 @@ return fn(handle, index, value);
  *                   返回逻辑盘符组成的字符串，每个盘符占一个字符。
  * \remark drivers 的内存空间由用户负责维护，长度应不小于 32。
 rtdb_error RTDBAPI_CALLRULE rtdb_get_logical_drivers_warp(rtdb_int32 handle, char *drivers)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdb_get_logical_drivers_fn)(rtdb_int32 handle, char *drivers);
-rtdb_get_logical_drivers_fn fn = (rtdb_get_logical_drivers_fn)get_function("rtdb_get_logical_drivers");
-return fn(handle, drivers);
-}
 */
 
 /**
@@ -3862,11 +3669,6 @@ return fn(handle, drivers);
 * \param handle       连接句柄
 * \param dir          字符串，输入，要打开的目录
 rtdb_error RTDBAPI_CALLRULE rtdb_open_path_warp(rtdb_int32 handle, const char *dir)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdb_open_path_fn)(rtdb_int32 handle, const char *dir);
-rtdb_open_path_fn fn = (rtdb_open_path_fn)get_function("rtdb_open_path");
-return fn(handle, dir);
-}
 */
 
 /**
@@ -3882,11 +3684,6 @@ return fn(handle, dir);
  * \remark path 的内存空间由用户负责维护，尺寸应不小于 RTDB_MAX_PATH。
  *      当返回值为 RtE_BATCH_END 时表示目录下所有子目录和文件已经遍历完毕。
 rtdb_error RTDBAPI_CALLRULE rtdb_read_path_warp(rtdb_int32 handle, char *path, rtdb_int16 *is_dir, rtdb_int32 *atime, rtdb_int32 *ctime, rtdb_int32 *mtime, rtdb_int64 *size)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdb_read_path_fn)(rtdb_int32 handle, char *path, rtdb_int16 *is_dir, rtdb_int32 *atime, rtdb_int32 *ctime, rtdb_int32 *mtime, rtdb_int64 *size);
-rtdb_read_path_fn fn = (rtdb_read_path_fn)get_function("rtdb_read_path");
-return fn(handle, path, is_dir, atime, ctime, mtime, size);
-}
 */
 
 /**
@@ -3902,11 +3699,6 @@ return fn(handle, path, is_dir, atime, ctime, mtime, size);
  * \remark path 的内存空间由用户负责维护，尺寸应不小于 RTDB_MAX_PATH。
  *      当返回值为 RtE_BATCH_END 时表示目录下所有子目录和文件已经遍历完毕。
 rtdb_error RTDBAPI_CALLRULE rtdb_read_path64_warp(rtdb_int32 handle, char* path, rtdb_int16* is_dir, rtdb_timestamp_type* atime, rtdb_timestamp_type* ctime, rtdb_timestamp_type* mtime, rtdb_int64* size)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdb_read_path64_fn)(rtdb_int32 handle, char* path, rtdb_int16* is_dir, rtdb_timestamp_type* atime, rtdb_timestamp_type* ctime, rtdb_timestamp_type* mtime, rtdb_int64* size);
-rtdb_read_path64_fn fn = (rtdb_read_path64_fn)get_function("rtdb_read_path64");
-return fn(handle, path, is_dir, atime, ctime, mtime, size);
-}
 */
 
 /**
@@ -3915,11 +3707,6 @@ return fn(handle, path, is_dir, atime, ctime, mtime, size);
  *
  * \param handle      连接句柄
 rtdb_error RTDBAPI_CALLRULE rtdb_close_path_warp(rtdb_int32 handle)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdb_close_path_fn)(rtdb_int32 handle);
-rtdb_close_path_fn fn = (rtdb_close_path_fn)get_function("rtdb_close_path");
-return fn(handle);
-}
 */
 
 /**
@@ -3929,11 +3716,6 @@ return fn(handle);
 * \param handle       连接句柄
 * \param dir          字符串，输入，新建目录的全路径
 rtdb_error RTDBAPI_CALLRULE rtdb_mkdir_warp(rtdb_int32 handle, const char *dir)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdb_mkdir_fn)(rtdb_int32 handle, const char *dir);
-rtdb_mkdir_fn fn = (rtdb_mkdir_fn)get_function("rtdb_mkdir");
-return fn(handle, dir);
-}
 */
 
 /**
@@ -3944,11 +3726,6 @@ return fn(handle, dir);
 * \param file       字符串，输入，文件名
 * \param size       64 位整数，输出，文件大小
 rtdb_error RTDBAPI_CALLRULE rtdb_get_file_size_warp(rtdb_int32 handle, const char *file, rtdb_int64 *size)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdb_get_file_size_fn)(rtdb_int32 handle, const char *file, rtdb_int64 *size);
-rtdb_get_file_size_fn fn = (rtdb_get_file_size_fn)get_function("rtdb_get_file_size");
-return fn(handle, file, size);
-}
 */
 
 /**
@@ -3964,11 +3741,6 @@ return fn(handle, file, size);
 *                     输出时表示实际读取的字节数
 * \remark 用户须保证分配给 content 的空间与 size 相符。
 rtdb_error RTDBAPI_CALLRULE rtdb_read_file_warp(rtdb_int32 handle, const char *file, char *content, rtdb_int64 pos, rtdb_int64 *size)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdb_read_file_fn)(rtdb_int32 handle, const char *file, char *content, rtdb_int64 pos, rtdb_int64 *size);
-rtdb_read_file_fn fn = (rtdb_read_file_fn)get_function("rtdb_read_file");
-return fn(handle, file, content, pos, size);
-}
 */
 
 /**
@@ -3978,11 +3750,6 @@ return fn(handle, file, content, pos, size);
  * \param handle       连接句柄
  * \param len          整形，输出参数，代表数据库允许的blob、str类型测点的最大长度
 rtdb_error RTDBAPI_CALLRULE rtdb_get_max_blob_len_warp(rtdb_int32 handle, rtdb_int32 *len)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdb_get_max_blob_len_fn)(rtdb_int32 handle, rtdb_int32 *len);
-rtdb_get_max_blob_len_fn fn = (rtdb_get_max_blob_len_fn)get_function("rtdb_get_max_blob_len");
-return fn(handle, len);
-}
 */
 
 /**
@@ -4000,11 +3767,6 @@ return fn(handle, len);
  * 限定位域：00（Not limited）01（Low limited）10（high limited）11（Constant）
  * 三个域之间用逗号隔开，输出到definitions参数中，前面有有RTDB，OPC或者USER标识，说明标签点类别
 rtdb_error RTDBAPI_CALLRULE rtdb_format_quality_warp(rtdb_int32 handle, rtdb_int32 *count, rtdb_int16 *qualities, rtdb_byte **definitions, rtdb_int32 *lens)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdb_format_quality_fn)(rtdb_int32 handle, rtdb_int32 *count, rtdb_int16 *qualities, rtdb_byte **definitions, rtdb_int32 *lens);
-rtdb_format_quality_fn fn = (rtdb_format_quality_fn)get_function("rtdb_format_quality");
-return fn(handle, count, qualities, definitions, lens);
-}
 */
 
 /**
@@ -4012,11 +3774,6 @@ return fn(handle, count, qualities, definitions, lens);
  * \brief 判断连接是否可用
  * \param handle   连接句柄
 rtdb_error RTDBAPI_CALLRULE rtdb_judge_connect_status_warp(rtdb_int32 handle, rtdb_int8* change_connection GAPI_DEFAULT_VALUE(0), char* current_ip_addr GAPI_DEFAULT_VALUE(0), rtdb_int32 size GAPI_DEFAULT_VALUE(0))
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdb_judge_connect_status_fn)(rtdb_int32 handle, rtdb_int8* change_connection GAPI_DEFAULT_VALUE(0), char* current_ip_addr GAPI_DEFAULT_VALUE(0), rtdb_int32 size GAPI_DEFAULT_VALUE(0));
-rtdb_judge_connect_status_fn fn = (rtdb_judge_connect_status_fn)get_function("rtdb_judge_connect_status");
-return fn(handle, change_connection, current_ip_addr, size);
-}
 */
 
 /**
@@ -4028,11 +3785,6 @@ return fn(handle, change_connection, current_ip_addr, size);
  *      [size]         整型，输入，ip_addr 参数的字节长度
  * 备注：用户须保证分配给 ip_addr 的空间与 size 相符
 void RTDBAPI_CALLRULE rtdb_format_ipaddr_warp(rtdb_uint32 ip, char* ip_addr, rtdb_int32 size)
-{
-typedef void (RTDBAPI_CALLRULE *rtdb_format_ipaddr_fn)(rtdb_uint32 ip, char* ip_addr, rtdb_int32 size);
-rtdb_format_ipaddr_fn fn = (rtdb_format_ipaddr_fn)get_function("rtdb_format_ipaddr");
-return fn(ip, ip_addr, size);
-}
 */
 
 /**
@@ -4044,11 +3796,6 @@ return fn(ip, ip_addr, size);
 *      [equation]  输出，返回的方程式长度最长为RTDB_MAX_EQUATION_SIZE-1
 *备注：用户调用时为equation分配的空间不得小于RTDB_MAX_EQUATION_SIZE
 rtdb_error RTDBAPI_CALLRULE rtdbb_get_equation_by_file_name_warp(rtdb_int32 handle, const char* file_name, char equation[RTDB_MAX_EQUATION_SIZE])
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_get_equation_by_file_name_fn)(rtdb_int32 handle, const char* file_name, char equation[RTDB_MAX_EQUATION_SIZE]);
-rtdbb_get_equation_by_file_name_fn fn = (rtdbb_get_equation_by_file_name_fn)get_function("rtdbb_get_equation_by_file_name");
-return fn(handle, file_name, equation);
-}
 */
 
 /**
@@ -4061,11 +3808,6 @@ return fn(handle, file_name, equation);
  *
  *备注：用户调用时为equation分配的空间不得小于RTDB_MAX_EQUATION_SIZE
 rtdb_error RTDBAPI_CALLRULE rtdbb_get_equation_by_id_warp(rtdb_int32 handle, rtdb_int32 id, char equation[RTDB_MAX_EQUATION_SIZE])
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_get_equation_by_id_fn)(rtdb_int32 handle, rtdb_int32 id, char equation[RTDB_MAX_EQUATION_SIZE]);
-rtdbb_get_equation_by_id_fn fn = (rtdbb_get_equation_by_id_fn)get_function("rtdbb_get_equation_by_id");
-return fn(handle, id, equation);
-}
 */
 
 /**
@@ -4077,11 +3819,6 @@ return fn(handle, id, equation);
  *                 在输入时，type、name、desc 字段有效；
  *                 输出时，id 字段由系统自动分配并返回给用户。
 rtdb_error RTDBAPI_CALLRULE rtdbb_append_table_warp(rtdb_int32 handle, RTDB_TABLE *field)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_append_table_fn)(rtdb_int32 handle, RTDB_TABLE *field);
-rtdbb_append_table_fn fn = (rtdbb_append_table_fn)get_function("rtdbb_append_table");
-return fn(handle, field);
-}
 */
 
 /**
@@ -4091,11 +3828,6 @@ return fn(handle, field);
  * \param handle   连接句柄
  * \param count    整型，输出，标签点表总数
 rtdb_error RTDBAPI_CALLRULE rtdbb_tables_count_warp(rtdb_int32 handle, rtdb_int32 *count)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_tables_count_fn)(rtdb_int32 handle, rtdb_int32 *count);
-rtdbb_tables_count_fn fn = (rtdbb_tables_count_fn)get_function("rtdbb_tables_count");
-return fn(handle, count);
-}
 */
 
 /**
@@ -4109,11 +3841,6 @@ return fn(handle, count);
  * \remark 用户须保证分配给 ids 的空间与 count 相符
  *      如果输入的 count 小于输出的 count，则只返回部分表id
 rtdb_error RTDBAPI_CALLRULE rtdbb_get_tables_warp(rtdb_int32 handle, rtdb_int32 *ids, rtdb_int32 *count)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_get_tables_fn)(rtdb_int32 handle, rtdb_int32 *ids, rtdb_int32 *count);
-rtdbb_get_tables_fn fn = (rtdbb_get_tables_fn)get_function("rtdbb_get_tables");
-return fn(handle, ids, count);
-}
 */
 
 /**
@@ -4124,11 +3851,6 @@ return fn(handle, ids, count);
  * \param id       整型，输入，表ID
  * \param size     整型，输出，表中标签点数量
 rtdb_error RTDBAPI_CALLRULE rtdbb_get_table_size_by_id_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32 *size)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_get_table_size_by_id_fn)(rtdb_int32 handle, rtdb_int32 id, rtdb_int32 *size);
-rtdbb_get_table_size_by_id_fn fn = (rtdbb_get_table_size_by_id_fn)get_function("rtdbb_get_table_size_by_id");
-return fn(handle, id, size);
-}
 */
 
 /**
@@ -4139,11 +3861,6 @@ return fn(handle, id, size);
 * \param name     字符串，输入，表名称
 * \param size     整型，输出，表中标签点数量
 rtdb_error RTDBAPI_CALLRULE rtdbb_get_table_size_by_name_warp(rtdb_int32 handle, const char *name, rtdb_int32 *size)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_get_table_size_by_name_fn)(rtdb_int32 handle, const char *name, rtdb_int32 *size);
-rtdbb_get_table_size_by_name_fn fn = (rtdbb_get_table_size_by_name_fn)get_function("rtdbb_get_table_size_by_name");
-return fn(handle, name, size);
-}
 */
 
 /**
@@ -4156,11 +3873,6 @@ return fn(handle, name, size);
  * 注意：通过此API获取标签点数量，然后搜索此表中的标签点得到的数量可能会不一致，这是由于服务内部批量建点采取了异步的方式。
  *       一般情况下请使用rtdbb_get_table_size_by_id来获取表中的标签点数量。
 rtdb_error RTDBAPI_CALLRULE rtdbb_get_table_real_size_by_id_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32 *size)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_get_table_real_size_by_id_fn)(rtdb_int32 handle, rtdb_int32 id, rtdb_int32 *size);
-rtdbb_get_table_real_size_by_id_fn fn = (rtdbb_get_table_real_size_by_id_fn)get_function("rtdbb_get_table_real_size_by_id");
-return fn(handle, id, size);
-}
 */
 
 /**
@@ -4171,11 +3883,6 @@ return fn(handle, id, size);
  * \param field  RTDB_TABLE 结构，输入/输出，标签点表属性，
  *               输入时指定 id 字段，输出时返回 type、name、desc 字段。
 rtdb_error RTDBAPI_CALLRULE rtdbb_get_table_property_by_id_warp(rtdb_int32 handle, RTDB_TABLE *field)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_get_table_property_by_id_fn)(rtdb_int32 handle, RTDB_TABLE *field);
-rtdbb_get_table_property_by_id_fn fn = (rtdbb_get_table_property_by_id_fn)get_function("rtdbb_get_table_property_by_id");
-return fn(handle, field);
-}
 */
 
 /**
@@ -4186,11 +3893,6 @@ return fn(handle, field);
  * \param field  RTDB_TABLE 结构，输入/输出，标签点表属性
  *               输入时指定 name 字段，输出时返回 id、type、desc 字段。
 rtdb_error RTDBAPI_CALLRULE rtdbb_get_table_property_by_name_warp(rtdb_int32 handle, RTDB_TABLE *field)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_get_table_property_by_name_fn)(rtdb_int32 handle, RTDB_TABLE *field);
-rtdbb_get_table_property_by_name_fn fn = (rtdbb_get_table_property_by_name_fn)get_function("rtdbb_get_table_property_by_name");
-return fn(handle, field);
-}
 */
 
 /**
@@ -4204,11 +3906,6 @@ return fn(handle, field);
  * \param calc RTDB_CALC_POINT 结构，输入，计算标签点扩展属性集。
  * \remark 如果新建的标签点没有对应的扩展属性集，可置为空指针。
 rtdb_error RTDBAPI_CALLRULE rtdbb_insert_point_warp(rtdb_int32 handle, RTDB_POINT *base, RTDB_SCAN_POINT *scan, RTDB_CALC_POINT *calc)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_insert_point_fn)(rtdb_int32 handle, RTDB_POINT *base, RTDB_SCAN_POINT *scan, RTDB_CALC_POINT *calc);
-rtdbb_insert_point_fn fn = (rtdbb_insert_point_fn)get_function("rtdbb_insert_point");
-return fn(handle, base, scan, calc);
-}
 */
 
 /**
@@ -4222,11 +3919,6 @@ return fn(handle, base, scan, calc);
  *      [calc] RTDB_MAX_CALC_POINT 结构，输入，计算标签点扩展属性集。
  * 备注：如果新建的标签点没有对应的扩展属性集，可置为空指针。
 rtdb_error RTDBAPI_CALLRULE rtdbb_insert_max_point_warp(rtdb_int32 handle, RTDB_POINT *base, RTDB_SCAN_POINT *scan, RTDB_MAX_CALC_POINT *calc)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_insert_max_point_fn)(rtdb_int32 handle, RTDB_POINT *base, RTDB_SCAN_POINT *scan, RTDB_MAX_CALC_POINT *calc);
-rtdbb_insert_max_point_fn fn = (rtdbb_insert_max_point_fn)get_function("rtdbb_insert_max_point");
-return fn(handle, base, scan, calc);
-}
 */
 
 /**
@@ -4242,11 +3934,6 @@ return fn(handle, base, scan, calc);
  *	   [errors] rtdb_error数组，输出，对应每个标签点的结果
  * 备注：如果新建的标签点没有对应的扩展属性集，可置为空指针。
 rtdb_error RTDBAPI_CALLRULE rtdbb_insert_max_points_warp(rtdb_int32 handle, rtdb_int32* count, RTDB_POINT* bases, RTDB_SCAN_POINT* scans, RTDB_MAX_CALC_POINT* calcs, rtdb_error* errors)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_insert_max_points_fn)(rtdb_int32 handle, rtdb_int32* count, RTDB_POINT* bases, RTDB_SCAN_POINT* scans, RTDB_MAX_CALC_POINT* calcs, rtdb_error* errors);
-rtdbb_insert_max_points_fn fn = (rtdbb_insert_max_points_fn)get_function("rtdbb_insert_max_points");
-return fn(handle, count, bases, scans, calcs, errors);
-}
 */
 
 /**
@@ -4263,11 +3950,6 @@ return fn(handle, count, bases, scans, calcs, errors);
 * \param point_id   整型，输出，标签点 id
 * \remark 标签点的其余属性将取默认值。
 rtdb_error RTDBAPI_CALLRULE rtdbb_insert_base_point_warp(rtdb_int32 handle, const char *tag, rtdb_int32 type, rtdb_int32 table_id, rtdb_int16 use_ms, rtdb_int32 *point_id)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_insert_base_point_fn)(rtdb_int32 handle, const char *tag, rtdb_int32 type, rtdb_int32 table_id, rtdb_int16 use_ms, rtdb_int32 *point_id);
-rtdbb_insert_base_point_fn fn = (rtdbb_insert_base_point_fn)get_function("rtdbb_insert_base_point");
-return fn(handle, tag, type, table_id, use_ms, point_id);
-}
 */
 
 /**
@@ -4281,11 +3963,6 @@ return fn(handle, tag, type, table_id, use_ms, point_id);
  *      [name] 字符串，输入，自定义数据类型的名字。
  * 备注：如果新建的标签点没有对应的扩展属性集，可置为空指针。
 rtdb_error RTDBAPI_CALLRULE rtdbb_insert_named_type_point_warp(rtdb_int32 handle, RTDB_POINT *base, RTDB_SCAN_POINT *scan, const char* name)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_insert_named_type_point_fn)(rtdb_int32 handle, RTDB_POINT *base, RTDB_SCAN_POINT *scan, const char* name);
-rtdbb_insert_named_type_point_fn fn = (rtdbb_insert_named_type_point_fn)get_function("rtdbb_insert_named_type_point");
-return fn(handle, base, scan, name);
-}
 */
 
 /**
@@ -4297,11 +3974,6 @@ return fn(handle, base, scan, name);
  * \remark 通过本接口删除的标签点为可回收标签点，
  *        可以通过 rtdbb_recover_point 接口恢复。
 rtdb_error RTDBAPI_CALLRULE rtdbb_remove_point_by_id_warp(rtdb_int32 handle, rtdb_int32 id)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_remove_point_by_id_fn)(rtdb_int32 handle, rtdb_int32 id);
-rtdbb_remove_point_by_id_fn fn = (rtdbb_remove_point_by_id_fn)get_function("rtdbb_remove_point_by_id");
-return fn(handle, id);
-}
 */
 
 /**
@@ -4312,11 +3984,6 @@ return fn(handle, id);
 * \remark 通过本接口删除的标签点为可回收标签点，
 *        可以通过 rtdbb_recover_point 接口恢复。
 rtdb_error RTDBAPI_CALLRULE rtdbb_remove_point_by_name_warp(rtdb_int32 handle, const char *table_dot_tag)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_remove_point_by_name_fn)(rtdb_int32 handle, const char *table_dot_tag);
-rtdbb_remove_point_by_name_fn fn = (rtdbb_remove_point_by_name_fn)get_function("rtdbb_remove_point_by_name");
-return fn(handle, table_dot_tag);
-}
 */
 
 /**
@@ -4329,11 +3996,6 @@ return fn(handle, table_dot_tag);
  * 备注：通过本接口移动标签点后不改变标签点的id，且快照
  *       和历史数据都不受影响
 rtdb_error RTDBAPI_CALLRULE rtdbb_move_point_by_id_warp(rtdb_int32 handle, rtdb_int32 id, const char* dest_table_name)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_move_point_by_id_fn)(rtdb_int32 handle, rtdb_int32 id, const char* dest_table_name);
-rtdbb_move_point_by_id_fn fn = (rtdbb_move_point_by_id_fn)get_function("rtdbb_move_point_by_id");
-return fn(handle, id, dest_table_name);
-}
 */
 
 /**
@@ -4350,11 +4012,6 @@ return fn(handle, id, dest_table_name);
  * \remark 用户须保证分配给 base、scan、calc、errors 的空间与 count 相符，
  *        扩展属性集 scan、calc 可为空指针，此时将不返回对应的扩展属性集。
 rtdb_error RTDBAPI_CALLRULE rtdbb_get_points_property_warp(rtdb_int32 handle, rtdb_int32 count, RTDB_POINT *base, RTDB_SCAN_POINT *scan, RTDB_CALC_POINT *calc, rtdb_error *errors)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_get_points_property_fn)(rtdb_int32 handle, rtdb_int32 count, RTDB_POINT *base, RTDB_SCAN_POINT *scan, RTDB_CALC_POINT *calc, rtdb_error *errors);
-rtdbb_get_points_property_fn fn = (rtdbb_get_points_property_fn)get_function("rtdbb_get_points_property");
-return fn(handle, count, base, scan, calc, errors);
-}
 */
 
 /**
@@ -4371,11 +4028,6 @@ return fn(handle, count, base, scan, calc, errors);
  * 备注：用户须保证分配给 base、scan、calc、errors 的空间与 count 相符，
  *        扩展属性集 scan、calc 可为空指针，此时将不返回对应的扩展属性集。
 rtdb_error RTDBAPI_CALLRULE rtdbb_get_max_points_property_warp(rtdb_int32 handle, rtdb_int32 count, RTDB_POINT *base, RTDB_SCAN_POINT *scan, RTDB_MAX_CALC_POINT *calc, rtdb_error *errors)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_get_max_points_property_fn)(rtdb_int32 handle, rtdb_int32 count, RTDB_POINT *base, RTDB_SCAN_POINT *scan, RTDB_MAX_CALC_POINT *calc, rtdb_error *errors);
-rtdbb_get_max_points_property_fn fn = (rtdbb_get_max_points_property_fn)get_function("rtdbb_get_max_points_property");
-return fn(handle, count, base, scan, calc, errors);
-}
 */
 
 /**
@@ -4401,11 +4053,6 @@ return fn(handle, count, base, scan, calc, errors);
 *        如果 tagmask、tablemask 为空指针，则表示使用缺省设置"*",
 *        多个搜索条件可以通过空格分隔，比如"demo_*1 demo_*2"，会将满足demo_*1或者demo_*2条件的标签点搜索出来。
 rtdb_error RTDBAPI_CALLRULE rtdbb_search_warp(rtdb_int32 handle, const char *tagmask, const char *tablemask, const char *source, const char *unit, const char *desc, const char *instrument, rtdb_int32 mode, rtdb_int32 *ids, rtdb_int32 *count)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_search_fn)(rtdb_int32 handle, const char *tagmask, const char *tablemask, const char *source, const char *unit, const char *desc, const char *instrument, rtdb_int32 mode, rtdb_int32 *ids, rtdb_int32 *count);
-rtdbb_search_fn fn = (rtdbb_search_fn)get_function("rtdbb_search");
-return fn(handle, tagmask, tablemask, source, unit, desc, instrument, mode, ids, count);
-}
 */
 
 /**
@@ -4433,11 +4080,6 @@ return fn(handle, tagmask, tablemask, source, unit, desc, instrument, mode, ids,
  *        当搜索到的标签点数比提供的要小时，表示这是最后一批符合条件的标签点 (即全部搜索完毕),
  *        多个搜索条件可以通过空格分隔，比如"demo_*1 demo_*2"，会将满足demo_*1或者demo_*2条件的标签点搜索出来。
 rtdb_error RTDBAPI_CALLRULE rtdbb_search_in_batches_warp(rtdb_int32 handle, rtdb_int32 start, const char *tagmask, const char *tablemask, const char *source, const char *unit, const char *desc, const char *instrument, rtdb_int32 mode, rtdb_int32 *ids, rtdb_int32 *count)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_search_in_batches_fn)(rtdb_int32 handle, rtdb_int32 start, const char *tagmask, const char *tablemask, const char *source, const char *unit, const char *desc, const char *instrument, rtdb_int32 mode, rtdb_int32 *ids, rtdb_int32 *count);
-rtdbb_search_in_batches_fn fn = (rtdbb_search_in_batches_fn)get_function("rtdbb_search_in_batches");
-return fn(handle, start, tagmask, tablemask, source, unit, desc, instrument, mode, ids, count);
-}
 */
 
 /**
@@ -4477,11 +4119,6 @@ return fn(handle, start, tagmask, tablemask, source, unit, desc, instrument, mod
 *        如果 tagmask、tablemask 为空指针，则表示使用缺省设置"*",
 *        多个搜索条件可以通过空格分隔，比如"demo_*1 demo_*2"，会将满足demo_*1或者demo_*2条件的标签点搜索出来。
 rtdb_error RTDBAPI_CALLRULE rtdbb_search_ex_warp(rtdb_int32 handle, const char *tagmask, const char *tablemask, const char *source, const char *unit, const char *desc, const char *instrument, const char *typemask, rtdb_int32 classofmask, rtdb_int32 timeunitmask, rtdb_int32 othertypemask, const char *othertypemaskvalue, rtdb_int32 mode, rtdb_int32 *ids, rtdb_int32 *count)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_search_ex_fn)(rtdb_int32 handle, const char *tagmask, const char *tablemask, const char *source, const char *unit, const char *desc, const char *instrument, const char *typemask, rtdb_int32 classofmask, rtdb_int32 timeunitmask, rtdb_int32 othertypemask, const char *othertypemaskvalue, rtdb_int32 mode, rtdb_int32 *ids, rtdb_int32 *count);
-rtdbb_search_ex_fn fn = (rtdbb_search_ex_fn)get_function("rtdbb_search_ex");
-return fn(handle, tagmask, tablemask, source, unit, desc, instrument, typemask, classofmask, timeunitmask, othertypemask, othertypemaskvalue, mode, ids, count);
-}
 */
 
 /**
@@ -4518,11 +4155,6 @@ return fn(handle, tagmask, tablemask, source, unit, desc, instrument, typemask, 
 *        如果 tagmask、tablemask 为空指针，则表示使用缺省设置"*",
 *        多个搜索条件可以通过空格分隔，比如"demo_*1 demo_*2"，会将满足demo_*1或者demo_*2条件的标签点搜索出来。
 rtdb_error RTDBAPI_CALLRULE rtdbb_search_points_count_warp(rtdb_int32 handle, const char *tagmask, const char *tablemask, const char *source, const char *unit, const char *desc, const char *instrument, const char *typemask, rtdb_int32 classofmask, rtdb_int32 timeunitmask, rtdb_int32 othertypemask, const char *othertypemaskvalue, rtdb_int32 *count)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_search_points_count_fn)(rtdb_int32 handle, const char *tagmask, const char *tablemask, const char *source, const char *unit, const char *desc, const char *instrument, const char *typemask, rtdb_int32 classofmask, rtdb_int32 timeunitmask, rtdb_int32 othertypemask, const char *othertypemaskvalue, rtdb_int32 *count);
-rtdbb_search_points_count_fn fn = (rtdbb_search_points_count_fn)get_function("rtdbb_search_points_count");
-return fn(handle, tagmask, tablemask, source, unit, desc, instrument, typemask, classofmask, timeunitmask, othertypemask, othertypemaskvalue, count);
-}
 */
 
 /**
@@ -4533,11 +4165,6 @@ return fn(handle, tagmask, tablemask, source, unit, desc, instrument, typemask, 
  * \param id            整型，输入，表 id
  * \remark 删除的表不可恢复，删除的标签点可以通过 rtdbb_recover_point 接口恢复。
 rtdb_error RTDBAPI_CALLRULE rtdbb_remove_table_by_id_warp(rtdb_int32 handle, rtdb_int32 id)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_remove_table_by_id_fn)(rtdb_int32 handle, rtdb_int32 id);
-rtdbb_remove_table_by_id_fn fn = (rtdbb_remove_table_by_id_fn)get_function("rtdbb_remove_table_by_id");
-return fn(handle, id);
-}
 */
 
 /**
@@ -4548,11 +4175,6 @@ return fn(handle, id);
 * \param name          字符串，输入，表名称
 * \remark 删除的表不可恢复，删除的标签点可以通过 rtdbb_recover_point 接口恢复。
 rtdb_error RTDBAPI_CALLRULE rtdbb_remove_table_by_name_warp(rtdb_int32 handle, const char *name)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_remove_table_by_name_fn)(rtdb_int32 handle, const char *name);
-rtdbb_remove_table_by_name_fn fn = (rtdbb_remove_table_by_name_fn)get_function("rtdbb_remove_table_by_name");
-return fn(handle, name);
-}
 */
 
 /**
@@ -4567,11 +4189,6 @@ return fn(handle, name);
 *      changedate、changer、createdate、creator 字段由系统维护，其余字段均可修改，
 *      包括 classof 字段。输入参数中 scan、calc 可为空指针，对应的扩展属性将保持不变。
 rtdb_error RTDBAPI_CALLRULE rtdbb_update_point_property_warp(rtdb_int32 handle, const RTDB_POINT *base, const RTDB_SCAN_POINT *scan, const RTDB_CALC_POINT *calc)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_update_point_property_fn)(rtdb_int32 handle, const RTDB_POINT *base, const RTDB_SCAN_POINT *scan, const RTDB_CALC_POINT *calc);
-rtdbb_update_point_property_fn fn = (rtdbb_update_point_property_fn)get_function("rtdbb_update_point_property");
-return fn(handle, base, scan, calc);
-}
 */
 
 /**
@@ -4586,11 +4203,6 @@ return fn(handle, base, scan, calc);
 *      changedate、changer、createdate、creator 字段由系统维护，其余字段均可修改，
 *      包括 classof 字段。输入参数中 scan、calc 可为空指针，对应的扩展属性将保持不变。
 rtdb_error RTDBAPI_CALLRULE rtdbb_update_max_point_property_warp(rtdb_int32 handle, const RTDB_POINT *base, const RTDB_SCAN_POINT *scan, const RTDB_MAX_CALC_POINT *calc)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_update_max_point_property_fn)(rtdb_int32 handle, const RTDB_POINT *base, const RTDB_SCAN_POINT *scan, const RTDB_MAX_CALC_POINT *calc);
-rtdbb_update_max_point_property_fn fn = (rtdbb_update_max_point_property_fn)get_function("rtdbb_update_max_point_property");
-return fn(handle, base, scan, calc);
-}
 */
 
 /**
@@ -4610,11 +4222,6 @@ return fn(handle, base, scan, calc);
  * \remark 用户须保证分配给 table_dot_tags、ids、types、classof、use_ms 的空间与count相符，
  *        其中 types、classof、use_ms 可为空指针，对应的字段将不再返回。
 rtdb_error RTDBAPI_CALLRULE rtdbb_find_points_warp(rtdb_int32 handle, rtdb_int32 *count, const char* const* table_dot_tags, rtdb_int32 *ids, rtdb_int32 *types, rtdb_int32 *classof, rtdb_int16 *use_ms)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_find_points_fn)(rtdb_int32 handle, rtdb_int32 *count, const char* const* table_dot_tags, rtdb_int32 *ids, rtdb_int32 *types, rtdb_int32 *classof, rtdb_int16 *use_ms);
-rtdbb_find_points_fn fn = (rtdbb_find_points_fn)get_function("rtdbb_find_points");
-return fn(handle, count, table_dot_tags, ids, types, classof, use_ms);
-}
 */
 
 /**
@@ -4635,11 +4242,6 @@ return fn(handle, count, table_dot_tags, ids, types, classof, use_ms);
  * \remark 用户须保证分配给 table_dot_tags、ids、types、classof、precisions、errors 的空间与count相符，
  *        其中 types、classof、precisions、errors 可为空指针，对应的字段将不再返回。
 rtdb_error RTDBAPI_CALLRULE rtdbb_find_points_ex_warp(rtdb_int32 handle, rtdb_int32* count, const char* const* table_dot_tags, rtdb_int32* ids, rtdb_int32* types, rtdb_int32* classof, rtdb_precision_type* precisions, rtdb_error* errors)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_find_points_ex_fn)(rtdb_int32 handle, rtdb_int32* count, const char* const* table_dot_tags, rtdb_int32* ids, rtdb_int32* types, rtdb_int32* classof, rtdb_precision_type* precisions, rtdb_error* errors);
-rtdbb_find_points_ex_fn fn = (rtdbb_find_points_ex_fn)get_function("rtdbb_find_points_ex");
-return fn(handle, count, table_dot_tags, ids, types, classof, precisions, errors);
-}
 */
 
 /**
@@ -4663,11 +4265,6 @@ return fn(handle, count, table_dot_tags, ids, types, classof, precisions, errors
  * \remark 用户须保证分配给 ids 的空间与 count 相符, 如果 ID 指定的标签并不存在，
  *        或标签不具备要求排序的字段 (如对非计算点进行方程式排序)，它们将被放置在数组的尾部。
 rtdb_error RTDBAPI_CALLRULE rtdbb_sort_points_warp(rtdb_int32 handle, rtdb_int32 count, rtdb_int32 *ids, rtdb_int32 index, rtdb_int32 flag)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_sort_points_fn)(rtdb_int32 handle, rtdb_int32 count, rtdb_int32 *ids, rtdb_int32 index, rtdb_int32 flag);
-rtdbb_sort_points_fn fn = (rtdbb_sort_points_fn)get_function("rtdbb_sort_points");
-return fn(handle, count, ids, index, flag);
-}
 */
 
 /**
@@ -4678,11 +4275,6 @@ return fn(handle, count, ids, index, flag);
  * \param tab_id    整型，输入，要修改表的标识
  * \param name      字符串，输入，新的标签点表名称。
 rtdb_error RTDBAPI_CALLRULE rtdbb_update_table_name_warp(rtdb_int32 handle, rtdb_int32 tab_id, const char *name)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_update_table_name_fn)(rtdb_int32 handle, rtdb_int32 tab_id, const char *name);
-rtdbb_update_table_name_fn fn = (rtdbb_update_table_name_fn)get_function("rtdbb_update_table_name");
-return fn(handle, tab_id, name);
-}
 */
 
 /**
@@ -4693,11 +4285,6 @@ return fn(handle, tab_id, name);
  * \param tab_id    整型，输入，要修改表的标识
  * \param desc      字符串，输入，新的表描述。
 rtdb_error RTDBAPI_CALLRULE rtdbb_update_table_desc_by_id_warp(rtdb_int32 handle, rtdb_int32 tab_id, const char *desc)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_update_table_desc_by_id_fn)(rtdb_int32 handle, rtdb_int32 tab_id, const char *desc);
-rtdbb_update_table_desc_by_id_fn fn = (rtdbb_update_table_desc_by_id_fn)get_function("rtdbb_update_table_desc_by_id");
-return fn(handle, tab_id, desc);
-}
 */
 
 /**
@@ -4708,11 +4295,6 @@ return fn(handle, tab_id, desc);
 * \param name      字符串，输入，要修改表的名称。
 * \param desc      字符串，输入，新的表描述。
 rtdb_error RTDBAPI_CALLRULE rtdbb_update_table_desc_by_name_warp(rtdb_int32 handle, const char *name, const char *desc)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_update_table_desc_by_name_fn)(rtdb_int32 handle, const char *name, const char *desc);
-rtdbb_update_table_desc_by_name_fn fn = (rtdbb_update_table_desc_by_name_fn)get_function("rtdbb_update_table_desc_by_name");
-return fn(handle, name, desc);
-}
 */
 
 /**
@@ -4725,11 +4307,6 @@ return fn(handle, name, desc);
  * 备注: 本接口只对可回收标签点(通过接口rtdbb_remove_point_by_id/rtdbb_remove_point_by_tag)有效，
  *        对正常的标签点没有作用。
 rtdb_error RTDBAPI_CALLRULE rtdbb_recover_point_warp(rtdb_int32 handle, rtdb_int32 table_id, rtdb_int32 point_id)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_recover_point_fn)(rtdb_int32 handle, rtdb_int32 table_id, rtdb_int32 point_id);
-rtdbb_recover_point_fn fn = (rtdbb_recover_point_fn)get_function("rtdbb_recover_point");
-return fn(handle, table_id, point_id);
-}
 */
 
 /**
@@ -4741,11 +4318,6 @@ return fn(handle, table_id, point_id);
  * 备注: 本接口仅对可回收标签点(通过接口rtdbb_remove_point_by_id/rtdbb_remove_point_by_name)有效，
  *      对正常的标签点没有作用。
 rtdb_error RTDBAPI_CALLRULE rtdbb_purge_point_warp(rtdb_int32 handle, rtdb_int32 id)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_purge_point_fn)(rtdb_int32 handle, rtdb_int32 id);
-rtdbb_purge_point_fn fn = (rtdbb_purge_point_fn)get_function("rtdbb_purge_point");
-return fn(handle, id);
-}
 */
 
 /**
@@ -4755,11 +4327,6 @@ return fn(handle, id);
  * \param handle    连接句柄
  * \param count     整型，输出，可回收标签点的数量
 rtdb_error RTDBAPI_CALLRULE rtdbb_get_recycled_points_count_warp(rtdb_int32 handle, rtdb_int32 *count)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_get_recycled_points_count_fn)(rtdb_int32 handle, rtdb_int32 *count);
-rtdbb_get_recycled_points_count_fn fn = (rtdbb_get_recycled_points_count_fn)get_function("rtdbb_get_recycled_points_count");
-return fn(handle, count);
-}
 */
 
 /**
@@ -4773,11 +4340,6 @@ return fn(handle, count);
  *                    输出时表示成功获取标签点的个数。
  * \remark 用户须保证 ids 的长度与 count 一致
 rtdb_error RTDBAPI_CALLRULE rtdbb_get_recycled_points_warp(rtdb_int32 handle, rtdb_int32 *ids, rtdb_int32 *count)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_get_recycled_points_fn)(rtdb_int32 handle, rtdb_int32 *ids, rtdb_int32 *count);
-rtdbb_get_recycled_points_fn fn = (rtdbb_get_recycled_points_fn)get_function("rtdbb_get_recycled_points");
-return fn(handle, ids, count);
-}
 */
 
 /**
@@ -4802,11 +4364,6 @@ return fn(handle, ids, count);
 *        用包含通配符的标签点名称作搜索条件时，如果第一个字符不是通配符(如"ai67*")，会得到最快的搜索速度。
 *        如果 tagmask、fullmask 为空指针，则表示使用缺省设置"*"
 rtdb_error RTDBAPI_CALLRULE rtdbb_search_recycled_points_warp(rtdb_int32 handle, const char *tagmask, const char *fullmask, const char *source, const char *unit, const char *desc, const char *instrument, rtdb_int32 mode, rtdb_int32 *ids, rtdb_int32 *count)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_search_recycled_points_fn)(rtdb_int32 handle, const char *tagmask, const char *fullmask, const char *source, const char *unit, const char *desc, const char *instrument, rtdb_int32 mode, rtdb_int32 *ids, rtdb_int32 *count);
-rtdbb_search_recycled_points_fn fn = (rtdbb_search_recycled_points_fn)get_function("rtdbb_search_recycled_points");
-return fn(handle, tagmask, fullmask, source, unit, desc, instrument, mode, ids, count);
-}
 */
 
 /**
@@ -4833,11 +4390,6 @@ return fn(handle, tagmask, fullmask, source, unit, desc, instrument, mode, ids, 
  *        如果 tagmask、fullmask 为空指针，则表示使用缺省设置"*"
  *        当搜索到的标签点数比提供的要小时，表示这是最后一批符合条件的标签点 (即全部搜索完毕)。
 rtdb_error RTDBAPI_CALLRULE rtdbb_search_recycled_points_in_batches_warp(rtdb_int32 handle, rtdb_int32 start, const char *tagmask, const char *fullmask, const char *source, const char *unit, const char *desc, const char *instrument, rtdb_int32 mode, rtdb_int32 *ids, rtdb_int32 *count)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_search_recycled_points_in_batches_fn)(rtdb_int32 handle, rtdb_int32 start, const char *tagmask, const char *fullmask, const char *source, const char *unit, const char *desc, const char *instrument, rtdb_int32 mode, rtdb_int32 *ids, rtdb_int32 *count);
-rtdbb_search_recycled_points_in_batches_fn fn = (rtdbb_search_recycled_points_in_batches_fn)get_function("rtdbb_search_recycled_points_in_batches");
-return fn(handle, start, tagmask, fullmask, source, unit, desc, instrument, mode, ids, count);
-}
 */
 
 /**
@@ -4851,11 +4403,6 @@ return fn(handle, start, tagmask, fullmask, source, unit, desc, instrument, mode
   * \param calc     RTDB_CALC_POINT 结构，输出，标签点计算扩展属性
   * \remark scan、calc 可为空指针，对应的扩展信息将不返回。
 rtdb_error RTDBAPI_CALLRULE rtdbb_get_recycled_point_property_warp(rtdb_int32 handle, RTDB_POINT *base, RTDB_SCAN_POINT *scan, RTDB_CALC_POINT *calc)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_get_recycled_point_property_fn)(rtdb_int32 handle, RTDB_POINT *base, RTDB_SCAN_POINT *scan, RTDB_CALC_POINT *calc);
-rtdbb_get_recycled_point_property_fn fn = (rtdbb_get_recycled_point_property_fn)get_function("rtdbb_get_recycled_point_property");
-return fn(handle, base, scan, calc);
-}
 */
 
 /**
@@ -4870,11 +4417,6 @@ return fn(handle, base, scan, calc);
   *        [calc]     RTDB_MAX_CALC_POINT 结构，输出，标签点计算扩展属性
   * 备注：scan、calc 可为空指针，对应的扩展信息将不返回。
 rtdb_error RTDBAPI_CALLRULE rtdbb_get_recycled_max_point_property_warp(rtdb_int32 handle, RTDB_POINT* base, RTDB_SCAN_POINT* scan, RTDB_MAX_CALC_POINT* calc)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_get_recycled_max_point_property_fn)(rtdb_int32 handle, RTDB_POINT* base, RTDB_SCAN_POINT* scan, RTDB_MAX_CALC_POINT* calc);
-rtdbb_get_recycled_max_point_property_fn fn = (rtdbb_get_recycled_max_point_property_fn)get_function("rtdbb_get_recycled_max_point_property");
-return fn(handle, base, scan, calc);
-}
 */
 
 /**
@@ -4883,11 +4425,6 @@ return fn(handle, base, scan, calc);
  *
  * \param handle   连接句柄
 rtdb_error RTDBAPI_CALLRULE rtdbb_clear_recycler_warp(rtdb_int32 handle)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_clear_recycler_fn)(rtdb_int32 handle);
-rtdbb_clear_recycler_fn fn = (rtdbb_clear_recycler_fn)get_function("rtdbb_clear_recycler");
-return fn(handle);
-}
 */
 
 /**
@@ -4920,11 +4457,6 @@ return fn(handle);
  * 备注：用于订阅测点的连接句柄必需是独立的，不能再用来调用其它 api，
  *       否则返回 RtE_OTHER_SDK_DOING 错误。
 rtdb_error RTDBAPI_CALLRULE rtdbb_subscribe_tags_ex_warp(rtdb_int32 handle, rtdb_uint32 options, void* param, rtdbb_tags_change_event_ex callback)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_subscribe_tags_ex_fn)(rtdb_int32 handle, rtdb_uint32 options, void* param, rtdbb_tags_change_event_ex callback);
-rtdbb_subscribe_tags_ex_fn fn = (rtdbb_subscribe_tags_ex_fn)get_function("rtdbb_subscribe_tags_ex");
-return fn(handle, options, param, callback);
-}
 */
 
 /**
@@ -4933,11 +4465,6 @@ return fn(handle, options, param, callback);
  *
  * \param handle    连接句柄
 rtdb_error RTDBAPI_CALLRULE rtdbb_cancel_subscribe_tags_warp(rtdb_int32 handle)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_cancel_subscribe_tags_fn)(rtdb_int32 handle);
-rtdbb_cancel_subscribe_tags_fn fn = (rtdbb_cancel_subscribe_tags_fn)get_function("rtdbb_cancel_subscribe_tags");
-return fn(handle);
-}
 */
 
 /**
@@ -4951,11 +4478,6 @@ return fn(handle);
 *              RTDB_DATA_TYPE_FIELD中的length只对type为str或blob类型的数据有效。其他类型忽略
 * 备注：自定义类型的大小必须要小于数据页大小(小于数据页大小的2/3，即需要合理定义字段的个数及每个字段的长度)。
 rtdb_error RTDBAPI_CALLRULE rtdbb_create_named_type_warp(rtdb_int32 handle, const char* name, rtdb_int32 field_count, const RTDB_DATA_TYPE_FIELD* fields, char desc[RTDB_DESC_SIZE])
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_create_named_type_fn)(rtdb_int32 handle, const char* name, rtdb_int32 field_count, const RTDB_DATA_TYPE_FIELD* fields, char desc[RTDB_DESC_SIZE]);
-rtdbb_create_named_type_fn fn = (rtdbb_create_named_type_fn)get_function("rtdbb_create_named_type");
-return fn(handle, name, field_count, fields, desc);
-}
 */
 
 /**
@@ -4965,11 +4487,6 @@ return fn(handle, name, field_count, fields, desc);
  *        [handle]      连接句柄，输入参数
  *        [count]      返回所有的自定义类型的总数，输入/输出参数
 rtdb_error RTDBAPI_CALLRULE rtdbb_get_named_types_count_warp(rtdb_int32 handle, rtdb_int32* count)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_get_named_types_count_fn)(rtdb_int32 handle, rtdb_int32* count);
-rtdbb_get_named_types_count_fn fn = (rtdbb_get_named_types_count_fn)get_function("rtdbb_get_named_types_count");
-return fn(handle, count);
-}
 */
 
 /**
@@ -4983,11 +4500,6 @@ return fn(handle, count);
  *        [field_counts]    返回所有的自定义类型所包含字段个数的数组，输入/输出参数
  *              输入：field_counts数组长度要等于count。输出:实际每个自定义类型所包含的字段的个数的数组
 rtdb_error RTDBAPI_CALLRULE rtdbb_get_all_named_types_warp(rtdb_int32 handle, rtdb_int32* count, char* name[RTDB_TYPE_NAME_SIZE], rtdb_int32* field_counts)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_get_all_named_types_fn)(rtdb_int32 handle, rtdb_int32* count, char* name[RTDB_TYPE_NAME_SIZE], rtdb_int32* field_counts);
-rtdbb_get_all_named_types_fn fn = (rtdbb_get_all_named_types_fn)get_function("rtdbb_get_all_named_types");
-return fn(handle, count, name, field_counts);
-}
 */
 
 /**
@@ -5003,11 +4515,6 @@ return fn(handle, count, name, field_counts);
 *        [type_size]      所有自定义类型fields结构中长度字段的累加和，输出参数
 *        [desc]           自定义类型的描述，输出参数
 rtdb_error RTDBAPI_CALLRULE rtdbb_get_named_type_warp(rtdb_int32 handle, const char* name, rtdb_int32* field_count, RTDB_DATA_TYPE_FIELD* fields, rtdb_int32* type_size, char desc[RTDB_DESC_SIZE])
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_get_named_type_fn)(rtdb_int32 handle, const char* name, rtdb_int32* field_count, RTDB_DATA_TYPE_FIELD* fields, rtdb_int32* type_size, char desc[RTDB_DESC_SIZE]);
-rtdbb_get_named_type_fn fn = (rtdbb_get_named_type_fn)get_function("rtdbb_get_named_type");
-return fn(handle, name, field_count, fields, type_size, desc);
-}
 */
 
 /**
@@ -5018,11 +4525,6 @@ return fn(handle, name, field_count, fields, type_size, desc);
 *        [name]        自定义类型的名称，输入参数
 *        [reserved]      保留字段,暂时不用
 rtdb_error RTDBAPI_CALLRULE rtdbb_remove_named_type_warp(rtdb_int32 handle, const char* name, rtdb_int32 reserved GAPI_DEFAULT_VALUE(0))
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_remove_named_type_fn)(rtdb_int32 handle, const char* name, rtdb_int32 reserved GAPI_DEFAULT_VALUE(0));
-rtdbb_remove_named_type_fn fn = (rtdbb_remove_named_type_fn)get_function("rtdbb_remove_named_type");
-return fn(handle, name, reserved);
-}
 */
 
 /**
@@ -5040,11 +4542,6 @@ return fn(handle, name, reserved);
  * 备注：用户须保证 ids、named_type_names、field_counts、errors 的长度与 count 一致。
  *        本接口只对数据类型为 RTDB_NAMED_T 的标签点有效。
 rtdb_error RTDBAPI_CALLRULE rtdbb_get_named_type_names_property_warp(rtdb_int32 handle, rtdb_int32 *count, rtdb_int32 *ids, char* const *named_type_names, rtdb_int32 *field_counts, rtdb_error *errors)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_get_named_type_names_property_fn)(rtdb_int32 handle, rtdb_int32 *count, rtdb_int32 *ids, char* const *named_type_names, rtdb_int32 *field_counts, rtdb_error *errors);
-rtdbb_get_named_type_names_property_fn fn = (rtdbb_get_named_type_names_property_fn)get_function("rtdbb_get_named_type_names_property");
-return fn(handle, count, ids, named_type_names, field_counts, errors);
-}
 */
 
 /**
@@ -5062,11 +4559,6 @@ return fn(handle, count, ids, named_type_names, field_counts, errors);
  * 备注：用户须保证 ids、named_type_names、field_counts、errors 的长度与 count 一致。
  *        本接口只对数据类型为 RTDB_NAMED_T 的标签点有效。
 rtdb_error RTDBAPI_CALLRULE rtdbb_get_recycled_named_type_names_property_warp(rtdb_int32 handle, rtdb_int32 *count, rtdb_int32 *ids, char* const *named_type_names, rtdb_int32 *field_counts, rtdb_error *errors)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_get_recycled_named_type_names_property_fn)(rtdb_int32 handle, rtdb_int32 *count, rtdb_int32 *ids, char* const *named_type_names, rtdb_int32 *field_counts, rtdb_error *errors);
-rtdbb_get_recycled_named_type_names_property_fn fn = (rtdbb_get_recycled_named_type_names_property_fn)get_function("rtdbb_get_recycled_named_type_names_property");
-return fn(handle, count, ids, named_type_names, field_counts, errors);
-}
 */
 
 /**
@@ -5077,11 +4569,6 @@ return fn(handle, count, ids, named_type_names, field_counts, errors);
 *        [name]             自定义类型的名称，输入参数
 *        [points_count]     返回name指定的自定义类型的标签点个数，输入参数
 rtdb_error RTDBAPI_CALLRULE rtdbb_get_named_type_points_count_warp(rtdb_int32 handle, const char* name, rtdb_int32 *points_count)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_get_named_type_points_count_fn)(rtdb_int32 handle, const char* name, rtdb_int32 *points_count);
-rtdbb_get_named_type_points_count_fn fn = (rtdbb_get_named_type_points_count_fn)get_function("rtdbb_get_named_type_points_count");
-return fn(handle, name, points_count);
-}
 */
 
 /**
@@ -5092,11 +4579,6 @@ return fn(handle, name, points_count);
 * \param type             整型，输入参数，内置的基本类型，参数的值可以是除RTDB_NAME_T以外的所有RTDB_TYPE枚举值
 * \param points_count     整型，输入参数，返回type指定的内置基本类型的标签点个数
 rtdb_error RTDBAPI_CALLRULE rtdbb_get_base_type_points_count_warp(rtdb_int32 handle, rtdb_int32 type, rtdb_int32 *points_count)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_get_base_type_points_count_fn)(rtdb_int32 handle, rtdb_int32 type, rtdb_int32 *points_count);
-rtdbb_get_base_type_points_count_fn fn = (rtdbb_get_base_type_points_count_fn)get_function("rtdbb_get_base_type_points_count");
-return fn(handle, type, points_count);
-}
 */
 
 /**
@@ -5111,11 +4593,6 @@ return fn(handle, type, points_count);
 *        [modify_field_desc]  要修改的自定义类型字段的描述，输入参数
 *        [field_count]        自定义类型字段的个数，输入参数
 rtdb_error RTDBAPI_CALLRULE rtdbb_modify_named_type_warp(rtdb_int32 handle, const char* name, const char* modify_name, const char* modify_desc, const char* modify_field_name[RTDB_TYPE_NAME_SIZE], const char* modify_field_desc[RTDB_DESC_SIZE], rtdb_int32 field_count)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_modify_named_type_fn)(rtdb_int32 handle, const char* name, const char* modify_name, const char* modify_desc, const char* modify_field_name[RTDB_TYPE_NAME_SIZE], const char* modify_field_desc[RTDB_DESC_SIZE], rtdb_int32 field_count);
-rtdbb_modify_named_type_fn fn = (rtdbb_modify_named_type_fn)get_function("rtdbb_modify_named_type");
-return fn(handle, name, modify_name, modify_desc, modify_field_name, modify_field_desc, field_count);
-}
 */
 
 /**
@@ -5129,11 +4606,6 @@ return fn(handle, name, modify_name, modify_desc, modify_field_name, modify_fiel
  * \param sync_infos       RTDB_SYNC_INFO数组，输出参数，输出实际获取到的同步信息
  * \param errors           rtdb_error数组，输出参数，输出对应节点的错误信息
 rtdb_error RTDBAPI_CALLRULE rtdbb_get_meta_sync_info_warp(rtdb_int32 handle, rtdb_int32 node_number, rtdb_int32* count, RTDB_SYNC_INFO* sync_infos, rtdb_error* errors)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbb_get_meta_sync_info_fn)(rtdb_int32 handle, rtdb_int32 node_number, rtdb_int32* count, RTDB_SYNC_INFO* sync_infos, rtdb_error* errors);
-rtdbb_get_meta_sync_info_fn fn = (rtdbb_get_meta_sync_info_fn)get_function("rtdbb_get_meta_sync_info");
-return fn(handle, node_number, count, sync_infos, errors);
-}
 */
 
 /**
@@ -5159,11 +4631,6 @@ return fn(handle, node_number, count, sync_infos, errors);
  * \remark 用户须保证 ids、datetimes、ms、values、states、qualities、errors 的长度与 count 一致。
  *        本接口对数据类型为 RTDB_COOR、RTDB_STRING、RTDB_BLOB 的标签点无效。
 rtdb_error RTDBAPI_CALLRULE rtdbs_get_snapshots64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float64* values, rtdb_int64* states, rtdb_int16* qualities, rtdb_error* errors)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbs_get_snapshots64_fn)(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float64* values, rtdb_int64* states, rtdb_int16* qualities, rtdb_error* errors);
-rtdbs_get_snapshots64_fn fn = (rtdbs_get_snapshots64_fn)get_function("rtdbs_get_snapshots64");
-return fn(handle, count, ids, datetimes, subtimes, values, states, qualities, errors);
-}
 */
 
 /**
@@ -5190,11 +4657,6 @@ return fn(handle, count, ids, datetimes, subtimes, values, states, qualities, er
  * \remark 用户须保证 ids、datetimes、ms、values、states、qualities、errors 的长度与 count 一致。
  *        本接口对数据类型为 RTDB_COOR、RTDB_STRING、RTDB_BLOB 的标签点无效。
 rtdb_error RTDBAPI_CALLRULE rtdbs_put_snapshots64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, const rtdb_float64* values, const rtdb_int64* states, const rtdb_int16* qualities, rtdb_error* errors)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbs_put_snapshots64_fn)(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, const rtdb_float64* values, const rtdb_int64* states, const rtdb_int16* qualities, rtdb_error* errors);
-rtdbs_put_snapshots64_fn fn = (rtdbs_put_snapshots64_fn)get_function("rtdbs_put_snapshots64");
-return fn(handle, count, ids, datetimes, subtimes, values, states, qualities, errors);
-}
 */
 
 /**
@@ -5223,11 +4685,6 @@ return fn(handle, count, ids, datetimes, subtimes, values, states, qualities, er
  *        仅当输入时间戳与当前快照时间戳完全相等时，会替换当前快照的值和质量；
  *        其余情况下会调用 rtdbs_put_snapshots()
 rtdb_error RTDBAPI_CALLRULE rtdbs_fix_snapshots64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, const rtdb_float64* values, const rtdb_int64* states, const rtdb_int16* qualities, rtdb_error* errors)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbs_fix_snapshots64_fn)(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, const rtdb_float64* values, const rtdb_int64* states, const rtdb_int16* qualities, rtdb_error* errors);
-rtdbs_fix_snapshots64_fn fn = (rtdbs_fix_snapshots64_fn)get_function("rtdbs_fix_snapshots64");
-return fn(handle, count, ids, datetimes, subtimes, values, states, qualities, errors);
-}
 */
 
 /**
@@ -5257,11 +4714,6 @@ return fn(handle, count, ids, datetimes, subtimes, values, states, qualities, er
  *       批量将标签点的快照值vtmq改成传入的vtmq，如果传入的时间戳早于当前快照，会删除传入时间戳到当前快照的历史存储值。
  *       如果传入的时间戳等于或者晚于当前快照，什么也不做。
 rtdb_error RTDBAPI_CALLRULE rtdbs_back_snapshots64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, const rtdb_float64* values, const rtdb_int64* states, const rtdb_int16* qualities, rtdb_error* errors)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbs_back_snapshots64_fn)(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, const rtdb_float64* values, const rtdb_int64* states, const rtdb_int16* qualities, rtdb_error* errors);
-rtdbs_back_snapshots64_fn fn = (rtdbs_back_snapshots64_fn)get_function("rtdbs_back_snapshots64");
-return fn(handle, count, ids, datetimes, subtimes, values, states, qualities, errors);
-}
 */
 
 /**
@@ -5284,11 +4736,6 @@ return fn(handle, count, ids, datetimes, subtimes, values, states, qualities, er
  * \remark 用户须保证 ids、datetimes、ms、x、y、qualities、errors 的长度与 count 一致。
  *        本接口只对数据类型为 RTDB_COOR 的标签点有效。
 rtdb_error RTDBAPI_CALLRULE rtdbs_get_coor_snapshots64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float32* x, rtdb_float32* y, rtdb_int16* qualities, rtdb_error* errors)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbs_get_coor_snapshots64_fn)(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float32* x, rtdb_float32* y, rtdb_int16* qualities, rtdb_error* errors);
-rtdbs_get_coor_snapshots64_fn fn = (rtdbs_get_coor_snapshots64_fn)get_function("rtdbs_get_coor_snapshots64");
-return fn(handle, count, ids, datetimes, subtimes, x, y, qualities, errors);
-}
 */
 
 /**
@@ -5311,11 +4758,6 @@ return fn(handle, count, ids, datetimes, subtimes, x, y, qualities, errors);
  * \remark 用户须保证 ids、datetimes、ms、x、y、qualities、errors 的长度与 count 一致。
  *        本接口只对数据类型为 RTDB_COOR 的标签点有效。
 rtdb_error RTDBAPI_CALLRULE rtdbs_put_coor_snapshots64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, const rtdb_float32* x, const rtdb_float32* y, const rtdb_int16* qualities, rtdb_error* errors)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbs_put_coor_snapshots64_fn)(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, const rtdb_float32* x, const rtdb_float32* y, const rtdb_int16* qualities, rtdb_error* errors);
-rtdbs_put_coor_snapshots64_fn fn = (rtdbs_put_coor_snapshots64_fn)get_function("rtdbs_put_coor_snapshots64");
-return fn(handle, count, ids, datetimes, subtimes, x, y, qualities, errors);
-}
 */
 
 /**
@@ -5340,11 +4782,6 @@ return fn(handle, count, ids, datetimes, subtimes, x, y, qualities, errors);
  *        仅当输入时间戳与当前快照时间戳完全相等时，会替换当前快照的值和质量；
  *        其余情况下会调用 rtdbs_put_coor_snapshots()
 rtdb_error RTDBAPI_CALLRULE rtdbs_fix_coor_snapshots64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, const rtdb_float32* x, const rtdb_float32* y, const rtdb_int16* qualities, rtdb_error* errors)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbs_fix_coor_snapshots64_fn)(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, const rtdb_float32* x, const rtdb_float32* y, const rtdb_int16* qualities, rtdb_error* errors);
-rtdbs_fix_coor_snapshots64_fn fn = (rtdbs_fix_coor_snapshots64_fn)get_function("rtdbs_fix_coor_snapshots64");
-return fn(handle, count, ids, datetimes, subtimes, x, y, qualities, errors);
-}
 */
 
 /**
@@ -5362,11 +4799,6 @@ return fn(handle, count, ids, datetimes, subtimes, x, y, qualities, errors);
  * \param quality   短整型，输出，实时数值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
  * \remark 本接口只对数据类型为 RTDB_BLOB、RTDB_STRING 的标签点有效。
 rtdb_error RTDBAPI_CALLRULE rtdbs_get_blob_snapshot64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type* datetime, rtdb_subtime_type* subtime, rtdb_byte* blob, rtdb_length_type* len, rtdb_int16* quality)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbs_get_blob_snapshot64_fn)(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type* datetime, rtdb_subtime_type* subtime, rtdb_byte* blob, rtdb_length_type* len, rtdb_int16* quality);
-rtdbs_get_blob_snapshot64_fn fn = (rtdbs_get_blob_snapshot64_fn)get_function("rtdbs_get_blob_snapshot64");
-return fn(handle, id, datetime, subtime, blob, len, quality);
-}
 */
 
 /**
@@ -5390,11 +4822,6 @@ return fn(handle, id, datetime, subtime, blob, len, quality);
  * \param errors    无符号整型数组，输出，读取实时数据的返回值列表，参考rtdb_error.h
  * \remark 本接口只对数据类型为 RTDB_BLOB、RTDB_STRING 的标签点有效。
 rtdb_error RTDBAPI_CALLRULE rtdbs_get_blob_snapshots64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_byte* const* blobs, rtdb_length_type* lens, rtdb_int16* qualities, rtdb_error* errors)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbs_get_blob_snapshots64_fn)(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_byte* const* blobs, rtdb_length_type* lens, rtdb_int16* qualities, rtdb_error* errors);
-rtdbs_get_blob_snapshots64_fn fn = (rtdbs_get_blob_snapshots64_fn)get_function("rtdbs_get_blob_snapshots64");
-return fn(handle, count, ids, datetimes, subtimes, blobs, lens, qualities, errors);
-}
 */
 
 /**
@@ -5412,11 +4839,6 @@ return fn(handle, count, ids, datetimes, subtimes, blobs, lens, qualities, error
  * \param quality   短整型，输入，实时数值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
  * \remark 本接口只对数据类型为 RTDB_BLOB、RTDB_STRING 的标签点有效。
 rtdb_error RTDBAPI_CALLRULE rtdbs_put_blob_snapshot64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime, rtdb_subtime_type subtime, const rtdb_byte* blob, rtdb_length_type len, rtdb_int16 quality)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbs_put_blob_snapshot64_fn)(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime, rtdb_subtime_type subtime, const rtdb_byte* blob, rtdb_length_type len, rtdb_int16 quality);
-rtdbs_put_blob_snapshot64_fn fn = (rtdbs_put_blob_snapshot64_fn)get_function("rtdbs_put_blob_snapshot64");
-return fn(handle, id, datetime, subtime, blob, len, quality);
-}
 */
 
 /**
@@ -5439,11 +4861,6 @@ return fn(handle, id, datetime, subtime, blob, len, quality);
  * \param errors    无符号整型数组，输出，读取实时数据的返回值列表，参考rtdb_error.h
  * \remark 本接口只对数据类型为 RTDB_BLOB、RTDB_STRING 的标签点有效。
 rtdb_error RTDBAPI_CALLRULE rtdbs_put_blob_snapshots64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, const rtdb_byte* const* blobs, const rtdb_length_type* lens, const rtdb_int16* qualities, rtdb_error* errors)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbs_put_blob_snapshots64_fn)(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, const rtdb_byte* const* blobs, const rtdb_length_type* lens, const rtdb_int16* qualities, rtdb_error* errors);
-rtdbs_put_blob_snapshots64_fn fn = (rtdbs_put_blob_snapshots64_fn)get_function("rtdbs_put_blob_snapshots64");
-return fn(handle, count, ids, datetimes, subtimes, blobs, lens, qualities, errors);
-}
 */
 
 /**
@@ -5469,11 +4886,6 @@ return fn(handle, count, ids, datetimes, subtimes, blobs, lens, qualities, error
  *                    如果不传type，则按照标签点属性显示，否则按照type类型显示
  * \remark 本接口只对数据类型为 RTDB_DATETIME 的标签点有效。
 rtdb_error RTDBAPI_CALLRULE rtdbs_get_datetime_snapshots64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_byte* const* dtvalues, rtdb_length_type* dtlens, rtdb_int16* qualities, rtdb_error* errors, rtdb_int16 type)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbs_get_datetime_snapshots64_fn)(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_byte* const* dtvalues, rtdb_length_type* dtlens, rtdb_int16* qualities, rtdb_error* errors, rtdb_int16 type);
-rtdbs_get_datetime_snapshots64_fn fn = (rtdbs_get_datetime_snapshots64_fn)get_function("rtdbs_get_datetime_snapshots64");
-return fn(handle, count, ids, datetimes, subtimes, dtvalues, dtlens, qualities, errors, type);
-}
 */
 
 /**
@@ -5495,11 +4907,6 @@ return fn(handle, count, ids, datetimes, subtimes, dtvalues, dtlens, qualities, 
  * \param errors      无符号整型数组，输出，读取实时数据的返回值列表，参考rtdb_error.h
  * \remark 被接口只对数据类型 RTDB_DATETIME 的标签点有效。
 rtdb_error RTDBAPI_CALLRULE rtdbs_put_datetime_snapshots64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, const rtdb_byte* const* dtvalues, const rtdb_length_type* dtlens, const rtdb_int16* qualities, rtdb_error* errors)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbs_put_datetime_snapshots64_fn)(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, const rtdb_byte* const* dtvalues, const rtdb_length_type* dtlens, const rtdb_int16* qualities, rtdb_error* errors);
-rtdbs_put_datetime_snapshots64_fn fn = (rtdbs_put_datetime_snapshots64_fn)get_function("rtdbs_put_datetime_snapshots64");
-return fn(handle, count, ids, datetimes, subtimes, dtvalues, dtlens, qualities, errors);
-}
 */
 
 /**
@@ -5552,11 +4959,6 @@ return fn(handle, count, ids, datetimes, subtimes, dtvalues, dtlens, qualities, 
  *        用于订阅快照的连接句柄必需是独立的，不能再用来调用其它 api，
  *        否则返回 RtE_OTHER_SDK_DOING 错误。
 rtdb_error RTDBAPI_CALLRULE rtdbs_subscribe_snapshots_ex64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, rtdb_uint32 options, void* param, rtdbs_snaps_event_ex64 callback, rtdb_error* errors)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbs_subscribe_snapshots_ex64_fn)(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, rtdb_uint32 options, void* param, rtdbs_snaps_event_ex64 callback, rtdb_error* errors);
-rtdbs_subscribe_snapshots_ex64_fn fn = (rtdbs_subscribe_snapshots_ex64_fn)get_function("rtdbs_subscribe_snapshots_ex64");
-return fn(handle, count, ids, options, param, callback, errors);
-}
 */
 
 /**
@@ -5612,11 +5014,6 @@ return fn(handle, count, ids, options, param, callback, errors);
   *           用于订阅快照的连接句柄必需是独立的，不能再用来调用其它 api，
   *           否则返回 RtE_OTHER_SDK_DOING 错误。
 rtdb_error RTDBAPI_CALLRULE rtdbs_subscribe_delta_snapshots64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_float64* delta_values, const rtdb_int64* delta_states, rtdb_uint32 options, void* param, rtdbs_snaps_event_ex64 callback, rtdb_error* errors)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbs_subscribe_delta_snapshots64_fn)(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_float64* delta_values, const rtdb_int64* delta_states, rtdb_uint32 options, void* param, rtdbs_snaps_event_ex64 callback, rtdb_error* errors);
-rtdbs_subscribe_delta_snapshots64_fn fn = (rtdbs_subscribe_delta_snapshots64_fn)get_function("rtdbs_subscribe_delta_snapshots64");
-return fn(handle, count, ids, delta_values, delta_states, options, param, callback, errors);
-}
 */
 
 /**
@@ -5641,11 +5038,6 @@ return fn(handle, count, ids, delta_values, delta_states, options, param, callba
  *               当方法返回值为RtE_OK时，表示已经成功发送给数据库，但是并没有等待修改结果。
  *               数据库的修改结果，会异步通知给api的回调函数，通过rtdbs_snaps_event_ex的RTDB_E_CHANGED事件通知修改结果
 rtdb_error RTDBAPI_CALLRULE rtdbs_change_subscribe_snapshots_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_float64* delta_values, const rtdb_int64* delta_states, const rtdb_int32* changed_types, rtdb_error* errors)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbs_change_subscribe_snapshots_fn)(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_float64* delta_values, const rtdb_int64* delta_states, const rtdb_int32* changed_types, rtdb_error* errors);
-rtdbs_change_subscribe_snapshots_fn fn = (rtdbs_change_subscribe_snapshots_fn)get_function("rtdbs_change_subscribe_snapshots");
-return fn(handle, count, ids, delta_values, delta_states, changed_types, errors);
-}
 */
 
 /**
@@ -5654,11 +5046,6 @@ return fn(handle, count, ids, delta_values, delta_states, changed_types, errors)
  *
  * \param handle    连接句柄
 rtdb_error RTDBAPI_CALLRULE rtdbs_cancel_subscribe_snapshots_warp(rtdb_int32 handle)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbs_cancel_subscribe_snapshots_fn)(rtdb_int32 handle);
-rtdbs_cancel_subscribe_snapshots_fn fn = (rtdbs_cancel_subscribe_snapshots_fn)get_function("rtdbs_cancel_subscribe_snapshots");
-return fn(handle);
-}
 */
 
 /**
@@ -5675,11 +5062,6 @@ return fn(handle);
  *        [length]    短整型，输入/输出，自定义类型标签点的数值长度
  *        [quality]   短整型，输出，实时数值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
 rtdb_error RTDBAPI_CALLRULE rtdbs_get_named_type_snapshot64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type* datetime, rtdb_subtime_type* subtime, void* object, rtdb_length_type* length, rtdb_int16* quality)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbs_get_named_type_snapshot64_fn)(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type* datetime, rtdb_subtime_type* subtime, void* object, rtdb_length_type* length, rtdb_int16* quality);
-rtdbs_get_named_type_snapshot64_fn fn = (rtdbs_get_named_type_snapshot64_fn)get_function("rtdbs_get_named_type_snapshot64");
-return fn(handle, id, datetime, subtime, object, length, quality);
-}
 */
 
 /**
@@ -5702,11 +5084,6 @@ return fn(handle, id, datetime, subtime, object, length, quality);
  *        [qualities] 短整型数组，输出，实时数值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
  *        [errors]    无符号整型数组，输出，读取实时数据的返回值列表，参考rtdb_error.h
 rtdb_error RTDBAPI_CALLRULE rtdbs_get_named_type_snapshots64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, void* const* objects, rtdb_length_type* lengths, rtdb_int16* qualities, rtdb_error* errors)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbs_get_named_type_snapshots64_fn)(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, void* const* objects, rtdb_length_type* lengths, rtdb_int16* qualities, rtdb_error* errors);
-rtdbs_get_named_type_snapshots64_fn fn = (rtdbs_get_named_type_snapshots64_fn)get_function("rtdbs_get_named_type_snapshots64");
-return fn(handle, count, ids, datetimes, subtimes, objects, lengths, qualities, errors);
-}
 */
 
 /**
@@ -5723,11 +5100,6 @@ return fn(handle, count, ids, datetimes, subtimes, objects, lengths, qualities, 
  *        [length]    短整型，输入，自定义类型标签点数值长度，超过一个页大小数据将被截断。
  *        [quality]   短整型，输入，实时数值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
 rtdb_error RTDBAPI_CALLRULE rtdbs_put_named_type_snapshot64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime, rtdb_subtime_type subtime, const void* object, rtdb_length_type length, rtdb_int16 quality)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbs_put_named_type_snapshot64_fn)(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime, rtdb_subtime_type subtime, const void* object, rtdb_length_type length, rtdb_int16 quality);
-rtdbs_put_named_type_snapshot64_fn fn = (rtdbs_put_named_type_snapshot64_fn)get_function("rtdbs_put_named_type_snapshot64");
-return fn(handle, id, datetime, subtime, object, length, quality);
-}
 */
 
 /**
@@ -5749,11 +5121,6 @@ return fn(handle, id, datetime, subtime, object, length, quality);
  *        [qualities] 短整型数组，输入，实时数值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
  *        [errors]    无符号整型数组，输出，读取实时数据的返回值列表，参考rtdb_error.h
 rtdb_error RTDBAPI_CALLRULE rtdbs_put_named_type_snapshots64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, const void* const* objects, const rtdb_length_type* lengths, const rtdb_int16* qualities, rtdb_error* errors)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbs_put_named_type_snapshots64_fn)(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, const void* const* objects, const rtdb_length_type* lengths, const rtdb_int16* qualities, rtdb_error* errors);
-rtdbs_put_named_type_snapshots64_fn fn = (rtdbs_put_named_type_snapshots64_fn)get_function("rtdbs_put_named_type_snapshots64");
-return fn(handle, count, ids, datetimes, subtimes, objects, lengths, qualities, errors);
-}
 */
 
 /**
@@ -5763,11 +5130,6 @@ return fn(handle, count, ids, datetimes, subtimes, objects, lengths, qualities, 
  * \param handle    连接句柄
  * \param count     整型，输出，存档文件数量
 rtdb_error RTDBAPI_CALLRULE rtdba_get_archives_count_warp(rtdb_int32 handle, rtdb_int32 *count)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdba_get_archives_count_fn)(rtdb_int32 handle, rtdb_int32 *count);
-rtdba_get_archives_count_fn fn = (rtdba_get_archives_count_fn)get_function("rtdba_get_archives_count");
-return fn(handle, count);
-}
 */
 
 /**
@@ -5781,11 +5143,6 @@ return fn(handle, count);
 * \param end        整数，输入，终止时间，距离1970年1月1日08:00:00的秒数
 * \param mb_size    整型，输入，文件兆字节大小，单位为 MB。
 rtdb_error RTDBAPI_CALLRULE rtdba_create_ranged_archive64_warp(rtdb_int32 handle, const char* path, const char* file, rtdb_timestamp_type begin, rtdb_timestamp_type end, rtdb_int32 mb_size)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdba_create_ranged_archive64_fn)(rtdb_int32 handle, const char* path, const char* file, rtdb_timestamp_type begin, rtdb_timestamp_type end, rtdb_int32 mb_size);
-rtdba_create_ranged_archive64_fn fn = (rtdba_create_ranged_archive64_fn)get_function("rtdba_create_ranged_archive64");
-return fn(handle, path, file, begin, end, mb_size);
-}
 */
 
 /**
@@ -5798,11 +5155,6 @@ return fn(handle, path, file, begin, end, mb_size);
 * \param state      整型，输入，取值 RTDB_ACTIVED_ARCHIVE、RTDB_NORMAL_ARCHIVE、
 *                     RTDB_READONLY_ARCHIVE 之一，表示文件状态
 rtdb_error RTDBAPI_CALLRULE rtdba_append_archive_warp(rtdb_int32 handle, const char *path, const char *file, rtdb_int32 state)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdba_append_archive_fn)(rtdb_int32 handle, const char *path, const char *file, rtdb_int32 state);
-rtdba_append_archive_fn fn = (rtdba_append_archive_fn)get_function("rtdba_append_archive");
-return fn(handle, path, file, state);
-}
 */
 
 /**
@@ -5813,11 +5165,6 @@ return fn(handle, path, file, state);
 * \param path       字符串，输入，文件所在目录路径，必须以"\"或"/"结尾。
 * \param file       字符串，输入，文件名。
 rtdb_error RTDBAPI_CALLRULE rtdba_remove_archive_warp(rtdb_int32 handle, const char *path, const char *file)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdba_remove_archive_fn)(rtdb_int32 handle, const char *path, const char *file);
-rtdba_remove_archive_fn fn = (rtdba_remove_archive_fn)get_function("rtdba_remove_archive");
-return fn(handle, path, file);
-}
 */
 
 /**
@@ -5833,11 +5180,6 @@ return fn(handle, path, file);
  *        并将active_archive_指向该文件。该事务进行过程中，
  *        用锁保证所有读写操作都暂停等待该事务完成。
 rtdb_error RTDBAPI_CALLRULE rtdba_shift_actived_warp(rtdb_int32 handle)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdba_shift_actived_fn)(rtdb_int32 handle);
-rtdba_shift_actived_fn fn = (rtdba_shift_actived_fn)get_function("rtdba_shift_actived");
-return fn(handle);
-}
 */
 
 /**
@@ -5850,11 +5192,6 @@ return fn(handle);
  *        [states]           整型数组，输出，取值 RTDB_INVALID_ARCHIVE、RTDB_ACTIVED_ARCHIVE、
  *                          RTDB_NORMAL_ARCHIVE、RTDB_READONLY_ARCHIVE 之一，表示文件状态
 rtdb_error RTDBAPI_CALLRULE rtdba_get_archives_warp(rtdb_int32 handle, rtdb_int32* count, rtdb_path_string* paths, rtdb_filename_string* files, rtdb_int32 *states)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdba_get_archives_fn)(rtdb_int32 handle, rtdb_int32* count, rtdb_path_string* paths, rtdb_filename_string* files, rtdb_int32 *states);
-rtdba_get_archives_fn fn = (rtdba_get_archives_fn)get_function("rtdba_get_archives");
-return fn(handle, count, paths, files, states);
-}
 */
 
 /**
@@ -5867,11 +5204,6 @@ return fn(handle, count, paths, files, states);
  *    [infos]: out, 存档信息
  *    [errors]: out, 错误
 rtdb_error RTDBAPI_CALLRULE rtdba_get_archives_info_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_path_string* const paths, const rtdb_filename_string* const files, RTDB_HEADER_PAGE *infos, rtdb_error* errors)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdba_get_archives_info_fn)(rtdb_int32 handle, rtdb_int32* count, const rtdb_path_string* const paths, const rtdb_filename_string* const files, RTDB_HEADER_PAGE *infos, rtdb_error* errors);
-rtdba_get_archives_info_fn fn = (rtdba_get_archives_info_fn)get_function("rtdba_get_archives_info");
-return fn(handle, count, paths, files, infos, errors);
-}
 */
 
 /**
@@ -5885,11 +5217,6 @@ return fn(handle, count, paths, files, infos, errors);
  *    [total_datas]: 总数
  *    [errors]: 错误
 rtdb_error RTDBAPI_CALLRULE rtdba_get_archives_perf_data_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_path_string* const paths, const rtdb_filename_string* const files, RTDB_ARCHIVE_PERF_DATA* real_time_datas, RTDB_ARCHIVE_PERF_DATA* total_datas, rtdb_error* errors)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdba_get_archives_perf_data_fn)(rtdb_int32 handle, rtdb_int32* count, const rtdb_path_string* const paths, const rtdb_filename_string* const files, RTDB_ARCHIVE_PERF_DATA* real_time_datas, RTDB_ARCHIVE_PERF_DATA* total_datas, rtdb_error* errors);
-rtdba_get_archives_perf_data_fn fn = (rtdba_get_archives_perf_data_fn)get_function("rtdba_get_archives_perf_data");
-return fn(handle, count, paths, files, real_time_datas, total_datas, errors);
-}
 */
 
 /**
@@ -5898,11 +5225,6 @@ return fn(handle, count, paths, files, real_time_datas, total_datas, errors);
  *    [handle]: in, 句柄
  *    [status]: out, 存档状态
 rtdb_error RTDBAPI_CALLRULE rtdba_get_archives_status_warp(rtdb_int32 handle, rtdb_error* status)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdba_get_archives_status_fn)(rtdb_int32 handle, rtdb_error* status);
-rtdba_get_archives_status_fn fn = (rtdba_get_archives_status_fn)get_function("rtdba_get_archives_status");
-return fn(handle, status);
-}
 */
 
 /**
@@ -5915,11 +5237,6 @@ return fn(handle, status);
 * \param file_id    整型，输入，附属文件标识，0 表示获取主文件信息。
 * \param info       RTDB_HEADER_PAGE 结构，输出，存档文件信息
 rtdb_error RTDBAPI_CALLRULE rtdba_get_archive_info_warp(rtdb_int32 handle, const char *path, const char *file, rtdb_int32 file_id, RTDB_HEADER_PAGE *info)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdba_get_archive_info_fn)(rtdb_int32 handle, const char *path, const char *file, rtdb_int32 file_id, RTDB_HEADER_PAGE *info);
-rtdba_get_archive_info_fn fn = (rtdba_get_archive_info_fn)get_function("rtdba_get_archive_info");
-return fn(handle, path, file, file_id, info);
-}
 */
 
 /**
@@ -5935,11 +5252,6 @@ return fn(handle, path, file, file_id, info);
 * \param auto_arrange   短整型，输入，是否自动整理存档文件。
 * 备注: rated_capacity 与 ex_capacity 参数可为 0，表示不修改对应的配置项。
 rtdb_error RTDBAPI_CALLRULE rtdba_update_archive_warp(rtdb_int32 handle, const char *path, const char *file, rtdb_int32 rated_capacity, rtdb_int32 ex_capacity, rtdb_int16 auto_merge, rtdb_int16 auto_arrange)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdba_update_archive_fn)(rtdb_int32 handle, const char *path, const char *file, rtdb_int32 rated_capacity, rtdb_int32 ex_capacity, rtdb_int16 auto_merge, rtdb_int16 auto_arrange);
-rtdba_update_archive_fn fn = (rtdba_update_archive_fn)get_function("rtdba_update_archive");
-return fn(handle, path, file, rated_capacity, ex_capacity, auto_merge, auto_arrange);
-}
 */
 
 /**
@@ -5950,11 +5262,6 @@ return fn(handle, path, file, rated_capacity, ex_capacity, auto_merge, auto_arra
 * \param path       字符串，输入，文件所在目录路径，必须以"\"或"/"结尾。
 * \param file       字符串，输入，文件名。
 rtdb_error RTDBAPI_CALLRULE rtdba_arrange_archive_warp(rtdb_int32 handle, const char *path, const char *file)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdba_arrange_archive_fn)(rtdb_int32 handle, const char *path, const char *file);
-rtdba_arrange_archive_fn fn = (rtdba_arrange_archive_fn)get_function("rtdba_arrange_archive");
-return fn(handle, path, file);
-}
 */
 
 /**
@@ -5965,11 +5272,6 @@ return fn(handle, path, file);
 * \param path       字符串，输入，文件所在目录路径，必须以"\"或"/"结尾。
 * \param file       字符串，输入，文件名。
 rtdb_error RTDBAPI_CALLRULE rtdba_reindex_archive_warp(rtdb_int32 handle, const char *path, const char *file)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdba_reindex_archive_fn)(rtdb_int32 handle, const char *path, const char *file);
-rtdba_reindex_archive_fn fn = (rtdba_reindex_archive_fn)get_function("rtdba_reindex_archive");
-return fn(handle, path, file);
-}
 */
 
 /**
@@ -5981,11 +5283,6 @@ return fn(handle, path, file);
 * \param file       字符串，输入，文件名。
 * \param dest       字符串，输入，备份目录路径，必须以"\"或"/"结尾。
 rtdb_error RTDBAPI_CALLRULE rtdba_backup_archive_warp(rtdb_int32 handle, const char *path, const char *file, const char *dest)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdba_backup_archive_fn)(rtdb_int32 handle, const char *path, const char *file, const char *dest);
-rtdba_backup_archive_fn fn = (rtdba_backup_archive_fn)get_function("rtdba_backup_archive");
-return fn(handle, path, file, dest);
-}
 */
 
 /**
@@ -5997,11 +5294,6 @@ return fn(handle, path, file, dest);
 *        [file]       字符串，输入，文件名。
 *        [dest]       字符串，输入，移动目录路径，必须以"\"或"/"结尾。
 rtdb_error RTDBAPI_CALLRULE rtdba_move_archive_warp(rtdb_int32 handle, const char *path, const char *file, const char *dest)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdba_move_archive_fn)(rtdb_int32 handle, const char *path, const char *file, const char *dest);
-rtdba_move_archive_fn fn = (rtdba_move_archive_fn)get_function("rtdba_move_archive");
-return fn(handle, path, file, dest);
-}
 */
 
 /**
@@ -6012,11 +5304,6 @@ return fn(handle, path, file, dest);
 *        [path]       字符串，输入，文件所在目录路径，必须以"\"或"/"结尾。
 *        [file]       字符串，输入，文件名。
 rtdb_error RTDBAPI_CALLRULE rtdba_convert_index_warp(rtdb_int32 handle, const char *path, const char *file)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdba_convert_index_fn)(rtdb_int32 handle, const char *path, const char *file);
-rtdba_convert_index_fn fn = (rtdba_convert_index_fn)get_function("rtdba_convert_index");
-return fn(handle, path, file);
-}
 */
 
 /**
@@ -6063,11 +5350,6 @@ return fn(handle, path, file);
  * \param progress   单精度浮点型，输出，任务的进度百分比。
  * \remark path 及 file 参数可传空指针，对应的信息将不再返回。
 rtdb_error RTDBAPI_CALLRULE rtdba_query_big_job64_warp(rtdb_int32 handle, rtdb_int32 process, char* path, char* file, rtdb_int16* job, rtdb_int32* state, rtdb_timestamp_type* end_time, rtdb_float32* progress)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdba_query_big_job64_fn)(rtdb_int32 handle, rtdb_int32 process, char* path, char* file, rtdb_int16* job, rtdb_int32* state, rtdb_timestamp_type* end_time, rtdb_float32* progress);
-rtdba_query_big_job64_fn fn = (rtdba_query_big_job64_fn)get_function("rtdba_query_big_job64");
-return fn(handle, process, path, file, job, state, end_time, progress);
-}
 */
 
 /**
@@ -6089,11 +5371,6 @@ return fn(handle, process, path, file, job, state, end_time, progress);
  *                         RTDB_REMOVE_TABLE: 删除表;
  * 备注：path 及 file 参数可传空指针，对应的信息将不再返回。
 rtdb_error RTDBAPI_CALLRULE rtdba_cancel_big_job_warp(rtdb_int32 handle, rtdb_int32 process)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdba_cancel_big_job_fn)(rtdb_int32 handle, rtdb_int32 process);
-rtdba_cancel_big_job_fn fn = (rtdba_cancel_big_job_fn)get_function("rtdba_cancel_big_job");
-return fn(handle, process);
-}
 */
 
 /**
@@ -6110,11 +5387,6 @@ return fn(handle, process);
  * \remark 由 datetime1、ms1 形成的时间可以大于 datetime2、ms2 表示的时间，
  *        此时前者表示结束时间，后者表示起始时间。
 rtdb_error RTDBAPI_CALLRULE rtdbh_archived_values_count64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime1, rtdb_subtime_type subtime1, rtdb_timestamp_type datetime2, rtdb_subtime_type subtime2, rtdb_int32* count)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbh_archived_values_count64_fn)(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime1, rtdb_subtime_type subtime1, rtdb_timestamp_type datetime2, rtdb_subtime_type subtime2, rtdb_int32* count);
-rtdbh_archived_values_count64_fn fn = (rtdbh_archived_values_count64_fn)get_function("rtdbh_archived_values_count64");
-return fn(handle, id, datetime1, subtime1, datetime2, subtime2, count);
-}
 */
 
 /**
@@ -6131,11 +5403,6 @@ return fn(handle, id, datetime1, subtime1, datetime2, subtime2, count);
  * \remark 由 datetime1、ms1 形成的时间可以大于 datetime2、ms2 表示的时间，
  *        此时前者表示结束时间，后者表示起始时间。
 rtdb_error RTDBAPI_CALLRULE rtdbh_archived_values_real_count64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime1, rtdb_subtime_type subtime1, rtdb_timestamp_type datetime2, rtdb_subtime_type subtime2, rtdb_int32* count)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbh_archived_values_real_count64_fn)(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime1, rtdb_subtime_type subtime1, rtdb_timestamp_type datetime2, rtdb_subtime_type subtime2, rtdb_int32* count);
-rtdbh_archived_values_real_count64_fn fn = (rtdbh_archived_values_real_count64_fn)get_function("rtdbh_archived_values_real_count64");
-return fn(handle, id, datetime1, subtime1, datetime2, subtime2, count);
-}
 */
 
 /**
@@ -6168,11 +5435,6 @@ return fn(handle, id, datetime1, subtime1, datetime2, subtime2, count);
  *        最后一个元素表示开始时间。
  *        本接口对数据类型为 RTDB_COOR、RTDB_BLOB、RTDB_STRING 的标签点无效。
 rtdb_error RTDBAPI_CALLRULE rtdbh_get_archived_values64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32* count, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float64* values, rtdb_int64* states, rtdb_int16* qualities)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbh_get_archived_values64_fn)(rtdb_int32 handle, rtdb_int32 id, rtdb_int32* count, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float64* values, rtdb_int64* states, rtdb_int16* qualities);
-rtdbh_get_archived_values64_fn fn = (rtdbh_get_archived_values64_fn)get_function("rtdbh_get_archived_values64");
-return fn(handle, id, count, datetimes, subtimes, values, states, qualities);
-}
 */
 
 /**
@@ -6205,11 +5467,6 @@ return fn(handle, id, count, datetimes, subtimes, values, states, qualities);
  *        最后一个元素表示开始时间。
  *        本接口对数据类型为 RTDB_COOR、RTDB_BLOB、RTDB_STRING 的标签点无效。
 rtdb_error RTDBAPI_CALLRULE rtdbh_get_archived_values_backward64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32* count, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float64* values, rtdb_int64* states, rtdb_int16* qualities)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbh_get_archived_values_backward64_fn)(rtdb_int32 handle, rtdb_int32 id, rtdb_int32* count, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float64* values, rtdb_int64* states, rtdb_int16* qualities);
-rtdbh_get_archived_values_backward64_fn fn = (rtdbh_get_archived_values_backward64_fn)get_function("rtdbh_get_archived_values_backward64");
-return fn(handle, id, count, datetimes, subtimes, values, states, qualities);
-}
 */
 
 /**
@@ -6239,11 +5496,6 @@ return fn(handle, id, count, datetimes, subtimes, values, states, qualities);
  *        最后一个元素表示开始时间。
  *        本接口只对数据类型为 RTDB_COOR 的标签点有效。
 rtdb_error RTDBAPI_CALLRULE rtdbh_get_archived_coor_values64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32* count, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float32* x, rtdb_float32* y, rtdb_int16* qualities)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbh_get_archived_coor_values64_fn)(rtdb_int32 handle, rtdb_int32 id, rtdb_int32* count, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float32* x, rtdb_float32* y, rtdb_int16* qualities);
-rtdbh_get_archived_coor_values64_fn fn = (rtdbh_get_archived_coor_values64_fn)get_function("rtdbh_get_archived_coor_values64");
-return fn(handle, id, count, datetimes, subtimes, x, y, qualities);
-}
 */
 
 /**
@@ -6273,11 +5525,6 @@ return fn(handle, id, count, datetimes, subtimes, x, y, qualities);
  *        最后一个元素表示开始时间。
  *        本接口只对数据类型为 RTDB_COOR 的标签点有效。
 rtdb_error RTDBAPI_CALLRULE rtdbh_get_archived_coor_values_backward64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32* count, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float32* x, rtdb_float32* y, rtdb_int16* qualities)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbh_get_archived_coor_values_backward64_fn)(rtdb_int32 handle, rtdb_int32 id, rtdb_int32* count, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float32* x, rtdb_float32* y, rtdb_int16* qualities);
-rtdbh_get_archived_coor_values_backward64_fn fn = (rtdbh_get_archived_coor_values_backward64_fn)get_function("rtdbh_get_archived_coor_values_backward64");
-return fn(handle, id, count, datetimes, subtimes, x, y, qualities);
-}
 */
 
 /**
@@ -6296,11 +5543,6 @@ return fn(handle, id, count, datetimes, subtimes, x, y, qualities);
  *        此时前者表示结束时间，后者表示起始时间。
  *        本接口对数据类型为 RTDB_COOR、RTDB_BLOB、RTDB_STRING 的标签点无效。
 rtdb_error RTDBAPI_CALLRULE rtdbh_get_archived_values_in_batches64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime1, rtdb_subtime_type subtime1, rtdb_timestamp_type datetime2, rtdb_subtime_type subtime2, rtdb_int32* count, rtdb_int32* batch_count)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbh_get_archived_values_in_batches64_fn)(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime1, rtdb_subtime_type subtime1, rtdb_timestamp_type datetime2, rtdb_subtime_type subtime2, rtdb_int32* count, rtdb_int32* batch_count);
-rtdbh_get_archived_values_in_batches64_fn fn = (rtdbh_get_archived_values_in_batches64_fn)get_function("rtdbh_get_archived_values_in_batches64");
-return fn(handle, id, datetime1, subtime1, datetime2, subtime2, count, batch_count);
-}
 */
 
 /**
@@ -6327,11 +5569,6 @@ return fn(handle, id, datetime1, subtime1, datetime2, subtime2, count, batch_cou
  *        当返回 RtE_BATCH_END 表示全部数据获取完毕。
  *        本接口对数据类型为 RTDB_COOR、RTDB_BLOB、RTDB_STRING 的标签点无效。
 rtdb_error RTDBAPI_CALLRULE rtdbh_get_next_archived_values64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32* count, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float64* values, rtdb_int64* states, rtdb_int16* qualities)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbh_get_next_archived_values64_fn)(rtdb_int32 handle, rtdb_int32 id, rtdb_int32* count, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float64* values, rtdb_int64* states, rtdb_int16* qualities);
-rtdbh_get_next_archived_values64_fn fn = (rtdbh_get_next_archived_values64_fn)get_function("rtdbh_get_next_archived_values64");
-return fn(handle, id, count, datetimes, subtimes, values, states, qualities);
-}
 */
 
 /**
@@ -6354,11 +5591,6 @@ return fn(handle, id, count, datetimes, subtimes, values, states, qualities);
  * \remark 用户须保证 datetimes、ms、values、states、qualities 的长度与 count 相符，
  *        本接口对数据类型为 RTDB_COOR、RTDB_BLOB、RTDB_STRING 的标签点无效。
 rtdb_error RTDBAPI_CALLRULE rtdbh_get_timed_values64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32 count, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, rtdb_float64* values, rtdb_int64* states, rtdb_int16* qualities)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbh_get_timed_values64_fn)(rtdb_int32 handle, rtdb_int32 id, rtdb_int32 count, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, rtdb_float64* values, rtdb_int64* states, rtdb_int16* qualities);
-rtdbh_get_timed_values64_fn fn = (rtdbh_get_timed_values64_fn)get_function("rtdbh_get_timed_values64");
-return fn(handle, id, count, datetimes, subtimes, values, states, qualities);
-}
 */
 
 /**
@@ -6378,11 +5610,6 @@ return fn(handle, id, count, datetimes, subtimes, values, states, qualities);
  * \remark 用户须保证 datetimes、ms、x、y、qualities 的长度与 count 相符，
  *        本接口只对数据类型为 RTDB_COOR 的标签点有效。
 rtdb_error RTDBAPI_CALLRULE rtdbh_get_timed_coor_values64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32 count, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, rtdb_float32* x, rtdb_float32* y, rtdb_int16* qualities)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbh_get_timed_coor_values64_fn)(rtdb_int32 handle, rtdb_int32 id, rtdb_int32 count, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, rtdb_float32* x, rtdb_float32* y, rtdb_int16* qualities);
-rtdbh_get_timed_coor_values64_fn fn = (rtdbh_get_timed_coor_values64_fn)get_function("rtdbh_get_timed_coor_values64");
-return fn(handle, id, count, datetimes, subtimes, x, y, qualities);
-}
 */
 
 /**
@@ -6415,11 +5642,6 @@ return fn(handle, id, count, datetimes, subtimes, x, y, qualities);
  *        最后一个元素表示开始时间。
  *        本接口对数据类型为 RTDB_COOR、RTDB_BLOB、RTDB_STRING 的标签点无效。
 rtdb_error RTDBAPI_CALLRULE rtdbh_get_interpo_values64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32* count, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float64* values, rtdb_int64* states, rtdb_int16* qualities)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbh_get_interpo_values64_fn)(rtdb_int32 handle, rtdb_int32 id, rtdb_int32* count, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float64* values, rtdb_int64* states, rtdb_int16* qualities);
-rtdbh_get_interpo_values64_fn fn = (rtdbh_get_interpo_values64_fn)get_function("rtdbh_get_interpo_values64");
-return fn(handle, id, count, datetimes, subtimes, values, states, qualities);
-}
 */
 
 /**
@@ -6448,11 +5670,6 @@ return fn(handle, id, count, datetimes, subtimes, values, states, qualities);
  *        在输入时，datetimes、ms 中至少应有一个元素用于存放起始时间。
  *        本接口对数据类型为 RTDB_COOR、RTDB_BLOB、RTDB_STRING 的标签点无效。
 rtdb_error RTDBAPI_CALLRULE rtdbh_get_interval_values64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int64 interval, rtdb_int32 count, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float64* values, rtdb_int64* states, rtdb_int16* qualities)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbh_get_interval_values64_fn)(rtdb_int32 handle, rtdb_int32 id, rtdb_int64 interval, rtdb_int32 count, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float64* values, rtdb_int64* states, rtdb_int16* qualities);
-rtdbh_get_interval_values64_fn fn = (rtdbh_get_interval_values64_fn)get_function("rtdbh_get_interval_values64");
-return fn(handle, id, interval, count, datetimes, subtimes, values, states, qualities);
-}
 */
 
 /**
@@ -6479,11 +5696,6 @@ return fn(handle, id, interval, count, datetimes, subtimes, values, states, qual
  * \param quality       短整型，输出，历史值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
  * \remark 本接口对数据类型为 RTDB_COOR、RTDB_BLOB、RTDB_STRING 的标签点无效。
 rtdb_error RTDBAPI_CALLRULE rtdbh_get_single_value64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32 mode, rtdb_timestamp_type* datetime, rtdb_subtime_type* subtime, rtdb_float64* value, rtdb_int64* state, rtdb_int16* quality)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbh_get_single_value64_fn)(rtdb_int32 handle, rtdb_int32 id, rtdb_int32 mode, rtdb_timestamp_type* datetime, rtdb_subtime_type* subtime, rtdb_float64* value, rtdb_int64* state, rtdb_int16* quality);
-rtdbh_get_single_value64_fn fn = (rtdbh_get_single_value64_fn)get_function("rtdbh_get_single_value64");
-return fn(handle, id, mode, datetime, subtime, value, state, quality);
-}
 */
 
 /**
@@ -6507,11 +5719,6 @@ return fn(handle, id, mode, datetime, subtime, value, state, quality);
  * \param quality       短整型，输出，历史值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
  * \remark 本接口只对数据类型为 RTDB_COOR 的标签点有效。
 rtdb_error RTDBAPI_CALLRULE rtdbh_get_single_coor_value64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32 mode, rtdb_timestamp_type* datetime, rtdb_subtime_type* subtime, rtdb_float32* x, rtdb_float32* y, rtdb_int16* quality)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbh_get_single_coor_value64_fn)(rtdb_int32 handle, rtdb_int32 id, rtdb_int32 mode, rtdb_timestamp_type* datetime, rtdb_subtime_type* subtime, rtdb_float32* x, rtdb_float32* y, rtdb_int16* quality);
-rtdbh_get_single_coor_value64_fn fn = (rtdbh_get_single_coor_value64_fn)get_function("rtdbh_get_single_coor_value64");
-return fn(handle, id, mode, datetime, subtime, x, y, quality);
-}
 */
 
 /**
@@ -6535,11 +5742,6 @@ return fn(handle, id, mode, datetime, subtime, x, y, quality);
  * \param quality       短整型，输出，历史值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
  * \remark 本接口只对数据类型为 RTDB_BLOB、RTDB_STRING 的标签点有效。
 rtdb_error RTDBAPI_CALLRULE rtdbh_get_single_blob_value64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32 mode, rtdb_timestamp_type* datetime, rtdb_subtime_type* subtime, rtdb_byte* blob, rtdb_length_type* len, rtdb_int16* quality)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbh_get_single_blob_value64_fn)(rtdb_int32 handle, rtdb_int32 id, rtdb_int32 mode, rtdb_timestamp_type* datetime, rtdb_subtime_type* subtime, rtdb_byte* blob, rtdb_length_type* len, rtdb_int16* quality);
-rtdbh_get_single_blob_value64_fn fn = (rtdbh_get_single_blob_value64_fn)get_function("rtdbh_get_single_blob_value64");
-return fn(handle, id, mode, datetime, subtime, blob, len, quality);
-}
 */
 
 /**
@@ -6567,11 +5769,6 @@ return fn(handle, id, mode, datetime, subtime, blob, len, quality);
  * \param qualities     短整型数组，输出，历史值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
  * \remark 本接口只对数据类型为 RTDB_BLOB、RTDB_STRING 的标签点有效。
 rtdb_error RTDBAPI_CALLRULE rtdbh_get_archived_blob_values64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32* count, rtdb_timestamp_type datetime1, rtdb_subtime_type subtime1, rtdb_timestamp_type datetime2, rtdb_subtime_type subtime2, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_length_type* lens, rtdb_byte* const* blobs, rtdb_int16* qualities)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbh_get_archived_blob_values64_fn)(rtdb_int32 handle, rtdb_int32 id, rtdb_int32* count, rtdb_timestamp_type datetime1, rtdb_subtime_type subtime1, rtdb_timestamp_type datetime2, rtdb_subtime_type subtime2, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_length_type* lens, rtdb_byte* const* blobs, rtdb_int16* qualities);
-rtdbh_get_archived_blob_values64_fn fn = (rtdbh_get_archived_blob_values64_fn)get_function("rtdbh_get_archived_blob_values64");
-return fn(handle, id, count, datetime1, subtime1, datetime2, subtime2, datetimes, subtimes, lens, blobs, qualities);
-}
 */
 
 /**
@@ -6602,11 +5799,6 @@ return fn(handle, id, count, datetime1, subtime1, datetime2, subtime2, datetimes
  * \param qualities     短整型数组，输出，历史值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
  * \remark 本接口只对数据类型为 RTDB_BLOB、RTDB_STRING 的标签点有效。
 rtdb_error RTDBAPI_CALLRULE rtdbh_get_archived_blob_values_filt64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32* count, rtdb_timestamp_type datetime1, rtdb_subtime_type subtime1, rtdb_timestamp_type datetime2, rtdb_subtime_type subtime2, const char* filter, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_length_type* lens, rtdb_byte* const* blobs, rtdb_int16* qualities)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbh_get_archived_blob_values_filt64_fn)(rtdb_int32 handle, rtdb_int32 id, rtdb_int32* count, rtdb_timestamp_type datetime1, rtdb_subtime_type subtime1, rtdb_timestamp_type datetime2, rtdb_subtime_type subtime2, const char* filter, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_length_type* lens, rtdb_byte* const* blobs, rtdb_int16* qualities);
-rtdbh_get_archived_blob_values_filt64_fn fn = (rtdbh_get_archived_blob_values_filt64_fn)get_function("rtdbh_get_archived_blob_values_filt64");
-return fn(handle, id, count, datetime1, subtime1, datetime2, subtime2, filter, datetimes, subtimes, lens, blobs, qualities);
-}
 */
 
 /**
@@ -6631,11 +5823,6 @@ return fn(handle, id, count, datetime1, subtime1, datetime2, subtime2, filter, d
  * \param type           短整型 datetime字符串的格式类型，默认为-1
  * \remark 本接口只对数据类型为 RTDB_DATETIME 的标签点有效。
 rtdb_error RTDBAPI_CALLRULE rtdbh_get_single_datetime_value64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32 mode, rtdb_timestamp_type* datetime, rtdb_subtime_type* subtime, rtdb_byte* dtblob, rtdb_length_type* dtlen, rtdb_int16* quality, rtdb_int16 type)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbh_get_single_datetime_value64_fn)(rtdb_int32 handle, rtdb_int32 id, rtdb_int32 mode, rtdb_timestamp_type* datetime, rtdb_subtime_type* subtime, rtdb_byte* dtblob, rtdb_length_type* dtlen, rtdb_int16* quality, rtdb_int16 type);
-rtdbh_get_single_datetime_value64_fn fn = (rtdbh_get_single_datetime_value64_fn)get_function("rtdbh_get_single_datetime_value64");
-return fn(handle, id, mode, datetime, subtime, dtblob, dtlen, quality, type);
-}
 */
 
 /**
@@ -6664,11 +5851,6 @@ return fn(handle, id, mode, datetime, subtime, dtblob, dtlen, quality, type);
  *                       “yyyy/mm/dd hh:mm:ss.000”的type为2
  * \remark 本接口只对数据类型为 RTDB_DATETIME 的标签点有效。
 rtdb_error RTDBAPI_CALLRULE rtdbh_get_archived_datetime_values64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32* count, rtdb_timestamp_type datetime1, rtdb_subtime_type subtime1, rtdb_timestamp_type datetime2, rtdb_subtime_type subtime2, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_length_type* lens, rtdb_byte* const* blobs, rtdb_int16* qualities, rtdb_int16 type)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbh_get_archived_datetime_values64_fn)(rtdb_int32 handle, rtdb_int32 id, rtdb_int32* count, rtdb_timestamp_type datetime1, rtdb_subtime_type subtime1, rtdb_timestamp_type datetime2, rtdb_subtime_type subtime2, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_length_type* lens, rtdb_byte* const* blobs, rtdb_int16* qualities, rtdb_int16 type);
-rtdbh_get_archived_datetime_values64_fn fn = (rtdbh_get_archived_datetime_values64_fn)get_function("rtdbh_get_archived_datetime_values64");
-return fn(handle, id, count, datetime1, subtime1, datetime2, subtime2, datetimes, subtimes, lens, blobs, qualities, type);
-}
 */
 
 /**
@@ -6692,11 +5874,6 @@ return fn(handle, id, count, datetime1, subtime1, datetime2, subtime2, datetimes
  *        本接口仅对数据类型为 RTDB_DATETIME 的标签点有效。
  *        如果 datetimes、ms 标识的数据已经存在，其值将被替换。
 rtdb_error RTDBAPI_CALLRULE rtdbh_put_archived_datetime_values64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, const rtdb_byte* const* dtvalues, const rtdb_length_type* dtlens, const rtdb_int16* qualities, rtdb_error* errors)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbh_put_archived_datetime_values64_fn)(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, const rtdb_byte* const* dtvalues, const rtdb_length_type* dtlens, const rtdb_int16* qualities, rtdb_error* errors);
-rtdbh_put_archived_datetime_values64_fn fn = (rtdbh_put_archived_datetime_values64_fn)get_function("rtdbh_put_archived_datetime_values64");
-return fn(handle, count, ids, datetimes, subtimes, dtvalues, dtlens, qualities, errors);
-}
 */
 
 /**
@@ -6726,11 +5903,6 @@ return fn(handle, count, ids, datetimes, subtimes, dtvalues, dtlens, qualities, 
  *        则表明仅有累计值和加权平均值输出有效，其余统计结果无效。
  *        本接口对数据类型为 RTDB_COOR、RTDB_BLOB、RTDB_STRING 的标签点无效。
 rtdb_error RTDBAPI_CALLRULE rtdbh_summary_data_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime1, rtdb_subtime_type subtime1, rtdb_timestamp_type datetime2, rtdb_subtime_type subtime2, RTDB_SUMMARY_DATA* summary_data)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbh_summary_data_fn)(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime1, rtdb_subtime_type subtime1, rtdb_timestamp_type datetime2, rtdb_subtime_type subtime2, RTDB_SUMMARY_DATA* summary_data);
-rtdbh_summary_data_fn fn = (rtdbh_summary_data_fn)get_function("rtdbh_summary_data");
-return fn(handle, id, datetime1, subtime1, datetime2, subtime2, summary_data);
-}
 */
 
 /**
@@ -6768,11 +5940,6 @@ return fn(handle, id, datetime1, subtime1, datetime2, subtime2, summary_data);
  *        则表明仅有累计值和加权平均值输出有效，其余统计结果无效。
  *        本接口对数据类型为 RTDB_COOR、RTDB_BLOB、RTDB_STRING 的标签点无效。
 rtdb_error RTDBAPI_CALLRULE rtdbh_summary_data_in_batches_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32* count, rtdb_int64 interval, rtdb_timestamp_type datetime1, rtdb_subtime_type subtime1, rtdb_timestamp_type datetime2, rtdb_subtime_type subtime2, RTDB_SUMMARY_DATA* summary_datas, rtdb_error* errors)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbh_summary_data_in_batches_fn)(rtdb_int32 handle, rtdb_int32 id, rtdb_int32* count, rtdb_int64 interval, rtdb_timestamp_type datetime1, rtdb_subtime_type subtime1, rtdb_timestamp_type datetime2, rtdb_subtime_type subtime2, RTDB_SUMMARY_DATA* summary_datas, rtdb_error* errors);
-rtdbh_summary_data_in_batches_fn fn = (rtdbh_summary_data_in_batches_fn)get_function("rtdbh_summary_data_in_batches");
-return fn(handle, id, count, interval, datetime1, subtime1, datetime2, subtime2, summary_datas, errors);
-}
 */
 
 /**
@@ -6810,11 +5977,6 @@ return fn(handle, id, count, interval, datetime1, subtime1, datetime2, subtime2,
  *        此时第一个元素表示结束时间，最后一个元素表示开始时间。
  *        本接口对数据类型为 RTDB_COOR、RTDB_BLOB、RTDB_STRING 的标签点无效。
 rtdb_error RTDBAPI_CALLRULE rtdbh_get_plot_values64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32 interval, rtdb_int32* count, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float64* values, rtdb_int64* states, rtdb_int16* qualities)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbh_get_plot_values64_fn)(rtdb_int32 handle, rtdb_int32 id, rtdb_int32 interval, rtdb_int32* count, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float64* values, rtdb_int64* states, rtdb_int16* qualities);
-rtdbh_get_plot_values64_fn fn = (rtdbh_get_plot_values64_fn)get_function("rtdbh_get_plot_values64");
-return fn(handle, id, interval, count, datetimes, subtimes, values, states, qualities);
-}
 */
 
 /**
@@ -6844,11 +6006,6 @@ return fn(handle, id, interval, count, datetimes, subtimes, values, states, qual
 * \remark 用户须保证 ids、datetimes、ms、values、states、qualities 的长度与 count 一致，
 *        本接口对数据类型为 RTDB_COOR、RTDB_BLOB、RTDB_STRING 的标签点无效。
 rtdb_error RTDBAPI_CALLRULE rtdbh_get_cross_section_values64_warp(rtdb_int32 handle, const rtdb_int32* ids, rtdb_int32 mode, rtdb_int32 count, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float64* values, rtdb_int64* states, rtdb_int16* qualities, rtdb_error* errors)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbh_get_cross_section_values64_fn)(rtdb_int32 handle, const rtdb_int32* ids, rtdb_int32 mode, rtdb_int32 count, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float64* values, rtdb_int64* states, rtdb_int16* qualities, rtdb_error* errors);
-rtdbh_get_cross_section_values64_fn fn = (rtdbh_get_cross_section_values64_fn)get_function("rtdbh_get_cross_section_values64");
-return fn(handle, ids, mode, count, datetimes, subtimes, values, states, qualities, errors);
-}
 */
 
 /**
@@ -6883,11 +6040,6 @@ return fn(handle, ids, mode, count, datetimes, subtimes, values, states, qualiti
  *        最后一个元素表示开始时间。
  *        本接口对数据类型为 RTDB_COOR、RTDB_BLOB、RTDB_STRING 的标签点无效。
 rtdb_error RTDBAPI_CALLRULE rtdbh_get_archived_values_filt64_warp(rtdb_int32 handle, rtdb_int32 id, const char* filter, rtdb_int32* count, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float64* values, rtdb_int64* states, rtdb_int16* qualities)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbh_get_archived_values_filt64_fn)(rtdb_int32 handle, rtdb_int32 id, const char* filter, rtdb_int32* count, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float64* values, rtdb_int64* states, rtdb_int16* qualities);
-rtdbh_get_archived_values_filt64_fn fn = (rtdbh_get_archived_values_filt64_fn)get_function("rtdbh_get_archived_values_filt64");
-return fn(handle, id, filter, count, datetimes, subtimes, values, states, qualities);
-}
 */
 
 /**
@@ -6918,11 +6070,6 @@ return fn(handle, id, filter, count, datetimes, subtimes, values, states, qualit
  *        在输入时，datetimes、ms 中至少应有一个元素用于表示起始时间。
  *        本接口对数据类型为 RTDB_COOR、RTDB_BLOB、RTDB_STRING 的标签点无效。
 rtdb_error RTDBAPI_CALLRULE rtdbh_get_interval_values_filt64_warp(rtdb_int32 handle, rtdb_int32 id, const char* filter, rtdb_int64 interval, rtdb_int32 count, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float64* values, rtdb_int64* states, rtdb_int16* qualities)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbh_get_interval_values_filt64_fn)(rtdb_int32 handle, rtdb_int32 id, const char* filter, rtdb_int64 interval, rtdb_int32 count, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float64* values, rtdb_int64* states, rtdb_int16* qualities);
-rtdbh_get_interval_values_filt64_fn fn = (rtdbh_get_interval_values_filt64_fn)get_function("rtdbh_get_interval_values_filt64");
-return fn(handle, id, filter, interval, count, datetimes, subtimes, values, states, qualities);
-}
 */
 
 /**
@@ -6957,11 +6104,6 @@ return fn(handle, id, filter, interval, count, datetimes, subtimes, values, stat
  *        最后一个元素表示开始时间。
  *        本接口对数据类型为 RTDB_COOR、RTDB_BLOB、RTDB_STRING 的标签点无效。
 rtdb_error RTDBAPI_CALLRULE rtdbh_get_interpo_values_filt64_warp(rtdb_int32 handle, rtdb_int32 id, const char* filter, rtdb_int32* count, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float64* values, rtdb_int64* states, rtdb_int16* qualities)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbh_get_interpo_values_filt64_fn)(rtdb_int32 handle, rtdb_int32 id, const char* filter, rtdb_int32* count, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float64* values, rtdb_int64* states, rtdb_int16* qualities);
-rtdbh_get_interpo_values_filt64_fn fn = (rtdbh_get_interpo_values_filt64_fn)get_function("rtdbh_get_interpo_values_filt64");
-return fn(handle, id, filter, count, datetimes, subtimes, values, states, qualities);
-}
 */
 
 /**
@@ -6993,11 +6135,6 @@ return fn(handle, id, filter, count, datetimes, subtimes, values, states, qualit
  *        则表明仅有累计值和加权平均值输出有效，其余统计结果无效。
  *        本接口对数据类型为 RTDB_COOR、RTDB_BLOB、RTDB_STRING 的标签点无效。
 rtdb_error RTDBAPI_CALLRULE rtdbh_summary_data_filt_warp(rtdb_int32 handle, rtdb_int32 id, const char* filter, rtdb_timestamp_type datetime1, rtdb_subtime_type subtime1, rtdb_timestamp_type datetime2, rtdb_subtime_type subtime2, RTDB_SUMMARY_DATA* summary_data)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbh_summary_data_filt_fn)(rtdb_int32 handle, rtdb_int32 id, const char* filter, rtdb_timestamp_type datetime1, rtdb_subtime_type subtime1, rtdb_timestamp_type datetime2, rtdb_subtime_type subtime2, RTDB_SUMMARY_DATA* summary_data);
-rtdbh_summary_data_filt_fn fn = (rtdbh_summary_data_filt_fn)get_function("rtdbh_summary_data_filt");
-return fn(handle, id, filter, datetime1, subtime1, datetime2, subtime2, summary_data);
-}
 */
 
 /**
@@ -7036,11 +6173,6 @@ return fn(handle, id, filter, datetime1, subtime1, datetime2, subtime2, summary_
  *        则表明仅有累计值和加权平均值输出有效，其余统计结果无效。
  *        本接口对数据类型为 RTDB_COOR、RTDB_BLOB、RTDB_STRING 的标签点无效。
 rtdb_error RTDBAPI_CALLRULE rtdbh_summary_data_filt_in_batches_warp(rtdb_int32 handle, rtdb_int32 id, const char* filter, rtdb_int32* count, rtdb_int64 interval, rtdb_timestamp_type datetime1, rtdb_subtime_type subtime1, rtdb_timestamp_type datetime2, rtdb_subtime_type subtime2, RTDB_SUMMARY_DATA* summary_datas, rtdb_error* errors)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbh_summary_data_filt_in_batches_fn)(rtdb_int32 handle, rtdb_int32 id, const char* filter, rtdb_int32* count, rtdb_int64 interval, rtdb_timestamp_type datetime1, rtdb_subtime_type subtime1, rtdb_timestamp_type datetime2, rtdb_subtime_type subtime2, RTDB_SUMMARY_DATA* summary_datas, rtdb_error* errors);
-rtdbh_summary_data_filt_in_batches_fn fn = (rtdbh_summary_data_filt_in_batches_fn)get_function("rtdbh_summary_data_filt_in_batches");
-return fn(handle, id, filter, count, interval, datetime1, subtime1, datetime2, subtime2, summary_datas, errors);
-}
 */
 
 /**
@@ -7060,11 +6192,6 @@ return fn(handle, id, filter, count, interval, datetime1, subtime1, datetime2, s
  * \param quality       短整型，输入，新的历史值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
  * \remark 本接口对数据类型为 RTDB_COOR、RTDB_BLOB、RTDB_STRING 的标签点无效。
 rtdb_error RTDBAPI_CALLRULE rtdbh_update_value64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime, rtdb_subtime_type subtime, rtdb_float64 value, rtdb_int64 state, rtdb_int16 quality)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbh_update_value64_fn)(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime, rtdb_subtime_type subtime, rtdb_float64 value, rtdb_int64 state, rtdb_int16 quality);
-rtdbh_update_value64_fn fn = (rtdbh_update_value64_fn)get_function("rtdbh_update_value64");
-return fn(handle, id, datetime, subtime, value, state, quality);
-}
 */
 
 /**
@@ -7081,11 +6208,6 @@ return fn(handle, id, datetime, subtime, value, state, quality);
  * \param quality       短整型，输入，新的历史值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
  * \remark 本接口仅对数据类型为 RTDB_COOR 的标签点有效。
 rtdb_error RTDBAPI_CALLRULE rtdbh_update_coor_value64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime, rtdb_subtime_type subtime, rtdb_float32 x, rtdb_float32 y, rtdb_int16 quality)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbh_update_coor_value64_fn)(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime, rtdb_subtime_type subtime, rtdb_float32 x, rtdb_float32 y, rtdb_int16 quality);
-rtdbh_update_coor_value64_fn fn = (rtdbh_update_coor_value64_fn)get_function("rtdbh_update_coor_value64");
-return fn(handle, id, datetime, subtime, x, y, quality);
-}
 */
 
 /**
@@ -7098,11 +6220,6 @@ return fn(handle, id, datetime, subtime, x, y, quality);
  * \param ms            短整型，输入，如果 id 指定的标签点时间精度为纳秒，
  *                        表示时间纳秒数；否则忽略。
 rtdb_error RTDBAPI_CALLRULE rtdbh_remove_value64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime, rtdb_subtime_type subtime)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbh_remove_value64_fn)(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime, rtdb_subtime_type subtime);
-rtdbh_remove_value64_fn fn = (rtdbh_remove_value64_fn)get_function("rtdbh_remove_value64");
-return fn(handle, id, datetime, subtime);
-}
 */
 
 /**
@@ -7119,11 +6236,6 @@ return fn(handle, id, datetime, subtime);
  * \remark 由 datetime1、ms1 表示的时间可以大于 datetime2、ms2 表示的时间，
  *        此时前者表示结束时间，后者表示起始时间。
 rtdb_error RTDBAPI_CALLRULE rtdbh_remove_values64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime1, rtdb_subtime_type subtime1, rtdb_timestamp_type datetime2, rtdb_subtime_type subtime2, rtdb_int32* count)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbh_remove_values64_fn)(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime1, rtdb_subtime_type subtime1, rtdb_timestamp_type datetime2, rtdb_subtime_type subtime2, rtdb_int32* count);
-rtdbh_remove_values64_fn fn = (rtdbh_remove_values64_fn)get_function("rtdbh_remove_values64");
-return fn(handle, id, datetime1, subtime1, datetime2, subtime2, count);
-}
 */
 
 /**
@@ -7144,11 +6256,6 @@ return fn(handle, id, datetime1, subtime1, datetime2, subtime2, count);
  * \remark 本接口对数据类型为 RTDB_COOR、RTDB_BLOB、RTDB_STRING 的标签点无效。
  *        如果 datetimes、ms 标识的数据已经存在，其值将被替换。
 rtdb_error RTDBAPI_CALLRULE rtdbh_put_single_value64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime, rtdb_subtime_type subtime, rtdb_float64 value, rtdb_int64 state, rtdb_int16 quality)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbh_put_single_value64_fn)(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime, rtdb_subtime_type subtime, rtdb_float64 value, rtdb_int64 state, rtdb_int16 quality);
-rtdbh_put_single_value64_fn fn = (rtdbh_put_single_value64_fn)get_function("rtdbh_put_single_value64");
-return fn(handle, id, datetime, subtime, value, state, quality);
-}
 */
 
 /**
@@ -7166,11 +6273,6 @@ return fn(handle, id, datetime, subtime, value, state, quality);
  * \remark 本接口对数据类型为 RTDB_COOR、RTDB_BLOB、RTDB_STRING 的标签点无效。
  *        如果 datetimes、ms 标识的数据已经存在，其值将被替换。
 rtdb_error RTDBAPI_CALLRULE rtdbh_put_single_coor_value64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime, rtdb_subtime_type subtime, rtdb_float32 x, rtdb_float32 y, rtdb_int16 quality)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbh_put_single_coor_value64_fn)(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime, rtdb_subtime_type subtime, rtdb_float32 x, rtdb_float32 y, rtdb_int16 quality);
-rtdbh_put_single_coor_value64_fn fn = (rtdbh_put_single_coor_value64_fn)get_function("rtdbh_put_single_coor_value64");
-return fn(handle, id, datetime, subtime, x, y, quality);
-}
 */
 
 /**
@@ -7188,11 +6290,6 @@ return fn(handle, id, datetime, subtime, x, y, quality);
  * \param quality   短整型，输入，历史数值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
  * \remark 本接口只对数据类型为 RTDB_BLOB、RTDB_STRING 的标签点有效。
 rtdb_error RTDBAPI_CALLRULE rtdbh_put_single_blob_value64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime, rtdb_subtime_type subtime, const rtdb_byte* blob, rtdb_length_type len, rtdb_int16 quality)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbh_put_single_blob_value64_fn)(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime, rtdb_subtime_type subtime, const rtdb_byte* blob, rtdb_length_type len, rtdb_int16 quality);
-rtdbh_put_single_blob_value64_fn fn = (rtdbh_put_single_blob_value64_fn)get_function("rtdbh_put_single_blob_value64");
-return fn(handle, id, datetime, subtime, blob, len, quality);
-}
 */
 
 /**
@@ -7219,11 +6316,6 @@ return fn(handle, id, datetime, subtime, blob, len, quality);
  *        本接口对数据类型为 RTDB_COOR、RTDB_BLOB、RTDB_STRING 的标签点无效。
  *        如果 datetimes、ms 标识的数据已经存在，其值将被替换。
 rtdb_error RTDBAPI_CALLRULE rtdbh_put_archived_values64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, const rtdb_float64* values, const rtdb_int64* states, const rtdb_int16* qualities, rtdb_error* errors)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbh_put_archived_values64_fn)(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, const rtdb_float64* values, const rtdb_int64* states, const rtdb_int16* qualities, rtdb_error* errors);
-rtdbh_put_archived_values64_fn fn = (rtdbh_put_archived_values64_fn)get_function("rtdbh_put_archived_values64");
-return fn(handle, count, ids, datetimes, subtimes, values, states, qualities, errors);
-}
 */
 
 /**
@@ -7246,11 +6338,6 @@ return fn(handle, count, ids, datetimes, subtimes, values, states, qualities, er
  *        本接口仅对数据类型为 RTDB_COOR 的标签点有效。
  *        如果 datetimes、ms 标识的数据已经存在，其值将被替换。
 rtdb_error RTDBAPI_CALLRULE rtdbh_put_archived_coor_values64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, const rtdb_float32* x, const rtdb_float32* y, const rtdb_int16* qualities, rtdb_error* errors)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbh_put_archived_coor_values64_fn)(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, const rtdb_float32* x, const rtdb_float32* y, const rtdb_int16* qualities, rtdb_error* errors);
-rtdbh_put_archived_coor_values64_fn fn = (rtdbh_put_archived_coor_values64_fn)get_function("rtdbh_put_archived_coor_values64");
-return fn(handle, count, ids, datetimes, subtimes, x, y, qualities, errors);
-}
 */
 
 /**
@@ -7268,11 +6355,6 @@ return fn(handle, count, ids, datetimes, subtimes, x, y, qualities, errors);
  * \param quality   短整型，输入，历史数值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
  * \remark 本接口只对数据类型为 RTDB_DATETIME 的标签点有效。
 rtdb_error RTDBAPI_CALLRULE rtdbh_put_single_datetime_value64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime, rtdb_subtime_type subtime, const rtdb_byte* blob, rtdb_length_type len, rtdb_int16 quality)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbh_put_single_datetime_value64_fn)(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime, rtdb_subtime_type subtime, const rtdb_byte* blob, rtdb_length_type len, rtdb_int16 quality);
-rtdbh_put_single_datetime_value64_fn fn = (rtdbh_put_single_datetime_value64_fn)get_function("rtdbh_put_single_datetime_value64");
-return fn(handle, id, datetime, subtime, blob, len, quality);
-}
 */
 
 /**
@@ -7296,11 +6378,6 @@ return fn(handle, id, datetime, subtime, blob, len, quality);
  *        本接口仅对数据类型为 RTDB_STRING、RTDB_BLOB 的标签点有效。
  *        如果 datetimes、ms 标识的数据已经存在，其值将被替换。
 rtdb_error RTDBAPI_CALLRULE rtdbh_put_archived_blob_values64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, const rtdb_byte* const* blobs, const rtdb_length_type* lens, const rtdb_int16* qualities, rtdb_error* errors)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbh_put_archived_blob_values64_fn)(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, const rtdb_byte* const* blobs, const rtdb_length_type* lens, const rtdb_int16* qualities, rtdb_error* errors);
-rtdbh_put_archived_blob_values64_fn fn = (rtdbh_put_archived_blob_values64_fn)get_function("rtdbh_put_archived_blob_values64");
-return fn(handle, count, ids, datetimes, subtimes, blobs, lens, qualities, errors);
-}
 */
 
 /**
@@ -7315,11 +6392,6 @@ return fn(handle, count, ids, datetimes, subtimes, blobs, lens, qualities, error
  *      应在结束补历史后调用本接口。
  *      count 参数可为空指针，对应的信息将不再返回。
 rtdb_error RTDBAPI_CALLRULE rtdbh_flush_archived_values_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32 *count)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbh_flush_archived_values_fn)(rtdb_int32 handle, rtdb_int32 id, rtdb_int32 *count);
-rtdbh_flush_archived_values_fn fn = (rtdbh_flush_archived_values_fn)get_function("rtdbh_flush_archived_values");
-return fn(handle, id, count);
-}
 */
 
 /**
@@ -7342,11 +6414,6 @@ return fn(handle, id, count);
  *                        输出时表示实际获取的自定义类型标签点数据长度。
  *        [quality]       短整型，输出，历史值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
 rtdb_error RTDBAPI_CALLRULE rtdbh_get_single_named_type_value64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32 mode, rtdb_timestamp_type* datetime, rtdb_subtime_type* subtime, void* object, rtdb_length_type* length, rtdb_int16* quality)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbh_get_single_named_type_value64_fn)(rtdb_int32 handle, rtdb_int32 id, rtdb_int32 mode, rtdb_timestamp_type* datetime, rtdb_subtime_type* subtime, void* object, rtdb_length_type* length, rtdb_int16* quality);
-rtdbh_get_single_named_type_value64_fn fn = (rtdbh_get_single_named_type_value64_fn)get_function("rtdbh_get_single_named_type_value64");
-return fn(handle, id, mode, datetime, subtime, object, length, quality);
-}
 */
 
 /**
@@ -7371,11 +6438,6 @@ return fn(handle, id, mode, datetime, subtime, object, length, quality);
  *        [objects]       void类型数组，输出，自定义类型标签点历史值
  *        [qualities]     短整型数组，输出，历史值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
 rtdb_error RTDBAPI_CALLRULE rtdbh_get_archived_named_type_values64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime1, rtdb_subtime_type subtime1, rtdb_timestamp_type datetime2, rtdb_subtime_type subtime2, rtdb_length_type length, rtdb_int32* count, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, void* const* objects, rtdb_int16* qualities)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbh_get_archived_named_type_values64_fn)(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime1, rtdb_subtime_type subtime1, rtdb_timestamp_type datetime2, rtdb_subtime_type subtime2, rtdb_length_type length, rtdb_int32* count, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, void* const* objects, rtdb_int16* qualities);
-rtdbh_get_archived_named_type_values64_fn fn = (rtdbh_get_archived_named_type_values64_fn)get_function("rtdbh_get_archived_named_type_values64");
-return fn(handle, id, datetime1, subtime1, datetime2, subtime2, length, count, datetimes, subtimes, objects, qualities);
-}
 */
 
 /**
@@ -7392,11 +6454,6 @@ return fn(handle, id, datetime1, subtime1, datetime2, subtime2, length, count, d
  *        [length]    短整型，输入，自定义类型标签点数值长度，超过一个页大小数据将被截断。
  *        [quality]   短整型，输入，历史数值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
 rtdb_error RTDBAPI_CALLRULE rtdbh_put_single_named_type_value64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime, rtdb_subtime_type subtime, const void* object, rtdb_length_type length, rtdb_int16 quality)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbh_put_single_named_type_value64_fn)(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime, rtdb_subtime_type subtime, const void* object, rtdb_length_type length, rtdb_int16 quality);
-rtdbh_put_single_named_type_value64_fn fn = (rtdbh_put_single_named_type_value64_fn)get_function("rtdbh_put_single_named_type_value64");
-return fn(handle, id, datetime, subtime, object, length, quality);
-}
 */
 
 /**
@@ -7419,11 +6476,6 @@ return fn(handle, id, datetime, subtime, object, length, quality);
  * 备注：用户须保证 ids、datetimes、ms、lens、objects、qualities、errors 的长度与 count 一致，
  *        如果 datetimes、ms 标识的数据已经存在，其值将被替换。
 rtdb_error RTDBAPI_CALLRULE rtdbh_put_archived_named_type_values64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, const void* const* objects, const rtdb_length_type* lengths, const rtdb_int16* qualities, rtdb_error* errors)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbh_put_archived_named_type_values64_fn)(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, const void* const* objects, const rtdb_length_type* lengths, const rtdb_int16* qualities, rtdb_error* errors);
-rtdbh_put_archived_named_type_values64_fn fn = (rtdbh_put_archived_named_type_values64_fn)get_function("rtdbh_put_archived_named_type_values64");
-return fn(handle, count, ids, datetimes, subtimes, objects, lengths, qualities, errors);
-}
 */
 
 /**
@@ -7446,11 +6498,6 @@ return fn(handle, count, ids, datetimes, subtimes, objects, lengths, qualities, 
  *        由 datetime1、ms1 表示的时间可以大于 datetime2、ms2 表示的时间，
  *        此时前者表示结束时间，后者表示起始时间。
 rtdb_error RTDBAPI_CALLRULE rtdbe_compute_history64_warp(rtdb_int32 handle, rtdb_int32* count, rtdb_int16 flag, rtdb_timestamp_type datetime1, rtdb_subtime_type subtime1, rtdb_timestamp_type datetime2, rtdb_subtime_type subtime2, const rtdb_int32* ids, rtdb_error* errors)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbe_compute_history64_fn)(rtdb_int32 handle, rtdb_int32* count, rtdb_int16 flag, rtdb_timestamp_type datetime1, rtdb_subtime_type subtime1, rtdb_timestamp_type datetime2, rtdb_subtime_type subtime2, const rtdb_int32* ids, rtdb_error* errors);
-rtdbe_compute_history64_fn fn = (rtdbe_compute_history64_fn)get_function("rtdbe_compute_history64");
-return fn(handle, count, flag, datetime1, subtime1, datetime2, subtime2, ids, errors);
-}
 */
 
 /**
@@ -7464,11 +6511,6 @@ return fn(handle, count, flag, datetime1, subtime1, datetime2, subtime2, ids, er
  * 备注：键值对为数据结构，存储方程式涉及到的各标签点ID、及其父ID等
  *		具体参考rtdbe_get_equation_graph_datas
 rtdb_error RTDBAPI_CALLRULE rtdbe_get_equation_graph_count_warp(rtdb_int32 handle, rtdb_int32 id, RTDB_GRAPH_FLAG flag, rtdb_int32 *count)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbe_get_equation_graph_count_fn)(rtdb_int32 handle, rtdb_int32 id, RTDB_GRAPH_FLAG flag, rtdb_int32 *count);
-rtdbe_get_equation_graph_count_fn fn = (rtdbe_get_equation_graph_count_fn)get_function("rtdbe_get_equation_graph_count");
-return fn(handle, id, flag, count);
-}
 */
 
 /**
@@ -7484,11 +6526,6 @@ return fn(handle, id, flag, count);
   *      [graph]    输出，GOLDE_GRAPH数据结构，拓扑图键值对信息
   * 备注：键值对为数据结构，存储方程式涉及到的各标签点ID、及其父ID等
 rtdb_error RTDBAPI_CALLRULE rtdbe_get_equation_graph_datas_warp(rtdb_int32 handle, rtdb_int32 id, RTDB_GRAPH_FLAG flag, rtdb_int32 *count, RTDB_GRAPH *graph)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbe_get_equation_graph_datas_fn)(rtdb_int32 handle, rtdb_int32 id, RTDB_GRAPH_FLAG flag, rtdb_int32 *count, RTDB_GRAPH *graph);
-rtdbe_get_equation_graph_datas_fn fn = (rtdbe_get_equation_graph_datas_fn)get_function("rtdbe_get_equation_graph_datas");
-return fn(handle, id, flag, count, graph);
-}
 */
 
 /**
@@ -7498,11 +6535,6 @@ return fn(handle, id, flag, count, graph);
  *      [handle]   连接句柄
  *      [count]    整型，输出，表示实际获取到的Perf服务中支持的性能计数点的数量
 rtdb_error RTDBAPI_CALLRULE rtdbp_get_perf_tags_count_warp(rtdb_int32 handle, int* count)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbp_get_perf_tags_count_fn)(rtdb_int32 handle, int* count);
-rtdbp_get_perf_tags_count_fn fn = (rtdbp_get_perf_tags_count_fn)get_function("rtdbp_get_perf_tags_count");
-return fn(handle, count);
-}
 */
 
 /**
@@ -7516,11 +6548,6 @@ return fn(handle, count);
          [errors] 无符号整型数组，输出，获取性能计数点信息的返回值列表，参考rtdb_error.h
   * 备注：用户须保证分配给 tags_info，errors 的空间与 count 相符
 rtdb_error RTDBAPI_CALLRULE rtdbp_get_perf_tags_info_warp(rtdb_int32 handle, rtdb_int32* count, RTDB_PERF_TAG_INFO* tags_info, rtdb_error* errors)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbp_get_perf_tags_info_fn)(rtdb_int32 handle, rtdb_int32* count, RTDB_PERF_TAG_INFO* tags_info, rtdb_error* errors);
-rtdbp_get_perf_tags_info_fn fn = (rtdbp_get_perf_tags_info_fn)get_function("rtdbp_get_perf_tags_info");
-return fn(handle, count, tags_info, errors);
-}
 */
 
 /**
@@ -7545,9 +6572,4 @@ return fn(handle, count, tags_info, errors);
  *        [errors]    无符号整型数组，输出，读取实时数据的返回值列表，参考rtdb_error.h
  * 备注：用户须保证 ids、datetimes、ms、values、states、qualities、errors 的长度与 count 一致。
 rtdb_error RTDBAPI_CALLRULE rtdbp_get_perf_values64_warp(rtdb_int32 handle, rtdb_int32* count, int* perf_ids, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float64* values, rtdb_int64* states, rtdb_int16* qualities, rtdb_error* errors)
-{
-typedef rtdb_error (RTDBAPI_CALLRULE *rtdbp_get_perf_values64_fn)(rtdb_int32 handle, rtdb_int32* count, int* perf_ids, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float64* values, rtdb_int64* states, rtdb_int16* qualities, rtdb_error* errors);
-rtdbp_get_perf_values64_fn fn = (rtdbp_get_perf_values64_fn)get_function("rtdbp_get_perf_values64");
-return fn(handle, count, perf_ids, datetimes, subtimes, values, states, qualities, errors);
-}
 */
