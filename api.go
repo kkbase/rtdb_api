@@ -7,6 +7,7 @@ package rtdb_api
 import "C"
 import (
 	_ "embed"
+	"errors"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -52,10 +53,11 @@ func init() {
 	C.load_library(cPath)
 }
 
+// RtdbError 数据库错误
 type RtdbError uint32
 
 func (re RtdbError) IsOk() bool {
-	return re == RteOk
+	return errors.Is(re, RteOk)
 }
 
 func (re RtdbError) Error() string {
@@ -1259,6 +1261,14 @@ func (re RtdbError) Error() string {
 		desc = "未知错误"
 	}
 	return desc
+}
+
+func (re RtdbError) GoError() error {
+	if re.IsOk() {
+		return nil
+	} else {
+		return re
+	}
 }
 
 const (
@@ -3081,6 +3091,11 @@ const (
 	RtdbApiServerPrecision = RtdbApiOption(C.RTDB_API_SERVER_PRECISION)
 )
 
+// DatagramHandle 连接句柄，所有的数据库操作都会通过句柄进行
+type DatagramHandle struct {
+	handle C.rtdb_datagram_handle
+}
+
 // RtdbGetApiVersionWarp 取得 rtdbapi 库的版本号
 // \param [out]  major   主版本号
 // \param [out]  minor   次版本号
@@ -3089,10 +3104,10 @@ const (
 // \remark 如果返回的版本号与 rtdb.h 中定义的不匹配(RTDB_API_XXX_VERSION)，则应用程序使用了错误的库。
 //
 //	应输出一条错误信息并退出，否则可能在调用某些 api 时会导致崩溃
-func RtdbGetApiVersionWarp() (int32, int32, int32, RtdbError) {
+func RtdbGetApiVersionWarp() (int32, int32, int32, error) {
 	major, minor, beta := C.rtdb_int32(0), C.rtdb_int32(0), C.rtdb_int32(0)
 	err := C.rtdb_get_api_version_warp(&major, &minor, &beta)
-	return int32(major), int32(minor), int32(beta), RtdbError(err)
+	return int32(major), int32(minor), int32(beta), RtdbError(err).GoError()
 }
 
 // RtdbSetOptionWarp 配置 api 行为参数，参见枚举 \ref RTDB_API_OPTION
@@ -3100,13 +3115,9 @@ func RtdbGetApiVersionWarp() (int32, int32, int32, RtdbError) {
 // \param [in] value 选项值
 // \return rtdb_error
 // \remark 选项设置后在下一次调用 api 时才生效
-func RtdbSetOptionWarp(optionType RtdbApiOption, value int32) RtdbError {
+func RtdbSetOptionWarp(optionType RtdbApiOption, value int32) error {
 	err := C.rtdb_set_option_warp(C.rtdb_int32(optionType), C.rtdb_int32(value))
-	return RtdbError(err)
-}
-
-type DatagramHandle struct {
-	handle C.rtdb_datagram_handle
+	return RtdbError(err).GoError()
 }
 
 // RtdbCreateDatagramHandleWarp 创建数据流
@@ -3115,21 +3126,21 @@ type DatagramHandle struct {
 // * \param [out] handle 数据流句柄
 // * \return rtdb_error
 // * \remark 创建数据流 (备注：C代码中没文档，Go这边补的)
-func RtdbCreateDatagramHandleWarp(port int32, remoteHost string) (DatagramHandle, RtdbError) {
+func RtdbCreateDatagramHandleWarp(port int32, remoteHost string) (DatagramHandle, error) {
 	var handle C.rtdb_datagram_handle
 	cRemoteHost := C.CString(remoteHost)
 	defer C.free(unsafe.Pointer(cRemoteHost))
 	err := C.rtdb_create_datagram_handle_warp(C.rtdb_int32(port), cRemoteHost, &handle)
-	return DatagramHandle{handle: handle}, RtdbError(err)
+	return DatagramHandle{handle: handle}, RtdbError(err).GoError()
 }
 
 // RtdbRemoveDatagramHandleWarp 删除数据流
 // * \param [in] handle 数据流句柄
 // * \return rtdb_error
 // * \remark 删除数据流 (备注：C代码中没文档，Go这边补的)
-func RtdbRemoveDatagramHandleWarp(handle DatagramHandle) RtdbError {
+func RtdbRemoveDatagramHandleWarp(handle DatagramHandle) error {
 	err := C.rtdb_remove_datagram_handle_warp(handle.handle)
-	return RtdbError(err)
+	return RtdbError(err).GoError()
 }
 
 // RtdbRecvDatagramWarp 接收数据流
@@ -3139,13 +3150,13 @@ func RtdbRemoveDatagramHandleWarp(handle DatagramHandle) RtdbError {
 // * \param [in] timeout 超时时间
 // * \return rtdb_error
 // * \remark 接收数据流 (备注：C代码中没文档，Go这边补的)
-func RtdbRecvDatagramWarp(cacheLen int32, handle DatagramHandle, remoteAddr string, timeout int32) ([]byte, RtdbError) {
+func RtdbRecvDatagramWarp(cacheLen int32, handle DatagramHandle, remoteAddr string, timeout int32) ([]byte, error) {
 	message := make([]byte, cacheLen)
 	messageLen := C.rtdb_int32(cacheLen)
 	cRemoteAddr := C.CString(remoteAddr)
 	defer C.free(unsafe.Pointer(cRemoteAddr))
 	err := C.rtdb_recv_datagram_warp((*C.char)(unsafe.Pointer(&message[0])), &messageLen, handle.handle, cRemoteAddr, C.rtdb_int32(timeout))
-	return message[0:messageLen], RtdbError(err)
+	return message[0:messageLen], RtdbError(err).GoError()
 }
 
 type ConnectHandle int32
@@ -3156,13 +3167,13 @@ type ConnectHandle int32
 // * \param [out]  handle  连接句柄
 // * \return rtdb_error
 // * \remark 在调用所有的接口函数之前，必须先调用本函数建立同Rtdb服务器的连接
-func RtdbConnectWarp(hostname string, port int32) (ConnectHandle, RtdbError) {
+func RtdbConnectWarp(hostname string, port int32) (ConnectHandle, error) {
 	cHostname := C.CString(hostname)
 	defer C.free(unsafe.Pointer(cHostname))
 	cPort := C.rtdb_int32(port)
 	cHandle := C.rtdb_int32(0)
 	err := C.rtdb_connect_warp(cHostname, cPort, &cHandle)
-	return ConnectHandle(cHandle), RtdbError(err)
+	return ConnectHandle(cHandle), RtdbError(err).GoError()
 }
 
 // RtdbConnectionCountWarp 获取 RTDB 服务器当前连接个数
@@ -3170,10 +3181,10 @@ func RtdbConnectWarp(hostname string, port int32) (ConnectHandle, RtdbError) {
 // * \param [in] node_number   双活模式下，指定节点编号，1为rtdb_connect中第1个IP，2为rtdb_connect中第2个IP
 // * \param [out]  count 返回当前主机的连接个数
 // * \return rtdb_error
-func RtdbConnectionCountWarp(handle ConnectHandle, nodeNumber int32) (int32, RtdbError) {
+func RtdbConnectionCountWarp(handle ConnectHandle, nodeNumber int32) (int32, error) {
 	count := C.rtdb_int32(0)
 	err := C.rtdb_connection_count_warp(C.rtdb_int32(handle), C.rtdb_int32(nodeNumber), &count)
-	return int32(count), RtdbError(err)
+	return int32(count), RtdbError(err).GoError()
 }
 
 /**
