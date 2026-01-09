@@ -3091,7 +3091,7 @@ const (
 	RtdbApiServerPrecision = RtdbApiOption(C.RTDB_API_SERVER_PRECISION)
 )
 
-// DatagramHandle 连接句柄，所有的数据库操作都会通过句柄进行
+// DatagramHandle 流句柄, 用于数据流订阅
 type DatagramHandle struct {
 	handle C.rtdb_datagram_handle
 }
