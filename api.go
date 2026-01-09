@@ -54,6 +54,1213 @@ func init() {
 
 type RtdbError uint32
 
+func (re RtdbError) IsOk() bool {
+	return re == RteOk
+}
+
+func (re RtdbError) Error() string {
+	desc := ""
+	switch re {
+	case RteUnknownError:
+		desc = "未知错误"
+	case RteOk:
+		desc = "操作成功完成"
+	case RteWindowsError:
+		desc = "Windows操作系统错误的起始值"
+	case RteWindowsErrorMax:
+		desc = "Windows操作系统错误的结束值"
+	case RteInvalidOpenmode:
+		desc = "无效的文件打开方式"
+	case RteOpenfileFailed:
+		desc = "打开文件失败"
+	case RteMovetoendFailed:
+		desc = "移动文件指针到文件尾失败"
+	case RteDifferReadbytes:
+		desc = "读取内容长度与要求不符"
+	case RteGetfileposFailed:
+		desc = "获取当前文件指针失败"
+	case RteFlushfileFailed:
+		desc = "刷新文件缓冲区失败"
+	case RteSetsizeFailed:
+		desc = "设置文件大小失败"
+	case RteFileNotClosed:
+		desc = "试图用未关闭的文件对象创建或打开文件"
+	case RteFileUnknown:
+		desc = "创建或打开文件时必须指定文件名"
+	case RteInvalidHeader:
+		desc = "数据文件头信息错误"
+	case RteDisabledFile:
+		desc = "数据文件无效，试图访问无效数据文件"
+	case RteFileNotOpened:
+		desc = "试图访问尚未打开的数据文件"
+	case RtePointNotFound:
+		desc = "要求访问的标签点不存在或无效"
+	case RteReadyblockNotFound:
+		desc = "数据文件中找不到从指定数据块以后的可用的空块"
+	case RteFileIsIncult:
+		desc = "文件未被使用过"
+	case RteFileIsFull:
+		desc = "数据文件已满"
+	case RteFileexIsFull:
+		desc = "数据文件扩展区已满，无法继续装载数据"
+	case RteInvalidDataType:
+		desc = "无效的数据类型"
+	case RteDatablockNotFound:
+		desc = "找不到符合时间条件的数据块"
+	case RteDataBetweenBlock:
+		desc = "数据时间位于找到的块和下一个数据块之间"
+	case RteCantModifyExistValue:
+		desc = "不允许修改已存在的数据"
+	case RteWrongdataInBlock:
+		desc = "块中有错误数据导致数据块头信息不符"
+	case RteDatatimeNotIn:
+		desc = "数据文件中没有该标签点指定时间的数据"
+	case RteNullArchivePath:
+		desc = "操作的数据文件路径为空"
+	case RteRegArchivePath:
+		desc = "数据文件已被注册"
+	case RteUnregArchivePath:
+		desc = "未注册的数据文件"
+	case RteFileInexistence:
+		desc = "指定的文件不存在"
+	case RteDataTypeNotMatch:
+		desc = "数据类型不匹配"
+	case RteFileIsReadonly:
+		desc = "不允许修改只读数据文件中的数据"
+	case RteTomanyArchiveFile:
+		desc = "过多的数据文件"
+	case RteNoPointsList:
+		desc = "缺少标签点列表"
+	case RteNoActivedArchive:
+		desc = "缺少活动文档"
+	case RteNoArchiveFile:
+		desc = "缺少数据文档"
+	case RteNeedActivedArchive:
+		desc = "只能在活动文档上执行该操作"
+	case RteInvalidTimestamp:
+		desc = "无效的时间戳"
+	case RteNeedMoreWritable:
+		desc = "非只读文档个数太少"
+	case RteNoArchiveForPut:
+		desc = "找不到合适的追加历史数据的文档"
+	case RteInvalidValueMode:
+		desc = "无效的取值模式"
+	case RteDataNotFound:
+		desc = "找不到需要的数据"
+	case RteInvalidParameter:
+		desc = "无效的参数"
+	case RteReduplicateTag:
+		desc = "重复的标签点名"
+	case RteReduplicateTabname:
+		desc = "重复的表名称"
+	case RteReduplicateTabid:
+		desc = "重复的表ID"
+	case RteTableNotFound:
+		desc = "指定的表不存在"
+	case RteUnsupportedClassof:
+		desc = "不支持的标签点类别"
+	case RteWrongOrDuplicTag:
+		desc = "错误的或重复的标签点名"
+	case RteReduplicatePt:
+		desc = "重复的标签点标识"
+	case RtePointLicenseFull:
+		desc = "标签点数超出了许可证规定的最大数目"
+	case RteTableLicenseFull:
+		desc = "标签点表个数超出了许可证规定的最大数目"
+	case RteWrongOrDuplicTabname:
+		desc = "错误的或重复的表名称"
+	case RteInvalidFileFormat:
+		desc = "无效的数据文件格式"
+	case RteWrongTabname:
+		desc = "错误的表名称"
+	case RteWrongTag:
+		desc = "错误的标签点名"
+	case RteNotInScope:
+		desc = "数值超出了应属的范围"
+	case RteCantLoadBase:
+		desc = "不能同标签点信息服务取得联系"
+	case RteCantLoadSnapshot:
+		desc = "不能同快照数据服务取得联系"
+	case RteCantLoadHistory:
+		desc = "不能同历史数据服务取得联系"
+	case RteCantLoadEquation:
+		desc = "不能同实施方程式服务取得联系"
+	case RteArraySizeNotMatch:
+		desc = "数组尺寸不匹配"
+	case RteInvalidHostAddress:
+		desc = "无效的主机地址"
+	case RteConnectFalse:
+		desc = "连接已断开"
+	case RteToomanyBytesRecved:
+		desc = "接收到的数据长度超出了指定字节长度"
+	case RteReqidRespidNotMatch:
+		desc = "应答与请求的ID不一致"
+	case RteLessBytesRecved:
+		desc = "接收到的数据长度小于指定字节长度"
+	case RteUnsupportedCalcMode:
+		desc = "不支持的计算模式"
+	case RteUnsupportedDataType:
+		desc = "不支持的标签点类型"
+	case RteInvalidExpression:
+		desc = "无效的表达式"
+	case RteIncondDataNotFound:
+		desc = "找不到符合条件的数据"
+	case RteValidDataNotFound:
+		desc = "找不到需要的有效数据"
+	case RteValueOrStateIsNan:
+		desc = "数据或状态不正常，为NAN"
+	case RteCreateMutexFailed:
+		desc = "创建互斥对象失败"
+	case RteTlsallocfail:
+		desc = "处理TLS时调用系统函数LocalAlloc()失败，可能因为内存不足导致"
+	case RteToManyPoints:
+		desc = "正在调用的API函数不支持过多的标签点数量，请参考函数声明和开发手册"
+	case RteLicInfoError:
+		desc = "获取授权许可协议信息时发生错误"
+	case RteArchiveBufferFull:
+		desc = "标签点的历史数据补写缓冲区已满，请稍后再补"
+	case RteUserNotExist:
+		desc = "用户不存在"
+	case RteUserIsLocked:
+		desc = "帐户被锁定,需要管理员为您解锁"
+	case RteWrongPassword:
+		desc = "错误的口令"
+	case RteAccessIsDenied:
+		desc = "访问被拒绝，请确定是否具有足够的权限"
+	case RteHaveNotLogin:
+		desc = "您尚未登录，请先登录"
+	case RteUserIsDeleted:
+		desc = "帐户已被删除"
+	case RteUserAlreadyExist:
+		desc = "帐户已存在"
+	case RteWrongCreateTabname:
+		desc = "创建删除表失败"
+	case RteWrongFieldValue:
+		desc = "标签点属性值有错误"
+	case RteInvalidTagId:
+		desc = "无效的标签点ID"
+	case RteCheckNamedTypeNameError:
+		desc = "无效的自定义类型名称或字段名称"
+	case RteCantLoadDispatch:
+		desc = "不能同转发服务器取得联系"
+	case RteConnectTimeOut:
+		desc = "连接已超时，需要重新登录"
+	case RteWrongLogin4:
+		desc = "账户信息验证失败，还有4次尝试机会"
+	case RteWrongLogin3:
+		desc = "账户信息验证失败，还有3次尝试机会"
+	case RteWrongLogin2:
+		desc = "账户信息验证失败，还有2次尝试机会"
+	case RteWrongLogin1:
+		desc = "账户信息验证失败，还有1次尝试机会"
+	case RteWrongDesc:
+		desc = "错误的表描述"
+	case RteWrongUnit:
+		desc = "错误的工程单位"
+	case RteWrongChanger:
+		desc = "错误的最后一次被修改的用户名"
+	case RteWrongCreator:
+		desc = "错误的标签点创建者用户名"
+	case RteWrongFull:
+		desc = "错误的标签点全名"
+	case RteWrongSource:
+		desc = "错误的数据源"
+	case RteWrongInstrument:
+		desc = "错误的设备标签"
+	case RteWrongUser:
+		desc = "错误的创建者"
+	case RteWrongEquation:
+		desc = "错误的实时方程式"
+	case RteWrongTypeName:
+		desc = "错误的自定义类型名称"
+	case RteWrongEncode:
+		desc = "编码转换时出错"
+	case RteWrongOthermask:
+		desc = "错误的搜索类型转换mask值"
+	case RteWrongType:
+		desc = "错误的搜索类型"
+	case RtePointHardwareLimited:
+		desc = "由于硬件资源限制，创建或恢复标签点失败"
+	case RteWaitingRecoverData:
+		desc = "正在等待恢复数据完成，请稍后尝试连接"
+	case RteReplicationLicMismatch:
+		desc = "双活数据库授权不一致"
+	case RteReadConfigFailed:
+		desc = "读取配置文件失败"
+	case RteUpdateConfigFailed:
+		desc = "更新配置文件失败"
+	case RteFilterTooLong:
+		desc = "filter超过最大长度"
+	case RteGetArchiveNameFail:
+		desc = "获取存档文件名失败"
+	case RteAutoMoveFailed:
+		desc = "自动移动存档文件失败"
+	case RteTimeGreaterThanHotTailArc:
+		desc = "创建/入列非闪盘存档文件的时间大于闪盘最早的存档文件"
+	case RteTimeLessThanColdBeginArc:
+		desc = "创建/入列闪盘的存档文件时间小于非闪盘最新的存档文件"
+	case RteRemoveEarliestArcFailed:
+		desc = "删除最早的存档文件失败（存档文件列表为空）"
+	case RteNoFreeTableId:
+		desc = "没有空闲的表ID可用"
+	case RteNoFreeTagPosition:
+		desc = "没有空闲的标签点位址可用"
+	case RteNoFreeScanTagPosition:
+		desc = "没有空闲的采集标签点位址可用"
+	case RteNoFreeCalcTagPosition:
+		desc = "没有空闲的计算标签点位址可用"
+	case RteInvalidIpcPosition:
+		desc = "无效的位址被用于进程间内存共享"
+	case RteWrongIpcPosition:
+		desc = "错误的位址被用于进程间内存共享"
+	case RteIpcAccessException:
+		desc = "共享内存访问异常"
+	case RteArvPageNotReady:
+		desc = "没有空闲的历史数据缓存页"
+	case RteArvexPageNotReady:
+		desc = "没有空闲的补历史数据缓存页"
+	case RteInvalidPositionFromId:
+		desc = "依据标签点ID获得的位址无效"
+	case RteNoActivePageAllocator:
+		desc = "新的活动存档无法加载页分配器"
+	case RteMapIsNotReady:
+		desc = "内存映射尚未就绪"
+	case RteFileMapFailed:
+		desc = "文件映射到内存失败"
+	case RteTimeRangeNotAllowed:
+		desc = "不允许使用的时间区间"
+	case RteNoDataForSummary:
+		desc = "找不到用于统计的源数据"
+	case RteCantOperateOnActived:
+		desc = "不允许操作活动存档文件"
+	case RteScanPointLicenseFull:
+		desc = "采集标签点数超出了许可证规定的最大数目"
+	case RteCalcPointLicenseFull:
+		desc = "计算标签点数超出了许可证规定的最大数目"
+	case RteHistorianIsShuttingdown:
+		desc = "历史数据服务正在停止"
+	case RteSnapshotIsShuttingdown:
+		desc = "实时数据服务正在停止"
+	case RteEquationIsShuttingdown:
+		desc = "实时方程式服务正在停止"
+	case RteBaseIsShuttingdown:
+		desc = "标签点信息服务正在停止"
+	case RteServerIsShuttingdown:
+		desc = "网络通信服务正在停止"
+	case RteOutOfMemory:
+		desc = "内存不足"
+	case RteInvalidPage:
+		desc = "无效的数据页，有可能是未加载"
+	case RtePageIsEmpty:
+		desc = "遇到空的数据页"
+	case RteStrOrBlobTooLong:
+		desc = "字符串或BLOB数据长度超出限制"
+	case RteCreatedOrOverdue:
+		desc = "尚未产生任何快照或快照已过期"
+	case RteArchiveInfoNotMatching:
+		desc = "历史存档文件头部信息与实际不符"
+	case RteTimeRangeOverlapping:
+		desc = "指定的时间范围与已有存档文件重叠"
+	case RteCannotShiftToActived:
+		desc = "找不到合适的存档文件用于切换成活动存档"
+	case RteIndexNotReady:
+		desc = "历史存档文件对应的索引尚未就绪"
+	case RteIndexNodeNotMatch:
+		desc = "索引节点与指向的内容不符"
+	case RteCanNotCreateIndex:
+		desc = "无法创建索引节点"
+	case RteCanNotRemoveIndex:
+		desc = "无法删除索引节点"
+	case RteInvalidFilterExpress:
+		desc = "无效的过滤器表达式"
+	case RteMoreVarInFilterExp:
+		desc = "过滤器表达式中的包含了过多的变量"
+	case RteInvalidArvPageAllocate:
+		desc = "刚分配的历史数据缓存页ID与标签点事件对象ID不匹配"
+	case RteInvalidArvexPageAllocate:
+		desc = "刚分配的补历史数据缓存页ID与标签点事件对象ID不匹配"
+	case RteBigJobIsNotDone:
+		desc = "正在执行重要的任务，请稍后再试"
+	case RteDatabaseNeedRestart:
+		desc = "数据库需要重新启动以便应用新的参数"
+	case RteInvalidTimeFormat:
+		desc = "无效的时间格式字符串"
+	case RteDataPlaybackDone:
+		desc = "历史数据回放过程已结束"
+	case RteBadEquation:
+		desc = "错误的方程式"
+	case RteNotEnoughSapce:
+		desc = "剩余磁盘空间不足"
+	case RteActivedArchiveExist:
+		desc = "已存在活动存档"
+	case RteArchiveHaveExFiles:
+		desc = "指定的存档文件具有附属文件"
+	case RteArchiveIsNotLatest:
+		desc = "指定的存档文件不是最晚的"
+	case RteDbSystemNotRunning:
+		desc = "数据库管理系统尚未完全启动"
+	case RteArchiveIsAltered:
+		desc = "存档文件内容发生变更"
+	case RteArchiveIsTooSmall:
+		desc = "不允许创建太小的存档文件和附属文件"
+	case RteInvalidIndexNode:
+		desc = "遇到无效的索引节点"
+	case RteModifySnapshotNotAllowed:
+		desc = "不允许删除或修改快照事件"
+	case RteSearchInterrupted:
+		desc = "因目标正被创建、删除或恢复，搜索被迫中断，请稍后再试"
+	case RteRecycleShutdown:
+		desc = "回收站已失效，相关操作无法完成"
+	case RteNeedToReindex:
+		desc = "索引文件缺失，或部分索引节点被损坏，需要重建索引"
+	case RteInvalidQuality:
+		desc = "无效的质量码"
+	case RteEquationNotReady:
+		desc = "实时方程式服务正在解析，请稍后再试"
+	case RteArchivesLicenseFull:
+		desc = "存档文件数已达到许可证规定的最大数目"
+	case RteRecycledLicenseFull:
+		desc = "标签点回收站容量超出了许可证规定的最大数目"
+	case RteStrBlobLicenseFull:
+		desc = "字符串或BLOB类型标签点数量超出了许可证规定的最大数目"
+	case RteNotSupportWhenDebug:
+		desc = "此功能被某个调试选项禁用"
+	case RteMappingAlreadyLoaded:
+		desc = "映射已经被加载，不允许重复加载"
+	case RteArchiveIsModified:
+		desc = "存档文件被修改，动作被中断"
+	case RteActiveArchiveFull:
+		desc = "活动文档已满"
+	case RteSplitNoData:
+		desc = "拆分数据页后所给时间区间内没有数据"
+	case RteInvalidDirectory:
+		desc = "指定的路径不存在或无效"
+	case RteArchiveLackExFiles:
+		desc = "指定存档文件的部分附属文件缺失"
+	case RteBigJobIsCanceled:
+		desc = "后台任务被取消"
+	case RteArvexBlobPageNotReady:
+		desc = "没有空闲的blob补历史数据缓存页"
+	case RteInvalidArvexBlobPageAllocate:
+		desc = "刚分配的blob补历史数据缓存页ID与标签点事件对象ID不匹配"
+	case RteTimestampEqualtoSnapshot:
+		desc = "写入的时间与快照时间相同"
+	case RteTimestampEarlierThanSnapshot:
+		desc = "写入的时间比当前快照时间较早"
+	case RteTimestampGreaterThanAllow:
+		desc = "写入的时间超过了允许的时间"
+	case RteTimestampBegintimeGreagerThanEndtime:
+		desc = "开始时间大于结束时间"
+	case RteTimestampBegintimeEqualtoEndtime:
+		desc = "开始时间等于结束时间"
+	case RteInvalidCount:
+		desc = "无效的count"
+	case RteInvalidCapacity:
+		desc = "无效的capacity"
+	case RteInvalidPath:
+		desc = "无效的路径"
+	case RteInvalidPosition:
+		desc = "无效的position"
+	case RteInvalidArvPage:
+		desc = "无效的rtdb_arv_page<RTDB_T>,未加载，或者size小于等于0"
+	case RteInvalidHisinfoItemState:
+		desc = "无效的历史信息条目"
+	case RteInvalidInterval:
+		desc = "无效的间隔"
+	case RteInvalidLength:
+		desc = "无效的字符串长度"
+	case RteInvalidSerachMode:
+		desc = "无效的search mode"
+	case RteInvalidFileId:
+		desc = "无效的存档文件ID"
+	case RteInvalidMillisecond:
+		desc = "无效的毫秒值/纳秒值"
+	case RteInvalidDeadline:
+		desc = "无效的截止时间"
+	case RteInvalidJobname:
+		desc = "无效的Job名称"
+	case RteInvalidJobstate:
+		desc = "无效的Job状态"
+	case RteInvalidProcessRate:
+		desc = "无效的Process速率"
+	case RteInvalidTableId:
+		desc = "无效的表ID"
+	case RteInvalidDataSource:
+		desc = "无效的数据源格式"
+	case RteInvalidTriggerMethod:
+		desc = "无效的触发方式"
+	case RteInvalidCalcTimeRes:
+		desc = "无效的计算结果时间戳参考方式"
+	case RteInvalidTriggerTimer:
+		desc = "无效的定时触发触发周期,不能小于1秒"
+	case RteInvalidLimit:
+		desc = "工程上限不得低于工程下限"
+	case RteInvalidCompTime:
+		desc = "无效的压缩间隔，最长压缩间隔不得小于最短压缩间隔"
+	case RteInvalidExtTime:
+		desc = "无效的例外间隔，最长例外间隔不得小于最短例外间隔"
+	case RteInvalidDigits:
+		desc = "无效的数值位数，数值位数超出了范围,-20~10"
+	case RteInvalidFullTagName:
+		desc = "标签点全名有误，找不到表名与点名的分隔符“.”"
+	case RteInvalidTableDesc:
+		desc = "表描述信息过有误"
+	case RteInvalidUserCount:
+		desc = "非法的用户个数，小于0"
+	case RteInvalidBlacklistCount:
+		desc = "非法的黑名单个数，小于0"
+	case RteInvalidAuthorizationCount:
+		desc = "非法的信任连接个数，小于0"
+	case RteInvalidBigJobType:
+		desc = "非法的大任务类型"
+	case RteInvalidSysParam:
+		desc = "无效的系统参数，调用db_set_db_info2时，参数有误"
+	case RteInvalidFileParam:
+		desc = "无效的文件路径参数，调用db_set_db_info1时，参数有误"
+	case RteInvalidFileSize:
+		desc = "文件长度有误  < 1 baserecycle.dat、scanrecycle.dat、calcrecycle.dat、snaprecycle.dat"
+	case RteInvalidTagType:
+		desc = "标签点类型有误，合法（ rtdb_bool ~ rtdb_blob)，但是不属于相应函数的处理范围"
+	case RteInvalidRecyStructPos:
+		desc = "回收站对象最后一个结构体位置非法"
+	case RteInvalidRecycleFile:
+		desc = "scanrecycle.dat、baserecycle.dat  snaprecycle.dat文件不存在或失效"
+	case RteInvalidSuffixName:
+		desc = "无效的文件后缀名"
+	case RteInsertStringFalse:
+		desc = "向数据页中插入字符串数据失败"
+	case RteBlobPageFull:
+		desc = "blob数据页已满"
+	case RteInvalidStringIteratorPointer:
+		desc = "无效的str/blob迭代器指针"
+	case RteNotEqualTagid:
+		desc = "目标页标签点ID 与 当前ID不一致"
+	case RtePathsOfArchiveAndAutobackAreSame:
+		desc = "存档文件路径与自动备份路径相同"
+	case RteXmlParseFail:
+		desc = "xml文件解析失败"
+	case RteXmlElementsAbsent:
+		desc = "xml清单文件文件内容缺失"
+	case RteXmlMismatchOnName:
+		desc = "xml清单文件与本产品不匹配"
+	case RteXmlMismatchOnVersion:
+		desc = "xml清单文件版本不匹配"
+	case RteXmlMismatchOnDatasize:
+		desc = "xml清单文件数据尺寸不匹配"
+	case RteXmlMismatchOnFileinfo:
+		desc = "xml清单文件中数据文件信息不匹配"
+	case RteXmlMismatchOnWindow:
+		desc = "xml清单文件中所有数据文件的窗口大小必须一致"
+	case RteXmlMismatchOnTypecount:
+		desc = "xml清单文件自定义数据类型的数量不匹配"
+	case RteXmlMismatchOnFieldcount:
+		desc = "xml清单文件自定义数据类型的field不匹配"
+	case RteXmlFieldMustInType:
+		desc = "xml清单文件中field标签必须嵌套在type标签中"
+	case RteInvalidNamedTypeFieldCount:
+		desc = "无效的FIELD数量"
+	case RteReduplicateFieldName:
+		desc = "重复的FIELD名字"
+	case RteInvalidNamedTypeName:
+		desc = "无效的自定义数据类型的名字"
+	case RteReduplicateNamedType:
+		desc = "已经存在的自定义数据类型"
+	case RteNotExistNamedType:
+		desc = "不存在的自定义数据类型"
+	case RteUpdateXmlFailed:
+		desc = "更新XML清单文件失败"
+	case RteNamedTypeUsedWithPoint:
+		desc = "有些标签点正在使用此自定义数据类型，不允许删除"
+	case RteNamedTypeUnsupportCalcPoint:
+		desc = "自定义数据类型不支持计算点"
+	case RteXmlMismatchOnMaxId:
+		desc = "自定义数据类型的最大ID与实际的自定义数据类型数量不一致"
+	case RteNamedTypeLicenseFull:
+		desc = "自定义数据类型的数量超出了许可证规定的最大数目"
+	case RteNoFreeNamedTypeId:
+		desc = "没有空闲的自定义数据类型的ID"
+	case RteInvalidNamedTypeId:
+		desc = "无效的自定义数据类型ID"
+	case RteInvalidNamedTypeFieldName:
+		desc = "无效的自定义数据类型的字段名字"
+	case RteNamedTypeUsedWithRecyclePoint:
+		desc = "有些回收站中的标签点正在使用此自定义数据类型，不允许删除"
+	case RteNamedTypeNameTooLong:
+		desc = "自定义类型的名字超过了允许的最大长度"
+	case RteNamedTypeFieldNameTooLong:
+		desc = "自定义类型的field 名字超过了允许的最大长度"
+	case RteInvalidNamedTypeFieldLength:
+		desc = "无效的自定义数据类型的字段长度"
+	case RteInvalidSearchMask:
+		desc = "无效的高级搜索的标签点属性mask"
+	case RteRecycledSpaceNotEnough:
+		desc = "标签点回收站空闲空间不足"
+	case RteDynamicLoadedMemoryNotInit:
+		desc = "动态加载的内存未初始化"
+	case RteForbidDynamicAllocType:
+		desc = "内存库禁止动态分配类型"
+	case RteMemorydbIndexCreateFailed:
+		desc = "内存库索引创建失败"
+	case RteWgMakeQueryReturnNull:
+		desc = "whitedb make_query_rc返回null"
+	case RteThtreadPoolCreatedFailed:
+		desc = "内存库创建线程池失败"
+	case RteMemorydbRemoveRecordFailed:
+		desc = "内存库删除记录失败"
+	case RteMemorydbConfigLoadFailed:
+		desc = "内存库配置文件加载失败"
+	case RteMemorydbProhibitDynamicAlloType:
+		desc = "内存库禁止动态分配类型"
+	case RteMemorydbDynamicAllocTypeFailed:
+		desc = "内存库动态分配类型失败"
+	case RteMemorydbStorageFileNameParseFailed:
+		desc = "内存库优先级文件名解析失败"
+	case RteMemorydbTtreeIndexDamage:
+		desc = "内存库T树索引损坏"
+	case RteMemorydbConfigFailed:
+		desc = "内存库配置文件错误"
+	case RteMemorydbValueCountNotMatch:
+		desc = "内存库记录的值个数不匹配。"
+	case RteMemorydbFieldTypeNotMatch:
+		desc = "内存库的字段类型不匹配"
+	case RteMemorydbMemoryAllocFailed:
+		desc = "内存库内存分配失败"
+	case RteMemorydbMethodParamErr:
+		desc = "内存库方法参数错误"
+	case RteMemorydbQueryResultAllocFailed:
+		desc = "内存库查询结果缓存分配失败"
+	case RteFilePathLength:
+		desc = "指定的文件路径长度错误"
+	case RteMemorydbFileVersionMatch:
+		desc = "内存库文件版本不匹配"
+	case RteMemorydbFileCrcError:
+		desc = "内存库文件CRC错误"
+	case RteMemorydbFileFlagMatch:
+		desc = "内存库文件标志错误"
+	case RteMemorydbInexistence:
+		desc = "存储库不存在"
+	case RteMemorydbLoadFailed:
+		desc = "存储库加载失败"
+	case RteNoDataInInterval:
+		desc = "指定的查询区间内没有数据。"
+	case RteCantLoadMemorydb:
+		desc = "不能与内存服务取得联系"
+	case RteQueryInWhitedb:
+		desc = "查询内存库过程中出现了错误，这是whitedb内部错误"
+	case RteNoDatabaseMemorydb:
+		desc = "没有找到指定数据类型所对应的分库"
+	case RteRecordNotGet:
+		desc = "从whitedb中获取记录失败"
+	case RteMemoryAllocErr:
+		desc = "内存库用于接收快照的缓冲区分配失败"
+	case RteEventCreateFailed:
+		desc = "用于内存库接收缓冲区的事件创建失败"
+	case RteGetPointFailed:
+		desc = "获取标签点失败"
+	case RteMemoryInitFailed:
+		desc = "内存库初始化失败"
+	case RteDatatypeNotMatch:
+		desc = "数据类型不匹配"
+	case RteGetFieldErr:
+		desc = "在whitedb获取记录的字段时出现了错误"
+	case RteMemorydbInternalErr:
+		desc = "whitedb内部未知错误"
+	case RteMemorydbRecordCreatedFailed:
+		desc = "内存库创建记录失败"
+	case RteParseNormalTypeSnapshotErr:
+		desc = "解析普通数据类型的快照失败"
+	case RteParseNamedTypeSnapshotErr:
+		desc = "解析自定义数据类型的快照失败"
+	case RteStringBlobTypeUnsupportCalcPoint:
+		desc = "string、blob类型不支持计算点"
+	case RteCoorTypeUnsupportCalcPoint:
+		desc = "坐标类型不支持计算点"
+	case RteIncludeHisData:
+		desc = "记录是历史数据，可能是无效过期的脏数据"
+	case RteThreadCreateErr:
+		desc = "线程创建失败"
+	case RteXmlCrcError:
+		desc = "xml文件crc校验失败"
+	case RteOversizeIntervals:
+		desc = "intervals >"
+	case RteDatetimesMustAscendingOrder:
+		desc = "时间必须按升序排序"
+	case RteCantLoadPerf:
+		desc = "不能同性能计数服务取得联系"
+	case RtePerfTagNotFound:
+		desc = "性能计数点不存在"
+	case RteWaitDataEmpty:
+		desc = "数据为空"
+	case RteWaitDataFull:
+		desc = "数据满了"
+	case RteDataTypeCountLess:
+		desc = "数据类型数量最小值"
+	case RteMemorydbCreateFailed:
+		desc = "内存库创建失败"
+	case RteMemorydbFieldEncodeFailed:
+		desc = "内存库字段编码失败"
+	case RteRecordCreateFailed:
+		desc = "内存库记录创建失败"
+	case RteRemoveRecordErr:
+		desc = "内存库记录删除失败"
+	case RteMemorydbFileOpenField:
+		desc = "内存库打开文件失败"
+	case RteMemorydbFileWriteFailed:
+		desc = "内存库写入文件失败"
+	case RteFilterWtihFloatAndEqual:
+		desc = "含有浮点数不等式中不能有"
+	case RteDispatchPluginNotExsit:
+		desc = "转发服务器插件不存在"
+	case RteDispatchPluginFileNotExsit:
+		desc = "转发服务器插件DLL文件不存在"
+	case RteDispatchPluginAlreadyExsit:
+		desc = "转发服务器插件已存在"
+	case RteDispatchRegisterPluginFailure:
+		desc = "插件注册失败"
+	case RteDispatchStartPluginFailure:
+		desc = "启动插件失败"
+	case RteDispatchStopPluginFailure:
+		desc = "停止插件失败"
+	case RteDispatchSetPluginEnableStatusFailure:
+		desc = "设置插件状态失败"
+	case RteDispatchGetPluginCountFailure:
+		desc = "获取插件个数信息失败"
+	case RteDispatchConfigfileNotExist:
+		desc = "转发服务配置文件不存在"
+	case RteDispatchConfigDataParseErr:
+		desc = "转发服务配置数据解析错误"
+	case RteDispatchPluginAlreadyRunning:
+		desc = "转发服务器插件已经运行"
+	case RteDispatchPluginCannotRun:
+		desc = "转发服务器插件禁止运行"
+	case RteDispatchPluginContainerUnrun:
+		desc = "转发服务器插件容器未运行"
+	case RteDispatchPluginInterfaceErr:
+		desc = "转发服务器插件接口未实现"
+	case RteDispatchPluginSaveConfigErr:
+		desc = "转发服务器保存配置文件出错"
+	case RteDispatchPluginStartErr:
+		desc = "转发服务器插件启动时失败"
+	case RteDispatchPluginStopErr:
+		desc = "转发服务器插件停止时失败"
+	case RteDispatchParseDataPageErr:
+		desc = "不支持的数据页类型"
+	case RteDispatchNotRun:
+		desc = "转发服务未启用"
+	case RteBigJobIsCanceledBecauseArcRoll:
+		desc = "因存档文件滚动，后台任务被取消"
+	case RtePerfForbiddenOperation:
+		desc = "禁止对性能表的操作"
+	case RteReduplicateTagInDestTable:
+		desc = "目标表中存在同名的标签点（用于标签点移动）"
+	case RteProtocolnotimpl:
+		desc = "用户请求的报文未实现"
+	case RteCrcerror:
+		desc = "报文CRC校验错误"
+	case RteWrongUserpw:
+		desc = "验证用户名密码失败"
+	case RteChangeUserpw:
+		desc = "修改用户名密码失败"
+	case RteInvalidHandle:
+		desc = "无效的句柄"
+	case RteInvalidSocketHandle:
+		desc = "无效的套接字句柄"
+	case RteFalse:
+		desc = "操作未成功完成，具体原因查看小错误码。"
+	case RteScanPointNotFound:
+		desc = "要求访问的采集标签点不存在或无效"
+	case RteCalcPointNotFound:
+		desc = "要求访问的计算标签点不存在或无效"
+	case RteReduplicateId:
+		desc = "重复的标签点标识"
+	case RteHandleSubscribed:
+		desc = "句柄已经被订阅"
+	case RteOtherSdkDoing:
+		desc = "另一个API正在执行"
+	case RteBatchEnd:
+		desc = "分段数据返回结束"
+	case RteAuthNotFound:
+		desc = "信任连接段不存在"
+	case RteAuthExist:
+		desc = "连接地址段已经位于信任列表中"
+	case RteAuthFull:
+		desc = "信任连接段已满"
+	case RteUserFull:
+		desc = "用户已满"
+	case RteVersionUnmatch:
+		desc = "报文或数据版本不匹配"
+	case RteInvalidPriv:
+		desc = "无效的权限"
+	case RteInvalidMask:
+		desc = "无效的子网掩码"
+	case RteInvalidUsername:
+		desc = "无效的用户名"
+	case RteInvalidMark:
+		desc = "无法识别的报文头标记"
+	case RteUnexpectedMethod:
+		desc = "意外的消息 ID"
+	case RteInvalidParamIndex:
+		desc = "无效的系统参数索引值"
+	case RteDecodePacketError:
+		desc = "解包错误"
+	case RteEncodePacketError:
+		desc = "编包错误"
+	case RteBlacklistFull:
+		desc = "阻止连接段已满"
+	case RteBlacklistExist:
+		desc = "连接地址段已经位于黑名单中"
+	case RteBlacklistNotFound:
+		desc = "阻止连接段不存在"
+	case RteInBlacklist:
+		desc = "连接地址位于黑名单中，被主动拒绝"
+	case RteIncreaseFileFailed:
+		desc = "试图增大文件失败"
+	case RteRpcInterfaceFailed:
+		desc = "远程过程接口调用失败"
+	case RteConnectionFull:
+		desc = "连接已满"
+	case RteOneClientConnectionFull:
+		desc = "连接已达到单个客户端允许连接数的最大值"
+	case RteServerClutterPoolNotEnough:
+		desc = "网络数据交换空间不足"
+	case RteEquationClutterPoolNotEnough:
+		desc = "实时方程式交换空间不足"
+	case RteNamedTypeNameLenError:
+		desc = "自定义类型的名称过长"
+	case RteNamedTypeLengthNotMatch:
+		desc = "数值长度与自定义类型的定义不符"
+	case RteCanNotUpdateSummary:
+		desc = "无法更新卫星数据"
+	case RteTooManyArvexFile:
+		desc = "附属文件太多，无法继续创建附属文件"
+	case RteNotSupportedFeature:
+		desc = "测试版本，暂时不支持此功能"
+	case RteEnsureError:
+		desc = "验证信息失败，详细信息请查看数据库日志"
+	case RteOperatorIsCancel:
+		desc = "操作被取消"
+	case RteMsgbodyRevError:
+		desc = "报文体接收失败"
+	case RteUncompressFailed:
+		desc = "解压缩失败"
+	case RteCompressFailed:
+		desc = "压缩失败"
+	case RteSubscribeError:
+		desc = "订阅失败，前一个订阅线程尚未退出"
+	case RteSubscribeCancelError:
+		desc = "取消订阅失败"
+	case RteSubscribeCallbackFailed:
+		desc = "订阅回掉函数中不能调用取消订阅、断开连接"
+	case RteSubscribeGreaterMaxCount:
+		desc = "超过单连接可订阅标签点数量"
+	case RteKillConnectionFailed:
+		desc = "断开连接失败，无法断开自身连接"
+	case RteSubscribeNotMatch:
+		desc = "请求的方法与当前的订阅不匹配"
+	case RteNoSubscribe:
+		desc = "连接还未发起订阅，或者标签点还未订阅"
+	case RteAlreadySubscribe:
+		desc = "标签点已经被订阅"
+	case RteCalcPointUnsupportedWriteData:
+		desc = "计算点不支持写入数据"
+	case RteFeatureDeprecated:
+		desc = "不再支持此功能"
+	case RteInvalidValue:
+		desc = "无效的数据"
+	case RteVerifyVercodeFailed:
+		desc = "验证授权码失败"
+	case RteInvalidPageSize:
+		desc = "无效的数据页的大小"
+	case RteInvalidPrecision:
+		desc = "无效的时间戳精度"
+	case RteInvalidPageVersion:
+		desc = "无效的数据页版本"
+	case RtePageIsFull:
+		desc = "数据页已满"
+	case RtePageNotLoaded:
+		desc = "还未加载数据页"
+	case RtePageAlreadyLoaded:
+		desc = "已经加载了数据页"
+	case RtePageTooSmall:
+		desc = "数据页太小，有效空间小于数据长度"
+	case RtePageNoEnoughData:
+		desc = "数据页中没有足够的数据"
+	case RtePageInsertFailed:
+		desc = "数据页插入数据失败"
+	case RtePageNoEnoughSpace:
+		desc = "数据页没有足够的空间"
+	case RteModifingMetaData:
+		desc = "正在修改元数据，请稍后再试"
+	case RtePageSizeNotMatch:
+		desc = "数据页大小不匹配"
+	case RteSyncBegin:
+		desc = "元数据同步错误码起始值"
+	case RteSyncInvalidConfig:
+		desc = "元数据同步-无效的配置"
+	case RteSyncInvalidVersion:
+		desc = "元数据同步-无效的版本号"
+	case RteSyncConfirmExpired:
+		desc = "元数据同步-等待确认信息过期"
+	case RteSyncTooManyFwdinfo:
+		desc = "元数据同步-转发信息过多"
+	case RteSyncNotMaster:
+		desc = "元数据同步-不是主库"
+	case RteSyncSyncing:
+		desc = "元数据同步-正在同步"
+	case RteSyncUnsynced:
+		desc = "元数据同步-未同步"
+	case RteSyncTablePosConflict:
+		desc = "元数据同步-表位置冲突"
+	case RteSyncInvalidPointId:
+		desc = "元数据同步-无效的标签点ID"
+	case RteSyncInvalidTableId:
+		desc = "元数据同步-无效的表ID"
+	case RteSyncInvalidNamedTypeId:
+		desc = "元数据同步-无效的自定义类型ID"
+	case RteSyncRestoring:
+		desc = "元数据同步-正在重建元数据"
+	case RteSyncServerIsNotRunning:
+		desc = "元数据同步-网络服务不是运行状态"
+	case RteSyncWriteWalFailed:
+		desc = "元数据同步-写WAL失败"
+	case RteSyncEnd:
+		desc = "元数据同步错误码结束值"
+	case RteNetError:
+		desc = "网络错误的起始值"
+	case RteSockWsaeintr:
+		desc = "（阻塞）调用被 WSACancelBlockingCall() 函数取消"
+	case RteSockWsaeacces:
+		desc = "请求地址是广播地址，但是相应的 flags 没设置"
+	case RteSockWsaefault:
+		desc = "非法内存访问"
+	case RteSockWsaemfile:
+		desc = "无多余的描述符可用"
+	case RteSockWsaewouldblock:
+		desc = "套接字被标识为非阻塞，但操作将被阻塞"
+	case RteSockWsaeinprogress:
+		desc = "一个阻塞的 Windows Sockets 操作正在进行"
+	case RteSockWsaealready:
+		desc = "一个非阻塞的 connect() 调用已经在指定的套接字上进行"
+	case RteSockWsaenotsock:
+		desc = "描述符不是套接字描述符"
+	case RteSockWsaedestaddrreq:
+		desc = "要求（未指定）目的地址"
+	case RteSockWsaemsgsize:
+		desc = "套接字为基于消息的，消息太大（大于底层传输支持的最大值）"
+	case RteSockWsaeprototype:
+		desc = "对此套接字来说，指定协议是错误的类型"
+	case RteSockWsaeprotonosupport:
+		desc = "不支持指定协议"
+	case RteSockWsaesocktnosupport:
+		desc = "在此地址族中不支持指定套接字类型"
+	case RteSockWsaeopnotsupp:
+		desc = "MSG_OOB 被指定，但是套接字不是流风格的"
+	case RteSockWsaeafnosupport:
+		desc = "不支持指定的地址族"
+	case RteSockWsaeaddrinuse:
+		desc = "套接字的本地地址已被使用"
+	case RteSockWsaeaddrnotavail:
+		desc = "远程地址非法"
+	case RteSockWsaenetdown:
+		desc = "Windows Sockets 检测到网络系统已经失效"
+	case RteSockWsaenetunreach:
+		desc = "网络无法到达主机"
+	case RteSockWsaenetreset:
+		desc = "在操作进行时 keep-alive 活动检测到一个失败，连接被中断"
+	case RteSockWsaeconnaborted:
+		desc = "连接因超时或其他失败而中断"
+	case RteSockWsaeconnreset:
+		desc = "连接被复位"
+	case RteSockWsaenobufs:
+		desc = "无缓冲区空间可用"
+	case RteSockWsaeisconn:
+		desc = "连接已建立"
+	case RteSockWsaenotconn:
+		desc = "套接字未建立连接"
+	case RteSockWsaeshutdown:
+		desc = "套接字已 shutdown，连接已断开"
+	case RteSockWsaetimedout:
+		desc = "连接请求超时，未能建立连接"
+	case RteSockWsaeconnrefused:
+		desc = "连接被拒绝"
+	case RteSockWsaeclose:
+		desc = "连接被关闭"
+	case RteSockWsanotinitialised:
+		desc = "Windows Sockets DLL 未初始化"
+	case RteCErrnoError:
+		desc = "C语言errno错误的起始值"
+	case RteCErrnoEperm:
+		desc = "Operation not permitted"
+	case RteCErrnoEnoent:
+		desc = "No such file or directory"
+	case RteCErrnoEsrch:
+		desc = "No such process"
+	case RteCErrnoEintr:
+		desc = "Interrupted system call"
+	case RteCErrnoEio:
+		desc = "I/O error"
+	case RteCErrnoEnxio:
+		desc = "No such device or address"
+	case RteCErrnoE2big:
+		desc = "Argument list too long"
+	case RteCErrnoEnoexec:
+		desc = "Exec format error"
+	case RteCErrnoEbadf:
+		desc = "Bad file number"
+	case RteCErrnoEchild:
+		desc = "No child processes"
+	case RteCErrnoEagain:
+		desc = "Try again"
+	case RteCErrnoEnomem:
+		desc = "Out of memory"
+	case RteCErrnoEacces:
+		desc = "Permission denied"
+	case RteCErrnoEfault:
+		desc = "Bad address"
+	case RteCErrnoEnotblk:
+		desc = "Block device required"
+	case RteCErrnoEbusy:
+		desc = "Device or resource busy"
+	case RteCErrnoEexist:
+		desc = "File exists"
+	case RteCErrnoExdev:
+		desc = "Cross-device link"
+	case RteCErrnoEnodev:
+		desc = "No such device"
+	case RteCErrnoEnotdir:
+		desc = "Not a directory"
+	case RteCErrnoEisdir:
+		desc = "Is a directory"
+	case RteCErrnoEinval:
+		desc = "Invalid argument"
+	case RteCErrnoEnfile:
+		desc = "File table overflow"
+	case RteCErrnoEmfile:
+		desc = "Too many open files"
+	case RteCErrnoEnotty:
+		desc = "Not a typewriter"
+	case RteCErrnoEtxtbsy:
+		desc = "Text file busy"
+	case RteCErrnoEfbig:
+		desc = "File too large"
+	case RteCErrnoEnospc:
+		desc = "No space left on device"
+	case RteCErrnoEspipe:
+		desc = "Illegal seek"
+	case RteCErrnoErofs:
+		desc = "Read-only file system"
+	case RteCErrnoEmlink:
+		desc = "Too many links"
+	case RteCErrnoEpipe:
+		desc = "Broken pipe"
+	case RteCErrnoEdom:
+		desc = "Math argument out of domain of func"
+	case RteCErrnoErange:
+		desc = "Math result not representable"
+	case RteCErrnoEdeadlk:
+		desc = "Resource deadlock would occur"
+	case RteCErrnoEnametoolong:
+		desc = "File name too long"
+	case RteCErrnoEnolck:
+		desc = "No record locks available"
+	case RteCErrnoEnosys:
+		desc = "Function not implemented"
+	case RteCErrnoEnotempty:
+		desc = "Directory not empty"
+	case RteCErrnoEloop:
+		desc = "Too many symbolic links encountered"
+	case RteCErrnoEnomsg:
+		desc = "No message of desired type"
+	case RteCErrnoEidrm:
+		desc = "Identifier removed"
+	case RteCErrnoEchrng:
+		desc = "Channel number out of range"
+	case RteCErrnoEl2nsync:
+		desc = "Level 2 not synchronized"
+	case RteCErrnoEl3hlt:
+		desc = "Level 3 halted"
+	case RteCErrnoEl3rst:
+		desc = "Level 3 reset"
+	case RteCErrnoElnrng:
+		desc = "Link number out of range"
+	case RteCErrnoEunatch:
+		desc = "Protocol driver not attached"
+	case RteCErrnoEnocsi:
+		desc = "No CSI structure available"
+	case RteCErrnoEl2hlt:
+		desc = "Level 2 halted"
+	case RteCErrnoEbade:
+		desc = "Invalid exchange"
+	case RteCErrnoEbadr:
+		desc = "Invalid request descriptor"
+	case RteCErrnoExfull:
+		desc = "Exchange full"
+	case RteCErrnoEnoano:
+		desc = "No anode"
+	case RteCErrnoEbadrqc:
+		desc = "Invalid request code"
+	case RteCErrnoEbadslt:
+		desc = "Invalid slot"
+	case RteCErrnoEbfont:
+		desc = "Bad font file format"
+	case RteCErrnoEnostr:
+		desc = "Device not a stream"
+	case RteCErrnoEnodata:
+		desc = "No data available"
+	case RteCErrnoEtime:
+		desc = "Timer expired"
+	case RteCErrnoEnosr:
+		desc = "Out of streams resources"
+	case RteCErrnoEnonet:
+		desc = "Machine is not on the network"
+	case RteCErrnoEnopkg:
+		desc = "Package not installed"
+	case RteCErrnoEremote:
+		desc = "Object is remote"
+	case RteCErrnoEnolink:
+		desc = "Link has been severed"
+	case RteCErrnoEadv:
+		desc = "Advertise error"
+	case RteCErrnoEsrmnt:
+		desc = "Srmount error"
+	case RteCErrnoEcomm:
+		desc = "Communication error on send"
+	case RteCErrnoEproto:
+		desc = "Protocol error"
+	case RteCErrnoEmultihop:
+		desc = "Multihop attempted"
+	case RteCErrnoEdotdot:
+		desc = "RFS specific error"
+	case RteCErrnoEbadmsg:
+		desc = "Not a data message"
+	case RteCErrnoEoverflow:
+		desc = "Value too large for defined data type"
+	case RteCErrnoEnotuniq:
+		desc = "Name not unique on network"
+	case RteCErrnoEbadfd:
+		desc = "File descriptor in bad state"
+	case RteCErrnoEremchg:
+		desc = "Remote address changed"
+	case RteCErrnoElibacc:
+		desc = "Can not access a needed shared library"
+	case RteCErrnoElibbad:
+		desc = "Accessing a corrupted shared library"
+	case RteCErrnoElibscn:
+		desc = ".lib section in a.out corrupted"
+	case RteCErrnoElibmax:
+		desc = "Attempting to link in too many shared libraries"
+	case RteCErrnoElibexec:
+		desc = "Cannot exec a shared library directly"
+	case RteCErrnoEilseq:
+		desc = "Illegal byte sequence"
+	case RteCErrnoErestart:
+		desc = "Interrupted system call should be restarted"
+	case RteCErrnoEstrpipe:
+		desc = "Streams pipe error"
+	case RteCErrnoEusers:
+		desc = "Too many users"
+	case RteCErrnoEnotsock:
+		desc = "Socket operation on non-socket"
+	case RteCErrnoEdestaddrreq:
+		desc = "Destination address required"
+	case RteCErrnoEmsgsize:
+		desc = "Message too long"
+	case RteCErrnoEprototype:
+		desc = "Protocol wrong type for socket"
+	case RteCErrnoEnoprotoopt:
+		desc = "Protocol not available"
+	case RteCErrnoEprotonosupport:
+		desc = "Protocol not supported"
+	case RteCErrnoEsocktnosupport:
+		desc = "Socket type not supported"
+	case RteCErrnoEopnotsupp:
+		desc = "Operation not supported on transport endpoint"
+	case RteCErrnoEpfnosupport:
+		desc = "Protocol family not supported"
+	case RteCErrnoEafnosupport:
+		desc = "Address family not supported by protocol"
+	case RteCErrnoEaddrinuse:
+		desc = "Address already in use"
+	case RteCErrnoEaddrnotavail:
+		desc = "Cannot assign requested address"
+	case RteCErrnoEnetdown:
+		desc = "Network is down"
+	case RteCErrnoEnetunreach:
+		desc = "Network is unreachable"
+	case RteCErrnoEnetreset:
+		desc = "Network dropped connection because of reset"
+	case RteCErrnoEconnaborted:
+		desc = "Software caused connection abort"
+	case RteCErrnoEconnreset:
+		desc = "Connection reset by peer"
+	case RteCErrnoEnobufs:
+		desc = "No buffer space available"
+	case RteCErrnoEisconn:
+		desc = "Transport endpoint is already connected"
+	case RteCErrnoEnotconn:
+		desc = "Transport endpoint is not connected"
+	case RteCErrnoEshutdown:
+		desc = "Cannot send after transport endpoint shutdown"
+	case RteCErrnoEtoomanyrefs:
+		desc = "Too many references: cannot splice"
+	case RteCErrnoEtimedout:
+		desc = "Connection timed out"
+	case RteCErrnoEconnrefused:
+		desc = "Connection refused"
+	case RteCErrnoEhostdown:
+		desc = "Host is down"
+	case RteCErrnoEhostunreach:
+		desc = "No route to host"
+	case RteCErrnoEalready:
+		desc = "Operation already in progress"
+	case RteCErrnoEinprogress:
+		desc = "Operation now in progress"
+	case RteCErrnoEstale:
+		desc = "Stale file handle"
+	case RteCErrnoEuclean:
+		desc = "Structure needs cleaning"
+	case RteCErrnoEnotnam:
+		desc = "Not a XENIX named type file"
+	case RteCErrnoEnavail:
+		desc = "No XENIX semaphores available"
+	case RteCErrnoEisnam:
+		desc = "Is a named type file"
+	case RteCErrnoEremoteio:
+		desc = "Remote I/O error"
+	case RteCErrnoEdquot:
+		desc = "Quota exceeded"
+	case RteCErrnoEnomedium:
+		desc = "No medium found"
+	case RteCErrnoEmediumtype:
+		desc = "Wrong medium type"
+	case RteCErrnoEcanceled:
+		desc = "Operation Canceled"
+	case RteCErrnoEnokey:
+		desc = "Required key not available"
+	case RteCErrnoEkeyexpired:
+		desc = "Key has expired"
+	case RteCErrnoEkeyrevoked:
+		desc = "Key has been revoked"
+	case RteCErrnoEkeyrejected:
+		desc = "Key was rejected by service"
+	case RteCErrnoEownerdead:
+		desc = "Owner died"
+	case RteCErrnoEnotrecoverable:
+		desc = "State not recoverable"
+	case RteCErrnoErfkill:
+		desc = "Operation not possible due to RF-kill"
+	case RteCErrnoEhwpoison:
+		desc = "Memory page has hardware error"
+	case RteIpcError:
+		desc = "ipc error begin"
+	case RteIpcErrorEnd:
+		desc = "ipc error end"
+	default:
+		desc = "未知错误"
+	}
+	return desc
+}
+
 const (
 	// RteUnknownError  未知错误
 	RteUnknownError = RtdbError(C.RtE_UNKNOWN_ERROR)
@@ -1939,4 +3146,21 @@ func RtdbRecvDatagramWarp(cacheLen int32, handle DatagramHandle, remoteAddr stri
 	defer C.free(unsafe.Pointer(cRemoteAddr))
 	err := C.rtdb_recv_datagram_warp((*C.char)(unsafe.Pointer(&message[0])), &messageLen, handle.handle, cRemoteAddr, C.rtdb_int32(timeout))
 	return message[0:messageLen], RtdbError(err)
+}
+
+type ConnectHandle int32
+
+// RtdbConnectWarp 建立同 RTDB 数据库的网络连接
+// * \param [in] hostname     RTDB 数据平台服务器的网络地址或机器名
+// * \param [in] port         连接断开，缺省值 6327
+// * \param [out]  handle  连接句柄
+// * \return rtdb_error
+// * \remark 在调用所有的接口函数之前，必须先调用本函数建立同Rtdb服务器的连接
+func RtdbConnectWarp(hostname string, port int32) (ConnectHandle, RtdbError) {
+	cHostname := C.CString(hostname)
+	defer C.free(unsafe.Pointer(cHostname))
+	cPort := C.rtdb_int32(port)
+	cHandle := C.rtdb_int32(0)
+	err := C.rtdb_connect_warp(cHostname, cPort, &cHandle)
+	return ConnectHandle(cHandle), RtdbError(err)
 }
