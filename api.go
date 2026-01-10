@@ -3091,6 +3091,27 @@ const (
 	RtdbApiOptionServerPrecision = RtdbApiOption(C.RTDB_API_SERVER_PRECISION)
 )
 
+func (rao RtdbApiOption) Desc() string {
+	switch rao {
+	case RtdbApiOptionAutoReconn:
+		return "api 在连接中断后是否自动重连, 0 不重连；1 重连。默认为 0 不重连"
+	case RtdbApiOptionConnTimeout:
+		return "api 连接超时值设置（单位：毫秒）,0 阻塞模式，无限等待，默认为1000"
+	case RtdbApiOptionSendTimeout:
+		return "api 发送超时值设置（单位：毫秒）,0 阻塞模式，无限等待，默认为1000"
+	case RtdbApiOptionRecvTimeout:
+		return "api 接收超时值设置（单位：毫秒）,0 阻塞模式，无限等待，默认为60000"
+	case RtdbApiOptionUserTimeout:
+		return "api TCP_USER_TIMEOUT超时值设置（单位：毫秒），默认为10000，Linux内核2.6.37以上有效"
+	case RtdbApiOptionDefaultPrecision:
+		return "api 默认的时间戳精度，当使用旧版相关的api，以及新版api中未设置时间戳精度时，则使用此默认时间戳精度。 默认为毫秒精度"
+	case RtdbApiOptionServerPrecision:
+		return "api 连接3.0数据库时，设置3.0数据库的时间戳精度，0表示毫秒精度，非0表示纳秒精度，默认为毫秒精度"
+	default:
+		return "未知的RtdbApiOption"
+	}
+}
+
 // DatagramHandle 流句柄, 用于数据流订阅
 type DatagramHandle struct {
 	handle C.rtdb_datagram_handle
