@@ -75,6 +75,44 @@ func TestRawRtdbConnectionCountWarp(t *testing.T) {
 	fmt.Println("当前服务器连接个数: ", count)
 }
 
-func TestParam(t *testing.T) {
-	Param()
+func TestRawRtdbGetDbInfo1Warp(t *testing.T) {
+	handle, err := RawRtdbConnectWarp(Hostname, Port)
+	if err != nil {
+		t.Error("创建连接失败", err.Error())
+		return
+	}
+	_, err = RawRtdbLoginWarp(handle, Username, Password)
+	if err != nil {
+		t.Error("登录失败:", err)
+		return
+	}
+	defer func() { _ = RawRtdbDisconnectWarp(handle) }()
+
+	param, err := RawRtdbGetDbInfo1Warp(handle, RtdbParamTableFile)
+	if err != nil {
+		t.Error("获取Str参数失败", err)
+		return
+	}
+	fmt.Println(param)
+}
+
+func TestRawRtdbGetDbInfo2Warp(t *testing.T) {
+	handle, err := RawRtdbConnectWarp(Hostname, Port)
+	if err != nil {
+		t.Error("创建连接失败", err.Error())
+		return
+	}
+	_, err = RawRtdbLoginWarp(handle, Username, Password)
+	if err != nil {
+		t.Error("登录失败:", err)
+		return
+	}
+	defer func() { _ = RawRtdbDisconnectWarp(handle) }()
+
+	param, err := RawRtdbGetDbInfo2Warp(handle, RtdbParamLicScanCount)
+	if err != nil {
+		t.Error("获取Str参数失败", err)
+		return
+	}
+	fmt.Println(param)
 }

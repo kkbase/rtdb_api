@@ -4278,7 +4278,7 @@ func RawRtdbGetDbInfo1Warp(handle ConnectHandle, param RtdbParam) (ParamString, 
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_get_db_info2_warp(rtdb_int32 handle, rtdb_int32 index, rtdb_uint32 *value)
 func RawRtdbGetDbInfo2Warp(handle ConnectHandle, param RtdbParam) (ParamInt, error) {
-	value := C.rtdb_int32(0)
+	value := C.rtdb_uint32(0)
 	err := C.rtdb_get_db_info2_warp(C.rtdb_int32(handle), C.rtdb_int32(param), &value)
 	return ParamInt(value), RtdbError(err).GoError()
 }
@@ -4293,9 +4293,9 @@ func RawRtdbGetDbInfo2Warp(handle ConnectHandle, param RtdbParam) (ParamInt, err
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_set_db_info1_warp(rtdb_int32 handle, rtdb_int32 index, const char *str)
 func RawRtdbSetDbInfo1Warp(handle ConnectHandle, param RtdbParam, value ParamString) error {
-	val := C.CString(string(value))
-	defer C.free(unsafe.Pointer(val))
-	err := C.rtdb_set_db_info1_warp(C.rtdb_int32(handle), C.rtdb_int32(param), &val)
+	cValue := C.CString(string(value))
+	defer C.free(unsafe.Pointer(cValue))
+	err := C.rtdb_set_db_info1_warp(C.rtdb_int32(handle), C.rtdb_int32(param), cValue)
 	return RtdbError(err).GoError()
 }
 
