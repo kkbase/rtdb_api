@@ -3435,6 +3435,7 @@ rtdb_error RTDBAPI_CALLRULE rtdbp_get_perf_values64_warp(rtdb_int32 handle, rtdb
 		fmt.Println(XXX(fn))
 		fmt.Println()
 	}
+	fmt.Println(len(fns))
 }
 
 func sp(s string) []string {
