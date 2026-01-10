@@ -3983,8 +3983,114 @@ func (rp RtdbParam) Desc() string {
 	}
 }
 
-/**
- */
+type RtdbConst int32
+
+const (
+	// RtdbTagSize 标签点名称占用字节数
+	RtdbTagSize = RtdbConst(C.RTDB_TAG_SIZE)
+
+	// RtdbDescSize 标签点描述占用字节数
+	RtdbDescSize = RtdbConst(C.RTDB_DESC_SIZE)
+
+	// RtdbUnitSize 标签点单位占用字节数
+	RtdbUnitSize = RtdbConst(C.RTDB_UNIT_SIZE)
+
+	// RtdbUserSize 用户名占用字节数
+	RtdbUserSize = RtdbConst(C.RTDB_USER_SIZE)
+
+	// RtdbSourceSize 标签点数据源占用字节数
+	RtdbSourceSize = RtdbConst(C.RTDB_SOURCE_SIZE)
+
+	// RtdbInstrumentSize 标签点所属设备占用字节数
+	RtdbInstrumentSize = RtdbConst(C.RTDB_INSTRUMENT_SIZE)
+
+	// RtdbLocationsSize  采集标签点位址个数
+	RtdbLocationsSize = RtdbConst(C.RTDB_LOCATIONS_SIZE)
+
+	// RtdbUserintSize  采集标签点用户自定义整数个数
+	RtdbUserintSize = RtdbConst(C.RTDB_USERINT_SIZE)
+
+	// RtdbUserrealSize  采集标签点用户自定义浮点数个数
+	RtdbUserrealSize = RtdbConst(C.RTDB_USERREAL_SIZE)
+
+	// RtdbEquationSize 计算标签点方程式占用字节数
+	RtdbEquationSize = RtdbConst(C.RTDB_EQUATION_SIZE)
+
+	// RtdbTypeNameSize 自定义类型名称占用字节数
+	RtdbTypeNameSize = RtdbConst(C.RTDB_TYPE_NAME_SIZE)
+
+	// RtdbPackOfSnapshot   事件快照备用字节空间
+	RtdbPackOfSnapshot = RtdbConst(C.RTDB_PACK_OF_SNAPSHOT)
+
+	// RtdbPackOfPoint 标签点备用字节空间
+	RtdbPackOfPoint = RtdbConst(C.RTDB_PACK_OF_POINT)
+
+	// RtdbPackOfBasePoint 基本标签点备用字节空间
+	RtdbPackOfBasePoint = RtdbConst(C.RTDB_PACK_OF_BASE_POINT)
+
+	// RtdbPackOfScan 采集标签点备用字节空间
+	RtdbPackOfScan = RtdbConst(C.RTDB_PACK_OF_SCAN)
+
+	// RtdbPackOfCalc 计算标签点备用字节空间
+	RtdbPackOfCalc = RtdbConst(C.RTDB_PACK_OF_CALC)
+
+	// RtdbFileNameSize 文件名字符串字节长度
+	RtdbFileNameSize = RtdbConst(C.RTDB_FILE_NAME_SIZE)
+
+	// RtdbPathSize  路径字符串字节长度
+	RtdbPathSize = RtdbConst(C.RTDB_PATH_SIZE)
+
+	// RtdbMaxUserCount 最大用户个数
+	RtdbMaxUserCount = RtdbConst(C.RTDB_MAX_USER_COUNT)
+
+	// RtdbMaxAuthCount 最大信任连接段个数
+	RtdbMaxAuthCount = RtdbConst(C.RTDB_MAX_AUTH_COUNT)
+
+	// RtdbMaxBlacklistLen 连接黑名单最大长度
+	RtdbMaxBlacklistLen = RtdbConst(C.RTDB_MAX_BLACKLIST_LEN)
+
+	// RtdbMaxSubscribeSnapshots  单个连接最大订阅快照数量
+	RtdbMaxSubscribeSnapshots = RtdbConst(C.RTDB_MAX_SUBSCRIBE_SNAPSHOTS)
+
+	// RtdbApiServerDescriptionLen  API_SERVER中，decription描述字段的长度
+	RtdbApiServerDescriptionLen = RtdbConst(C.RTDB_API_SERVER_DESCRIPTION_LEN)
+
+	// RtdbMinEquationSize 缩减长度后的方程式占用字节数
+	RtdbMinEquationSize = RtdbConst(C.RTDB_MIN_EQUATION_SIZE)
+
+	// RtdbPackOfMinCalc 缩减长度后的计算标签点备用字节空间
+	RtdbPackOfMinCalc = RtdbConst(C.RTDB_PACK_OF_MIN_CALC)
+
+	// RtdbMaxEquationSize 最大长度的方程式占用字节数
+	RtdbMaxEquationSize = RtdbConst(C.RTDB_MAX_EQUATION_SIZE)
+
+	// RtdbPackOfMaxCalc 最大长度的计算标签点备用字节空间
+	RtdbPackOfMaxCalc = RtdbConst(C.RTDB_PACK_OF_MAX_CALC)
+
+	// RtdbMaxJsonSize  允许的json字符串的最大长度
+	RtdbMaxJsonSize = RtdbConst(C.RTDB_MAX_JSON_SIZE)
+
+	// RtdbIpv6AddrSize ipv6地址空间大小
+	RtdbIpv6AddrSize = RtdbConst(C.RTDB_IPV6_ADDR_SIZE)
+
+	// RtdbOutputPluginLibVersionLength 输入输出适配器插件库版本号长度64Bytes
+	RtdbOutputPluginLibVersionLength = RtdbConst(C.RTDB_OUTPUT_PLUGIN_LIB_VERSION_LENGTH)
+
+	// RtdbOutputPluginLibNameLength  输入输出适配器插件库名长度128Bytes
+	RtdbOutputPluginLibNameLength = RtdbConst(C.RTDB_OUTPUT_PLUGIN_LIB_NAME_LENGTH)
+
+	// RtdbOutputPluginActorNameLength  输入输出适配器执行实例长度128Bytes
+	RtdbOutputPluginActorNameLength = RtdbConst(C.RTDB_OUTPUT_PLUGIN_ACTOR_NAME_LENGTH)
+
+	// RtdbOutputPluginNameLength 输入输出适配器插件名长度255Bytes
+	RtdbOutputPluginNameLength = RtdbConst(C.RTDB_OUTPUT_PLUGIN_NAME_LENGTH)
+
+	// RtdbOutputPluginDirLength 输入输出适配器路径长度255Bytes
+	RtdbOutputPluginDirLength = RtdbConst(C.RTDB_OUTPUT_PLUGIN_DIR_LENGTH)
+
+	// RtdbPerOfUsefulMemSize 历史数据缓存/补历史数据缓存/blob补历史数据缓存/内存大小上限占可用内存百分比值占用的字节数
+	RtdbPerOfUsefulMemSize = RtdbConst(C.RTDB_PER_OF_USEFUL_MEM_SIZE)
+)
 
 /////////////////////////////// 上面是结构定义 ////////////////////////////////////
 /////////////////////////////// -- 华丽的分割线 -- ////////////////////////////////
@@ -4142,7 +4248,13 @@ func RawRtdbConnectionCountWarp(handle ConnectHandle, nodeNumber int32) (int32, 
 // * \param size      整型，输入，字符串缓冲区尺寸。
 // * \remark 本接口只接受 [RTDB_PARAM_STR_FIRST, RTDB_PARAM_STR_LAST) 范围之内参数索引。
 // rtdb_error RTDBAPI_CALLRULE rtdb_get_db_info1_warp(rtdb_int32 handle, rtdb_int32 index, char *str, rtdb_int32 size)
-func RawRtdbGetDbInfo1Warp() {}
+func RawRtdbGetDbInfo1Warp(handle ConnectHandle, param RtdbParam) (string, error) {
+	buf := make([]byte, RtdbApiServerDescriptionLen)
+	cStr := (*C.char)(unsafe.Pointer(&buf[0]))
+	err := C.rtdb_get_db_info1_warp(C.rtdb_int32(handle), C.rtdb_int32(param), cStr, C.rtdb_int32(RtdbApiServerDescriptionLen))
+	rtn := C.GoString((*C.char)(unsafe.Pointer(&buf[0])))
+	return rtn, RtdbError(err).GoError()
+}
 
 // RawRtdbGetDbInfo2Warp 获得整型数据库系统参数
 // * \param handle    连接句柄
