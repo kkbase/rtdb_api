@@ -3419,39 +3419,25 @@ func RawRtdbGetAuthorizationsWarp() {}
 // rtdb_error RTDBAPI_CALLRULE rtdb_host_time_warp(rtdb_int32 handle, rtdb_int32 *hosttime)
 func RawRtdbHostTimeWarp() {}
 
-// /*
-// *
-//   - \brief 获取 RTDB 服务器当前UTC时间
-//     *
-//   - \param handle       连接句柄
-//   - \param hosttime     整型，输出，Rtdb服务器的当前UTC时间，
-//   - 表示距离1970年1月1日08:00:00的秒数。
-//
+// RawRtdbHostTime64Warp 获取 RTDB 服务器当前UTC时间
+// * \param handle       连接句柄
+// * \param hosttime     整型，输出，Rtdb服务器的当前UTC时间，
+// * 表示距离1970年1月1日08:00:00的秒数。
 // rtdb_error RTDBAPI_CALLRULE rtdb_host_time64_warp(rtdb_int32 handle, rtdb_timestamp_type* hosttime)
-// */
 func RawRtdbHostTime64Warp() {}
 
-// /*
-// *
-//   - \brief 根据时间跨度值生成时间格式字符串
-//     *
-//   - \param str          字符串，输出，时间格式字符串，形如:
-//   - "1d" 表示时间跨度为24小时。
-//   - 具体含义参见 rtdb_parse_timespan 注释。
-//   - \param timespan     整型，输入，要处理的时间跨度秒数。
-//   - \remark 字符串缓冲区大小不应小于 32 字节。
-//
+// RawRtdbFormatTimespanWarp 根据时间跨度值生成时间格式字符串
+// * \param str          字符串，输出，时间格式字符串，形如:
+// * "1d" 表示时间跨度为24小时。
+// * 具体含义参见 rtdb_parse_timespan 注释。
+// * \param timespan     整型，输入，要处理的时间跨度秒数。
+// * \remark 字符串缓冲区大小不应小于 32 字节。
 // rtdb_error RTDBAPI_CALLRULE rtdb_format_timespan_warp(char *str, rtdb_int32 timespan)
-// */
 func RawRtdbFormatTimespanWarp() {}
 
-// /*
-// *
-// * \brief 根据时间格式字符串解析时间跨度值
-// *
+// RawRtdbParseTimespanWarp 根据时间格式字符串解析时间跨度值
 // * \param str          字符串，输入，时间格式字符串，规则如下：
 // *                     [time_span]
-// *
 // *                     时间跨度部分可以出现多次，
 // *                     可用的时间跨度代码及含义如下：
 // *                     ?y            ?年, 1年 = 365日
@@ -3461,16 +3447,11 @@ func RawRtdbFormatTimespanWarp() {}
 // *                     ?n            ?分钟
 // *                     ?s            ?秒
 // *                     例如："1d" 表示时间跨度为24小时。
-// *
 // * \param timespan     整型，输出，返回解析得到的时间跨度秒数。
 // rtdb_error RTDBAPI_CALLRULE rtdb_parse_timespan_warp(const char *str, rtdb_int32 *timespan)
-// */
 func RawRtdbParseTimespanWarp() {}
 
-// /*
-// *
-// * \brief 根据时间格式字符串解析时间值
-// *
+// RawRtdbParseTimeWarp 根据时间格式字符串解析时间值
 // * \param str          字符串，输入，时间格式字符串，规则如下：
 // *                     base_time [+|- offset_time]
 // *
@@ -3489,7 +3470,6 @@ func RawRtdbParseTimespanWarp() {}
 // *                     sat            本周六零点
 // *                     sun            本周日零点
 // *                     3. 星号('*')，表示客户端当前时间。
-// *
 // *                     offset_time 是可选的，可以出现多次，
 // *                     可用的时间偏移代码及含义如下：
 // *                     [+|-] ?y            偏移?年, 1年 = 365日
@@ -3500,259 +3480,172 @@ func RawRtdbParseTimespanWarp() {}
 // *                     [+|-] ?s            偏移?秒
 // *                     [+|-] ?ms           偏移?毫秒
 // *                     例如："*-1d" 表示当前时刻减去24小时。
-// *
 // * \param datetime     整型，输出，返回解析得到的时间值。
 // * \param ms           短整型，输出，返回解析得到的时间毫秒值。
 // *  备注：ms 可以为空指针，相应的毫秒信息将不再返回。
 // rtdb_error RTDBAPI_CALLRULE rtdb_parse_time_warp(const char *str, rtdb_int64 *datetime, rtdb_int16 *ms)
-// */
 func RawRtdbParseTimeWarp() {}
 
-// /*
-// *
-//   - \brief 获取 Rtdb API 调用返回值的简短描述
-//     *
-//   - \param ecode        无符号整型，输入，Rtdb API调用后的返回值，详见rtdb_error.h头文件
-//   - \param message      字符串，输出，返回错误码简短描述
-//   - \param name         字符串，输出，返回错误码宏名称
-//   - \param size         整型，输入，message 参数的字节长度
-//   - \remark 用户须保证分配给 message， name 的空间与 size 相符,
-//   - name 或 message 可以为空指针，对应的信息将不再返回。
-//
+// RawRtdbFormatMessageWarp 获取 Rtdb API 调用返回值的简短描述
+// * \param ecode        无符号整型，输入，Rtdb API调用后的返回值，详见rtdb_error.h头文件
+// * \param message      字符串，输出，返回错误码简短描述
+// * \param name         字符串，输出，返回错误码宏名称
+// * \param size         整型，输入，message 参数的字节长度
+// * \remark 用户须保证分配给 message， name 的空间与 size 相符,
+// * name 或 message 可以为空指针，对应的信息将不再返回。
 // void RTDBAPI_CALLRULE rtdb_format_message_warp(rtdb_error ecode, char *message, char *name, rtdb_int32 size)
-// */
 func RawRtdbFormatMessageWarp() {}
 
-// /*
-// *
-//   - \brief 获取任务的简短描述
-//     *
-//   - \param job_id       整型，输入，RTDB_HOST_CONNECT_INFO::job 字段所表示的最近任务的描述
-//   - \param desc         字符串，输出，返回任务描述
-//   - \param name         字符串，输出，返回任务名称
-//   - \param size         整型，输入，desc、name 参数的字节长度
-//   - \remark 用户须保证分配给 desc、name 的空间与 size 相符，
-//   - name 或 message 可以为空指针，对应的信息将不再返回。
-//
+// RawRtdbJobMessageWarp 获取任务的简短描述
+// * \param job_id       整型，输入，RTDB_HOST_CONNECT_INFO::job 字段所表示的最近任务的描述
+// * \param desc         字符串，输出，返回任务描述
+// * \param name         字符串，输出，返回任务名称
+// * \param size         整型，输入，desc、name 参数的字节长度
+// * \remark 用户须保证分配给 desc、name 的空间与 size 相符，
+// * name 或 message 可以为空指针，对应的信息将不再返回。
 // void RTDBAPI_CALLRULE rtdb_job_message_warp(rtdb_int32 job_id, char *desc, char *name, rtdb_int32 size)
-// */
 func RawRtdbJobMessageWarp() {}
 
-// /*
-// *
-//   - \brief 设置连接超时时间
-//     *
-//   - \param handle   连接句柄
-//   - \param socket   整型，输入，要设置超时时间的连接
-//   - \param timeout  整型，输入，超时时间，单位为秒，0 表示始终保持
-//
+// RawRtdbSetTimeoutWarp 设置连接超时时间
+// * \param handle   连接句柄
+// * \param socket   整型，输入，要设置超时时间的连接
+// * \param timeout  整型，输入，超时时间，单位为秒，0 表示始终保持
 // rtdb_error RTDBAPI_CALLRULE rtdb_set_timeout_warp(rtdb_int32 handle, rtdb_int32 socket, rtdb_int32 timeout)
-// */
 func RawRtdbSetTimeoutWarp() {}
 
-// /*
-// *
-//   - \brief 获得连接超时时间
-//     *
-//   - \param handle   连接句柄
-//   - \param socket   整型，输入，要获取超时时间的连接
-//   - \param timeout  整型，输出，超时时间，单位为秒，0 表示始终保持
-//
+// RawRtdbGetTimeoutWarp 获得连接超时时间
+// * \param handle   连接句柄
+// * \param socket   整型，输入，要获取超时时间的连接
+// * \param timeout  整型，输出，超时时间，单位为秒，0 表示始终保持
 // rtdb_error RTDBAPI_CALLRULE rtdb_get_timeout_warp(rtdb_int32 handle, rtdb_int32 socket, rtdb_int32 *timeout)
-// */
 func RawRtdbGetTimeoutWarp() {}
 
-// /*
-// *
-//   - \brief 断开已知连接
-//     *
-//   - \param handle    连接句柄
-//   - \param socket    整型，输入，要断开的连接
-//
+// RawRtdbKillConnectionWarp 断开已知连接
+// * \param handle    连接句柄
+// * \param socket    整型，输入，要断开的连接
 // rtdb_error RTDBAPI_CALLRULE rtdb_kill_connection_warp(rtdb_int32 handle, rtdb_int32 socket)
-// */
 func RawRtdbKillConnectionWarp() {}
 
-// /*
-// *
-//   - \brief 获得字符串型数据库系统参数
-//     *
-//   - \param handle    连接句柄
-//   - \param index     整型，输入，要取得的参数索引，参见枚举 RTDB_DB_PARAM_INDEX。
-//   - \param str       字符串型，输出，存放取得的字符串参数值。
-//   - \param size      整型，输入，字符串缓冲区尺寸。
-//   - \remark 本接口只接受 [RTDB_PARAM_STR_FIRST, RTDB_PARAM_STR_LAST) 范围之内参数索引。
-//
+// RawRtdbGetDbInfo1Warp 获得字符串型数据库系统参数
+// * \param handle    连接句柄
+// * \param index     整型，输入，要取得的参数索引，参见枚举 RTDB_DB_PARAM_INDEX。
+// * \param str       字符串型，输出，存放取得的字符串参数值。
+// * \param size      整型，输入，字符串缓冲区尺寸。
+// * \remark 本接口只接受 [RTDB_PARAM_STR_FIRST, RTDB_PARAM_STR_LAST) 范围之内参数索引。
 // rtdb_error RTDBAPI_CALLRULE rtdb_get_db_info1_warp(rtdb_int32 handle, rtdb_int32 index, char *str, rtdb_int32 size)
-// */
 func RawRtdbGetDbInfo1Warp() {}
 
-// /*
-// *
-//   - \brief 获得整型数据库系统参数
-//     *
-//   - \param handle    连接句柄
-//   - \param index     整型，输入，要取得的参数索引，参见枚举 RTDB_DB_PARAM_INDEX。
-//   - \param value     无符号整型，输出，存放取得的整型参数值。
-//   - \remark 本接口只接受 [RTDB_PARAM_INT_FIRST, RTDB_PARAM_INT_LAST) 范围之内参数索引。
-//
+// RawRtdbGetDbInfo2Warp 获得整型数据库系统参数
+// * \param handle    连接句柄
+// * \param index     整型，输入，要取得的参数索引，参见枚举 RTDB_DB_PARAM_INDEX。
+// * \param value     无符号整型，输出，存放取得的整型参数值。
+// * \remark 本接口只接受 [RTDB_PARAM_INT_FIRST, RTDB_PARAM_INT_LAST) 范围之内参数索引。
 // rtdb_error RTDBAPI_CALLRULE rtdb_get_db_info2_warp(rtdb_int32 handle, rtdb_int32 index, rtdb_uint32 *value)
-// */
 func RawRtdbGetDbInfo2Warp() {}
 
-// /*
-// *
-//   - \brief 设置字符串型数据库系统参数
-//     *
-//   - \param handle    连接句柄
-//   - \param index     整型，输入，要设置的参数索引，参见枚举 RTDB_DB_PARAM_INDEX。
-//   - 其中，仅以下列出的枚举值可用：
-//   - RTDB_PARAM_AUTO_BACKUP_PATH,
-//   - RTDB_PARAM_SERVER_SENDER_IP,
-//   - \param str       字符串型，输入，新的参数值。
-//   - \remark 如果修改了启动参数，将返回 RtE_DATABASE_NEED_RESTART 提示码。
-//
+// RawRtdbSetDbInfo1Warp 设置字符串型数据库系统参数
+// * \param handle    连接句柄
+// * \param index     整型，输入，要设置的参数索引，参见枚举 RTDB_DB_PARAM_INDEX。
+// * 其中，仅以下列出的枚举值可用：
+// * RTDB_PARAM_AUTO_BACKUP_PATH,
+// * RTDB_PARAM_SERVER_SENDER_IP,
+// * \param str       字符串型，输入，新的参数值。
+// * \remark 如果修改了启动参数，将返回 RtE_DATABASE_NEED_RESTART 提示码。
 // rtdb_error RTDBAPI_CALLRULE rtdb_set_db_info1_warp(rtdb_int32 handle, rtdb_int32 index, const char *str)
-// */
 func RawRtdbSetDbInfo1Warp() {}
 
-// /*
-// *
-//   - \brief 设置整型数据库系统参数
-//     *
-//   - \param handle    连接句柄
-//   - \param index     整型，输入，要取得的参数索引，参见枚举 RTDB_DB_PARAM_INDEX。
-//   - 其中，仅以下列出的枚举值可用：
-//   - RTDB_PARAM_SERVER_IPC_SIZE,
-//   - RTDB_PARAM_EQUATION_IPC_SIZE,
-//   - RTDB_PARAM_HASH_TABLE_SIZE,
-//   - RTDB_PARAM_TAG_DELETE_TIMES,
-//   - RTDB_PARAM_SERVER_PORT,
-//   - RTDB_PARAM_SERVER_SENDER_PORT,
-//   - RTDB_PARAM_SERVER_RECEIVER_PORT,
-//   - RTDB_PARAM_SERVER_MODE,
-//   - RTDB_PARAM_ARV_PAGES_NUMBER,
-//   - RTDB_PARAM_ARVEX_PAGES_NUMBER,
-//   - RTDB_PARAM_EXCEPTION_AT_SERVER,
-//   - RTDB_PARAM_EX_ARCHIVE_SIZE,
-//   - RTDB_PARAM_ARCHIVE_BATCH_SIZE,
-//   - RTDB_PARAM_ARV_ASYNC_QUEUE_SLOWER_DOOR,
-//   - RTDB_PARAM_ARV_ASYNC_QUEUE_NORMAL_DOOR,
-//   - RTDB_PARAM_INDEX_ALWAYS_IN_MEMORY,
-//   - RTDB_PARAM_DISK_MIN_REST_SIZE,
-//   - RTDB_PARAM_DELAY_OF_AUTO_MERGE_OR_ARRANGE,
-//   - RTDB_PARAM_START_OF_AUTO_MERGE_OR_ARRANGE,
-//   - RTDB_PARAM_STOP_OF_AUTO_MERGE_OR_ARRANGE,
-//   - RTDB_PARAM_START_OF_AUTO_BACKUP,
-//   - RTDB_PARAM_STOP_OF_AUTO_BACKUP,
-//   - RTDB_PARAM_MAX_LATENCY_OF_SNAPSHOT,
-//   - RTDB_PARAM_PAGE_ALLOCATOR_RESERVE_SIZE,
-//   - \param value     无符号整型，输入，新的参数值。
-//   - \remark 如果修改了启动参数，将返回 RtE_DATABASE_NEED_RESTART 提示码。
-//
+// RawRtdbSetDbInfo2Warp 设置整型数据库系统参数
+// * \param handle    连接句柄
+// * \param index     整型，输入，要取得的参数索引，参见枚举 RTDB_DB_PARAM_INDEX。
+// * 其中，仅以下列出的枚举值可用：
+// * RTDB_PARAM_SERVER_IPC_SIZE,
+// * RTDB_PARAM_EQUATION_IPC_SIZE,
+// * RTDB_PARAM_HASH_TABLE_SIZE,
+// * RTDB_PARAM_TAG_DELETE_TIMES,
+// * RTDB_PARAM_SERVER_PORT,
+// * RTDB_PARAM_SERVER_SENDER_PORT,
+// * RTDB_PARAM_SERVER_RECEIVER_PORT,
+// * RTDB_PARAM_SERVER_MODE,
+// * RTDB_PARAM_ARV_PAGES_NUMBER,
+// * RTDB_PARAM_ARVEX_PAGES_NUMBER,
+// * RTDB_PARAM_EXCEPTION_AT_SERVER,
+// * RTDB_PARAM_EX_ARCHIVE_SIZE,
+// * RTDB_PARAM_ARCHIVE_BATCH_SIZE,
+// * RTDB_PARAM_ARV_ASYNC_QUEUE_SLOWER_DOOR,
+// * RTDB_PARAM_ARV_ASYNC_QUEUE_NORMAL_DOOR,
+// * RTDB_PARAM_INDEX_ALWAYS_IN_MEMORY,
+// * RTDB_PARAM_DISK_MIN_REST_SIZE,
+// * RTDB_PARAM_DELAY_OF_AUTO_MERGE_OR_ARRANGE,
+// * RTDB_PARAM_START_OF_AUTO_MERGE_OR_ARRANGE,
+// * RTDB_PARAM_STOP_OF_AUTO_MERGE_OR_ARRANGE,
+// * RTDB_PARAM_START_OF_AUTO_BACKUP,
+// * RTDB_PARAM_STOP_OF_AUTO_BACKUP,
+// * RTDB_PARAM_MAX_LATENCY_OF_SNAPSHOT,
+// * RTDB_PARAM_PAGE_ALLOCATOR_RESERVE_SIZE,
+// * \param value     无符号整型，输入，新的参数值。
+// * \remark 如果修改了启动参数，将返回 RtE_DATABASE_NEED_RESTART 提示码。
 // rtdb_error RTDBAPI_CALLRULE rtdb_set_db_info2_warp(rtdb_int32 handle, rtdb_int32 index, rtdb_uint32 value)
-// */
 func RawRtdbSetDbInfo2Warp() {}
 
-// /*
-// *
-//   - \brief 获得逻辑盘符
-//     *
-//   - \param handle     连接句柄
-//   - \param drivers    字符数组，输出，
-//   - 返回逻辑盘符组成的字符串，每个盘符占一个字符。
-//   - \remark drivers 的内存空间由用户负责维护，长度应不小于 32。
-//
+// RawRtdbGetLogicalDriversWarp 获得逻辑盘符
+// * \param handle     连接句柄
+// * \param drivers    字符数组，输出，
+// * 返回逻辑盘符组成的字符串，每个盘符占一个字符。
+// * \remark drivers 的内存空间由用户负责维护，长度应不小于 32。
 // rtdb_error RTDBAPI_CALLRULE rtdb_get_logical_drivers_warp(rtdb_int32 handle, char *drivers)
-// */
 func RawRtdbGetLogicalDriversWarp() {}
 
-// /*
-// *
-// * \brief 打开目录以便遍历其中的文件和子目录。
-// *
+// RawRtdbOpenPathWarp 打开目录以便遍历其中的文件和子目录。
 // * \param handle       连接句柄
 // * \param dir          字符串，输入，要打开的目录
 // rtdb_error RTDBAPI_CALLRULE rtdb_open_path_warp(rtdb_int32 handle, const char *dir)
-// */
 func RawRtdbOpenPathWarp() {}
 
-// /*
-// *
-//   - \brief 读取目录中的文件或子目录
-//     *
-//   - \param handle      连接句柄
-//   - \param path        字符数组，输出，返回的文件、子目录全路径
-//   - \param is_dir      短整数，输出，返回 1 为目录，0 为文件
-//   - \param atime       整数，输出，为文件时，返回访问时间
-//   - \param ctime       整数，输出，为文件时，返回建立时间
-//   - \param mtime       整数，输出，为文件时，返回修改时间
-//   - \param size        64 位整数，输出，为文件时，返回文件大小
-//   - \remark path 的内存空间由用户负责维护，尺寸应不小于 RTDB_MAX_PATH。
-//   - 当返回值为 RtE_BATCH_END 时表示目录下所有子目录和文件已经遍历完毕。
-//
+// RawRtdbReadPathWarp 读取目录中的文件或子目录
+// * \param handle      连接句柄
+// * \param path        字符数组，输出，返回的文件、子目录全路径
+// * \param is_dir      短整数，输出，返回 1 为目录，0 为文件
+// * \param atime       整数，输出，为文件时，返回访问时间
+// * \param ctime       整数，输出，为文件时，返回建立时间
+// * \param mtime       整数，输出，为文件时，返回修改时间
+// * \param size        64 位整数，输出，为文件时，返回文件大小
+// * \remark path 的内存空间由用户负责维护，尺寸应不小于 RTDB_MAX_PATH。
+// * 当返回值为 RtE_BATCH_END 时表示目录下所有子目录和文件已经遍历完毕。
 // rtdb_error RTDBAPI_CALLRULE rtdb_read_path_warp(rtdb_int32 handle, char *path, rtdb_int16 *is_dir, rtdb_int32 *atime, rtdb_int32 *ctime, rtdb_int32 *mtime, rtdb_int64 *size)
-// */
 func RawRtdbReadPathWarp() {}
 
-// /*
-// *
-//   - \brief 读取目录中的文件或子目录
-//     *
-//   - \param handle      连接句柄
-//   - \param path        字符数组，输出，返回的文件、子目录全路径
-//   - \param is_dir      短整数，输出，返回 1 为目录，0 为文件
-//   - \param atime       整数，输出，为文件时，返回访问时间
-//   - \param ctime       整数，输出，为文件时，返回建立时间
-//   - \param mtime       整数，输出，为文件时，返回修改时间
-//   - \param size        64 位整数，输出，为文件时，返回文件大小
-//   - \remark path 的内存空间由用户负责维护，尺寸应不小于 RTDB_MAX_PATH。
-//   - 当返回值为 RtE_BATCH_END 时表示目录下所有子目录和文件已经遍历完毕。
-//
+// RawRtdbReadPath64Warp 读取目录中的文件或子目录
+// * \param handle      连接句柄
+// * \param path        字符数组，输出，返回的文件、子目录全路径
+// * \param is_dir      短整数，输出，返回 1 为目录，0 为文件
+// * \param atime       整数，输出，为文件时，返回访问时间
+// * \param ctime       整数，输出，为文件时，返回建立时间
+// * \param mtime       整数，输出，为文件时，返回修改时间
+// * \param size        64 位整数，输出，为文件时，返回文件大小
+// * \remark path 的内存空间由用户负责维护，尺寸应不小于 RTDB_MAX_PATH。
+// * 当返回值为 RtE_BATCH_END 时表示目录下所有子目录和文件已经遍历完毕。
 // rtdb_error RTDBAPI_CALLRULE rtdb_read_path64_warp(rtdb_int32 handle, char* path, rtdb_int16* is_dir, rtdb_timestamp_type* atime, rtdb_timestamp_type* ctime, rtdb_timestamp_type* mtime, rtdb_int64* size)
-// */
 func RawRtdbReadPath64Warp() {}
 
-// /*
-// *
-//
-//	*
-//	* \brief 关闭当前遍历的目录
-//	*
-//	* \param handle      连接句柄
-//
+// RawRtdbClosePathWarp 关闭当前遍历的目录
+// * \param handle      连接句柄
 // rtdb_error RTDBAPI_CALLRULE rtdb_close_path_warp(rtdb_int32 handle)
-// */
 func RawRtdbClosePathWarp() {}
 
-// /*
-// *
-// *
-// * \brief 建立目录
-// *
+// RawRtdbMkdirWarp 建立目录
 // * \param handle       连接句柄
 // * \param dir          字符串，输入，新建目录的全路径
 // rtdb_error RTDBAPI_CALLRULE rtdb_mkdir_warp(rtdb_int32 handle, const char *dir)
-// */
 func RawRtdbMkdirWarp() {}
 
-// /*
-// *
-// *
-// * \brief 获得指定服务器端文件的大小
-// *
+// RawRtdbGetFileSizeWarp 获得指定服务器端文件的大小
 // * \param handle     连接句柄
 // * \param file       字符串，输入，文件名
 // * \param size       64 位整数，输出，文件大小
 // rtdb_error RTDBAPI_CALLRULE rtdb_get_file_size_warp(rtdb_int32 handle, const char *file, rtdb_int64 *size)
-// */
 func RawRtdbGetFileSizeWarp() {}
 
-// /*
-// *
-// *
-// * \brief 读取服务器端指定文件的内容
-// *
+// RawRtdbReadFileWarp 读取服务器端指定文件的内容
 // * \param handle       连接句柄
 // * \param file         字符串，输入，要读取内容的文件名
 // * \param content      字符数组，输出，文件内容
@@ -3762,79 +3655,47 @@ func RawRtdbGetFileSizeWarp() {}
 // *                     输出时表示实际读取的字节数
 // * \remark 用户须保证分配给 content 的空间与 size 相符。
 // rtdb_error RTDBAPI_CALLRULE rtdb_read_file_warp(rtdb_int32 handle, const char *file, char *content, rtdb_int64 pos, rtdb_int64 *size)
-// */
 func RawRtdbReadFileWarp() {}
 
-// /*
-// *
-//
-//	*
-//	* \brief 取得数据库允许的blob与str类型测点的最大长度
-//	*
-//	* \param handle       连接句柄
-//	* \param len          整形，输出参数，代表数据库允许的blob、str类型测点的最大长度
-//
+// RawRtdbGetMaxBlobLenWarp 取得数据库允许的blob与str类型测点的最大长度
+// * \param handle       连接句柄
+// * \param len          整形，输出参数，代表数据库允许的blob、str类型测点的最大长度
 // rtdb_error RTDBAPI_CALLRULE rtdb_get_max_blob_len_warp(rtdb_int32 handle, rtdb_int32 *len)
-// */
 func RawRtdbGetMaxBlobLenWarp() {}
 
-// /*
-// *
-//
-//	*
-//	* \brief 取得质量码对应的定义
-//	*
-//	* \param handle       连接句柄
-//	* \param count        质量码个数，输入参数，
-//	* \param qualities    质量码，输入参数
-//	* \param definitions  输出参数，0~255为RTDB质量码（参加rtdb.h文件），256~511为OPC质量码，大于511为用户自定义质量码
-//	* \param lens         输出参数，每个定义对应的长度
-//	* \remark OPC质量码把8位分3部分定义：XX XXXX XX，对应着：品质位域 分状态位域 限定位域
-//	* 品质位域：00（Bad）01（Uncertain）10（N/A）11（Good）
-//	* 分状态位域：不同品质位域对应各自的分状态位域
-//	* 限定位域：00（Not limited）01（Low limited）10（high limited）11（Constant）
-//	* 三个域之间用逗号隔开，输出到definitions参数中，前面有有RTDB，OPC或者USER标识，说明标签点类别
-//
+// RawRtdbFormatQualityWarp 取得质量码对应的定义
+// * \param handle       连接句柄
+// * \param count        质量码个数，输入参数，
+// * \param qualities    质量码，输入参数
+// * \param definitions  输出参数，0~255为RTDB质量码（参加rtdb.h文件），256~511为OPC质量码，大于511为用户自定义质量码
+// * \param lens         输出参数，每个定义对应的长度
+// * \remark OPC质量码把8位分3部分定义：XX XXXX XX，对应着：品质位域 分状态位域 限定位域
+// * 品质位域：00（Bad）01（Uncertain）10（N/A）11（Good）
+// * 分状态位域：不同品质位域对应各自的分状态位域
+// * 限定位域：00（Not limited）01（Low limited）10（high limited）11（Constant）
+// * 三个域之间用逗号隔开，输出到definitions参数中，前面有有RTDB，OPC或者USER标识，说明标签点类别
 // rtdb_error RTDBAPI_CALLRULE rtdb_format_quality_warp(rtdb_int32 handle, rtdb_int32 *count, rtdb_int16 *qualities, rtdb_byte **definitions, rtdb_int32 *lens)
-// */
 func RawRtdbFormatQualityWarp() {}
 
-// /*
-// *
-//
-//	*
-//	* \brief 判断连接是否可用
-//	* \param handle   连接句柄
-//
+// RawRtdbJudgeConnectStatusWarp 判断连接是否可用
+// * \param handle   连接句柄
 // rtdb_error RTDBAPI_CALLRULE rtdb_judge_connect_status_warp(rtdb_int32 handle, rtdb_int8* change_connection GAPI_DEFAULT_VALUE(0), char* current_ip_addr GAPI_DEFAULT_VALUE(0), rtdb_int32 size GAPI_DEFAULT_VALUE(0))
-// */
 func RawRtdbJudgeConnectStatusWarp() {}
 
-// /*
-// *
-//   - 命名：rtdb_format_ipaddr
-//   - 功能：将整形IP转换为字符串形式的IP
-//   - 参数：
-//   - [ip]        无符号整型，输入，整形的IP地址
-//   - [ip_addr]      字符串，输出，字符串IP地址缓冲区
-//   - [size]         整型，输入，ip_addr 参数的字节长度
-//   - 备注：用户须保证分配给 ip_addr 的空间与 size 相符
-//
+// RawRtdbFormatIpaddrWarp 将整形IP转换为字符串形式的IP
+// * [ip]        无符号整型，输入，整形的IP地址
+// * [ip_addr]      字符串，输出，字符串IP地址缓冲区
+// * [size]         整型，输入，ip_addr 参数的字节长度
+// * 备注：用户须保证分配给 ip_addr 的空间与 size 相符
 // void RTDBAPI_CALLRULE rtdb_format_ipaddr_warp(rtdb_uint32 ip, char* ip_addr, rtdb_int32 size)
-// */
 func RawRtdbFormatIpaddrWarp() {}
 
-// /*
-// *
-// * 命名：rtdbb_get_equation_by_file_name
-// * 功能：根据文件名获取方程式
-// * 参数：
+// RawRtdbbGetEquationByFileNameWarp 根据文件名获取方程式
 // *      [handle]   连接句柄
 // *      [file_name] 输入，字符串，方程式路径
 // *      [equation]  输出，返回的方程式长度最长为RTDB_MAX_EQUATION_SIZE-1
 // *备注：用户调用时为equation分配的空间不得小于RTDB_MAX_EQUATION_SIZE
 // rtdb_error RTDBAPI_CALLRULE rtdbb_get_equation_by_file_name_warp(rtdb_int32 handle, const char* file_name, char equation[RTDB_MAX_EQUATION_SIZE])
-// */
 func RawRtdbbGetEquationByFileNameWarp() {}
 
 // /*
