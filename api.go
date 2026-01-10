@@ -3122,9 +3122,45 @@ type ApiVersion struct {
 	Beta  int32 // 发布版本号
 }
 
+type PrivGroup uint32
+
+const (
+	// PrivGroupRtdbRO 只读
+	PrivGroupRtdbRO = PrivGroup(C.RTDB_RO)
+
+	// PrivGroupRtdbDW 数据记录
+	PrivGroupRtdbDW = PrivGroup(C.RTDB_DW)
+
+	// PrivGroupRtdbTA 标签点表管理员
+	PrivGroupRtdbTA = PrivGroup(C.RTDB_TA)
+
+	// PrivGroupRtdbSA 数据库管理员
+	PrivGroupRtdbSA = PrivGroup(C.RTDB_SA)
+)
+
+func (pg PrivGroup) Desc() string {
+	switch pg {
+	case PrivGroupRtdbRO:
+		return "只读"
+	case PrivGroupRtdbDW:
+		return "数据记录"
+	case PrivGroupRtdbTA:
+		return "标签点表管理员"
+	case PrivGroupRtdbSA:
+		return "数据库管理员"
+	default:
+		return "未知权限"
+	}
+}
+
+/////////////////////////////// 上面是结构定义 ////////////////////////////////////
+/////////////////////////////// -- 华丽的分割线 -- ////////////////////////////////
+/////////////////////////////// 下面是函数实现 ////////////////////////////////////
+
 // RawRtdbGetApiVersionWarp 返回 ApiVersion 版本号
 //
-// ApiVersion 指的是 API库 的版本号
+// output:
+//   - ApiVersion 指的是 API库 的版本号
 func RawRtdbGetApiVersionWarp() (ApiVersion, error) {
 	major, minor, beta := C.rtdb_int32(0), C.rtdb_int32(0), C.rtdb_int32(0)
 	err := C.rtdb_get_api_version_warp(&major, &minor, &beta)
@@ -3137,17 +3173,23 @@ func RawRtdbGetApiVersionWarp() (ApiVersion, error) {
 }
 
 // RawRtdbSetOptionWarp 配置 API库 的行为参数，详见 RtdbApiOption 枚举
+//
+// input:
+//   - optionType API库 的行为参数枚举
+//   - value 每个 API库 行为参数枚举， 都可以附带一个 value 值对该行为参数进行调整
 func RawRtdbSetOptionWarp(optionType RtdbApiOption, value int32) error {
 	err := C.rtdb_set_option_warp(C.rtdb_int32(optionType), C.rtdb_int32(value))
 	return RtdbError(err).GoError()
 }
 
 // RawRtdbCreateDatagramHandleWarp 创建数据流
-// * \param [in] in 端口
-// * \param [out] remotehost 对端地址
-// * \param [out] handle 数据流句柄
-// * \return rtdb_error
-// * \remark 创建数据流 (备注：C代码中没文档，Go这边补的)
+//
+// input:
+//   - port 端口号
+//   - remoteHost 对端IP地址
+//
+// output:
+//   - DatagramHandle 数据流句柄
 func RawRtdbCreateDatagramHandleWarp(port int32, remoteHost string) (DatagramHandle, error) {
 	var handle C.rtdb_datagram_handle
 	cRemoteHost := C.CString(remoteHost)
@@ -3157,22 +3199,21 @@ func RawRtdbCreateDatagramHandleWarp(port int32, remoteHost string) (DatagramHan
 }
 
 // RawRtdbRemoveDatagramHandleWarp 删除数据流
-// * \param [in] handle 数据流句柄
-// * \return rtdb_error
-// * \remark 删除数据流 (备注：C代码中没文档，Go这边补的)
+//
+// input:
+//   - handle 数据流句柄
 func RawRtdbRemoveDatagramHandleWarp(handle DatagramHandle) error {
 	err := C.rtdb_remove_datagram_handle_warp(handle.handle)
 	return RtdbError(err).GoError()
 }
 
 // RawRtdbRecvDatagramWarp 接收数据流
-// * \param [in] cacheLen 缓存大小(会分配一个[]byte)
-// * \param [in] handle 数据流句柄
-// * \param [in] remote_addr 对端地址
-// * \param [in] timeout 超时时间
-// * \return rtdb_error
-// * \remark 接收数据流 (备注：C代码中没文档，Go这边补的)
-func RawRtdbRecvDatagramWarp(cacheLen int32, handle DatagramHandle, remoteAddr string, timeout int32) ([]byte, error) {
+// input:
+//   - handle  数据流句柄
+//   - cacheLen 缓存大小，会创建对应大小的缓存，用于接收数据流返回的数据
+//   - remoteAddr 对端IP地址
+//   - timeout 超时时间(单位秒)
+func RawRtdbRecvDatagramWarp(handle DatagramHandle, cacheLen int32, remoteAddr string, timeout int32) ([]byte, error) {
 	message := make([]byte, cacheLen)
 	messageLen := C.rtdb_int32(cacheLen)
 	cRemoteAddr := C.CString(remoteAddr)
@@ -3181,14 +3222,14 @@ func RawRtdbRecvDatagramWarp(cacheLen int32, handle DatagramHandle, remoteAddr s
 	return message[0:messageLen], RtdbError(err).GoError()
 }
 
+// ConnectHandle 连接句柄, 用于描述一个 API库 与 数据库 之间的连接
 type ConnectHandle int32
 
-// RawRtdbConnectWarp 建立同 RTDB 数据库的网络连接
-// * \param [in] hostname     RTDB 数据平台服务器的网络地址或机器名
-// * \param [in] port         连接断开，缺省值 6327
-// * \param [out]  handle  连接句柄
-// * \return rtdb_error
-// * \remark 在调用所有的接口函数之前，必须先调用本函数建立同Rtdb服务器的连接
+// RawRtdbConnectWarp 建立同 RTDB 数据库的网络连接, 注意这里只是创建连接，并没有进行用户登陆
+//
+// input:
+//   - hostname 数据库IP地址
+//   - port 数据库端口号
 func RawRtdbConnectWarp(hostname string, port int32) (ConnectHandle, error) {
 	cHostname := C.CString(hostname)
 	defer C.free(unsafe.Pointer(cHostname))
@@ -3198,11 +3239,28 @@ func RawRtdbConnectWarp(hostname string, port int32) (ConnectHandle, error) {
 	return ConnectHandle(cHandle), RtdbError(err).GoError()
 }
 
-// RawRtdbConnectionCountWarp 获取 RTDB 服务器当前连接个数
-// * \param [in] handle   连接句柄 参见 \ref rtdb_connect
-// * \param [in] node_number   双活模式下，指定节点编号，1为rtdb_connect中第1个IP，2为rtdb_connect中第2个IP
-// * \param [out]  count 返回当前主机的连接个数
+// RawRtdbLoginWarp 以有效帐户登录
+// * \param handle          连接句柄
+// * \param user            登录帐户
+// * \param password        帐户口令
+// * \param [out] priv     账户权限， 枚举 \ref RTDB_PRIV_GROUP 的值之一
 // * \return rtdb_error
+// rtdb_error RTDBAPI_CALLRULE rtdb_login_warp(rtdb_int32 handle, const char *user, const char *password, rtdb_int32 *priv)
+func RawRtdbLoginWarp(handle ConnectHandle, user string, password string) (PrivGroup, error) {
+	cUser := C.CString(user)
+	defer C.free(unsafe.Pointer(cUser))
+	cPassword := C.CString(password)
+	defer C.free(unsafe.Pointer(cPassword))
+	cPriv := C.rtdb_int32(0)
+	err := C.rtdb_login_warp(C.rtdb_int32(handle), cUser, cPassword, &cPriv)
+	return PrivGroup(cPriv), RtdbError(err).GoError()
+}
+
+// RawRtdbConnectionCountWarp 获取 RTDB 服务器当前连接个数
+//
+// input:
+//   - handle 连接句柄
+//   - nodeNumber 单机模式下写0, 双活模式下，指定节点编号，1为rtdb_connect中第1个IP，2为rtdb_connect中第2个IP
 func RawRtdbConnectionCountWarp(handle ConnectHandle, nodeNumber int32) (int32, error) {
 	count := C.rtdb_int32(0)
 	err := C.rtdb_connection_count_warp(C.rtdb_int32(handle), C.rtdb_int32(nodeNumber), &count)
@@ -3250,15 +3308,6 @@ func RawRtdbGetConnectionInfoIpv6Warp() {}
 // * \remark 完成对 RTDB 的访问后调用本函数断开连接。连接一旦断开，则需要重新连接后才能调用其他的接口函数。
 // rtdb_error RTDBAPI_CALLRULE rtdb_disconnect_warp(rtdb_int32 handle)
 func RawRtdbDisconnectWarp() {}
-
-// RawRtdbLoginWarp 以有效帐户登录
-// * \param handle          连接句柄
-// * \param user            登录帐户
-// * \param password        帐户口令
-// * \param [out] priv     账户权限， 枚举 \ref RTDB_PRIV_GROUP 的值之一
-// * \return rtdb_error
-// rtdb_error RTDBAPI_CALLRULE rtdb_login_warp(rtdb_int32 handle, const char *user, const char *password, rtdb_int32 *priv)
-func RawRtdbLoginWarp() {}
 
 // RawRTDBOSINVALID 获取连接句柄所连接的服务器操作系统类型
 // * \param     handle          连接句柄
