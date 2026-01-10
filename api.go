@@ -4544,255 +4544,211 @@ func RawRtdbsGetBlobSnapshot64Warp() {}
 // rtdb_error RTDBAPI_CALLRULE rtdbs_get_blob_snapshots64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_byte* const* blobs, rtdb_length_type* lens, rtdb_int16* qualities, rtdb_error* errors)
 func RawRtdbsGetBlobSnapshots64Warp() {}
 
-//   - \brief 写入二进制/字符串实时数据
-//     *
-//   - \param handle    连接句柄
-//   - \param id        整型，输入，标签点标识
-//   - \param datetime  整型，输入，实时数值时间列表,
-//   - 表示距离1970年1月1日08:00:00的秒数
-//   - \param ms        短整型，输入，实时数值时间列表，
-//   - 对于时间精度为纳秒的标签点，存放相应的纳秒值；否则忽略
-//   - \param blob      字节型数组，输入，实时二进制/字符串数值
-//   - \param len       短整型，输入，二进制/字符串数值长度，超过一个页大小数据将被截断。
-//   - \param quality   短整型，输入，实时数值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
-//   - \remark 本接口只对数据类型为 RTDB_BLOB、RTDB_STRING 的标签点有效。
-//
+// RawRtdbsPutBlobSnapshot64Warp 写入二进制/字符串实时数据
+// * \param handle    连接句柄
+// * \param id        整型，输入，标签点标识
+// * \param datetime  整型，输入，实时数值时间列表,
+// * 表示距离1970年1月1日08:00:00的秒数
+// * \param ms        短整型，输入，实时数值时间列表，
+// * 对于时间精度为纳秒的标签点，存放相应的纳秒值；否则忽略
+// * \param blob      字节型数组，输入，实时二进制/字符串数值
+// * \param len       短整型，输入，二进制/字符串数值长度，超过一个页大小数据将被截断。
+// * \param quality   短整型，输入，实时数值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
+// * \remark 本接口只对数据类型为 RTDB_BLOB、RTDB_STRING 的标签点有效。
 // rtdb_error RTDBAPI_CALLRULE rtdbs_put_blob_snapshot64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime, rtdb_subtime_type subtime, const rtdb_byte* blob, rtdb_length_type len, rtdb_int16 quality)
-// */
 func RawRtdbsPutBlobSnapshot64Warp() {}
 
-// /*
-//
-//	*
-//	* \brief 批量写入二进制/字符串实时数据
-//	*
-//	* \param handle    连接句柄
-//	* \param count     整型，输入/输出，标签点个数，
-//	*                    输入时表示 ids、datetimes、ms、blobs、lens、qualities、errors 的长度，
-//	*                    输出时表示成功获取实时值的标签点个数
-//	* \param ids       整型数组，输入，标签点标识
-//	* \param datetimes 整型数组，输入，实时数值时间列表,
-//	*                    表示距离1970年1月1日08:00:00的秒数
-//	* \param ms        短整型数组，输入，实时数值时间列表，
-//	*                    对于时间精度为纳秒的标签点，表示相应的纳秒值；否则忽略
-//	* \param blobs     字节型指针数组，输入，实时二进制/字符串数值
-//	* \param lens      短整型数组，输入，二进制/字符串数值长度，
-//	*                    表示对应的 blobs 指针指向的缓冲区长度，超过一个页大小数据将被截断。
-//	* \param qualities 短整型数组，输入，实时数值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
-//	* \param errors    无符号整型数组，输出，读取实时数据的返回值列表，参考rtdb_error.h
-//	* \remark 本接口只对数据类型为 RTDB_BLOB、RTDB_STRING 的标签点有效。
-//
+// RawRtdbsPutBlobSnapshots64Warp 批量写入二进制/字符串实时数据
+// * \param handle    连接句柄
+// * \param count     整型，输入/输出，标签点个数，
+// *                    输入时表示 ids、datetimes、ms、blobs、lens、qualities、errors 的长度，
+// *                    输出时表示成功获取实时值的标签点个数
+// * \param ids       整型数组，输入，标签点标识
+// * \param datetimes 整型数组，输入，实时数值时间列表,
+// *                    表示距离1970年1月1日08:00:00的秒数
+// * \param ms        短整型数组，输入，实时数值时间列表，
+// *                    对于时间精度为纳秒的标签点，表示相应的纳秒值；否则忽略
+// * \param blobs     字节型指针数组，输入，实时二进制/字符串数值
+// * \param lens      短整型数组，输入，二进制/字符串数值长度，
+// *                    表示对应的 blobs 指针指向的缓冲区长度，超过一个页大小数据将被截断。
+// * \param qualities 短整型数组，输入，实时数值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
+// * \param errors    无符号整型数组，输出，读取实时数据的返回值列表，参考rtdb_error.h
+// * \remark 本接口只对数据类型为 RTDB_BLOB、RTDB_STRING 的标签点有效。
 // rtdb_error RTDBAPI_CALLRULE rtdbs_put_blob_snapshots64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, const rtdb_byte* const* blobs, const rtdb_length_type* lens, const rtdb_int16* qualities, rtdb_error* errors)
-// */
 func RawRtdbsPutBlobSnapshots64Warp() {}
 
-// /*
-//
-//	*
-//	* \brief 批量读取datetime类型标签点实时数据
-//	*
-//	* \param handle    连接句柄
-//	* \param count     整型，输入/输出，标签点个数，
-//	*                    输入时表示 ids、datetimes、ms、dtvalues、dtlens、qualities、errors 的长度，
-//	*                    输出时表示成功获取实时值的标签点个数
-//	* \param ids       整型数组，输入，标签点标识
-//	* \param datetimes 整型数组，输出，实时数值时间列表,
-//	*                    表示距离1970年1月1日08:00:00的秒数
-//	* \param ms        短整型数组，输出，实时数值时间列表，
-//	*                    对于时间精度为纳秒的标签点，返回相应的纳秒值；否则为 0
-//	* \param dtvalues  字节型指针数组，输出，实时datetime数值
-//	* \param dtlens    短整型数组，输入/输出，datetime数值长度，
-//	*                    输入时表示对应的 dtvalues 指针指向的缓冲区长度，
-//	* \param qualities 短整型数组，输出，实时数值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
-//	* \param errors    无符号整型数组，输出，读取实时数据的返回值列表，参考rtdb_error.h
-//	* \param type      短整型，输入，所有标签点的显示类型，如“yyyy-mm-dd hh:mm:ss.000”的type为1，默认类型1，
-//	*                    “yyyy/mm/dd hh:mm:ss.000”的type为2
-//	*                    如果不传type，则按照标签点属性显示，否则按照type类型显示
-//	* \remark 本接口只对数据类型为 RTDB_DATETIME 的标签点有效。
-//
+// RawRtdbsGetDatetimeSnapshots64Warp 批量读取datetime类型标签点实时数据
+// * \param handle    连接句柄
+// * \param count     整型，输入/输出，标签点个数，
+// *                    输入时表示 ids、datetimes、ms、dtvalues、dtlens、qualities、errors 的长度，
+// *                    输出时表示成功获取实时值的标签点个数
+// * \param ids       整型数组，输入，标签点标识
+// * \param datetimes 整型数组，输出，实时数值时间列表,
+// *                    表示距离1970年1月1日08:00:00的秒数
+// * \param ms        短整型数组，输出，实时数值时间列表，
+// *                    对于时间精度为纳秒的标签点，返回相应的纳秒值；否则为 0
+// * \param dtvalues  字节型指针数组，输出，实时datetime数值
+// * \param dtlens    短整型数组，输入/输出，datetime数值长度，
+// *                    输入时表示对应的 dtvalues 指针指向的缓冲区长度，
+// * \param qualities 短整型数组，输出，实时数值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
+// * \param errors    无符号整型数组，输出，读取实时数据的返回值列表，参考rtdb_error.h
+// * \param type      短整型，输入，所有标签点的显示类型，如“yyyy-mm-dd hh:mm:ss.000”的type为1，默认类型1，
+// *                    “yyyy/mm/dd hh:mm:ss.000”的type为2
+// *                    如果不传type，则按照标签点属性显示，否则按照type类型显示
+// * \remark 本接口只对数据类型为 RTDB_DATETIME 的标签点有效。
 // rtdb_error RTDBAPI_CALLRULE rtdbs_get_datetime_snapshots64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_byte* const* dtvalues, rtdb_length_type* dtlens, rtdb_int16* qualities, rtdb_error* errors, rtdb_int16 type)
-// */
 func RawRtdbsGetDatetimeSnapshots64Warp() {}
 
-// /*
-//
-//	*
-//	* \brief 批量插入datetime类型标签点数据
-//	*
-//	* \param handle      连接句柄
-//	* \param count       整型，输入/输出，标签点个数，
-//	*                      输入时表示 ids、datetimes、ms、dtvalues、dtlens、qualities、errors的长度，
-//	*                      输出时表示成功写入的标签点个数
-//	* \param ids         整型数组，输入，标签点标识
-//	* \param datetimes   整型数组，输入，实时值时间列表
-//	*                      表示距离1970年1月1日08:00:00的秒数
-//	* \param ms          短整型数组，输入，实时数值时间列表，
-//	*                      对于时间精度为纳秒的标签点，表示相应的纳秒值；否则忽略
-//	* \param dtvalues    字节型指针数组，输入，datetime标签点的值
-//	* \param dtlens      短整型数组，输入，数值长度
-//	* \param qualities   短整型数组，输入，实时数值品质，，数据库预定义的品质参见枚举 RTDB_QUALITY
-//	* \param errors      无符号整型数组，输出，读取实时数据的返回值列表，参考rtdb_error.h
-//	* \remark 被接口只对数据类型 RTDB_DATETIME 的标签点有效。
-//
+// RawRtdbsPutDatetimeSnapshots64Warp 批量插入datetime类型标签点数据
+// * \param handle      连接句柄
+// * \param count       整型，输入/输出，标签点个数，
+// *                      输入时表示 ids、datetimes、ms、dtvalues、dtlens、qualities、errors的长度，
+// *                      输出时表示成功写入的标签点个数
+// * \param ids         整型数组，输入，标签点标识
+// * \param datetimes   整型数组，输入，实时值时间列表
+// *                      表示距离1970年1月1日08:00:00的秒数
+// * \param ms          短整型数组，输入，实时数值时间列表，
+// *                      对于时间精度为纳秒的标签点，表示相应的纳秒值；否则忽略
+// * \param dtvalues    字节型指针数组，输入，datetime标签点的值
+// * \param dtlens      短整型数组，输入，数值长度
+// * \param qualities   短整型数组，输入，实时数值品质，，数据库预定义的品质参见枚举 RTDB_QUALITY
+// * \param errors      无符号整型数组，输出，读取实时数据的返回值列表，参考rtdb_error.h
+// * \remark 被接口只对数据类型 RTDB_DATETIME 的标签点有效。
 // rtdb_error RTDBAPI_CALLRULE rtdbs_put_datetime_snapshots64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, const rtdb_byte* const* dtvalues, const rtdb_length_type* dtlens, const rtdb_int16* qualities, rtdb_error* errors)
-// */
 func RawRtdbsPutDatetimeSnapshots64Warp() {}
 
-// /*
-//
-//	*
-//	* \brief 批量标签点快照改变的通知订阅
-//	*
-//	* \param handle         连接句柄
-//	* \param count          整型，输入/输出，标签点个数，输入时表示 ids、errors 的长度，
-//	*                           输出时表示成功订阅的标签点个数，不得超过 RTDB_MAX_SUBSCRIBE_SNAPSHOTS。
-//	* \param ids            整型数组，输入，标签点标识列表。
-//	* \param options        订阅选项
-//	*                           RTDB_O_AUTOCONN 自动重连
-//	* \param param          用户自定义参数
-//	* \param callback       rtdbs_snaps_event_ex 类型回调接口，输入，当回掉函数返回非RtE_OK时退出订阅
-//	*                       当未设置options为RTDB_O_AUTOCONN时，订阅断开后使用RTDB_E_DISCONNECT
-//	*                       作为event_type取值调用回掉函数后退出订阅。
-//	*                       当设置options为RTDB_O_AUTOCONN时，订阅断开后使用RTDB_E_DISCONNECT
-//	*                       作为event_type取值调用回掉函数直到连接恢复或回掉函数返回非RtE_OK，
-//	*                       网络中断期间回掉函数调用频率为最少3秒
-//	*                       event_type参数值含义如下：
-//	*                         RTDB_E_DATA        标签点快照改变
-//	*                         RTDB_E_DISCONNECT  订阅客户端与数据库网络断开
-//	*                         RTDB_E_RECOVERY    订阅客户端与数据库网络及订阅恢复
-//	*                         RTDB_E_CHANGED     客户端修改订阅标签点信息，即通过rtdbs_change_subscribe_snapshots修改订阅信息的结果
-//	*                       handle 产生订阅回掉的连接句柄，调用rtdbs_subscribe_snapshots_ex时的handle参数
-//	*                       param  用户自定义参数，调用rtdbs_subscribe_snapshots_ex时的param参数
-//	*                       count  event_type为RTDB_E_DATA和RTDB_E_CHANGED时表示ids，datetimes,values等的数量
-//	*                              event_type为其它值时，count值为0
-//	*                       ids    event_type为RTDB_E_DATA和RTDB_E_CHANGED时表示快照改变的标签点ID，数量由count指定
-//	*                              event_type为其它值时，ids值为NULL
-//	*                       datetimes event_type为RTDB_E_DATA时表示快照时间，数量由count指定
-//	*                                 event_type为RTDB_E_CHANGED时表示changed_types，即通过rtdbs_change_subscribe_snapshots传入的changed_types
-//	*                                 event_type为其它值时，datetimes值为NULL
-//	*                       ms     event_type为RTDB_E_DATA时表示快照的毫秒，数量由count指定
-//	*                              event_type为其它值时，ms值为NULL
-//	*                       values event_type为RTDB_E_DATA时表示浮点数据类型快照值，数量由count指定
-//	*                              event_type为RTDB_E_CHANGED时，表示delta_values，即通过rtdbs_change_subscribe_snapshots传入的delta_values
-//	*                              event_type为其它值时，values值为NULL
-//	*                       states event_type为RTDB_E_DATA时表示整形数据类型快照值，数量由count指定
-//	*                              event_type为RTDB_E_CHANGED时，表示delta_states，通过rtdbs_change_subscribe_snapshots传入的delta_states
-//	*                              event_type为其它值时，states值为NULL
-//	*                       qualities event_type为RTDB_E_DATA时表示快照质量码，数量由count指定
-//	*                              event_type为其它值时，qualities值为NULL
-//	*                       errors event_type为RTDB_E_DATA时表示快照错误码，数量由count指定
-//	*                              event_type为RTDB_E_CHANGED时，表示修改结果对应的错误码，数量由count指定
-//	*                              event_type为其它值时，errors值为NULL
-//	* \param errors         无符号整型数组，输出，
-//	*                           写入实时数据的返回值列表，参考rtdb_error.h
-//	* \remark   用户须保证 ids、errors 的长度与 count 一致。
-//	*        用于订阅快照的连接句柄必需是独立的，不能再用来调用其它 api，
-//	*        否则返回 RtE_OTHER_SDK_DOING 错误。
-//
+// RawRtdbsSubscribeSnapshotsEx64Warp 批量标签点快照改变的通知订阅
+// *
+// * \param handle         连接句柄
+// * \param count          整型，输入/输出，标签点个数，输入时表示 ids、errors 的长度，
+// *                           输出时表示成功订阅的标签点个数，不得超过 RTDB_MAX_SUBSCRIBE_SNAPSHOTS。
+// * \param ids            整型数组，输入，标签点标识列表。
+// * \param options        订阅选项
+// *                           RTDB_O_AUTOCONN 自动重连
+// * \param param          用户自定义参数
+// * \param callback       rtdbs_snaps_event_ex 类型回调接口，输入，当回掉函数返回非RtE_OK时退出订阅
+// *                       当未设置options为RTDB_O_AUTOCONN时，订阅断开后使用RTDB_E_DISCONNECT
+// *                       作为event_type取值调用回掉函数后退出订阅。
+// *                       当设置options为RTDB_O_AUTOCONN时，订阅断开后使用RTDB_E_DISCONNECT
+// *                       作为event_type取值调用回掉函数直到连接恢复或回掉函数返回非RtE_OK，
+// *                       网络中断期间回掉函数调用频率为最少3秒
+// *                       event_type参数值含义如下：
+// *                         RTDB_E_DATA        标签点快照改变
+// *                         RTDB_E_DISCONNECT  订阅客户端与数据库网络断开
+// *                         RTDB_E_RECOVERY    订阅客户端与数据库网络及订阅恢复
+// *                         RTDB_E_CHANGED     客户端修改订阅标签点信息，即通过rtdbs_change_subscribe_snapshots修改订阅信息的结果
+// *                       handle 产生订阅回掉的连接句柄，调用rtdbs_subscribe_snapshots_ex时的handle参数
+// *                       param  用户自定义参数，调用rtdbs_subscribe_snapshots_ex时的param参数
+// *                       count  event_type为RTDB_E_DATA和RTDB_E_CHANGED时表示ids，datetimes,values等的数量
+// *                              event_type为其它值时，count值为0
+// *                       ids    event_type为RTDB_E_DATA和RTDB_E_CHANGED时表示快照改变的标签点ID，数量由count指定
+// *                              event_type为其它值时，ids值为NULL
+// *                       datetimes event_type为RTDB_E_DATA时表示快照时间，数量由count指定
+// *                                 event_type为RTDB_E_CHANGED时表示changed_types，即通过rtdbs_change_subscribe_snapshots传入的changed_types
+// *                                 event_type为其它值时，datetimes值为NULL
+// *                       ms     event_type为RTDB_E_DATA时表示快照的毫秒，数量由count指定
+// *                              event_type为其它值时，ms值为NULL
+// *                       values event_type为RTDB_E_DATA时表示浮点数据类型快照值，数量由count指定
+// *                              event_type为RTDB_E_CHANGED时，表示delta_values，即通过rtdbs_change_subscribe_snapshots传入的delta_values
+// *                              event_type为其它值时，values值为NULL
+// *                       states event_type为RTDB_E_DATA时表示整形数据类型快照值，数量由count指定
+// *                              event_type为RTDB_E_CHANGED时，表示delta_states，通过rtdbs_change_subscribe_snapshots传入的delta_states
+// *                              event_type为其它值时，states值为NULL
+// *                       qualities event_type为RTDB_E_DATA时表示快照质量码，数量由count指定
+// *                              event_type为其它值时，qualities值为NULL
+// *                       errors event_type为RTDB_E_DATA时表示快照错误码，数量由count指定
+// *                              event_type为RTDB_E_CHANGED时，表示修改结果对应的错误码，数量由count指定
+// *                              event_type为其它值时，errors值为NULL
+// * \param errors         无符号整型数组，输出，
+// *                           写入实时数据的返回值列表，参考rtdb_error.h
+// * \remark   用户须保证 ids、errors 的长度与 count 一致。
+// *        用于订阅快照的连接句柄必需是独立的，不能再用来调用其它 api，
+// *        否则返回 RtE_OTHER_SDK_DOING 错误。
 // rtdb_error RTDBAPI_CALLRULE rtdbs_subscribe_snapshots_ex64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, rtdb_uint32 options, void* param, rtdbs_snaps_event_ex64 callback, rtdb_error* errors)
-// */
 func RawRtdbsSubscribeSnapshotsEx64Warp() {}
 
-// /*
-//
-//	*
-//	* \brief 批量标签点快照改变的通知订阅
-//	*
-//	* \param handle         连接句柄
-//	* \param count          整型，输入/输出，标签点个数，输入时表示 ids、errors 的长度，
-//	*                           输出时表示成功订阅的标签点个数，不得超过 RTDB_MAX_SUBSCRIBE_SNAPSHOTS。
-//	* \param ids            整型数组，输入，标签点标识列表。
-//	* \param delta_values   double型数组，输入，订阅浮点类型标签点的容差值，变化超过设置的容差值才会推送
-//	* \param delta_values   整型数组，输入，订阅整型标签点的容差值，变化超过设置的容差值才会推送
-//	* \param options        订阅选项
-//	*                           RTDB_O_AUTOCONN 自动重连
-//	* \param param          用户自定义参数
-//	* \param callback       rtdbs_snaps_event_ex 类型回调接口，输入，当回掉函数返回非RtE_OK时退出订阅
-//	*                         当未设置options为RTDB_O_AUTOCONN时，订阅断开后使用RTDB_E_DISCONNECT
-//	*                         作为event_type取值调用回掉函数后退出订阅。
-//	*                         当设置options为RTDB_O_AUTOCONN时，订阅断开后使用RTDB_E_DISCONNECT
-//	*                         作为event_type取值调用回掉函数直到连接恢复或回掉函数返回非RtE_OK，
-//	*                         网络中断期间回掉函数调用频率为最少3秒
-//	*                         event_type参数值含义如下：
-//	*                           RTDB_E_DATA        标签点快照改变
-//	*                           RTDB_E_DISCONNECT  订阅客户端与数据库网络断开
-//	*                           RTDB_E_RECOVERY    订阅客户端与数据库网络及订阅恢复
-//	*                           RTDB_E_CHANGED     客户端修改订阅标签点信息，即通过rtdbs_change_subscribe_snapshots修改订阅信息的结果
-//	*                         handle 产生订阅回掉的连接句柄，调用rtdbs_subscribe_snapshots_ex时的handle参数
-//	*                         param  用户自定义参数，调用rtdbs_subscribe_snapshots_ex时的param参数
-//	*                         count  event_type为RTDB_E_DATA和RTDB_E_CHANGED时表示ids，datetimes,values等的数量
-//	*                                event_type为其它值时，count值为0
-//	*                         ids    event_type为RTDB_E_DATA和RTDB_E_CHANGED时表示快照改变的标签点ID，数量由count指定
-//	*                                event_type为其它值时，ids值为NULL
-//	*                         datetimes event_type为RTDB_E_DATA时表示快照时间，数量由count指定
-//	*                                   event_type为RTDB_E_CHANGED时表示changed_types，即通过rtdbs_change_subscribe_snapshots传入的changed_types
-//	*                                   event_type为其它值时，datetimes值为NULL
-//	*                         ms     event_type为RTDB_E_DATA时表示快照的毫秒，数量由count指定
-//	*                                event_type为其它值时，ms值为NULL
-//	*                         values event_type为RTDB_E_DATA时表示浮点数据类型快照值，数量由count指定
-//	*                                event_type为RTDB_E_CHANGED时，表示delta_values，即通过rtdbs_change_subscribe_snapshots传入的delta_values
-//	*                                event_type为其它值时，values值为NULL
-//	*                         states event_type为RTDB_E_DATA时表示整形数据类型快照值，数量由count指定
-//	*                                event_type为RTDB_E_CHANGED时，表示delta_states，通过rtdbs_change_subscribe_snapshots传入的delta_states
-//	*                                event_type为其它值时，states值为NULL
-//	*                         qualities event_type为RTDB_E_DATA时表示快照质量码，数量由count指定
-//	*                                event_type为其它值时，qualities值为NULL
-//	*                         errors event_type为RTDB_E_DATA时表示快照错误码，数量由count指定
-//	*                                event_type为RTDB_E_CHANGED时，表示修改结果对应的错误码，数量由count指定
-//	*                                event_type为其它值时，errors值为NULL
-//	* \param errors         无符号整型数组，输出，
-//	*                           写入实时数据的返回值列表，参考rtdb_error.h
-//	* \remark delta_values和delta_states可以为空指针，表示不设置容差值。 只有两个参数都不为空时，设置容差值才会生效。
-//	*           用户须保证 ids、delta_values、delta_states、errors 的长度与 count 一致
-//	*           用于订阅快照的连接句柄必需是独立的，不能再用来调用其它 api，
-//	*           否则返回 RtE_OTHER_SDK_DOING 错误。
+// RawRtdbsSubscribeDeltaSnapshots64Warp 批量标签点快照改变的通知订阅
+//   - \param handle         连接句柄
+//   - \param count          整型，输入/输出，标签点个数，输入时表示 ids、errors 的长度，
+//   - 输出时表示成功订阅的标签点个数，不得超过 RTDB_MAX_SUBSCRIBE_SNAPSHOTS。
+//   - \param ids            整型数组，输入，标签点标识列表。
+//   - \param delta_values   double型数组，输入，订阅浮点类型标签点的容差值，变化超过设置的容差值才会推送
+//   - \param delta_values   整型数组，输入，订阅整型标签点的容差值，变化超过设置的容差值才会推送
+//   - \param options        订阅选项
+//   - RTDB_O_AUTOCONN 自动重连
+//   - \param param          用户自定义参数
+//   - \param callback       rtdbs_snaps_event_ex 类型回调接口，输入，当回掉函数返回非RtE_OK时退出订阅
+//   - 当未设置options为RTDB_O_AUTOCONN时，订阅断开后使用RTDB_E_DISCONNECT
+//   - 作为event_type取值调用回掉函数后退出订阅。
+//   - 当设置options为RTDB_O_AUTOCONN时，订阅断开后使用RTDB_E_DISCONNECT
+//   - 作为event_type取值调用回掉函数直到连接恢复或回掉函数返回非RtE_OK，
+//   - 网络中断期间回掉函数调用频率为最少3秒
+//   - event_type参数值含义如下：
+//   - RTDB_E_DATA        标签点快照改变
+//   - RTDB_E_DISCONNECT  订阅客户端与数据库网络断开
+//   - RTDB_E_RECOVERY    订阅客户端与数据库网络及订阅恢复
+//   - RTDB_E_CHANGED     客户端修改订阅标签点信息，即通过rtdbs_change_subscribe_snapshots修改订阅信息的结果
+//   - handle 产生订阅回掉的连接句柄，调用rtdbs_subscribe_snapshots_ex时的handle参数
+//   - param  用户自定义参数，调用rtdbs_subscribe_snapshots_ex时的param参数
+//   - count  event_type为RTDB_E_DATA和RTDB_E_CHANGED时表示ids，datetimes,values等的数量
+//   - event_type为其它值时，count值为0
+//   - ids    event_type为RTDB_E_DATA和RTDB_E_CHANGED时表示快照改变的标签点ID，数量由count指定
+//   - event_type为其它值时，ids值为NULL
+//   - datetimes event_type为RTDB_E_DATA时表示快照时间，数量由count指定
+//   - event_type为RTDB_E_CHANGED时表示changed_types，即通过rtdbs_change_subscribe_snapshots传入的changed_types
+//   - event_type为其它值时，datetimes值为NULL
+//   - ms     event_type为RTDB_E_DATA时表示快照的毫秒，数量由count指定
+//   - event_type为其它值时，ms值为NULL
+//   - values event_type为RTDB_E_DATA时表示浮点数据类型快照值，数量由count指定
+//   - event_type为RTDB_E_CHANGED时，表示delta_values，即通过rtdbs_change_subscribe_snapshots传入的delta_values
+//   - event_type为其它值时，values值为NULL
+//   - states event_type为RTDB_E_DATA时表示整形数据类型快照值，数量由count指定
+//   - event_type为RTDB_E_CHANGED时，表示delta_states，通过rtdbs_change_subscribe_snapshots传入的delta_states
+//   - event_type为其它值时，states值为NULL
+//   - qualities event_type为RTDB_E_DATA时表示快照质量码，数量由count指定
+//   - event_type为其它值时，qualities值为NULL
+//   - errors event_type为RTDB_E_DATA时表示快照错误码，数量由count指定
+//   - event_type为RTDB_E_CHANGED时，表示修改结果对应的错误码，数量由count指定
+//   - event_type为其它值时，errors值为NULL
+//   - \param errors         无符号整型数组，输出，
+//   - 写入实时数据的返回值列表，参考rtdb_error.h
+//   - \remark delta_values和delta_states可以为空指针，表示不设置容差值。 只有两个参数都不为空时，设置容差值才会生效。
+//   - 用户须保证 ids、delta_values、delta_states、errors 的长度与 count 一致
+//   - 用于订阅快照的连接句柄必需是独立的，不能再用来调用其它 api，
+//   - 否则返回 RtE_OTHER_SDK_DOING 错误。
 //
 // rtdb_error RTDBAPI_CALLRULE rtdbs_subscribe_delta_snapshots64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_float64* delta_values, const rtdb_int64* delta_states, rtdb_uint32 options, void* param, rtdbs_snaps_event_ex64 callback, rtdb_error* errors)
-// */
 func RawRtdbsSubscribeDeltaSnapshots64Warp() {}
 
-// /*
-//
-//	*
-//	* \brief 批量修改订阅标签点信息
-//	*
-//	* \param handle         连接句柄
-//	* \param count          整型，输入/输出，标签点个数，输入时表示 ids、errors 的长度，
-//	*                           输出时表示成功订阅的标签点个数，不得超过 RTDB_MAX_SUBSCRIBE_SNAPSHOTS。
-//	* \param ids            整型数组，输入，标签点标识列表。
-//	* \param delta_values   double型数组，输入，订阅浮点类型标签点的容差值，变化超过设置的容差值才会推送
-//	* \param delta_values   整型数组，输入，订阅整型标签点的容差值，变化超过设置的容差值才会推送
-//	* \param changed_types  整型数组，输入，修改类型，参考RTDB_SUBSCRIBE_CHANGE_TYPE
-//	* \param errors         异步调用，保留参数，暂时不启用
-//	* \remark   用户须保证 ids、delta_values、delta_states、errors 的长度与 count 一致。
-//	*               可以同时添加、修改、删除订阅的标签点信息，
-//	*               delta_values和delta_states，可以为空指针，为空，则表示不设置容差值，即写入新数据即推送
-//	*               只有delta_values和delta_states都不为空时，设置的容差值才有效。
-//	*               用于订阅快照的连接句柄必需是独立的，不能再用来调用其它 api，
-//	*               否则返回 RtE_OTHER_SDK_DOING 错误。
-//	*               此方法是异步方法，当网络中断等异常情况时，会通过方法的返回值返回错误，参考rtdb_error.h。
-//	*               当方法返回值为RtE_OK时，表示已经成功发送给数据库，但是并没有等待修改结果。
-//	*               数据库的修改结果，会异步通知给api的回调函数，通过rtdbs_snaps_event_ex的RTDB_E_CHANGED事件通知修改结果
+// RawRtdbsChangeSubscribeSnapshotsWarp 批量修改订阅标签点信息
+//   - \param handle         连接句柄
+//   - \param count          整型，输入/输出，标签点个数，输入时表示 ids、errors 的长度，
+//   - 输出时表示成功订阅的标签点个数，不得超过 RTDB_MAX_SUBSCRIBE_SNAPSHOTS。
+//   - \param ids            整型数组，输入，标签点标识列表。
+//   - \param delta_values   double型数组，输入，订阅浮点类型标签点的容差值，变化超过设置的容差值才会推送
+//   - \param delta_values   整型数组，输入，订阅整型标签点的容差值，变化超过设置的容差值才会推送
+//   - \param changed_types  整型数组，输入，修改类型，参考RTDB_SUBSCRIBE_CHANGE_TYPE
+//   - \param errors         异步调用，保留参数，暂时不启用
+//   - \remark   用户须保证 ids、delta_values、delta_states、errors 的长度与 count 一致。
+//   - 可以同时添加、修改、删除订阅的标签点信息，
+//   - delta_values和delta_states，可以为空指针，为空，则表示不设置容差值，即写入新数据即推送
+//   - 只有delta_values和delta_states都不为空时，设置的容差值才有效。
+//   - 用于订阅快照的连接句柄必需是独立的，不能再用来调用其它 api，
+//   - 否则返回 RtE_OTHER_SDK_DOING 错误。
+//   - 此方法是异步方法，当网络中断等异常情况时，会通过方法的返回值返回错误，参考rtdb_error.h。
+//   - 当方法返回值为RtE_OK时，表示已经成功发送给数据库，但是并没有等待修改结果。
+//   - 数据库的修改结果，会异步通知给api的回调函数，通过rtdbs_snaps_event_ex的RTDB_E_CHANGED事件通知修改结果
 //
 // rtdb_error RTDBAPI_CALLRULE rtdbs_change_subscribe_snapshots_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_float64* delta_values, const rtdb_int64* delta_states, const rtdb_int32* changed_types, rtdb_error* errors)
-// */
 func RawRtdbsChangeSubscribeSnapshotsWarp() {}
 
-// /*
-//
-//	*
-//	* \brief 取消标签点快照更改通知订阅
-//	*
-//	* \param handle    连接句柄
+// RawRtdbsCancelSubscribeSnapshotsWarp 取消标签点快照更改通知订阅
+//   - \param handle    连接句柄
 //
 // rtdb_error RTDBAPI_CALLRULE rtdbs_cancel_subscribe_snapshots_warp(rtdb_int32 handle)
-// */
 func RawRtdbsCancelSubscribeSnapshotsWarp() {}
 
-// /*
-//   - 命名：rtdbs_get_named_type_snapshot32
-//   - 功能：获取自定义类型测点的单个快照
-//   - 参数：
+// RawRtdbsGetNamedTypeSnapshot64Warp 获取自定义类型测点的单个快照
 //   - [handle]    连接句柄
 //   - [id]        整型，输入，标签点标识
 //   - [datetime]  整型，输出，实时数值时间列表,
@@ -4804,13 +4760,9 @@ func RawRtdbsCancelSubscribeSnapshotsWarp() {}
 //   - [quality]   短整型，输出，实时数值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
 //
 // rtdb_error RTDBAPI_CALLRULE rtdbs_get_named_type_snapshot64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type* datetime, rtdb_subtime_type* subtime, void* object, rtdb_length_type* length, rtdb_int16* quality)
-// */
 func RawRtdbsGetNamedTypeSnapshot64Warp() {}
 
-// /*
-//   - 命名：rtdbs_get_named_type_snapshots32
-//   - 功能：批量获取自定义类型测点的快照
-//   - 参数：
+// RawRtdbsGetNamedTypeSnapshots64Warp 批量获取自定义类型测点的快照
 //   - [handle]    连接句柄
 //   - [count]     整型，输入/输出，标签点个数，
 //   - 输入时表示 ids、datetimes、ms、objects、lengths、qualities、errors 的长度，
@@ -4828,13 +4780,9 @@ func RawRtdbsGetNamedTypeSnapshot64Warp() {}
 //   - [errors]    无符号整型数组，输出，读取实时数据的返回值列表，参考rtdb_error.h
 //
 // rtdb_error RTDBAPI_CALLRULE rtdbs_get_named_type_snapshots64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, void* const* objects, rtdb_length_type* lengths, rtdb_int16* qualities, rtdb_error* errors)
-// */
 func RawRtdbsGetNamedTypeSnapshots64Warp() {}
 
-// /*
-//   - 命名：rtdbs_put_named_type_snapshot32
-//   - 功能：写入单个自定义类型标签点的快照
-//   - 参数：
+// RawRtdbsPutNamedTypeSnapshot64Warp 写入单个自定义类型标签点的快照
 //   - [handle]    连接句柄
 //   - [id]        整型，输入，标签点标识
 //   - [datetime]  整型，输入，实时数值时间列表,
@@ -4846,14 +4794,9 @@ func RawRtdbsGetNamedTypeSnapshots64Warp() {}
 //   - [quality]   短整型，输入，实时数值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
 //
 // rtdb_error RTDBAPI_CALLRULE rtdbs_put_named_type_snapshot64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime, rtdb_subtime_type subtime, const void* object, rtdb_length_type length, rtdb_int16 quality)
-// */
 func RawRtdbsPutNamedTypeSnapshot64Warp() {}
 
-// /*
-// *
-//   - 命名：rtdbs_put_named_type_snapshots32
-//   - 功能：批量写入自定义类型标签点的快照
-//   - 参数：
+// RawRtdbsPutNamedTypeSnapshots64Warp 批量写入自定义类型标签点的快照
 //   - [handle]    连接句柄
 //   - [count]     整型，输入/输出，标签点个数，
 //   - 输入时表示 ids、datetimes、ms、objects、lengths、qualities、errors 的长度，
@@ -4870,24 +4813,16 @@ func RawRtdbsPutNamedTypeSnapshot64Warp() {}
 //   - [errors]    无符号整型数组，输出，读取实时数据的返回值列表，参考rtdb_error.h
 //
 // rtdb_error RTDBAPI_CALLRULE rtdbs_put_named_type_snapshots64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, const void* const* objects, const rtdb_length_type* lengths, const rtdb_int16* qualities, rtdb_error* errors)
-// */
 func RawRtdbsPutNamedTypeSnapshots64Warp() {}
 
-// /*
-//
-//	*
-//	* \brief 获取存档文件数量
-//	*
-//	* \param handle    连接句柄
-//	* \param count     整型，输出，存档文件数量
+// RawRtdbaGetArchivesCountWarp 获取存档文件数量
+//   - \param handle    连接句柄
+//   - \param count     整型，输出，存档文件数量
 //
 // rtdb_error RTDBAPI_CALLRULE rtdba_get_archives_count_warp(rtdb_int32 handle, rtdb_int32 *count)
-// */
 func RawRtdbaGetArchivesCountWarp() {}
 
-// /*
-// * \brief 新建指定时间范围的历史存档文件并插入到历史数据库
-// *
+// RawRtdbaCreateRangedArchive64Warp 新建指定时间范围的历史存档文件并插入到历史数据库
 // * \param handle     连接句柄
 // * \param path       字符串，输入，文件所在目录路径，必须以"\"或"/"结尾。
 // * \param file       字符串，输入，文件名。
@@ -4895,54 +4830,38 @@ func RawRtdbaGetArchivesCountWarp() {}
 // * \param end        整数，输入，终止时间，距离1970年1月1日08:00:00的秒数
 // * \param mb_size    整型，输入，文件兆字节大小，单位为 MB。
 // rtdb_error RTDBAPI_CALLRULE rtdba_create_ranged_archive64_warp(rtdb_int32 handle, const char* path, const char* file, rtdb_timestamp_type begin, rtdb_timestamp_type end, rtdb_int32 mb_size)
-// */
 func RawRtdbaCreateRangedArchive64Warp() {}
 
-// /*
-// * \brief 追加磁盘上的历史存档文件到历史数据库。
-// *
+// RawRtdbaAppendArchiveWarp 追加磁盘上的历史存档文件到历史数据库。
 // * \param handle     连接句柄
 // * \param path       字符串，输入，文件所在目录路径，必须以"\"或"/"结尾。
 // * \param file       字符串，输入，文件名，后缀名应为.rdf。
 // * \param state      整型，输入，取值 RTDB_ACTIVED_ARCHIVE、RTDB_NORMAL_ARCHIVE、
 // *                     RTDB_READONLY_ARCHIVE 之一，表示文件状态
 // rtdb_error RTDBAPI_CALLRULE rtdba_append_archive_warp(rtdb_int32 handle, const char *path, const char *file, rtdb_int32 state)
-// */
 func RawRtdbaAppendArchiveWarp() {}
 
-// /*
-// * \brief 从历史数据库中移出历史存档文件。
-// *
+// RawRtdbaRemoveArchiveWarp 从历史数据库中移出历史存档文件。
 // * \param handle     连接句柄
 // * \param path       字符串，输入，文件所在目录路径，必须以"\"或"/"结尾。
 // * \param file       字符串，输入，文件名。
 // rtdb_error RTDBAPI_CALLRULE rtdba_remove_archive_warp(rtdb_int32 handle, const char *path, const char *file)
-// */
 func RawRtdbaRemoveArchiveWarp() {}
 
-// /*
-//
-//	*
-//	* \brief 切换活动文件
-//	*
-//	* \param handle     连接句柄
-//	* \remark 当前活动文件被写满时该事务被启动，
-//	*        改变当前活动文件的状态为普通状态，
-//	*        在所有历史数据存档文件中寻找未被使用过的
-//	*        插入到前活动文件的右侧并改为活动状态，
-//	*        若找不到则将前活动文件右侧的文件改为活动状态，
-//	*        并将active_archive_指向该文件。该事务进行过程中，
-//	*        用锁保证所有读写操作都暂停等待该事务完成。
+// RawRtdbaShiftActivedWarp 切换活动文件
+//   - \param handle     连接句柄
+//   - \remark 当前活动文件被写满时该事务被启动，
+//   - 改变当前活动文件的状态为普通状态，
+//   - 在所有历史数据存档文件中寻找未被使用过的
+//   - 插入到前活动文件的右侧并改为活动状态，
+//   - 若找不到则将前活动文件右侧的文件改为活动状态，
+//   - 并将active_archive_指向该文件。该事务进行过程中，
+//   - 用锁保证所有读写操作都暂停等待该事务完成。
 //
 // rtdb_error RTDBAPI_CALLRULE rtdba_shift_actived_warp(rtdb_int32 handle)
-// */
 func RawRtdbaShiftActivedWarp() {}
 
-// /*
-// *
-//   - 命名：rtdba_get_archives
-//   - 功能：获取存档文件的路径、名称、状态和最早允许写入时间。
-//   - 参数：
+// RawRtdbaGetArchivesWarp 获取存档文件的路径、名称、状态和最早允许写入时间。
 //   - [handle]          连接句柄
 //   - [paths]            字符串数组，输出，存档文件的目录路径，长度至少为 RTDB_PATH_SIZE。
 //   - [files]            字符串数组，输出，存档文件的名称，长度至少为 RTDB_FILE_NAME_SIZE。
@@ -4950,13 +4869,9 @@ func RawRtdbaShiftActivedWarp() {}
 //   - RTDB_NORMAL_ARCHIVE、RTDB_READONLY_ARCHIVE 之一，表示文件状态
 //
 // rtdb_error RTDBAPI_CALLRULE rtdba_get_archives_warp(rtdb_int32 handle, rtdb_int32* count, rtdb_path_string* paths, rtdb_filename_string* files, rtdb_int32 *states)
-// */
 func RawRtdbaGetArchivesWarp() {}
 
-// /*
-// *
-//   - 功能：获取存档信息
-//   - 参数：
+// RawRtdbaGetArchivesInfoWarp 获取存档信息
 //   - [handle]: in, 句柄
 //   - [count]: out, 数量
 //   - [paths]: out, 路径
@@ -4965,13 +4880,9 @@ func RawRtdbaGetArchivesWarp() {}
 //   - [errors]: out, 错误
 //
 // rtdb_error RTDBAPI_CALLRULE rtdba_get_archives_info_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_path_string* const paths, const rtdb_filename_string* const files, RTDB_HEADER_PAGE *infos, rtdb_error* errors)
-// */
 func RawRtdbaGetArchivesInfoWarp() {}
 
-// /*
-// *
-//   - 功能：获取存档的实时信息
-//   - 参数：
+// RawRtdbaGetArchivesPerfDataWarp 获取存档的实时信息
 //   - [handle]: in, 句柄
 //   - [count]: out, 数量
 //   - [paths]: out, 路径
@@ -4981,34 +4892,25 @@ func RawRtdbaGetArchivesInfoWarp() {}
 //   - [errors]: 错误
 //
 // rtdb_error RTDBAPI_CALLRULE rtdba_get_archives_perf_data_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_path_string* const paths, const rtdb_filename_string* const files, RTDB_ARCHIVE_PERF_DATA* real_time_datas, RTDB_ARCHIVE_PERF_DATA* total_datas, rtdb_error* errors)
-// */
 func RawRtdbaGetArchivesPerfDataWarp() {}
 
-// /*
-// *
-//   - 功能：获取存档状态
-//   - 参数：
+// RawRtdbaGetArchivesStatusWarp 获取存档状态
 //   - [handle]: in, 句柄
 //   - [status]: out, 存档状态
 //
 // rtdb_error RTDBAPI_CALLRULE rtdba_get_archives_status_warp(rtdb_int32 handle, rtdb_error* status)
-// */
 func RawRtdbaGetArchivesStatusWarp() {}
 
-// /*
-// * \brief 获取存档文件及其附属文件的详细信息。
+// RawRtdbaGetArchiveInfoWarp 获取存档文件及其附属文件的详细信息。
 // * \param handle     连接句柄
 // * \param path       字符串，输入，文件所在目录路径，必须以"\"或"/"结尾。
 // * \param file       字符串，输入，文件名。
 // * \param file_id    整型，输入，附属文件标识，0 表示获取主文件信息。
 // * \param info       RTDB_HEADER_PAGE 结构，输出，存档文件信息
 // rtdb_error RTDBAPI_CALLRULE rtdba_get_archive_info_warp(rtdb_int32 handle, const char *path, const char *file, rtdb_int32 file_id, RTDB_HEADER_PAGE *info)
-// */
 func RawRtdbaGetArchiveInfoWarp() {}
 
-// /*
-// * \brief 修改存档文件的可配置项。
-// *
+// RawRtdbaUpdateArchiveWarp 修改存档文件的可配置项。
 // * \param handle         连接句柄
 // * \param path           字符串，输入，文件所在目录路径，必须以"\"或"/"结尾。
 // * \param file           字符串，输入，文件名。
@@ -5018,70 +4920,46 @@ func RawRtdbaGetArchiveInfoWarp() {}
 // * \param auto_arrange   短整型，输入，是否自动整理存档文件。
 // * 备注: rated_capacity 与 ex_capacity 参数可为 0，表示不修改对应的配置项。
 // rtdb_error RTDBAPI_CALLRULE rtdba_update_archive_warp(rtdb_int32 handle, const char *path, const char *file, rtdb_int32 rated_capacity, rtdb_int32 ex_capacity, rtdb_int16 auto_merge, rtdb_int16 auto_arrange)
-// */
 func RawRtdbaUpdateArchiveWarp() {}
 
-// /*
-// * \brief 整理存档文件，将同一标签点的数据块存放在一起以提高查询效率。
-// *
+// RawRtdbaArrangeArchiveWarp 整理存档文件，将同一标签点的数据块存放在一起以提高查询效率。
 // * \param handle     连接句柄
 // * \param path       字符串，输入，文件所在目录路径，必须以"\"或"/"结尾。
 // * \param file       字符串，输入，文件名。
 // rtdb_error RTDBAPI_CALLRULE rtdba_arrange_archive_warp(rtdb_int32 handle, const char *path, const char *file)
-// */
 func RawRtdbaArrangeArchiveWarp() {}
 
-// /*
-// * \brief 为存档文件重新生成索引，用于恢复数据。
-// *
+// RawRtdbaReindexArchiveWarp 为存档文件重新生成索引，用于恢复数据。
 // * \param handle     连接句柄
 // * \param path       字符串，输入，文件所在目录路径，必须以"\"或"/"结尾。
 // * \param file       字符串，输入，文件名。
 // rtdb_error RTDBAPI_CALLRULE rtdba_reindex_archive_warp(rtdb_int32 handle, const char *path, const char *file)
-// */
 func RawRtdbaReindexArchiveWarp() {}
 
-// /*
-// * \brief 备份主存档文件及其附属文件到指定路径
-// *
+// RawRtdbaBackupArchiveWarp 备份主存档文件及其附属文件到指定路径
 // * \param handle     连接句柄
 // * \param path       字符串，输入，文件所在目录路径，必须以"\"或"/"结尾。
 // * \param file       字符串，输入，文件名。
 // * \param dest       字符串，输入，备份目录路径，必须以"\"或"/"结尾。
 // rtdb_error RTDBAPI_CALLRULE rtdba_backup_archive_warp(rtdb_int32 handle, const char *path, const char *file, const char *dest)
-// */
 func RawRtdbaBackupArchiveWarp() {}
 
-// /*
-// *
-// * 命名：rtdba_move_archive
-// * 功能：将存档文件移动到指定目录
-// * 参数：
+// RawRtdbaMoveArchiveWarp 将存档文件移动到指定目录
 // *        [handle]     连接句柄
 // *        [path]       字符串，输入，文件所在目录路径，必须以"\"或"/"结尾。
 // *        [file]       字符串，输入，文件名。
 // *        [dest]       字符串，输入，移动目录路径，必须以"\"或"/"结尾。
 // rtdb_error RTDBAPI_CALLRULE rtdba_move_archive_warp(rtdb_int32 handle, const char *path, const char *file, const char *dest)
-// */
 func RawRtdbaMoveArchiveWarp() {}
 
-// /*
-// *
-// * 命名：rtdba_reindex_archive
-// * 功能：为存档文件转换索引格式。
-// * 参数：
+// RawRtdbaConvertIndexWarp 为存档文件转换索引格式。
 // *        [handle]     连接句柄
 // *        [path]       字符串，输入，文件所在目录路径，必须以"\"或"/"结尾。
 // *        [file]       字符串，输入，文件名。
 // rtdb_error RTDBAPI_CALLRULE rtdba_convert_index_warp(rtdb_int32 handle, const char *path, const char *file)
-// */
 func RawRtdbaConvertIndexWarp() {}
 
-// /*
-// *
-//   - 命名：rtdba_query_big_job
-//   - \brief 查询进程正在执行的后台任务类型、状态和进度
-//     *
+// RawRtdbaQueryBigJob64Warp 查询进程正在执行的后台任务类型、状态和进度
 //   - \param handle     连接句柄
 //   - \param process    所查询的进程代号，进程的标识参见枚举 RTDB_PROCESS_NAME,
 //   - RTDB_PROCESS_HISTORIAN: 历史服务进程，具有以下任务类型：
@@ -5123,14 +5001,9 @@ func RawRtdbaConvertIndexWarp() {}
 //   - \remark path 及 file 参数可传空指针，对应的信息将不再返回。
 //
 // rtdb_error RTDBAPI_CALLRULE rtdba_query_big_job64_warp(rtdb_int32 handle, rtdb_int32 process, char* path, char* file, rtdb_int16* job, rtdb_int32* state, rtdb_timestamp_type* end_time, rtdb_float32* progress)
-// */
 func RawRtdbaQueryBigJob64Warp() {}
 
-// /*
-// *
-//   - 命名：rtdba_cancel_big_job
-//   - 功能：取消进程正在执行的后台任务
-//   - 参数：
+// RawRtdbaCancelBigJobWarp 取消进程正在执行的后台任务
 //   - [handle]     连接句柄
 //   - [process]    所查询的进程代号，进程的标识参见枚举 RTDB_PROCESS_NAME,
 //   - RTDB_PROCESS_HISTORIAN: 历史服务进程，具有以下任务类型：
@@ -5147,86 +5020,68 @@ func RawRtdbaQueryBigJob64Warp() {}
 //   - 备注：path 及 file 参数可传空指针，对应的信息将不再返回。
 //
 // rtdb_error RTDBAPI_CALLRULE rtdba_cancel_big_job_warp(rtdb_int32 handle, rtdb_int32 process)
-// */
 func RawRtdbaCancelBigJobWarp() {}
 
-// /*
-//
-//	*
-//	* \brief 获取单个标签点在一段时间范围内的存储值数量.
-//	*
-//	* \param handle        连接句柄
-//	* \param id            整型，输入，标签点标识
-//	* \param datetime1     整型，输入，表示起始时间秒数。如果为 0，表示从存档中最早时间的数据开始读取
-//	* \param ms1           短整型，输入，如果 id 指定的标签点时间精度为纳秒，表示起始时间对应的纳秒；否则忽略
-//	* \param datetime2     整型，输入，表示结束时间秒数。如果为 0，表示读取直至存档中数据的最后时间
-//	* \param ms2           短整型，输入，如果 id 指定的标签点时间精度为纳秒，表示结束时间对应的纳秒；否则忽略
-//	* \param count         整型，输出，返回上述时间范围内的存储值数量
-//	* \remark 由 datetime1、ms1 形成的时间可以大于 datetime2、ms2 表示的时间，
-//	*        此时前者表示结束时间，后者表示起始时间。
+// RawRtdbhArchivedValuesCount64Warp 获取单个标签点在一段时间范围内的存储值数量.
+//   - \param handle        连接句柄
+//   - \param id            整型，输入，标签点标识
+//   - \param datetime1     整型，输入，表示起始时间秒数。如果为 0，表示从存档中最早时间的数据开始读取
+//   - \param ms1           短整型，输入，如果 id 指定的标签点时间精度为纳秒，表示起始时间对应的纳秒；否则忽略
+//   - \param datetime2     整型，输入，表示结束时间秒数。如果为 0，表示读取直至存档中数据的最后时间
+//   - \param ms2           短整型，输入，如果 id 指定的标签点时间精度为纳秒，表示结束时间对应的纳秒；否则忽略
+//   - \param count         整型，输出，返回上述时间范围内的存储值数量
+//   - \remark 由 datetime1、ms1 形成的时间可以大于 datetime2、ms2 表示的时间，
+//   - 此时前者表示结束时间，后者表示起始时间。
 //
 // rtdb_error RTDBAPI_CALLRULE rtdbh_archived_values_count64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime1, rtdb_subtime_type subtime1, rtdb_timestamp_type datetime2, rtdb_subtime_type subtime2, rtdb_int32* count)
-// */
 func RawRtdbhArchivedValuesCount64Warp() {}
 
-// /*
-//
-//	*
-//	* \brief 获取单个标签点在一段时间范围内的真实的存储值数量.
-//	*
-//	* \param handle        连接句柄
-//	* \param id            整型，输入，标签点标识
-//	* \param datetime1     整型，输入，表示起始时间秒数。如果为 0，表示从存档中最早时间的数据开始读取
-//	* \param ms1           短整型，输入，如果 id 指定的标签点时间精度为纳秒，表示起始时间对应的纳秒；否则忽略
-//	* \param datetime2     整型，输入，表示结束时间秒数。如果为 0，表示读取直至存档中数据的最后时间
-//	* \param ms2           短整型，输入，如果 id 指定的标签点时间精度为纳秒，表示结束时间对应的纳秒；否则忽略
-//	* \param count         整型，输出，返回上述时间范围内的存储值数量
-//	* \remark 由 datetime1、ms1 形成的时间可以大于 datetime2、ms2 表示的时间，
-//	*        此时前者表示结束时间，后者表示起始时间。
+// RawRtdbhArchivedValuesRealCount64Warp 获取单个标签点在一段时间范围内的真实的存储值数量.
+//   - \param handle        连接句柄
+//   - \param id            整型，输入，标签点标识
+//   - \param datetime1     整型，输入，表示起始时间秒数。如果为 0，表示从存档中最早时间的数据开始读取
+//   - \param ms1           短整型，输入，如果 id 指定的标签点时间精度为纳秒，表示起始时间对应的纳秒；否则忽略
+//   - \param datetime2     整型，输入，表示结束时间秒数。如果为 0，表示读取直至存档中数据的最后时间
+//   - \param ms2           短整型，输入，如果 id 指定的标签点时间精度为纳秒，表示结束时间对应的纳秒；否则忽略
+//   - \param count         整型，输出，返回上述时间范围内的存储值数量
+//   - \remark 由 datetime1、ms1 形成的时间可以大于 datetime2、ms2 表示的时间，
+//   - 此时前者表示结束时间，后者表示起始时间。
 //
 // rtdb_error RTDBAPI_CALLRULE rtdbh_archived_values_real_count64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime1, rtdb_subtime_type subtime1, rtdb_timestamp_type datetime2, rtdb_subtime_type subtime2, rtdb_int32* count)
-// */
 func RawRtdbhArchivedValuesRealCount64Warp() {}
 
-// /*
-//
-//	*
-//	* \brief 读取单个标签点一段时间内的储存数据
-//	*
-//	* \param handle        连接句柄
-//	* \param id            整型，输入，标签点标识
-//	* \param count         整型，输入/输出，
-//	*                        输入时表示 datetimes、ms、values、states、qualities 的长度；
-//	*                        输出时返回实际得到的数值个数
-//	* \param datetimes     整型数组，输入/输出，
-//	*                        输入时第一个元素表示起始时间秒数，
-//	*                        最后一个元素表示结束时间秒数，如果为 0，表示直到数据的最后时间；
-//	*                        输出时表示对应的历史数值时间秒数。
-//	* \param ms            短整型数组，输入/输出，如果 id 指定的标签点时间精度为纳秒，
-//	*                        则输入时第一个元素表示起始时间纳秒，
-//	*                        最后一个元素表示结束时间纳秒；
-//	*                        输出时表示对应的历史数值时间纳秒。
-//	*                        否则忽略输入，输出时为 0。
-//	* \param values        双精度浮点数数组，输出，历史浮点型数值列表
-//	*                        对于数据类型为 RTDB_REAL16、RTDB_REAL32、RTDB_REAL64 的标签点，存放相应的历史存储值；否则为 0
-//	* \param states        64 位整数数组，输出，历史整型数值列表，
-//	*                        对于数据类型为 RTDB_BOOL、RTDB_UINT8、RTDB_INT8、RTDB_CHAR、RTDB_UINT16、RTDB_INT16、
-//	*                        RTDB_UINT32、RTDB_INT32、RTDB_INT64 的标签点，存放相应的历史存储值；否则为 0
-//	* \param qualities     短整型数组，输出，历史数值品质列表，数据库预定义的品质参见枚举 RTDB_QUALITY
-//	* \remark 用户须保证 datetimes、ms、values、states、qualities 的长度与 count 一致，
-//	*        在输入时，datetimes、ms 中至少应有一个元素，第一个元素形成的时间可以
-//	*        大于最后一个元素形成的时间，此时第一个元素表示结束时间，
-//	*        最后一个元素表示开始时间。
-//	*        本接口对数据类型为 RTDB_COOR、RTDB_BLOB、RTDB_STRING 的标签点无效。
+// RawRtdbhGetArchivedValues64Warp 读取单个标签点一段时间内的储存数据
+//   - \param handle        连接句柄
+//   - \param id            整型，输入，标签点标识
+//   - \param count         整型，输入/输出，
+//   - 输入时表示 datetimes、ms、values、states、qualities 的长度；
+//   - 输出时返回实际得到的数值个数
+//   - \param datetimes     整型数组，输入/输出，
+//   - 输入时第一个元素表示起始时间秒数，
+//   - 最后一个元素表示结束时间秒数，如果为 0，表示直到数据的最后时间；
+//   - 输出时表示对应的历史数值时间秒数。
+//   - \param ms            短整型数组，输入/输出，如果 id 指定的标签点时间精度为纳秒，
+//   - 则输入时第一个元素表示起始时间纳秒，
+//   - 最后一个元素表示结束时间纳秒；
+//   - 输出时表示对应的历史数值时间纳秒。
+//   - 否则忽略输入，输出时为 0。
+//   - \param values        双精度浮点数数组，输出，历史浮点型数值列表
+//   - 对于数据类型为 RTDB_REAL16、RTDB_REAL32、RTDB_REAL64 的标签点，存放相应的历史存储值；否则为 0
+//   - \param states        64 位整数数组，输出，历史整型数值列表，
+//   - 对于数据类型为 RTDB_BOOL、RTDB_UINT8、RTDB_INT8、RTDB_CHAR、RTDB_UINT16、RTDB_INT16、
+//   - RTDB_UINT32、RTDB_INT32、RTDB_INT64 的标签点，存放相应的历史存储值；否则为 0
+//   - \param qualities     短整型数组，输出，历史数值品质列表，数据库预定义的品质参见枚举 RTDB_QUALITY
+//   - \remark 用户须保证 datetimes、ms、values、states、qualities 的长度与 count 一致，
+//   - 在输入时，datetimes、ms 中至少应有一个元素，第一个元素形成的时间可以
+//   - 大于最后一个元素形成的时间，此时第一个元素表示结束时间，
+//   - 最后一个元素表示开始时间。
+//   - 本接口对数据类型为 RTDB_COOR、RTDB_BLOB、RTDB_STRING 的标签点无效。
 //
 // rtdb_error RTDBAPI_CALLRULE rtdbh_get_archived_values64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32* count, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float64* values, rtdb_int64* states, rtdb_int16* qualities)
-// */
 func RawRtdbhGetArchivedValues64Warp() {}
 
-// /*
+// RawRtdbhGetArchivedValuesBackward64Warp 逆向读取单个标签点一段时间内的储存数据
 //
-//	*
-//	* \brief 逆向读取单个标签点一段时间内的储存数据
 //	*
 //	* \param handle        连接句柄
 //	* \param id            整型，输入，标签点标识
@@ -5255,175 +5110,140 @@ func RawRtdbhGetArchivedValues64Warp() {}
 //	*        本接口对数据类型为 RTDB_COOR、RTDB_BLOB、RTDB_STRING 的标签点无效。
 //
 // rtdb_error RTDBAPI_CALLRULE rtdbh_get_archived_values_backward64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32* count, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float64* values, rtdb_int64* states, rtdb_int16* qualities)
-// */
 func RawRtdbhGetArchivedValuesBackward64Warp() {}
 
-// /*
-//
-//	*
-//	* \brief 读取单个标签点一段时间内的坐标型储存数据
-//	*
-//	* \param handle        连接句柄
-//	* \param id            整型，输入，标签点标识
-//	* \param count         整型，输入/输出，
-//	*                        输入时表示 datetimes、ms、x、y、qualities 的长度；
-//	*                        输出时返回实际得到的数值个数
-//	* \param datetimes     整型数组，输入/输出，
-//	*                        输入时第一个元素表示起始时间秒数，
-//	*                        最后一个元素表示结束时间秒数，如果为 0，表示直到数据的最后时间；
-//	*                        输出时表示对应的历史数值时间秒数。
-//	* \param ms            短整型数组，输入/输出，如果 id 指定的标签点时间精度为纳秒，
-//	*                        则输入时第一个元素表示起始时间纳秒，
-//	*                        最后一个元素表示结束时间纳秒；
-//	*                        输出时表示对应的历史数值时间纳秒。
-//	*                        否则忽略输入，输出时为 0。
-//	* \param x             单精度浮点型数组，输出，浮点型横坐标历史数值列表
-//	* \param y             单精度浮点型数组，输出，浮点型纵坐标历史数值列表
-//	* \param qualities     短整型数组，输出，历史数值品质列表，数据库预定义的品质参见枚举 RTDB_QUALITY
-//	* \remark 用户须保证 datetimes、ms、x、y、qualities 的长度与 count 一致，
-//	*        在输入时，datetimes、ms 中至少应有一个元素，第一个元素形成的时间可以
-//	*        大于最后一个元素形成的时间，此时第一个元素表示结束时间，
-//	*        最后一个元素表示开始时间。
-//	*        本接口只对数据类型为 RTDB_COOR 的标签点有效。
+// RawRtdbhGetArchivedCoorValues64Warp 读取单个标签点一段时间内的坐标型储存数据
+//   - \param handle        连接句柄
+//   - \param id            整型，输入，标签点标识
+//   - \param count         整型，输入/输出，
+//   - 输入时表示 datetimes、ms、x、y、qualities 的长度；
+//   - 输出时返回实际得到的数值个数
+//   - \param datetimes     整型数组，输入/输出，
+//   - 输入时第一个元素表示起始时间秒数，
+//   - 最后一个元素表示结束时间秒数，如果为 0，表示直到数据的最后时间；
+//   - 输出时表示对应的历史数值时间秒数。
+//   - \param ms            短整型数组，输入/输出，如果 id 指定的标签点时间精度为纳秒，
+//   - 则输入时第一个元素表示起始时间纳秒，
+//   - 最后一个元素表示结束时间纳秒；
+//   - 输出时表示对应的历史数值时间纳秒。
+//   - 否则忽略输入，输出时为 0。
+//   - \param x             单精度浮点型数组，输出，浮点型横坐标历史数值列表
+//   - \param y             单精度浮点型数组，输出，浮点型纵坐标历史数值列表
+//   - \param qualities     短整型数组，输出，历史数值品质列表，数据库预定义的品质参见枚举 RTDB_QUALITY
+//   - \remark 用户须保证 datetimes、ms、x、y、qualities 的长度与 count 一致，
+//   - 在输入时，datetimes、ms 中至少应有一个元素，第一个元素形成的时间可以
+//   - 大于最后一个元素形成的时间，此时第一个元素表示结束时间，
+//   - 最后一个元素表示开始时间。
+//   - 本接口只对数据类型为 RTDB_COOR 的标签点有效。
 //
 // rtdb_error RTDBAPI_CALLRULE rtdbh_get_archived_coor_values64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32* count, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float32* x, rtdb_float32* y, rtdb_int16* qualities)
-// */
 func RawRtdbhGetArchivedCoorValues64Warp() {}
 
-// /*
-//
-//	*
-//	* \brief 逆向读取单个标签点一段时间内的坐标型储存数据
-//	*
-//	* \param handle        连接句柄
-//	* \param id            整型，输入，标签点标识
-//	* \param count         整型，输入/输出，
-//	*                        输入时表示 datetimes、ms、x、y、qualities 的长度；
-//	*                        输出时返回实际得到的数值个数
-//	* \param datetimes     整型数组，输入/输出，
-//	*                        输入时第一个元素表示起始时间秒数，
-//	*                        最后一个元素表示结束时间秒数，如果为 0，表示直到数据的最后时间；
-//	*                        输出时表示对应的历史数值时间秒数。
-//	* \param ms            短整型数组，输入/输出，如果 id 指定的标签点时间精度为纳秒，
-//	*                        则输入时第一个元素表示起始时间纳秒，
-//	*                        最后一个元素表示结束时间纳秒；
-//	*                        输出时表示对应的历史数值时间纳秒。
-//	*                        否则忽略输入，输出时为 0。
-//	* \param x             单精度浮点型数组，输出，浮点型横坐标历史数值列表
-//	* \param y             单精度浮点型数组，输出，浮点型纵坐标历史数值列表
-//	* \param qualities     短整型数组，输出，历史数值品质列表，数据库预定义的品质参见枚举 RTDB_QUALITY
-//	* \remark 用户须保证 datetimes、ms、x、y、qualities 的长度与 count 一致，
-//	*        在输入时，datetimes、ms 中至少应有一个元素，第一个元素形成的时间可以
-//	*        大于最后一个元素形成的时间，此时第一个元素表示结束时间，
-//	*        最后一个元素表示开始时间。
-//	*        本接口只对数据类型为 RTDB_COOR 的标签点有效。
+// RawRtdbhGetArchivedCoorValuesBackward64Warp 逆向读取单个标签点一段时间内的坐标型储存数据
+//   - \param handle        连接句柄
+//   - \param id            整型，输入，标签点标识
+//   - \param count         整型，输入/输出，
+//   - 输入时表示 datetimes、ms、x、y、qualities 的长度；
+//   - 输出时返回实际得到的数值个数
+//   - \param datetimes     整型数组，输入/输出，
+//   - 输入时第一个元素表示起始时间秒数，
+//   - 最后一个元素表示结束时间秒数，如果为 0，表示直到数据的最后时间；
+//   - 输出时表示对应的历史数值时间秒数。
+//   - \param ms            短整型数组，输入/输出，如果 id 指定的标签点时间精度为纳秒，
+//   - 则输入时第一个元素表示起始时间纳秒，
+//   - 最后一个元素表示结束时间纳秒；
+//   - 输出时表示对应的历史数值时间纳秒。
+//   - 否则忽略输入，输出时为 0。
+//   - \param x             单精度浮点型数组，输出，浮点型横坐标历史数值列表
+//   - \param y             单精度浮点型数组，输出，浮点型纵坐标历史数值列表
+//   - \param qualities     短整型数组，输出，历史数值品质列表，数据库预定义的品质参见枚举 RTDB_QUALITY
+//   - \remark 用户须保证 datetimes、ms、x、y、qualities 的长度与 count 一致，
+//   - 在输入时，datetimes、ms 中至少应有一个元素，第一个元素形成的时间可以
+//   - 大于最后一个元素形成的时间，此时第一个元素表示结束时间，
+//   - 最后一个元素表示开始时间。
+//   - 本接口只对数据类型为 RTDB_COOR 的标签点有效。
 //
 // rtdb_error RTDBAPI_CALLRULE rtdbh_get_archived_coor_values_backward64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32* count, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float32* x, rtdb_float32* y, rtdb_int16* qualities)
-// */
 func RawRtdbhGetArchivedCoorValuesBackward64Warp() {}
 
-// /*
-//
-//	*
-//	* \brief 开始以分段返回方式读取一段时间内的储存数据
-//	*
-//	* \param handle        连接句柄
-//	* \param id            整型，输入，标签点标识
-//	* \param datetime1     整型，输入，表示起始时间秒数。如果为 0，表示从存档中最早时间的数据开始读取
-//	* \param ms1           短整型，输入，如果 id 指定的标签点时间精度为纳秒，表示起始时间对应的纳秒；否则忽略
-//	* \param datetime2     整型，输入，表示结束时间秒数。如果为 0，表示读取直至存档中数据的最后时间
-//	* \param ms2           短整型，输入，如果 id 指定的标签点时间精度为纳秒，表示结束时间对应的纳秒；否则忽略
-//	* \param count         整型，输出，返回上述时间范围内的存储值数量
-//	* \param batch_count   整型，输出，每次分段返回的长度，用于继续调用 rtdbh_get_next_archived_values 接口
-//	* \remark 由 datetime1、ms1 表示的时间可以大于 datetime2、ms2 表示的时间，
-//	*        此时前者表示结束时间，后者表示起始时间。
-//	*        本接口对数据类型为 RTDB_COOR、RTDB_BLOB、RTDB_STRING 的标签点无效。
+// RawRtdbhGetArchivedValuesInBatches64Warp 开始以分段返回方式读取一段时间内的储存数据
+//   - \param handle        连接句柄
+//   - \param id            整型，输入，标签点标识
+//   - \param datetime1     整型，输入，表示起始时间秒数。如果为 0，表示从存档中最早时间的数据开始读取
+//   - \param ms1           短整型，输入，如果 id 指定的标签点时间精度为纳秒，表示起始时间对应的纳秒；否则忽略
+//   - \param datetime2     整型，输入，表示结束时间秒数。如果为 0，表示读取直至存档中数据的最后时间
+//   - \param ms2           短整型，输入，如果 id 指定的标签点时间精度为纳秒，表示结束时间对应的纳秒；否则忽略
+//   - \param count         整型，输出，返回上述时间范围内的存储值数量
+//   - \param batch_count   整型，输出，每次分段返回的长度，用于继续调用 rtdbh_get_next_archived_values 接口
+//   - \remark 由 datetime1、ms1 表示的时间可以大于 datetime2、ms2 表示的时间，
+//   - 此时前者表示结束时间，后者表示起始时间。
+//   - 本接口对数据类型为 RTDB_COOR、RTDB_BLOB、RTDB_STRING 的标签点无效。
 //
 // rtdb_error RTDBAPI_CALLRULE rtdbh_get_archived_values_in_batches64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime1, rtdb_subtime_type subtime1, rtdb_timestamp_type datetime2, rtdb_subtime_type subtime2, rtdb_int32* count, rtdb_int32* batch_count)
-// */
 func RawRtdbhGetArchivedValuesInBatches64Warp() {}
 
-// /*
-//
-//	*
-//	* \brief 分段读取一段时间内的储存数据
-//	*
-//	* \param handle        连接句柄
-//	* \param id            整型，输入，标签点标识
-//	* \param count         整形，输入/输出，
-//	*                        输入时表示 datetimes、ms、values、states、qualities 的长度；
-//	*                        输出时表示实际得到的存储值个数。
-//	* \param datetimes     整型数组，输出，历史数值时间列表,
-//	*                        表示距离1970年1月1日08:00:00的秒数
-//	* \param ms            短整型数组，输出，历史数值时间列表，
-//	*                        对于时间精度为纳秒的标签点，返回相应的纳秒值；否则为 0
-//	* \param values        双精度浮点型数组，输出，历史浮点型数值列表，
-//	*                        对于数据类型为 RTDB_REAL16、RTDB_REAL32、RTDB_REAL64 的标签点，返回相应的历史存储值；否则为 0
-//	* \param states        64 位整型数组，输出，历史整型数值列表，
-//	*                        对于数据类型为 RTDB_BOOL、RTDB_UINT8、RTDB_INT8、RTDB_CHAR、RTDB_UINT16、RTDB_INT16、
-//	*                        RTDB_UINT32、RTDB_INT32、RTDB_INT64 的标签点，返回相应的历史存储值；否则为 0
-//	* \param qualities     短整型数组，输出，历史数值品质列表，数据库预定义的品质参见枚举 RTDB_QUALITY
-//	* \remark 用户须保证 datetimes、ms、values、states、qualities 的长度与 count 相符，
-//	*        且 count 不能小于 rtdbh_get_archived_values_in_batches 接口中返回的 batch_count 的值，
-//	*        当返回 RtE_BATCH_END 表示全部数据获取完毕。
-//	*        本接口对数据类型为 RTDB_COOR、RTDB_BLOB、RTDB_STRING 的标签点无效。
+// RawRtdbhGetNextArchivedValues64Warp 分段读取一段时间内的储存数据
+//   - \param handle        连接句柄
+//   - \param id            整型，输入，标签点标识
+//   - \param count         整形，输入/输出，
+//   - 输入时表示 datetimes、ms、values、states、qualities 的长度；
+//   - 输出时表示实际得到的存储值个数。
+//   - \param datetimes     整型数组，输出，历史数值时间列表,
+//   - 表示距离1970年1月1日08:00:00的秒数
+//   - \param ms            短整型数组，输出，历史数值时间列表，
+//   - 对于时间精度为纳秒的标签点，返回相应的纳秒值；否则为 0
+//   - \param values        双精度浮点型数组，输出，历史浮点型数值列表，
+//   - 对于数据类型为 RTDB_REAL16、RTDB_REAL32、RTDB_REAL64 的标签点，返回相应的历史存储值；否则为 0
+//   - \param states        64 位整型数组，输出，历史整型数值列表，
+//   - 对于数据类型为 RTDB_BOOL、RTDB_UINT8、RTDB_INT8、RTDB_CHAR、RTDB_UINT16、RTDB_INT16、
+//   - RTDB_UINT32、RTDB_INT32、RTDB_INT64 的标签点，返回相应的历史存储值；否则为 0
+//   - \param qualities     短整型数组，输出，历史数值品质列表，数据库预定义的品质参见枚举 RTDB_QUALITY
+//   - \remark 用户须保证 datetimes、ms、values、states、qualities 的长度与 count 相符，
+//   - 且 count 不能小于 rtdbh_get_archived_values_in_batches 接口中返回的 batch_count 的值，
+//   - 当返回 RtE_BATCH_END 表示全部数据获取完毕。
+//   - 本接口对数据类型为 RTDB_COOR、RTDB_BLOB、RTDB_STRING 的标签点无效。
 //
 // rtdb_error RTDBAPI_CALLRULE rtdbh_get_next_archived_values64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32* count, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float64* values, rtdb_int64* states, rtdb_int16* qualities)
-// */
 func RawRtdbhGetNextArchivedValues64Warp() {}
 
-// /*
-//
-//	*
-//	* \brief 获取单个标签点的单调递增时间序列历史插值。
-//	*
-//	* \param handle        连接句柄
-//	* \param id            整型，输入，标签点标识
-//	* \param count         整型，输入，表示 datetimes、ms、values、states、qualities 的长度。
-//	* \param datetimes     整型数组，输入，表示需要的单调递增时间列表，
-//	*                        为距离1970年1月1日08:00:00的秒数
-//	* \param ms            短整型数组，输入，对于时间精度为纳秒的标签点，
-//	*                        表示需要的单调递增时间对应的纳秒值；否则忽略。
-//	* \param values        双精度浮点型数组，输出，历史浮点型数值列表，
-//	*                        对于数据类型为 RTDB_REAL16、RTDB_REAL32、RTDB_REAL64 的标签点，返回相应的历史插值；否则为 0
-//	* \param states        64 位整型数组，输出，历史整型数值列表，
-//	*                        对于数据类型为 RTDB_BOOL、RTDB_UINT8、RTDB_INT8、RTDB_CHAR、RTDB_UINT16、RTDB_INT16、
-//	*                        RTDB_UINT32、RTDB_INT32、RTDB_INT64 的标签点，返回相应的历史插值；否则为 0
-//	* \param qualities     短整型数组，输出，历史数值品质列表，数据库预定义的品质参见枚举 RTDB_QUALITY
-//	* \remark 用户须保证 datetimes、ms、values、states、qualities 的长度与 count 相符，
-//	*        本接口对数据类型为 RTDB_COOR、RTDB_BLOB、RTDB_STRING 的标签点无效。
+// RawRtdbhGetTimedValues64Warp 获取单个标签点的单调递增时间序列历史插值。
+//   - \param handle        连接句柄
+//   - \param id            整型，输入，标签点标识
+//   - \param count         整型，输入，表示 datetimes、ms、values、states、qualities 的长度。
+//   - \param datetimes     整型数组，输入，表示需要的单调递增时间列表，
+//   - 为距离1970年1月1日08:00:00的秒数
+//   - \param ms            短整型数组，输入，对于时间精度为纳秒的标签点，
+//   - 表示需要的单调递增时间对应的纳秒值；否则忽略。
+//   - \param values        双精度浮点型数组，输出，历史浮点型数值列表，
+//   - 对于数据类型为 RTDB_REAL16、RTDB_REAL32、RTDB_REAL64 的标签点，返回相应的历史插值；否则为 0
+//   - \param states        64 位整型数组，输出，历史整型数值列表，
+//   - 对于数据类型为 RTDB_BOOL、RTDB_UINT8、RTDB_INT8、RTDB_CHAR、RTDB_UINT16、RTDB_INT16、
+//   - RTDB_UINT32、RTDB_INT32、RTDB_INT64 的标签点，返回相应的历史插值；否则为 0
+//   - \param qualities     短整型数组，输出，历史数值品质列表，数据库预定义的品质参见枚举 RTDB_QUALITY
+//   - \remark 用户须保证 datetimes、ms、values、states、qualities 的长度与 count 相符，
+//   - 本接口对数据类型为 RTDB_COOR、RTDB_BLOB、RTDB_STRING 的标签点无效。
 //
 // rtdb_error RTDBAPI_CALLRULE rtdbh_get_timed_values64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32 count, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, rtdb_float64* values, rtdb_int64* states, rtdb_int16* qualities)
-// */
 func RawRtdbhGetTimedValues64Warp() {}
 
-// /*
-//
-//	*
-//	* \brief 获取单个坐标标签点的单调递增时间序列历史插值。
-//	*
-//	* \param handle        连接句柄
-//	* \param id            整型，输入，标签点标识
-//	* \param count         整型，输入，表示 datetimes、ms、x、y、qualities 的长度。
-//	* \param datetimes     整型数组，输入，表示需要的单调递增时间列表，
-//	*                        为距离1970年1月1日08:00:00的秒数
-//	* \param ms            短整型数组，输入，对于时间精度为纳秒的标签点，
-//	*                        表示需要的单调递增时间对应的纳秒值；否则忽略。
-//	* \param x             单精度浮点型数组，输出，浮点型横坐标历史插值数值列表
-//	* \param y             单精度浮点型数组，输出，浮点型纵坐标历史插值数值列表
-//	* \param qualities     短整型数组，输出，历史数值品质列表，数据库预定义的品质参见枚举 RTDB_QUALITY
-//	* \remark 用户须保证 datetimes、ms、x、y、qualities 的长度与 count 相符，
-//	*        本接口只对数据类型为 RTDB_COOR 的标签点有效。
+// RawRtdbhGetTimedCoorValues64Warp 获取单个坐标标签点的单调递增时间序列历史插值。
+//   - \param handle        连接句柄
+//   - \param id            整型，输入，标签点标识
+//   - \param count         整型，输入，表示 datetimes、ms、x、y、qualities 的长度。
+//   - \param datetimes     整型数组，输入，表示需要的单调递增时间列表，
+//   - 为距离1970年1月1日08:00:00的秒数
+//   - \param ms            短整型数组，输入，对于时间精度为纳秒的标签点，
+//   - 表示需要的单调递增时间对应的纳秒值；否则忽略。
+//   - \param x             单精度浮点型数组，输出，浮点型横坐标历史插值数值列表
+//   - \param y             单精度浮点型数组，输出，浮点型纵坐标历史插值数值列表
+//   - \param qualities     短整型数组，输出，历史数值品质列表，数据库预定义的品质参见枚举 RTDB_QUALITY
+//   - \remark 用户须保证 datetimes、ms、x、y、qualities 的长度与 count 相符，
+//   - 本接口只对数据类型为 RTDB_COOR 的标签点有效。
 //
 // rtdb_error RTDBAPI_CALLRULE rtdbh_get_timed_coor_values64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32 count, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, rtdb_float32* x, rtdb_float32* y, rtdb_int16* qualities)
-// */
 func RawRtdbhGetTimedCoorValues64Warp() {}
 
-// /*
-//
-//	*
-//	* \brief 获取单个标签点一段时间内等间隔历史插值
-//	*
+//	RawRtdbhGetInterpoValues64Warp 获取单个标签点一段时间内等间隔历史插值
 //	* \param handle        连接句柄
 //	* \param id            整型，输入，标签点标识
 //	* \param count         整型，输入/输出，
@@ -5451,13 +5271,10 @@ func RawRtdbhGetTimedCoorValues64Warp() {}
 //	*        本接口对数据类型为 RTDB_COOR、RTDB_BLOB、RTDB_STRING 的标签点无效。
 //
 // rtdb_error RTDBAPI_CALLRULE rtdbh_get_interpo_values64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32* count, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float64* values, rtdb_int64* states, rtdb_int16* qualities)
-// */
 func RawRtdbhGetInterpoValues64Warp() {}
 
-// /*
+// RawRtdbhGetIntervalValues64Warp 读取单个标签点某个时刻之后一定数量的等间隔内插值替换的历史数值
 //
-//	*
-//	* \brief 读取单个标签点某个时刻之后一定数量的等间隔内插值替换的历史数值
 //	*
 //	* \param handle        连接句柄
 //	* \param id            整型，输入，标签点标识
@@ -5482,13 +5299,10 @@ func RawRtdbhGetInterpoValues64Warp() {}
 //	*        本接口对数据类型为 RTDB_COOR、RTDB_BLOB、RTDB_STRING 的标签点无效。
 //
 // rtdb_error RTDBAPI_CALLRULE rtdbh_get_interval_values64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int64 interval, rtdb_int32 count, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float64* values, rtdb_int64* states, rtdb_int16* qualities)
-// */
 func RawRtdbhGetIntervalValues64Warp() {}
 
-// /*
+// RawRtdbhGetSingleValue64Warp 读取单个标签点某个时间的历史数据
 //
-//	*
-//	* \brief 读取单个标签点某个时间的历史数据
 //	*
 //	* \param handle        连接句柄
 //	* \param id            整型，输入，标签点标识
@@ -5511,13 +5325,10 @@ func RawRtdbhGetIntervalValues64Warp() {}
 //	* \remark 本接口对数据类型为 RTDB_COOR、RTDB_BLOB、RTDB_STRING 的标签点无效。
 //
 // rtdb_error RTDBAPI_CALLRULE rtdbh_get_single_value64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32 mode, rtdb_timestamp_type* datetime, rtdb_subtime_type* subtime, rtdb_float64* value, rtdb_int64* state, rtdb_int16* quality)
-// */
 func RawRtdbhGetSingleValue64Warp() {}
 
-// /*
+// RawRtdbhGetSingleCoorValue64Warp 读取单个标签点某个时间的坐标型历史数据
 //
-//	*
-//	* \brief 读取单个标签点某个时间的坐标型历史数据
 //	*
 //	* \param handle        连接句柄
 //	* \param id            整型，输入，标签点标识
@@ -5537,13 +5348,10 @@ func RawRtdbhGetSingleValue64Warp() {}
 //	* \remark 本接口只对数据类型为 RTDB_COOR 的标签点有效。
 //
 // rtdb_error RTDBAPI_CALLRULE rtdbh_get_single_coor_value64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32 mode, rtdb_timestamp_type* datetime, rtdb_subtime_type* subtime, rtdb_float32* x, rtdb_float32* y, rtdb_int16* quality)
-// */
 func RawRtdbhGetSingleCoorValue64Warp() {}
 
-// /*
+// RawRtdbhGetSingleBlobValue64Warp 读取单个标签点某个时间的二进制/字符串型历史数据
 //
-//	*
-//	* \brief 读取单个标签点某个时间的二进制/字符串型历史数据
 //	*
 //	* \param handle        连接句柄
 //	* \param id            整型，输入，标签点标识
@@ -5563,12 +5371,9 @@ func RawRtdbhGetSingleCoorValue64Warp() {}
 //	* \remark 本接口只对数据类型为 RTDB_BLOB、RTDB_STRING 的标签点有效。
 //
 // rtdb_error RTDBAPI_CALLRULE rtdbh_get_single_blob_value64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32 mode, rtdb_timestamp_type* datetime, rtdb_subtime_type* subtime, rtdb_byte* blob, rtdb_length_type* len, rtdb_int16* quality)
-// */
 func RawRtdbhGetSingleBlobValue64Warp() {}
 
-// /*
-//   - \brief 读取单个标签点一段时间的二进制/字符串型历史数据
-//     *
+// RawRtdbhGetArchivedBlobValues64Warp 读取单个标签点一段时间的二进制/字符串型历史数据
 //   - \param handle        连接句柄
 //   - \param id            整型，输入，标签点标识
 //   - RTDB_EXACT 取指定时间的数据，如果没有则返回错误 RtE_DATA_NOT_FOUND；
@@ -5591,45 +5396,37 @@ func RawRtdbhGetSingleBlobValue64Warp() {}
 //   - \remark 本接口只对数据类型为 RTDB_BLOB、RTDB_STRING 的标签点有效。
 //
 // rtdb_error RTDBAPI_CALLRULE rtdbh_get_archived_blob_values64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32* count, rtdb_timestamp_type datetime1, rtdb_subtime_type subtime1, rtdb_timestamp_type datetime2, rtdb_subtime_type subtime2, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_length_type* lens, rtdb_byte* const* blobs, rtdb_int16* qualities)
-// */
 func RawRtdbhGetArchivedBlobValues64Warp() {}
 
-// /*
-//
-//	*
-//	* \brief 读取并模糊搜索单个标签点一段时间的二进制/字符串型历史数据
-//	*
-//	* \param handle        连接句柄
-//	* \param id            整型，输入，标签点标识
-//	*                        RTDB_EXACT 取指定时间的数据，如果没有则返回错误 RtE_DATA_NOT_FOUND；
-//	* \param count         整型，输入/输出，输入表示想要查询多少数据
-//	*                        输出表示实际查到多少数据
-//	* \param datetime1     整型，输入，表示开始时间秒数；
-//	* \param ms1           短整型，输入，指定的标签点时间精度为纳秒，
-//	*                        表示时间纳秒数；
-//	* \param datetime2     整型，输入,表示结束时间秒数；
-//	* \param ms2           短整型，输入，指定的标签点时间精度为纳秒，
-//	*                        表示时间纳秒数；
-//	* \param filter        字符串，输入，支持通配符的模糊搜索字符串，多个模糊搜索的条件通过空格分隔，只针对string类型有效
-//	*                        当filter为空指针时，表示不进行过滤,
-//	*                        限制最大长度为RTDB_EQUATION_SIZE-1，超过此长度会返回错误
-//	* \param datetimes     整型数组，输出，表示实际取得的历史数值对应的时间秒数。
-//	* \param ms            短整型，输出，如果 id 指定的标签点时间精度为纳秒，
-//	*                        表示实际取得的历史数值时间纳秒数。
-//	* \param lens          短整型数组，输入/输出，输入时表示 blob 的长度，
-//	*                        输出时表示实际获取的二进制/字符串数据长度。
-//	*                        当blobs为空指针时，表示只获取每条数据的长度，此时会忽略输入的lens
-//	* \param blobs         字节型数组，输出，二进制/字符串历史值。可以设置为空指针，表示只获取每条数据的长度
-//	* \param qualities     短整型数组，输出，历史值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
-//	* \remark 本接口只对数据类型为 RTDB_BLOB、RTDB_STRING 的标签点有效。
+// RawRtdbhGetArchivedBlobValuesFilt64Warp 读取并模糊搜索单个标签点一段时间的二进制/字符串型历史数据
+//   - \param handle        连接句柄
+//   - \param id            整型，输入，标签点标识
+//   - RTDB_EXACT 取指定时间的数据，如果没有则返回错误 RtE_DATA_NOT_FOUND；
+//   - \param count         整型，输入/输出，输入表示想要查询多少数据
+//   - 输出表示实际查到多少数据
+//   - \param datetime1     整型，输入，表示开始时间秒数；
+//   - \param ms1           短整型，输入，指定的标签点时间精度为纳秒，
+//   - 表示时间纳秒数；
+//   - \param datetime2     整型，输入,表示结束时间秒数；
+//   - \param ms2           短整型，输入，指定的标签点时间精度为纳秒，
+//   - 表示时间纳秒数；
+//   - \param filter        字符串，输入，支持通配符的模糊搜索字符串，多个模糊搜索的条件通过空格分隔，只针对string类型有效
+//   - 当filter为空指针时，表示不进行过滤,
+//   - 限制最大长度为RTDB_EQUATION_SIZE-1，超过此长度会返回错误
+//   - \param datetimes     整型数组，输出，表示实际取得的历史数值对应的时间秒数。
+//   - \param ms            短整型，输出，如果 id 指定的标签点时间精度为纳秒，
+//   - 表示实际取得的历史数值时间纳秒数。
+//   - \param lens          短整型数组，输入/输出，输入时表示 blob 的长度，
+//   - 输出时表示实际获取的二进制/字符串数据长度。
+//   - 当blobs为空指针时，表示只获取每条数据的长度，此时会忽略输入的lens
+//   - \param blobs         字节型数组，输出，二进制/字符串历史值。可以设置为空指针，表示只获取每条数据的长度
+//   - \param qualities     短整型数组，输出，历史值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
+//   - \remark 本接口只对数据类型为 RTDB_BLOB、RTDB_STRING 的标签点有效。
 //
 // rtdb_error RTDBAPI_CALLRULE rtdbh_get_archived_blob_values_filt64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32* count, rtdb_timestamp_type datetime1, rtdb_subtime_type subtime1, rtdb_timestamp_type datetime2, rtdb_subtime_type subtime2, const char* filter, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_length_type* lens, rtdb_byte* const* blobs, rtdb_int16* qualities)
-// */
 func RawRtdbhGetArchivedBlobValuesFilt64Warp() {}
 
-// /*
-//   - \brief 读取单个标签点某个时间的datetime历史数据
-//     *
+// RawRtdbhGetSingleDatetimeValue64Warp 读取单个标签点某个时间的datetime历史数据
 //   - \param handle        连接句柄
 //   - \param id            整型，输入，标签点标识
 //   - \param mode          整型，输入，取值 RTDB_NEXT、RTDB_PREVIOUS、RTDB_EXACT 之一：
@@ -5649,12 +5446,9 @@ func RawRtdbhGetArchivedBlobValuesFilt64Warp() {}
 //   - \remark 本接口只对数据类型为 RTDB_DATETIME 的标签点有效。
 //
 // rtdb_error RTDBAPI_CALLRULE rtdbh_get_single_datetime_value64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32 mode, rtdb_timestamp_type* datetime, rtdb_subtime_type* subtime, rtdb_byte* dtblob, rtdb_length_type* dtlen, rtdb_int16* quality, rtdb_int16 type)
-// */
 func RawRtdbhGetSingleDatetimeValue64Warp() {}
 
-// /*
-//   - \brief 读取单个标签点一段时间的时间类型历史数据
-//     *
+// RawRtdbhGetArchivedDatetimeValues64Warp 读取单个标签点一段时间的时间类型历史数据
 //   - \param handle        连接句柄
 //   - \param id            整型，输入，标签点标识
 //   - RTDB_EXACT 取指定时间的数据，如果没有则返回错误 RtE_DATA_NOT_FOUND；
@@ -5678,12 +5472,9 @@ func RawRtdbhGetSingleDatetimeValue64Warp() {}
 //   - \remark 本接口只对数据类型为 RTDB_DATETIME 的标签点有效。
 //
 // rtdb_error RTDBAPI_CALLRULE rtdbh_get_archived_datetime_values64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32* count, rtdb_timestamp_type datetime1, rtdb_subtime_type subtime1, rtdb_timestamp_type datetime2, rtdb_subtime_type subtime2, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_length_type* lens, rtdb_byte* const* blobs, rtdb_int16* qualities, rtdb_int16 type)
-// */
 func RawRtdbhGetArchivedDatetimeValues64Warp() {}
 
-// /*
-//   - \brief 写入批量标签点批量时间型历史存储数据
-//     *
+// RawRtdbhPutArchivedDatetimeValues64Warp 写入批量标签点批量时间型历史存储数据
 //   - \param handle        连接句柄
 //   - \param count         整型，输入/输出，
 //   - 输入时表示 ids、datetimes、ms、dtlens、dtvalues、qualities、errors 的长度，
@@ -5702,12 +5493,9 @@ func RawRtdbhGetArchivedDatetimeValues64Warp() {}
 //   - 如果 datetimes、ms 标识的数据已经存在，其值将被替换。
 //
 // rtdb_error RTDBAPI_CALLRULE rtdbh_put_archived_datetime_values64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, const rtdb_byte* const* dtvalues, const rtdb_length_type* dtlens, const rtdb_int16* qualities, rtdb_error* errors)
-// */
 func RawRtdbhPutArchivedDatetimeValues64Warp() {}
 
-// /*
-//   - \brief 获取单个标签点一段时间内的统计值。
-//     *
+// RawRtdbhSummaryDataWarp 获取单个标签点一段时间内的统计值。
 //   - \param handle            连接句柄
 //   - \param id                整型，输入，标签点标识
 //   - \param datetime1         整型，输入/输出，输入时表示起始时间秒数。
@@ -5732,53 +5520,46 @@ func RawRtdbhPutArchivedDatetimeValues64Warp() {}
 //   - 本接口对数据类型为 RTDB_COOR、RTDB_BLOB、RTDB_STRING 的标签点无效。
 //
 // rtdb_error RTDBAPI_CALLRULE rtdbh_summary_data_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime1, rtdb_subtime_type subtime1, rtdb_timestamp_type datetime2, rtdb_subtime_type subtime2, RTDB_SUMMARY_DATA* summary_data)
-// */
 func RawRtdbhSummaryDataWarp() {}
 
-// /*
-// *
-//   - 命名：rtdbh_summary_in_batches
-//   - \brief 分批获取单一标签点一段时间内的统计值
-//     *
-//   - \param handle            连接句柄
-//   - \param id                整型，输入，标签点标识
-//   - \param count             整形，输入/输出，输入时表示 datatimes1、ms1、datatimes2、ms2、
-//   - max_values、min_values、total_values、calc_avgs、power_avgs、errors 的长度，
-//   - 即分段的个数；输出时表示成功取得统计值的分段个数。
-//   - \param interval          64 位整型，输入，分段时间间隔，单位为纳秒。
-//   - 如果为纳秒点，输入时间必须大于1纳秒，如果为秒级点，则必须大于1000000000纳秒。
-//   - \param datetimes1        整型数组，输入/输出，输入时第一个元素表示起始时间秒数。
-//   - 如果为 0，表示从存档中最早时间的数据开始进行统计。
-//   - 输出时返回各个分段对应的最大值的时间秒数。
-//   - \param ms1               短整型数组，输入/输出，如果 id 指定的标签点时间精度为纳秒，
-//   - 第一个元素表示起始时间对应的纳秒，
-//   - 输出时返回各个分段对应的最大值的时间纳秒数；否则忽略，返回值为 0
-//   - \param datetimes2        整型数组，输入/输出，输入时第一个元素表示结束时间秒数。
-//   - 如果为 0，表示统计到存档中最近时间的数据为止。
-//   - 输出时返回各个分段对应的最小值的时间秒数。
-//   - \param ms2               短整型数组，如果 id 指定的标签点时间精度为纳秒，
-//   - 第一个元素表示结束时间对应的纳秒，
-//   - 输出时返回各个分段对应的最小值的时间纳秒数；否则忽略，返回值为 0
-//   - \param max_values        双精度浮点型数组，输出，表示统计时间段内的最大数值。
-//   - \param min_values        双精度浮点型数组，输出，表示统计时间段内的最小数值。
-//   - \param total_values      双精度浮点型数组，输出，表示统计时间段内的累计值，结果的单位为标签点的工程单位。
-//   - \param calc_avgs         双精度浮点型数组，输出，表示统计时间段内的算术平均值。
-//   - \param power_avgs        双精度浮点型数组，输出，表示统计时间段内的加权平均值。
-//   - \param errors            无符号整型数组，输出，表示各个分段取得统计值的返回值。
-//   - \remark 由 datetimes1[0]、ms1[0] 表示的时间可以大于 datetimes2[0]、ms2[0] 表示的时间，
-//   - 此时前者表示结束时间，后者表示起始时间。
-//   - 如果输出的最大值或最小值的时间戳秒值为 0，
-//   - 则表明仅有累计值和加权平均值输出有效，其余统计结果无效。
-//   - 本接口对数据类型为 RTDB_COOR、RTDB_BLOB、RTDB_STRING 的标签点无效。
+// RawRtdbhSummaryDataInBatchesWarp 分批获取单一标签点一段时间内的统计值
+//
+//	  *
+//	- \param handle            连接句柄
+//	- \param id                整型，输入，标签点标识
+//	- \param count             整形，输入/输出，输入时表示 datatimes1、ms1、datatimes2、ms2、
+//	- max_values、min_values、total_values、calc_avgs、power_avgs、errors 的长度，
+//	- 即分段的个数；输出时表示成功取得统计值的分段个数。
+//	- \param interval          64 位整型，输入，分段时间间隔，单位为纳秒。
+//	- 如果为纳秒点，输入时间必须大于1纳秒，如果为秒级点，则必须大于1000000000纳秒。
+//	- \param datetimes1        整型数组，输入/输出，输入时第一个元素表示起始时间秒数。
+//	- 如果为 0，表示从存档中最早时间的数据开始进行统计。
+//	- 输出时返回各个分段对应的最大值的时间秒数。
+//	- \param ms1               短整型数组，输入/输出，如果 id 指定的标签点时间精度为纳秒，
+//	- 第一个元素表示起始时间对应的纳秒，
+//	- 输出时返回各个分段对应的最大值的时间纳秒数；否则忽略，返回值为 0
+//	- \param datetimes2        整型数组，输入/输出，输入时第一个元素表示结束时间秒数。
+//	- 如果为 0，表示统计到存档中最近时间的数据为止。
+//	- 输出时返回各个分段对应的最小值的时间秒数。
+//	- \param ms2               短整型数组，如果 id 指定的标签点时间精度为纳秒，
+//	- 第一个元素表示结束时间对应的纳秒，
+//	- 输出时返回各个分段对应的最小值的时间纳秒数；否则忽略，返回值为 0
+//	- \param max_values        双精度浮点型数组，输出，表示统计时间段内的最大数值。
+//	- \param min_values        双精度浮点型数组，输出，表示统计时间段内的最小数值。
+//	- \param total_values      双精度浮点型数组，输出，表示统计时间段内的累计值，结果的单位为标签点的工程单位。
+//	- \param calc_avgs         双精度浮点型数组，输出，表示统计时间段内的算术平均值。
+//	- \param power_avgs        双精度浮点型数组，输出，表示统计时间段内的加权平均值。
+//	- \param errors            无符号整型数组，输出，表示各个分段取得统计值的返回值。
+//	- \remark 由 datetimes1[0]、ms1[0] 表示的时间可以大于 datetimes2[0]、ms2[0] 表示的时间，
+//	- 此时前者表示结束时间，后者表示起始时间。
+//	- 如果输出的最大值或最小值的时间戳秒值为 0，
+//	- 则表明仅有累计值和加权平均值输出有效，其余统计结果无效。
+//	- 本接口对数据类型为 RTDB_COOR、RTDB_BLOB、RTDB_STRING 的标签点无效。
 //
 // rtdb_error RTDBAPI_CALLRULE rtdbh_summary_data_in_batches_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32* count, rtdb_int64 interval, rtdb_timestamp_type datetime1, rtdb_subtime_type subtime1, rtdb_timestamp_type datetime2, rtdb_subtime_type subtime2, RTDB_SUMMARY_DATA* summary_datas, rtdb_error* errors)
-// */
 func RawRtdbhSummaryDataInBatchesWarp() {}
 
-// /*
-//
-//	*
-//	* \brief 获取单个标签点一段时间内用于绘图的历史数据
+//	RawRtdbhGetPlotValues64Warp 获取单个标签点一段时间内用于绘图的历史数据
 //	*
 //	* \param handle        连接句柄
 //	* \param id            整型，输入，标签点标识
@@ -5812,12 +5593,9 @@ func RawRtdbhSummaryDataInBatchesWarp() {}
 //	*        本接口对数据类型为 RTDB_COOR、RTDB_BLOB、RTDB_STRING 的标签点无效。
 //
 // rtdb_error RTDBAPI_CALLRULE rtdbh_get_plot_values64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32 interval, rtdb_int32* count, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float64* values, rtdb_int64* states, rtdb_int16* qualities)
-// */
 func RawRtdbhGetPlotValues64Warp() {}
 
-// /*
-// * \brief 获取批量标签点在某一时间的历史断面数据
-// *
+// RawRtdbhGetCrossSectionValues64Warp 获取批量标签点在某一时间的历史断面数据
 // * \param handle        连接句柄
 // * \param ids           整型数组，输入，标签点标识列表
 // * \param mode          整型，输入，取值 RTDB_NEXT、RTDB_PREVIOUS、RTDB_EXACT、RTDB_INTER 之一：
@@ -5841,13 +5619,9 @@ func RawRtdbhGetPlotValues64Warp() {}
 // * \remark 用户须保证 ids、datetimes、ms、values、states、qualities 的长度与 count 一致，
 // *        本接口对数据类型为 RTDB_COOR、RTDB_BLOB、RTDB_STRING 的标签点无效。
 // rtdb_error RTDBAPI_CALLRULE rtdbh_get_cross_section_values64_warp(rtdb_int32 handle, const rtdb_int32* ids, rtdb_int32 mode, rtdb_int32 count, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float64* values, rtdb_int64* states, rtdb_int16* qualities, rtdb_error* errors)
-// */
 func RawRtdbhGetCrossSectionValues64Warp() {}
 
-// /*
-//   - 命名：rtdbh_get_archived_values_filt
-//   - 功能：读取单个标签点在一段时间内经复杂条件筛选后的历史储存值
-//     *
+// RawRtdbhGetArchivedValuesFilt64Warp 读取单个标签点在一段时间内经复杂条件筛选后的历史储存值
 //   - \param handle        连接句柄
 //   - \param id            整型，输入，标签点标识
 //   - \param filter        字符串，输入，由算术、逻辑运算符组成的复杂条件表达式，
@@ -5877,179 +5651,158 @@ func RawRtdbhGetCrossSectionValues64Warp() {}
 //   - 本接口对数据类型为 RTDB_COOR、RTDB_BLOB、RTDB_STRING 的标签点无效。
 //
 // rtdb_error RTDBAPI_CALLRULE rtdbh_get_archived_values_filt64_warp(rtdb_int32 handle, rtdb_int32 id, const char* filter, rtdb_int32* count, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float64* values, rtdb_int64* states, rtdb_int16* qualities)
-// */
 func RawRtdbhGetArchivedValuesFilt64Warp() {}
 
-// /*
+// RawRtdbhGetIntervalValuesFilt64Warp 读取单个标签点某个时刻之后经复杂条件筛选后一定数量的等间隔内插值替换的历史数值
 //
-//	*
-//	* \brief 读取单个标签点某个时刻之后经复杂条件筛选后一定数量的等间隔内插值替换的历史数值
-//	*
-//	* \param handle        连接句柄
-//	* \param id            整型，输入，标签点标识
-//	* \param filter        字符串，输入，由算术、逻辑运算符组成的复杂条件表达式，
-//	*                        长度不得超过 RTDB_EQUATION_SIZE，长度为 0 则不进行条件筛选。
-//	* \param interval      整型，输入，插值时间间隔，单位为纳秒
-//	* \param count         整型，输入，表示 datetimes、ms、values、states、qualities 的长度，
-//	*                        即需要的插值个数。
-//	* \param datetimes     整型数组，输入/输出，
-//	*                        输入时第一个元素表示起始时间秒数；
-//	*                        输出时表示对应的历史数值时间秒数。
-//	* \param ms            短整型数组，输入/输出，如果 id 指定的标签点时间精度为纳秒，
-//	*                        则输入时第一个元素表示起始时间纳秒；
-//	*                        输出时表示对应的历史数值时间纳秒。
-//	*                        否则忽略输入，输出时为 0。
-//	* \param values        双精度浮点数数组，输出，浮点型历史插值数值列表
-//	*                        对于数据类型为 RTDB_REAL16、RTDB_REAL32、RTDB_REAL64 的标签点，存放相应的历史插值；否则为 0
-//	* \param states        64 位整数数组，输出，整型历史插值数值列表，
-//	*                        对于数据类型为 RTDB_BOOL、RTDB_UINT8、RTDB_INT8、RTDB_CHAR、RTDB_UINT16、RTDB_INT16、
-//	*                        RTDB_UINT32、RTDB_INT32、RTDB_INT64 的标签点，存放相应的历史插值；否则为 0
-//	* \param qualities     短整型数组，输出，历史插值品质列表，数据库预定义的品质参见枚举 RTDB_QUALITY
-//	* \remark 用户须保证 datetimes、ms、values、states、qualities 的长度与 count 一致，
-//	*        在输入时，datetimes、ms 中至少应有一个元素用于表示起始时间。
-//	*        本接口对数据类型为 RTDB_COOR、RTDB_BLOB、RTDB_STRING 的标签点无效。
+//   - \param handle        连接句柄
+//   - \param id            整型，输入，标签点标识
+//   - \param filter        字符串，输入，由算术、逻辑运算符组成的复杂条件表达式，
+//   - 长度不得超过 RTDB_EQUATION_SIZE，长度为 0 则不进行条件筛选。
+//   - \param interval      整型，输入，插值时间间隔，单位为纳秒
+//   - \param count         整型，输入，表示 datetimes、ms、values、states、qualities 的长度，
+//   - 即需要的插值个数。
+//   - \param datetimes     整型数组，输入/输出，
+//   - 输入时第一个元素表示起始时间秒数；
+//   - 输出时表示对应的历史数值时间秒数。
+//   - \param ms            短整型数组，输入/输出，如果 id 指定的标签点时间精度为纳秒，
+//   - 则输入时第一个元素表示起始时间纳秒；
+//   - 输出时表示对应的历史数值时间纳秒。
+//   - 否则忽略输入，输出时为 0。
+//   - \param values        双精度浮点数数组，输出，浮点型历史插值数值列表
+//   - 对于数据类型为 RTDB_REAL16、RTDB_REAL32、RTDB_REAL64 的标签点，存放相应的历史插值；否则为 0
+//   - \param states        64 位整数数组，输出，整型历史插值数值列表，
+//   - 对于数据类型为 RTDB_BOOL、RTDB_UINT8、RTDB_INT8、RTDB_CHAR、RTDB_UINT16、RTDB_INT16、
+//   - RTDB_UINT32、RTDB_INT32、RTDB_INT64 的标签点，存放相应的历史插值；否则为 0
+//   - \param qualities     短整型数组，输出，历史插值品质列表，数据库预定义的品质参见枚举 RTDB_QUALITY
+//   - \remark 用户须保证 datetimes、ms、values、states、qualities 的长度与 count 一致，
+//   - 在输入时，datetimes、ms 中至少应有一个元素用于表示起始时间。
+//   - 本接口对数据类型为 RTDB_COOR、RTDB_BLOB、RTDB_STRING 的标签点无效。
 //
 // rtdb_error RTDBAPI_CALLRULE rtdbh_get_interval_values_filt64_warp(rtdb_int32 handle, rtdb_int32 id, const char* filter, rtdb_int64 interval, rtdb_int32 count, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float64* values, rtdb_int64* states, rtdb_int16* qualities)
-// */
 func RawRtdbhGetIntervalValuesFilt64Warp() {}
 
-// /*
+// RawRtdbhGetInterpoValuesFilt64Warp 获取单个标签点一段时间内经复杂条件筛选后的等间隔插值
 //
-//	*
-//	* \brief 获取单个标签点一段时间内经复杂条件筛选后的等间隔插值
-//	*
-//	* \param handle        连接句柄
-//	* \param id            整型，输入，标签点标识
-//	* \param filter        字符串，输入，由算术、逻辑运算符组成的复杂条件表达式，
-//	*                        长度不得超过 RTDB_EQUATION_SIZE，长度为 0 则不进行条件筛选。
-//	* \param count         整型，输入/输出，
-//	*                        输入时表示 datetimes、ms、values、states、qualities 的长度，
-//	*                        即需要的插值个数；输出时返回实际得到的插值个数
-//	* \param datetimes     整型数组，输入/输出，
-//	*                        输入时第一个元素表示起始时间秒数，
-//	*                        最后一个元素表示结束时间秒数，如果为 0，表示直到数据的最后时间；
-//	*                        输出时表示对应的历史数值时间秒数。
-//	* \param ms            短整型数组，输入/输出，如果 id 指定的标签点时间精度为纳秒，
-//	*                        则输入时第一个元素表示起始时间纳秒，
-//	*                        最后一个元素表示结束时间纳秒；
-//	*                        输出时表示对应的历史数值时间纳秒。
-//	*                        否则忽略输入，输出时为 0。
-//	* \param values        双精度浮点数数组，输出，浮点型历史插值数值列表
-//	*                        对于数据类型为 RTDB_REAL16、RTDB_REAL32、RTDB_REAL64 的标签点，存放相应的历史插值；否则为 0
-//	* \param states        64 位整数数组，输出，整型历史插值数值列表，
-//	*                        对于数据类型为 RTDB_BOOL、RTDB_UINT8、RTDB_INT8、RTDB_CHAR、RTDB_UINT16、RTDB_INT16、
-//	*                        RTDB_UINT32、RTDB_INT32、RTDB_INT64 的标签点，存放相应的历史插值；否则为 0
-//	* \param qualities     短整型数组，输出，历史插值品质列表，数据库预定义的品质参见枚举 RTDB_QUALITY
-//	* \remark 用户须保证 datetimes、ms、values、states、qualities 的长度与 count 一致，
-//	*        在输入时，datetimes、ms 中至少应有一个元素，第一个元素形成的时间可以
-//	*        大于最后一个元素形成的时间，此时第一个元素表示结束时间，
-//	*        最后一个元素表示开始时间。
-//	*        本接口对数据类型为 RTDB_COOR、RTDB_BLOB、RTDB_STRING 的标签点无效。
+//   - \param handle        连接句柄
+//   - \param id            整型，输入，标签点标识
+//   - \param filter        字符串，输入，由算术、逻辑运算符组成的复杂条件表达式，
+//   - 长度不得超过 RTDB_EQUATION_SIZE，长度为 0 则不进行条件筛选。
+//   - \param count         整型，输入/输出，
+//   - 输入时表示 datetimes、ms、values、states、qualities 的长度，
+//   - 即需要的插值个数；输出时返回实际得到的插值个数
+//   - \param datetimes     整型数组，输入/输出，
+//   - 输入时第一个元素表示起始时间秒数，
+//   - 最后一个元素表示结束时间秒数，如果为 0，表示直到数据的最后时间；
+//   - 输出时表示对应的历史数值时间秒数。
+//   - \param ms            短整型数组，输入/输出，如果 id 指定的标签点时间精度为纳秒，
+//   - 则输入时第一个元素表示起始时间纳秒，
+//   - 最后一个元素表示结束时间纳秒；
+//   - 输出时表示对应的历史数值时间纳秒。
+//   - 否则忽略输入，输出时为 0。
+//   - \param values        双精度浮点数数组，输出，浮点型历史插值数值列表
+//   - 对于数据类型为 RTDB_REAL16、RTDB_REAL32、RTDB_REAL64 的标签点，存放相应的历史插值；否则为 0
+//   - \param states        64 位整数数组，输出，整型历史插值数值列表，
+//   - 对于数据类型为 RTDB_BOOL、RTDB_UINT8、RTDB_INT8、RTDB_CHAR、RTDB_UINT16、RTDB_INT16、
+//   - RTDB_UINT32、RTDB_INT32、RTDB_INT64 的标签点，存放相应的历史插值；否则为 0
+//   - \param qualities     短整型数组，输出，历史插值品质列表，数据库预定义的品质参见枚举 RTDB_QUALITY
+//   - \remark 用户须保证 datetimes、ms、values、states、qualities 的长度与 count 一致，
+//   - 在输入时，datetimes、ms 中至少应有一个元素，第一个元素形成的时间可以
+//   - 大于最后一个元素形成的时间，此时第一个元素表示结束时间，
+//   - 最后一个元素表示开始时间。
+//   - 本接口对数据类型为 RTDB_COOR、RTDB_BLOB、RTDB_STRING 的标签点无效。
 //
 // rtdb_error RTDBAPI_CALLRULE rtdbh_get_interpo_values_filt64_warp(rtdb_int32 handle, rtdb_int32 id, const char* filter, rtdb_int32* count, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float64* values, rtdb_int64* states, rtdb_int16* qualities)
-// */
 func RawRtdbhGetInterpoValuesFilt64Warp() {}
 
-// /*
+// RawRtdbhSummaryDataFiltWarp 获取单个标签点一段时间内经复杂条件筛选后的统计值
 //
-//	*
-//	* \brief 获取单个标签点一段时间内经复杂条件筛选后的统计值
-//	*
-//	* \param handle            连接句柄
-//	* \param id                整型，输入，标签点标识
-//	* \param filter            字符串，输入，由算术、逻辑运算符组成的复杂条件表达式，
-//	*                            长度不得超过 RTDB_EQUATION_SIZE，长度为 0 则不进行条件筛选。
-//	* \param datetime1         整型，输入/输出，输入时表示起始时间秒数。
-//	*                            如果为 0，表示从存档中最早时间的数据开始进行统计。
-//	*                            输出时返回最大值的时间秒数。
-//	* \param ms1               短整型，输入/输出，如果 id 指定的标签点时间精度为纳秒，
-//	*                            表示起始时间对应的纳秒，输出时表示最大值的时间纳秒数；否则忽略，返回值为 0
-//	* \param datetime2         整型，输入/输出，输入时表示结束时间秒数。
-//	*                            如果为 0，表示统计到存档中最近时间的数据为止。
-//	*                            输出时返回最小值的时间秒数。
-//	* \param ms2               短整型，如果 id 指定的标签点时间精度为纳秒，
-//	*                            表示结束时间对应的纳秒，输出时表示最小值的时间纳秒数；否则忽略，返回值为 0
-//	* \param max_value         双精度浮点型，输出，表示统计时间段内的最大数值。
-//	* \param min_value         双精度浮点型，输出，表示统计时间段内的最小数值。
-//	* \param total_value       双精度浮点型，输出，表示统计时间段内的累计值，结果的单位为标签点的工程单位。
-//	* \param calc_avg          双精度浮点型，输出，表示统计时间段内的算术平均值。
-//	* \param power_avg         双精度浮点型，输出，表示统计时间段内的加权平均值。
-//	* \remark 由 datetime1、ms1 表示的时间可以大于 datetime2、ms2 表示的时间，
-//	*        此时前者表示结束时间，后者表示起始时间。
-//	*        如果输出的最大值或最小值的时间戳秒值为 0，
-//	*        则表明仅有累计值和加权平均值输出有效，其余统计结果无效。
-//	*        本接口对数据类型为 RTDB_COOR、RTDB_BLOB、RTDB_STRING 的标签点无效。
-//
-// rtdb_error RTDBAPI_CALLRULE rtdbh_summary_data_filt_warp(rtdb_int32 handle, rtdb_int32 id, const char* filter, rtdb_timestamp_type datetime1, rtdb_subtime_type subtime1, rtdb_timestamp_type datetime2, rtdb_subtime_type subtime2, RTDB_SUMMARY_DATA* summary_data)
-// */
-func RawRtdbhSummaryDataFiltWarp() {}
-
-// /*
-// *
-//   - 命名：rtdbh_summary_filt_in_batches
-//   - 功能：分批获取单一标签点一段时间内经复杂条件筛选后的统计值
-//     *
 //   - \param handle            连接句柄
 //   - \param id                整型，输入，标签点标识
 //   - \param filter            字符串，输入，由算术、逻辑运算符组成的复杂条件表达式，
 //   - 长度不得超过 RTDB_EQUATION_SIZE，长度为 0 则不进行条件筛选。
-//   - \param count             整形，输入/输出，输入时表示 datatimes1、ms1、datatimes2、ms2、
-//   - max_values、min_values、total_values、calc_avgs、power_avgs、errors 的长度，
-//   - 即分段的个数；输出时表示成功取得统计值的分段个数。
-//   - \param interval          64 位整型，输入，分段时间间隔，单位为纳秒。
-//   - \param datetimes1        整型数组，输入/输出，输入时第一个元素表示起始时间秒数。
+//   - \param datetime1         整型，输入/输出，输入时表示起始时间秒数。
 //   - 如果为 0，表示从存档中最早时间的数据开始进行统计。
-//   - 输出时返回各个分段对应的最大值的时间秒数。
-//   - \param ms1               短整型数组，输入/输出，如果 id 指定的标签点时间精度为纳秒，
-//   - 第一个元素表示起始时间对应的纳秒，
-//   - 输出时返回各个分段对应的最大值的时间纳秒数；否则忽略，返回值为 0
-//   - \param datetimes2        整型数组，输入/输出，输入时第一个元素表示结束时间秒数。
+//   - 输出时返回最大值的时间秒数。
+//   - \param ms1               短整型，输入/输出，如果 id 指定的标签点时间精度为纳秒，
+//   - 表示起始时间对应的纳秒，输出时表示最大值的时间纳秒数；否则忽略，返回值为 0
+//   - \param datetime2         整型，输入/输出，输入时表示结束时间秒数。
 //   - 如果为 0，表示统计到存档中最近时间的数据为止。
-//   - 输出时返回各个分段对应的最小值的时间秒数。
-//   - \param ms2               短整型数组，如果 id 指定的标签点时间精度为纳秒，
-//   - 第一个元素表示结束时间对应的纳秒，
-//   - 输出时返回各个分段对应的最小值的时间纳秒数；否则忽略，返回值为 0
-//   - \param max_values        双精度浮点型数组，输出，表示统计时间段内的最大数值。
-//   - \param min_values        双精度浮点型数组，输出，表示统计时间段内的最小数值。
-//   - \param total_values      双精度浮点型数组，输出，表示统计时间段内的累计值，结果的单位为标签点的工程单位。
-//   - \param calc_avgs         双精度浮点型数组，输出，表示统计时间段内的算术平均值。
-//   - \param power_avgs        双精度浮点型数组，输出，表示统计时间段内的加权平均值。
-//   - \param errors            无符号整型数组，输出，表示各个分段取得统计值的返回值。
-//   - \remark 由 datetimes1[0]、ms1[0] 表示的时间可以大于 datetimes2[0]、ms2[0] 表示的时间，
+//   - 输出时返回最小值的时间秒数。
+//   - \param ms2               短整型，如果 id 指定的标签点时间精度为纳秒，
+//   - 表示结束时间对应的纳秒，输出时表示最小值的时间纳秒数；否则忽略，返回值为 0
+//   - \param max_value         双精度浮点型，输出，表示统计时间段内的最大数值。
+//   - \param min_value         双精度浮点型，输出，表示统计时间段内的最小数值。
+//   - \param total_value       双精度浮点型，输出，表示统计时间段内的累计值，结果的单位为标签点的工程单位。
+//   - \param calc_avg          双精度浮点型，输出，表示统计时间段内的算术平均值。
+//   - \param power_avg         双精度浮点型，输出，表示统计时间段内的加权平均值。
+//   - \remark 由 datetime1、ms1 表示的时间可以大于 datetime2、ms2 表示的时间，
 //   - 此时前者表示结束时间，后者表示起始时间。
 //   - 如果输出的最大值或最小值的时间戳秒值为 0，
 //   - 则表明仅有累计值和加权平均值输出有效，其余统计结果无效。
 //   - 本接口对数据类型为 RTDB_COOR、RTDB_BLOB、RTDB_STRING 的标签点无效。
 //
+// rtdb_error RTDBAPI_CALLRULE rtdbh_summary_data_filt_warp(rtdb_int32 handle, rtdb_int32 id, const char* filter, rtdb_timestamp_type datetime1, rtdb_subtime_type subtime1, rtdb_timestamp_type datetime2, rtdb_subtime_type subtime2, RTDB_SUMMARY_DATA* summary_data)
+func RawRtdbhSummaryDataFiltWarp() {}
+
+// RawRtdbhSummaryDataFiltInBatchesWarp 分批获取单一标签点一段时间内经复杂条件筛选后的统计值
+//
+//	  *
+//	- \param handle            连接句柄
+//	- \param id                整型，输入，标签点标识
+//	- \param filter            字符串，输入，由算术、逻辑运算符组成的复杂条件表达式，
+//	- 长度不得超过 RTDB_EQUATION_SIZE，长度为 0 则不进行条件筛选。
+//	- \param count             整形，输入/输出，输入时表示 datatimes1、ms1、datatimes2、ms2、
+//	- max_values、min_values、total_values、calc_avgs、power_avgs、errors 的长度，
+//	- 即分段的个数；输出时表示成功取得统计值的分段个数。
+//	- \param interval          64 位整型，输入，分段时间间隔，单位为纳秒。
+//	- \param datetimes1        整型数组，输入/输出，输入时第一个元素表示起始时间秒数。
+//	- 如果为 0，表示从存档中最早时间的数据开始进行统计。
+//	- 输出时返回各个分段对应的最大值的时间秒数。
+//	- \param ms1               短整型数组，输入/输出，如果 id 指定的标签点时间精度为纳秒，
+//	- 第一个元素表示起始时间对应的纳秒，
+//	- 输出时返回各个分段对应的最大值的时间纳秒数；否则忽略，返回值为 0
+//	- \param datetimes2        整型数组，输入/输出，输入时第一个元素表示结束时间秒数。
+//	- 如果为 0，表示统计到存档中最近时间的数据为止。
+//	- 输出时返回各个分段对应的最小值的时间秒数。
+//	- \param ms2               短整型数组，如果 id 指定的标签点时间精度为纳秒，
+//	- 第一个元素表示结束时间对应的纳秒，
+//	- 输出时返回各个分段对应的最小值的时间纳秒数；否则忽略，返回值为 0
+//	- \param max_values        双精度浮点型数组，输出，表示统计时间段内的最大数值。
+//	- \param min_values        双精度浮点型数组，输出，表示统计时间段内的最小数值。
+//	- \param total_values      双精度浮点型数组，输出，表示统计时间段内的累计值，结果的单位为标签点的工程单位。
+//	- \param calc_avgs         双精度浮点型数组，输出，表示统计时间段内的算术平均值。
+//	- \param power_avgs        双精度浮点型数组，输出，表示统计时间段内的加权平均值。
+//	- \param errors            无符号整型数组，输出，表示各个分段取得统计值的返回值。
+//	- \remark 由 datetimes1[0]、ms1[0] 表示的时间可以大于 datetimes2[0]、ms2[0] 表示的时间，
+//	- 此时前者表示结束时间，后者表示起始时间。
+//	- 如果输出的最大值或最小值的时间戳秒值为 0，
+//	- 则表明仅有累计值和加权平均值输出有效，其余统计结果无效。
+//	- 本接口对数据类型为 RTDB_COOR、RTDB_BLOB、RTDB_STRING 的标签点无效。
+//
 // rtdb_error RTDBAPI_CALLRULE rtdbh_summary_data_filt_in_batches_warp(rtdb_int32 handle, rtdb_int32 id, const char* filter, rtdb_int32* count, rtdb_int64 interval, rtdb_timestamp_type datetime1, rtdb_subtime_type subtime1, rtdb_timestamp_type datetime2, rtdb_subtime_type subtime2, RTDB_SUMMARY_DATA* summary_datas, rtdb_error* errors)
-// */
 func RawRtdbhSummaryDataFiltInBatchesWarp() {}
 
-// /*
+// RawRtdbhUpdateValue64Warp 修改单个标签点某一时间的历史存储值.
 //
-//	*
-//	* \brief 修改单个标签点某一时间的历史存储值.
-//	*
-//	* \param handle        连接句柄
-//	* \param id            整型，输入，标签点标识
-//	* \param datetime      整型，输入，时间秒数
-//	* \param ms            短整型，输入，如果 id 指定的标签点时间精度为纳秒，
-//	*                        表示时间纳秒数；否则忽略。
-//	* \param value         双精度浮点数，输入，浮点型历史数值
-//	*                        对于数据类型为 RTDB_REAL16、RTDB_REAL32、RTDB_REAL64 的标签点，存放新的历史值；否则忽略
-//	* \param state         64 位整数，输入，整型历史数值，
-//	*                        对于数据类型为 RTDB_BOOL、RTDB_UINT8、RTDB_INT8、RTDB_CHAR、RTDB_UINT16、RTDB_INT16、
-//	*                        RTDB_UINT32、RTDB_INT32、RTDB_INT64 的标签点，存放新的历史值；否则忽略
-//	* \param quality       短整型，输入，新的历史值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
-//	* \remark 本接口对数据类型为 RTDB_COOR、RTDB_BLOB、RTDB_STRING 的标签点无效。
+//   - \param handle        连接句柄
+//   - \param id            整型，输入，标签点标识
+//   - \param datetime      整型，输入，时间秒数
+//   - \param ms            短整型，输入，如果 id 指定的标签点时间精度为纳秒，
+//   - 表示时间纳秒数；否则忽略。
+//   - \param value         双精度浮点数，输入，浮点型历史数值
+//   - 对于数据类型为 RTDB_REAL16、RTDB_REAL32、RTDB_REAL64 的标签点，存放新的历史值；否则忽略
+//   - \param state         64 位整数，输入，整型历史数值，
+//   - 对于数据类型为 RTDB_BOOL、RTDB_UINT8、RTDB_INT8、RTDB_CHAR、RTDB_UINT16、RTDB_INT16、
+//   - RTDB_UINT32、RTDB_INT32、RTDB_INT64 的标签点，存放新的历史值；否则忽略
+//   - \param quality       短整型，输入，新的历史值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
+//   - \remark 本接口对数据类型为 RTDB_COOR、RTDB_BLOB、RTDB_STRING 的标签点无效。
 //
 // rtdb_error RTDBAPI_CALLRULE rtdbh_update_value64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime, rtdb_subtime_type subtime, rtdb_float64 value, rtdb_int64 state, rtdb_int16 quality)
-// */
 func RawRtdbhUpdateValue64Warp() {}
 
-// /*
-//   - \brief 修改单个标签点某一时间的历史存储值.
-//     *
+// RawRtdbhUpdateCoorValue64Warp 修改单个标签点某一时间的历史存储值.
+//
 //   - \param handle        连接句柄
 //   - \param id            整型，输入，标签点标识
 //   - \param datetime      整型，输入，时间秒数
@@ -6061,27 +5814,19 @@ func RawRtdbhUpdateValue64Warp() {}
 //   - \remark 本接口仅对数据类型为 RTDB_COOR 的标签点有效。
 //
 // rtdb_error RTDBAPI_CALLRULE rtdbh_update_coor_value64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime, rtdb_subtime_type subtime, rtdb_float32 x, rtdb_float32 y, rtdb_int16 quality)
-// */
 func RawRtdbhUpdateCoorValue64Warp() {}
 
-// /*
-//
-//	*
-//	* \brief 删除单个标签点某个时间的历史存储值
-//	*
-//	* \param handle        连接句柄
-//	* \param id            整型，输入，标签点标识
-//	* \param datetime      整型，输入，时间秒数
-//	* \param ms            短整型，输入，如果 id 指定的标签点时间精度为纳秒，
-//	*                        表示时间纳秒数；否则忽略。
+// RawRtdbhRemoveValue64Warp 删除单个标签点某个时间的历史存储值
+//   - \param handle        连接句柄
+//   - \param id            整型，输入，标签点标识
+//   - \param datetime      整型，输入，时间秒数
+//   - \param ms            短整型，输入，如果 id 指定的标签点时间精度为纳秒，
+//   - 表示时间纳秒数；否则忽略。
 //
 // rtdb_error RTDBAPI_CALLRULE rtdbh_remove_value64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime, rtdb_subtime_type subtime)
-// */
 func RawRtdbhRemoveValue64Warp() {}
 
-// /*
-//   - \brief 删除单个标签点一段时间内的历史存储值
-//     *
+// RawRtdbhRemoveValues64Warp 删除单个标签点一段时间内的历史存储值
 //   - \param handle        连接句柄
 //   - \param id            整型，输入，标签点标识
 //   - \param datetime1     整型，输入，表示起始时间秒数。如果为 0，表示从存档中最早时间的数据开始读取
@@ -6093,102 +5838,83 @@ func RawRtdbhRemoveValue64Warp() {}
 //   - 此时前者表示结束时间，后者表示起始时间。
 //
 // rtdb_error RTDBAPI_CALLRULE rtdbh_remove_values64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime1, rtdb_subtime_type subtime1, rtdb_timestamp_type datetime2, rtdb_subtime_type subtime2, rtdb_int32* count)
-// */
 func RawRtdbhRemoveValues64Warp() {}
 
-// /*
-//
-//	*
-//	* \brief 写入单个标签点在某一时间的历史数据。
-//	*
-//	* \param handle        连接句柄
-//	* \param id            整型，输入，标签点标识
-//	* \param datetime      整型，输入，时间秒数
-//	* \param ms            短整型，输入，如果 id 指定的标签点时间精度为纳秒，
-//	*                        表示时间纳秒数；否则忽略。
-//	* \param value         双精度浮点数，输入，浮点型历史数值
-//	*                        对于数据类型为 RTDB_REAL16、RTDB_REAL32、RTDB_REAL64 的标签点，存放历史值；否则忽略
-//	* \param state         64 位整数，输入，整型历史数值，
-//	*                        对于数据类型为 RTDB_BOOL、RTDB_UINT8、RTDB_INT8、RTDB_CHAR、RTDB_UINT16、RTDB_INT16、
-//	*                        RTDB_UINT32、RTDB_INT32、RTDB_INT64 的标签点，存放历史值；否则忽略
-//	* \param quality       短整型，输入，历史值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
-//	* \remark 本接口对数据类型为 RTDB_COOR、RTDB_BLOB、RTDB_STRING 的标签点无效。
-//	*        如果 datetimes、ms 标识的数据已经存在，其值将被替换。
-//
-// rtdb_error RTDBAPI_CALLRULE rtdbh_put_single_value64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime, rtdb_subtime_type subtime, rtdb_float64 value, rtdb_int64 state, rtdb_int16 quality)
-// */
-func RawRtdbhPutSingleValue64Warp() {}
-
-// /*
-//
-//	*
-//	* \brief 写入单个标签点在某一时间的坐标型历史数据。
-//	*
-//	* \param handle              连接句柄
-//	* \param id            整型，输入，标签点标识
-//	* \param datetime      整型，输入，时间秒数
-//	* \param ms            短整型，输入，如果 id 指定的标签点时间精度为纳秒，
-//	*                        表示时间纳秒数；否则忽略。
-//	* \param x             单精度浮点型，输入，横坐标历史数值
-//	* \param y             单精度浮点型，输入，纵坐标历史数值
-//	* \param quality       短整型，输入，历史值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
-//	* \remark 本接口对数据类型为 RTDB_COOR、RTDB_BLOB、RTDB_STRING 的标签点无效。
-//	*        如果 datetimes、ms 标识的数据已经存在，其值将被替换。
-//
-// rtdb_error RTDBAPI_CALLRULE rtdbh_put_single_coor_value64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime, rtdb_subtime_type subtime, rtdb_float32 x, rtdb_float32 y, rtdb_int16 quality)
-// */
-func RawRtdbhPutSingleCoorValue64Warp() {}
-
-// /*
-//
-//	*
-//	* \brief 写入单个二进制/字符串标签点在某一时间的历史数据
-//	*
-//	* \param handle    连接句柄
-//	* \param id        整型，输入，标签点标识
-//	* \param datetime  整型，输入，数值时间列表,
-//	*                    表示距离1970年1月1日08:00:00的秒数
-//	* \param ms        短整型，输入，历史数值时间，
-//	*                    对于时间精度为纳秒的标签点，存放相应的纳秒值；否则忽略
-//	* \param blob      字节型数组，输入，历史二进制/字符串数值
-//	* \param len       短整型，输入，二进制/字符串数值长度，超过一个页大小数据将被截断。
-//	* \param quality   短整型，输入，历史数值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
-//	* \remark 本接口只对数据类型为 RTDB_BLOB、RTDB_STRING 的标签点有效。
-//
-// rtdb_error RTDBAPI_CALLRULE rtdbh_put_single_blob_value64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime, rtdb_subtime_type subtime, const rtdb_byte* blob, rtdb_length_type len, rtdb_int16 quality)
-// */
-func RawRtdbhPutSingleBlobValue64Warp() {}
-
-// /*
-//   - \brief 写入批量标签点批量历史存储数据
-//     *
+// RawRtdbhPutSingleValue64Warp 写入单个标签点在某一时间的历史数据。
 //   - \param handle        连接句柄
-//   - \param count         整型，输入/输出，
-//   - 输入时表示 ids、datetimes、ms、values、states、qualities、errors 的长度，
-//   - 即历史值个数；输出时返回实际写入的数值个数
-//   - \param ids           整型数组，输入，标签点标识，同一个标签点标识可以出现多次，
-//   - 但它们的时间戳必需是递增的。
-//   - \param datetimes     整型数组，输入，表示对应的历史数值时间秒数。
-//   - \param ms            短整型数组，输入，如果 id 指定的标签点时间精度为纳秒，
-//   - 表示对应的历史数值时间纳秒；否则忽略。
-//   - \param values        双精度浮点数数组，输入，浮点型历史数值列表
-//   - 对于数据类型为 RTDB_REAL16、RTDB_REAL32、RTDB_REAL64 的标签点，表示相应的历史存储值；否则忽略
-//   - \param states        64 位整数数组，输入，整型历史数值列表，
+//   - \param id            整型，输入，标签点标识
+//   - \param datetime      整型，输入，时间秒数
+//   - \param ms            短整型，输入，如果 id 指定的标签点时间精度为纳秒，
+//   - 表示时间纳秒数；否则忽略。
+//   - \param value         双精度浮点数，输入，浮点型历史数值
+//   - 对于数据类型为 RTDB_REAL16、RTDB_REAL32、RTDB_REAL64 的标签点，存放历史值；否则忽略
+//   - \param state         64 位整数，输入，整型历史数值，
 //   - 对于数据类型为 RTDB_BOOL、RTDB_UINT8、RTDB_INT8、RTDB_CHAR、RTDB_UINT16、RTDB_INT16、
-//   - RTDB_UINT32、RTDB_INT32、RTDB_INT64 的标签点，表示相应的历史存储值；否则忽略
-//   - \param qualities     短整型数组，输入，历史数值品质列表，数据库预定义的品质参见枚举 RTDB_QUALITY
-//   - \param errors        无符号整型数组，输出，写入历史数据的返回值列表，参考rtdb_error.h
-//   - \remark 用户须保证 ids、datetimes、ms、values、states、qualities、errors 的长度与 count 一致，
-//   - 本接口对数据类型为 RTDB_COOR、RTDB_BLOB、RTDB_STRING 的标签点无效。
+//   - RTDB_UINT32、RTDB_INT32、RTDB_INT64 的标签点，存放历史值；否则忽略
+//   - \param quality       短整型，输入，历史值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
+//   - \remark 本接口对数据类型为 RTDB_COOR、RTDB_BLOB、RTDB_STRING 的标签点无效。
 //   - 如果 datetimes、ms 标识的数据已经存在，其值将被替换。
 //
+// rtdb_error RTDBAPI_CALLRULE rtdbh_put_single_value64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime, rtdb_subtime_type subtime, rtdb_float64 value, rtdb_int64 state, rtdb_int16 quality)
+func RawRtdbhPutSingleValue64Warp() {}
+
+// RawRtdbhPutSingleCoorValue64Warp 写入单个标签点在某一时间的坐标型历史数据。
+//   - \param handle              连接句柄
+//   - \param id            整型，输入，标签点标识
+//   - \param datetime      整型，输入，时间秒数
+//   - \param ms            短整型，输入，如果 id 指定的标签点时间精度为纳秒，
+//   - 表示时间纳秒数；否则忽略。
+//   - \param x             单精度浮点型，输入，横坐标历史数值
+//   - \param y             单精度浮点型，输入，纵坐标历史数值
+//   - \param quality       短整型，输入，历史值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
+//   - \remark 本接口对数据类型为 RTDB_COOR、RTDB_BLOB、RTDB_STRING 的标签点无效。
+//   - 如果 datetimes、ms 标识的数据已经存在，其值将被替换。
+//
+// rtdb_error RTDBAPI_CALLRULE rtdbh_put_single_coor_value64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime, rtdb_subtime_type subtime, rtdb_float32 x, rtdb_float32 y, rtdb_int16 quality)
+func RawRtdbhPutSingleCoorValue64Warp() {}
+
+// RawRtdbhPutSingleBlobValue64Warp 写入单个二进制/字符串标签点在某一时间的历史数据
+//   - \param handle    连接句柄
+//   - \param id        整型，输入，标签点标识
+//   - \param datetime  整型，输入，数值时间列表,
+//   - 表示距离1970年1月1日08:00:00的秒数
+//   - \param ms        短整型，输入，历史数值时间，
+//   - 对于时间精度为纳秒的标签点，存放相应的纳秒值；否则忽略
+//   - \param blob      字节型数组，输入，历史二进制/字符串数值
+//   - \param len       短整型，输入，二进制/字符串数值长度，超过一个页大小数据将被截断。
+//   - \param quality   短整型，输入，历史数值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
+//   - \remark 本接口只对数据类型为 RTDB_BLOB、RTDB_STRING 的标签点有效。
+//
+// rtdb_error RTDBAPI_CALLRULE rtdbh_put_single_blob_value64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime, rtdb_subtime_type subtime, const rtdb_byte* blob, rtdb_length_type len, rtdb_int16 quality)
+func RawRtdbhPutSingleBlobValue64Warp() {}
+
+// RawRtdbhPutArchivedValues64Warp 写入批量标签点批量历史存储数据
+//
+//	  *
+//	- \param handle        连接句柄
+//	- \param count         整型，输入/输出，
+//	- 输入时表示 ids、datetimes、ms、values、states、qualities、errors 的长度，
+//	- 即历史值个数；输出时返回实际写入的数值个数
+//	- \param ids           整型数组，输入，标签点标识，同一个标签点标识可以出现多次，
+//	- 但它们的时间戳必需是递增的。
+//	- \param datetimes     整型数组，输入，表示对应的历史数值时间秒数。
+//	- \param ms            短整型数组，输入，如果 id 指定的标签点时间精度为纳秒，
+//	- 表示对应的历史数值时间纳秒；否则忽略。
+//	- \param values        双精度浮点数数组，输入，浮点型历史数值列表
+//	- 对于数据类型为 RTDB_REAL16、RTDB_REAL32、RTDB_REAL64 的标签点，表示相应的历史存储值；否则忽略
+//	- \param states        64 位整数数组，输入，整型历史数值列表，
+//	- 对于数据类型为 RTDB_BOOL、RTDB_UINT8、RTDB_INT8、RTDB_CHAR、RTDB_UINT16、RTDB_INT16、
+//	- RTDB_UINT32、RTDB_INT32、RTDB_INT64 的标签点，表示相应的历史存储值；否则忽略
+//	- \param qualities     短整型数组，输入，历史数值品质列表，数据库预定义的品质参见枚举 RTDB_QUALITY
+//	- \param errors        无符号整型数组，输出，写入历史数据的返回值列表，参考rtdb_error.h
+//	- \remark 用户须保证 ids、datetimes、ms、values、states、qualities、errors 的长度与 count 一致，
+//	- 本接口对数据类型为 RTDB_COOR、RTDB_BLOB、RTDB_STRING 的标签点无效。
+//	- 如果 datetimes、ms 标识的数据已经存在，其值将被替换。
+//
 // rtdb_error RTDBAPI_CALLRULE rtdbh_put_archived_values64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, const rtdb_float64* values, const rtdb_int64* states, const rtdb_int16* qualities, rtdb_error* errors)
-// */
 func RawRtdbhPutArchivedValues64Warp() {}
 
-// /*
-//   - \brief 写入批量标签点批量坐标型历史存储数据
-//     *
+// RawRtdbhPutArchivedCoorValues64Warp 写入批量标签点批量坐标型历史存储数据
 //   - \param handle        连接句柄
 //   - \param count         整型，输入/输出，
 //   - 输入时表示 ids、datetimes、ms、x、y、qualities、errors 的长度，
@@ -6206,30 +5932,26 @@ func RawRtdbhPutArchivedValues64Warp() {}
 //   - 如果 datetimes、ms 标识的数据已经存在，其值将被替换。
 //
 // rtdb_error RTDBAPI_CALLRULE rtdbh_put_archived_coor_values64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, const rtdb_float32* x, const rtdb_float32* y, const rtdb_int16* qualities, rtdb_error* errors)
-// */
 func RawRtdbhPutArchivedCoorValues64Warp() {}
 
-// /*
-//   - \brief 写入单个datetime标签点在某一时间的历史数据
-//     *
-//   - \param handle    连接句柄
-//   - \param id        整型，输入，标签点标识
-//   - \param datetime  整型，输入，数值时间列表,
-//   - 表示距离1970年1月1日08:00:00的秒数
-//   - \param ms        短整型，输入，历史数值时间，
-//   - 对于时间精度为纳秒的标签点，存放相应的纳秒值；否则忽略
-//   - \param blob      字节型数组，输入，历史datetime数值
-//   - \param len       短整型，输入，datetime数值长度，超过一个页大小数据将被截断。
-//   - \param quality   短整型，输入，历史数值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
-//   - \remark 本接口只对数据类型为 RTDB_DATETIME 的标签点有效。
+// RawRtdbhPutSingleDatetimeValue64Warp 写入单个datetime标签点在某一时间的历史数据
+//
+//	  *
+//	- \param handle    连接句柄
+//	- \param id        整型，输入，标签点标识
+//	- \param datetime  整型，输入，数值时间列表,
+//	- 表示距离1970年1月1日08:00:00的秒数
+//	- \param ms        短整型，输入，历史数值时间，
+//	- 对于时间精度为纳秒的标签点，存放相应的纳秒值；否则忽略
+//	- \param blob      字节型数组，输入，历史datetime数值
+//	- \param len       短整型，输入，datetime数值长度，超过一个页大小数据将被截断。
+//	- \param quality   短整型，输入，历史数值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
+//	- \remark 本接口只对数据类型为 RTDB_DATETIME 的标签点有效。
 //
 // rtdb_error RTDBAPI_CALLRULE rtdbh_put_single_datetime_value64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime, rtdb_subtime_type subtime, const rtdb_byte* blob, rtdb_length_type len, rtdb_int16 quality)
-// */
 func RawRtdbhPutSingleDatetimeValue64Warp() {}
 
-// /*
-//   - \brief 写入批量标签点批量字符串型历史存储数据
-//     *
+// RawRtdbhPutArchivedBlobValues64Warp 写入批量标签点批量字符串型历史存储数据
 //   - \param handle        连接句柄
 //   - \param count         整型，输入/输出，
 //   - 输入时表示 ids、datetimes、ms、lens、blobs、qualities、errors 的长度，
@@ -6248,12 +5970,9 @@ func RawRtdbhPutSingleDatetimeValue64Warp() {}
 //   - 如果 datetimes、ms 标识的数据已经存在，其值将被替换。
 //
 // rtdb_error RTDBAPI_CALLRULE rtdbh_put_archived_blob_values64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, const rtdb_byte* const* blobs, const rtdb_length_type* lens, const rtdb_int16* qualities, rtdb_error* errors)
-// */
 func RawRtdbhPutArchivedBlobValues64Warp() {}
 
-// /*
-//   - \brief 将标签点未写满的补历史缓存页写入存档文件中。
-//     *
+// RawRtdbhFlushArchivedValuesWarp 将标签点未写满的补历史缓存页写入存档文件中。
 //   - \param handle        连接句柄
 //   - \param id            整型，输入，标签点标识。
 //   - \param count         整型，输出，缓存页中数据个数。
@@ -6263,12 +5982,9 @@ func RawRtdbhPutArchivedBlobValues64Warp() {}
 //   - count 参数可为空指针，对应的信息将不再返回。
 //
 // rtdb_error RTDBAPI_CALLRULE rtdbh_flush_archived_values_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32 *count)
-// */
 func RawRtdbhFlushArchivedValuesWarp() {}
 
-// /*
-//   - 命名：rtdbh_get_single_named_type_value32
-//   - 功能：读取单个自定义类型标签点某个时间的历史数据
+// RawRtdbhGetSingleNamedTypeValue64Warp 读取单个自定义类型标签点某个时间的历史数据
 //   - 参数：
 //   - [handle]        连接句柄
 //   - [id]            整型，输入，标签点标识
@@ -6287,13 +6003,9 @@ func RawRtdbhFlushArchivedValuesWarp() {}
 //   - [quality]       短整型，输出，历史值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
 //
 // rtdb_error RTDBAPI_CALLRULE rtdbh_get_single_named_type_value64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32 mode, rtdb_timestamp_type* datetime, rtdb_subtime_type* subtime, void* object, rtdb_length_type* length, rtdb_int16* quality)
-// */
 func RawRtdbhGetSingleNamedTypeValue64Warp() {}
 
-// /*
-// *
-//   - 命名：rtdbh_get_archived_named_type_values32
-//   - 功能：连续读取自定义类型标签点的历史数据
+// RawRtdbhGetArchivedNamedTypeValues64Warp 连续读取自定义类型标签点的历史数据
 //   - 参数：
 //   - [handle]        连接句柄
 //   - [id]            整型，输入，标签点标识
@@ -6314,13 +6026,9 @@ func RawRtdbhGetSingleNamedTypeValue64Warp() {}
 //   - [qualities]     短整型数组，输出，历史值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
 //
 // rtdb_error RTDBAPI_CALLRULE rtdbh_get_archived_named_type_values64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime1, rtdb_subtime_type subtime1, rtdb_timestamp_type datetime2, rtdb_subtime_type subtime2, rtdb_length_type length, rtdb_int32* count, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, void* const* objects, rtdb_int16* qualities)
-// */
 func RawRtdbhGetArchivedNamedTypeValues64Warp() {}
 
-// /*
-// *
-//   - 命名：rtdbh_put_single_named_type_value32
-//   - 功能：写入自定义类型标签点的单个历史事件
+// RawRtdbhPutSingleNamedTypeValue64Warp 写入自定义类型标签点的单个历史事件
 //   - 参数：
 //   - [handle]    连接句柄
 //   - [id]        整型，输入，标签点标识
@@ -6333,14 +6041,9 @@ func RawRtdbhGetArchivedNamedTypeValues64Warp() {}
 //   - [quality]   短整型，输入，历史数值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
 //
 // rtdb_error RTDBAPI_CALLRULE rtdbh_put_single_named_type_value64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime, rtdb_subtime_type subtime, const void* object, rtdb_length_type length, rtdb_int16 quality)
-// */
 func RawRtdbhPutSingleNamedTypeValue64Warp() {}
 
-// /*
-// *
-//   - 命名：rtdbh_put_archived_named_type_values32
-//   - 功能：批量补写自定义类型标签点的历史事件
-//   - 参数：
+// RawRtdbhPutArchivedNamedTypeValues64Warp 批量补写自定义类型标签点的历史事件
 //   - [handle]        连接句柄
 //   - [count]         整型，输入/输出，
 //   - 输入时表示 ids、datetimes、ms、lens、blobs、qualities、errors 的长度，
@@ -6358,13 +6061,10 @@ func RawRtdbhPutSingleNamedTypeValue64Warp() {}
 //   - 如果 datetimes、ms 标识的数据已经存在，其值将被替换。
 //
 // rtdb_error RTDBAPI_CALLRULE rtdbh_put_archived_named_type_values64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, const void* const* objects, const rtdb_length_type* lengths, const rtdb_int16* qualities, rtdb_error* errors)
-// */
 func RawRtdbhPutArchivedNamedTypeValues64Warp() {}
 
-// /*
+// RawRtdbeComputeHistory64Warp 重算或补算批量计算标签点历史数据
 //
-//	*
-//	* \brief 重算或补算批量计算标签点历史数据
 //	*
 //	* \param handle        连接句柄
 //	* \param count         整型，输入/输出，
@@ -6383,12 +6083,9 @@ func RawRtdbhPutArchivedNamedTypeValues64Warp() {}
 //	*        此时前者表示结束时间，后者表示起始时间。
 //
 // rtdb_error RTDBAPI_CALLRULE rtdbe_compute_history64_warp(rtdb_int32 handle, rtdb_int32* count, rtdb_int16 flag, rtdb_timestamp_type datetime1, rtdb_subtime_type subtime1, rtdb_timestamp_type datetime2, rtdb_subtime_type subtime2, const rtdb_int32* ids, rtdb_error* errors)
-// */
 func RawRtdbeComputeHistory64Warp() {}
 
-// /*
-//   - 命名：rtdbe_get_equation_graph_count
-//   - 功能：根据标签点 id 获取相关联方程式键值对数量
+// RawRtdbeGetEquationGraphCountWarp 根据标签点 id 获取相关联方程式键值对数量
 //   - 参数：
 //   - [handle]   连接句柄
 //   - [id]       整型，输入，标签点标识
@@ -6398,12 +6095,9 @@ func RawRtdbeComputeHistory64Warp() {}
 //   - 具体参考rtdbe_get_equation_graph_datas
 //
 // rtdb_error RTDBAPI_CALLRULE rtdbe_get_equation_graph_count_warp(rtdb_int32 handle, rtdb_int32 id, RTDB_GRAPH_FLAG flag, rtdb_int32 *count)
-// */
 func RawRtdbeGetEquationGraphCountWarp() {}
 
-// /*
-//   - 命名：rtdbe_get_equation_graph_datas
-//   - 功能：根据标签点 id 获取相关联方程式键值对数据
+// RawRtdbeGetEquationGraphDatasWarp 根据标签点 id 获取相关联方程式键值对数据
 //   - 参数：
 //   - [handle]   连接句柄
 //   - [id]       整型，输入，标签点标识
@@ -6415,25 +6109,17 @@ func RawRtdbeGetEquationGraphCountWarp() {}
 //   - 备注：键值对为数据结构，存储方程式涉及到的各标签点ID、及其父ID等
 //
 // rtdb_error RTDBAPI_CALLRULE rtdbe_get_equation_graph_datas_warp(rtdb_int32 handle, rtdb_int32 id, RTDB_GRAPH_FLAG flag, rtdb_int32 *count, RTDB_GRAPH *graph)
-// */
 func RawRtdbeGetEquationGraphDatasWarp() {}
 
-// /*
-// *
-//   - 命名：rtdbp_get_perf_tags_count
-//   - 功能：获取Perf服务中支持的性能计数点的数量
+// RawRtdbpGetPerfTagsCountWarp 获取Perf服务中支持的性能计数点的数量
 //   - 参数：
 //   - [handle]   连接句柄
 //   - [count]    整型，输出，表示实际获取到的Perf服务中支持的性能计数点的数量
 //
 // rtdb_error RTDBAPI_CALLRULE rtdbp_get_perf_tags_count_warp(rtdb_int32 handle, int* count)
-// */
 func RawRtdbpGetPerfTagsCountWarp() {}
 
-// /*
-// *
-//   - 命名：rtdbp_get_perf_tags_info
-//   - 功能：根据性能计数点ID获取相关的性能计数点信息
+// RawRtdbpGetPerfTagsInfoWarp 根据性能计数点ID获取相关的性能计数点信息
 //   - 参数：
 //   - [handle]   连接句柄
 //   - [count]    整型，输入，输出
@@ -6443,13 +6129,9 @@ func RawRtdbpGetPerfTagsCountWarp() {}
 //   - 备注：用户须保证分配给 tags_info，errors 的空间与 count 相符
 //
 // rtdb_error RTDBAPI_CALLRULE rtdbp_get_perf_tags_info_warp(rtdb_int32 handle, rtdb_int32* count, RTDB_PERF_TAG_INFO* tags_info, rtdb_error* errors)
-// */
 func RawRtdbpGetPerfTagsInfoWarp() {}
 
-// /*
-// *
-//   - 命名：rtdbp_get_perf_values
-//   - 功能：批量读取性能计数点的当前快照数值
+// RawRtdbpGetPerfValues64Warp 批量读取性能计数点的当前快照数值
 //   - 参数：
 //   - [handle]    连接句柄
 //   - [count]     整型，输入/输出，性能点个数，
@@ -6470,5 +6152,4 @@ func RawRtdbpGetPerfTagsInfoWarp() {}
 //   - 备注：用户须保证 ids、datetimes、ms、values、states、qualities、errors 的长度与 count 一致。
 //
 // rtdb_error RTDBAPI_CALLRULE rtdbp_get_perf_values64_warp(rtdb_int32 handle, rtdb_int32* count, int* perf_ids, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float64* values, rtdb_int64* states, rtdb_int16* qualities, rtdb_error* errors)
-// */
 func RawRtdbpGetPerfValues64Warp() {}
