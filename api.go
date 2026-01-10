@@ -3153,6 +3153,9 @@ func (pg PrivGroup) Desc() string {
 	}
 }
 
+// ConnectHandle 连接句柄, 用于描述一个 API库 与 数据库 之间的连接
+type ConnectHandle int32
+
 /////////////////////////////// 上面是结构定义 ////////////////////////////////////
 /////////////////////////////// -- 华丽的分割线 -- ////////////////////////////////
 /////////////////////////////// 下面是函数实现 ////////////////////////////////////
@@ -3161,6 +3164,9 @@ func (pg PrivGroup) Desc() string {
 //
 // output:
 //   - ApiVersion 指的是 API库 的版本号
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdb_get_api_version_warp(rtdb_int32 *major, rtdb_int32 *minor, rtdb_int32 *beta)
 func RawRtdbGetApiVersionWarp() (ApiVersion, error) {
 	major, minor, beta := C.rtdb_int32(0), C.rtdb_int32(0), C.rtdb_int32(0)
 	err := C.rtdb_get_api_version_warp(&major, &minor, &beta)
@@ -3177,6 +3183,9 @@ func RawRtdbGetApiVersionWarp() (ApiVersion, error) {
 // input:
 //   - optionType API库 的行为参数枚举
 //   - value 每个 API库 行为参数枚举， 都可以附带一个 value 值对该行为参数进行调整
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdb_set_option_warp(rtdb_int32 type, rtdb_int32 value)
 func RawRtdbSetOptionWarp(optionType RtdbApiOption, value int32) error {
 	err := C.rtdb_set_option_warp(C.rtdb_int32(optionType), C.rtdb_int32(value))
 	return RtdbError(err).GoError()
@@ -3190,6 +3199,9 @@ func RawRtdbSetOptionWarp(optionType RtdbApiOption, value int32) error {
 //
 // output:
 //   - DatagramHandle 数据流句柄
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdb_create_datagram_handle_warp(rtdb_int32 port, const char* remotehost, rtdb_datagram_handle* handle)
 func RawRtdbCreateDatagramHandleWarp(port int32, remoteHost string) (DatagramHandle, error) {
 	var handle C.rtdb_datagram_handle
 	cRemoteHost := C.CString(remoteHost)
@@ -3202,6 +3214,9 @@ func RawRtdbCreateDatagramHandleWarp(port int32, remoteHost string) (DatagramHan
 //
 // input:
 //   - handle 数据流句柄
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdb_remove_datagram_handle_warp(rtdb_datagram_handle handle)
 func RawRtdbRemoveDatagramHandleWarp(handle DatagramHandle) error {
 	err := C.rtdb_remove_datagram_handle_warp(handle.handle)
 	return RtdbError(err).GoError()
@@ -3213,6 +3228,9 @@ func RawRtdbRemoveDatagramHandleWarp(handle DatagramHandle) error {
 //   - cacheLen 缓存大小，会创建对应大小的缓存，用于接收数据流返回的数据
 //   - remoteAddr 对端IP地址
 //   - timeout 超时时间(单位秒)
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdb_recv_datagram_warp(char* message, rtdb_int32* message_len, rtdb_datagram_handle handle, char* remote_addr, rtdb_int32 timeout)
 func RawRtdbRecvDatagramWarp(handle DatagramHandle, cacheLen int32, remoteAddr string, timeout int32) ([]byte, error) {
 	message := make([]byte, cacheLen)
 	messageLen := C.rtdb_int32(cacheLen)
@@ -3222,14 +3240,14 @@ func RawRtdbRecvDatagramWarp(handle DatagramHandle, cacheLen int32, remoteAddr s
 	return message[0:messageLen], RtdbError(err).GoError()
 }
 
-// ConnectHandle 连接句柄, 用于描述一个 API库 与 数据库 之间的连接
-type ConnectHandle int32
-
 // RawRtdbConnectWarp 建立同 RTDB 数据库的网络连接, 注意这里只是创建连接，并没有进行用户登陆
 //
 // input:
 //   - hostname 数据库IP地址
 //   - port 数据库端口号
+//
+// raw_fn:
+// - rtdb_error RTDBAPI_CALLRULE rtdb_connect_warp(const char *hostname, rtdb_int32 port, rtdb_int32 *handle)
 func RawRtdbConnectWarp(hostname string, port int32) (ConnectHandle, error) {
 	cHostname := C.CString(hostname)
 	defer C.free(unsafe.Pointer(cHostname))
@@ -3240,12 +3258,17 @@ func RawRtdbConnectWarp(hostname string, port int32) (ConnectHandle, error) {
 }
 
 // RawRtdbLoginWarp 以有效帐户登录
-// * \param handle          连接句柄
-// * \param user            登录帐户
-// * \param password        帐户口令
-// * \param [out] priv     账户权限， 枚举 \ref RTDB_PRIV_GROUP 的值之一
-// * \return rtdb_error
-// rtdb_error RTDBAPI_CALLRULE rtdb_login_warp(rtdb_int32 handle, const char *user, const char *password, rtdb_int32 *priv)
+//
+// input:
+//   - handle 连接句柄
+//   - user 用户名
+//   - password 密码
+//
+// output:
+//   - PrivGroup 用户权限
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdb_login_warp(rtdb_int32 handle, const char *user, const char *password, rtdb_int32 *priv)
 func RawRtdbLoginWarp(handle ConnectHandle, user string, password string) (PrivGroup, error) {
 	cUser := C.CString(user)
 	defer C.free(unsafe.Pointer(cUser))
@@ -3256,11 +3279,26 @@ func RawRtdbLoginWarp(handle ConnectHandle, user string, password string) (PrivG
 	return PrivGroup(cPriv), RtdbError(err).GoError()
 }
 
+// RawRtdbDisconnectWarp 断开同 RTDB 数据平台的连接
+//
+// input:
+//   - handle 连接句柄
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdb_disconnect_warp(rtdb_int32 handle)
+func RawRtdbDisconnectWarp(handle ConnectHandle) error {
+	err := C.rtdb_disconnect_warp(C.rtdb_int32(handle))
+	return RtdbError(err).GoError()
+}
+
 // RawRtdbConnectionCountWarp 获取 RTDB 服务器当前连接个数
 //
 // input:
 //   - handle 连接句柄
 //   - nodeNumber 单机模式下写0, 双活模式下，指定节点编号，1为rtdb_connect中第1个IP，2为rtdb_connect中第2个IP
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdb_connection_count_warp(rtdb_int32 handle, rtdb_int32 node_number, rtdb_int32 *count)
 func RawRtdbConnectionCountWarp(handle ConnectHandle, nodeNumber int32) (int32, error) {
 	count := C.rtdb_int32(0)
 	err := C.rtdb_connection_count_warp(C.rtdb_int32(handle), C.rtdb_int32(nodeNumber), &count)
@@ -3301,13 +3339,6 @@ func RawRtdbGetConnectionInfoWarp() {}
 // * \return rtdb_error
 // rtdb_error RTDBAPI_CALLRULE rtdb_get_connection_info_ipv6_warp(rtdb_int32 handle, rtdb_int32 node_number, rtdb_int32 socket, RTDB_HOST_CONNECT_INFO_IPV6* info)
 func RawRtdbGetConnectionInfoIpv6Warp() {}
-
-// RawRtdbDisconnectWarp 断开同 RTDB 数据平台的连接
-// * \param handle  连接句柄
-// * \return rtdb_error
-// * \remark 完成对 RTDB 的访问后调用本函数断开连接。连接一旦断开，则需要重新连接后才能调用其他的接口函数。
-// rtdb_error RTDBAPI_CALLRULE rtdb_disconnect_warp(rtdb_int32 handle)
-func RawRtdbDisconnectWarp() {}
 
 // RawRTDBOSINVALID 获取连接句柄所连接的服务器操作系统类型
 // * \param     handle          连接句柄
