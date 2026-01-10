@@ -100,3 +100,69 @@ func extractParamNames(params string) string {
 
 	return strings.Join(names, ", ")
 }
+
+func sp(s string) []string {
+	// 统一换行符（兼容 Windows / Unix）
+	s = strings.ReplaceAll(s, "\r\n", "\n")
+
+	// 正则：一个或多个“空白行”
+	re := regexp.MustCompile(`\n\s*\n+`)
+
+	parts := re.Split(strings.TrimSpace(s), -1)
+
+	// 可选：过滤掉意外的空段
+	res := make([]string, 0, len(parts))
+	for _, p := range parts {
+		p = strings.TrimSpace(p)
+		if p != "" {
+			res = append(res, p)
+		}
+	}
+	return res
+}
+
+// XXX 将 C 接口注释 + 函数定义，转换为 Go 的空函数定义
+func XXX(s string) string {
+	comment := extractComment(s)
+	cFuncName := extractCFuncName(s)
+	goFuncName := "Raw" + toGoFuncName(cFuncName)
+
+	var b strings.Builder
+	if comment != "" {
+		b.WriteString(comment)
+		b.WriteString("\n")
+	}
+	b.WriteString("func ")
+	b.WriteString(goFuncName)
+	b.WriteString("() {}\n")
+
+	return b.String()
+}
+
+// 提取 /** ... */ 注释
+func extractComment(s string) string {
+	re := regexp.MustCompile(`(?s)/\*\*.*?\*/`)
+	return re.FindString(s)
+}
+
+// 提取 C 函数名
+func extractCFuncName(s string) string {
+	re := regexp.MustCompile(`\b([a-zA-Z_][a-zA-Z0-9_]*)\s*\(`)
+	m := re.FindStringSubmatch(s)
+	if len(m) > 1 {
+		return m[1]
+	}
+	return ""
+}
+
+// rtdbh_update_value64_warp -> RawRtdbhUpdateValue64Warp
+func toGoFuncName(cName string) string {
+	parts := strings.Split(cName, "_")
+	for i, p := range parts {
+		if p == "" {
+			continue
+		}
+		parts[i] = strings.ToUpper(p[:1]) + p[1:]
+	}
+	return strings.Join(parts, "")
+}

@@ -3096,18 +3096,25 @@ type DatagramHandle struct {
 	handle C.rtdb_datagram_handle
 }
 
-// RawRtdbGetApiVersionWarp 取得 rtdbapi 库的版本号
-// \param [out]  major   主版本号
-// \param [out]  minor   次版本号
-// \param [out]  beta    发布版本号
-// \return rtdb_error
-// \remark 如果返回的版本号与 rtdb.h 中定义的不匹配(RTDB_API_XXX_VERSION)，则应用程序使用了错误的库。
+// ApiVersion 版本号
+type ApiVersion struct {
+	Major int32 // 主版本号
+	Minor int32 // 次版本号
+	Beta  int32 // 发布版本号
+}
+
+// RawRtdbGetApiVersionWarp 返回 ApiVersion 版本号
 //
-//	应输出一条错误信息并退出，否则可能在调用某些 api 时会导致崩溃
-func RawRtdbGetApiVersionWarp() (int32, int32, int32, error) {
+// ApiVersion 指的是数据库Client端动态库的版本号
+func RawRtdbGetApiVersionWarp() (ApiVersion, error) {
 	major, minor, beta := C.rtdb_int32(0), C.rtdb_int32(0), C.rtdb_int32(0)
 	err := C.rtdb_get_api_version_warp(&major, &minor, &beta)
-	return int32(major), int32(minor), int32(beta), RtdbError(err).GoError()
+	version := ApiVersion{
+		Major: int32(major),
+		Minor: int32(minor),
+		Beta:  int32(beta),
+	}
+	return version, RtdbError(err).GoError()
 }
 
 // RawRtdbSetOptionWarp 配置 api 行为参数，参见枚举 \ref RTDB_API_OPTION
