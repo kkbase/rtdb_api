@@ -3069,26 +3069,26 @@ const (
 type RtdbApiOption uint32
 
 const (
-	// RtdbApiAutoReconn api 在连接中断后是否自动重连, 0 不重连；1 重连。默认为 0 不重连
-	RtdbApiAutoReconn = RtdbApiOption(C.RTDB_API_AUTO_RECONN)
+	// RtdbApiOptionAutoReconn api 在连接中断后是否自动重连, 0 不重连；1 重连。默认为 0 不重连
+	RtdbApiOptionAutoReconn = RtdbApiOption(C.RTDB_API_AUTO_RECONN)
 
-	// RtdbApiConnTimeout api 连接超时值设置（单位：毫秒）,0 阻塞模式，无限等待，默认为1000
-	RtdbApiConnTimeout = RtdbApiOption(C.RTDB_API_CONN_TIMEOUT)
+	// RtdbApiOptionConnTimeout api 连接超时值设置（单位：毫秒）,0 阻塞模式，无限等待，默认为1000
+	RtdbApiOptionConnTimeout = RtdbApiOption(C.RTDB_API_CONN_TIMEOUT)
 
-	// RtdbApiSendTimeout api 发送超时值设置（单位：毫秒）,0 阻塞模式，无限等待，默认为1000
-	RtdbApiSendTimeout = RtdbApiOption(C.RTDB_API_SEND_TIMEOUT)
+	// RtdbApiOptionSendTimeout api 发送超时值设置（单位：毫秒）,0 阻塞模式，无限等待，默认为1000
+	RtdbApiOptionSendTimeout = RtdbApiOption(C.RTDB_API_SEND_TIMEOUT)
 
-	// RtdbApiRecvTimeout api 接收超时值设置（单位：毫秒）,0 阻塞模式，无限等待，默认为60000
-	RtdbApiRecvTimeout = RtdbApiOption(C.RTDB_API_RECV_TIMEOUT)
+	// RtdbApiOptionRecvTimeout api 接收超时值设置（单位：毫秒）,0 阻塞模式，无限等待，默认为60000
+	RtdbApiOptionRecvTimeout = RtdbApiOption(C.RTDB_API_RECV_TIMEOUT)
 
-	// RtdbApiUserTimeout api TCP_USER_TIMEOUT超时值设置（单位：毫秒），默认为10000，Linux内核2.6.37以上有效
-	RtdbApiUserTimeout = RtdbApiOption(C.RTDB_API_USER_TIMEOUT)
+	// RtdbApiOptionUserTimeout api TCP_USER_TIMEOUT超时值设置（单位：毫秒），默认为10000，Linux内核2.6.37以上有效
+	RtdbApiOptionUserTimeout = RtdbApiOption(C.RTDB_API_USER_TIMEOUT)
 
-	// RtdbApiDefaultPrecision api 默认的时间戳精度，当使用旧版相关的api，以及新版api中未设置时间戳精度时，则使用此默认时间戳精度。 默认为毫秒精度
-	RtdbApiDefaultPrecision = RtdbApiOption(C.RTDB_API_DEFAULT_PRECISION)
+	// RtdbApiOptionDefaultPrecision api 默认的时间戳精度，当使用旧版相关的api，以及新版api中未设置时间戳精度时，则使用此默认时间戳精度。 默认为毫秒精度
+	RtdbApiOptionDefaultPrecision = RtdbApiOption(C.RTDB_API_DEFAULT_PRECISION)
 
-	// RtdbApiServerPrecision api 连接3.0数据库时，设置3.0数据库的时间戳精度，0表示毫秒精度，非0表示纳秒精度，默认为毫秒精度
-	RtdbApiServerPrecision = RtdbApiOption(C.RTDB_API_SERVER_PRECISION)
+	// RtdbApiOptionServerPrecision api 连接3.0数据库时，设置3.0数据库的时间戳精度，0表示毫秒精度，非0表示纳秒精度，默认为毫秒精度
+	RtdbApiOptionServerPrecision = RtdbApiOption(C.RTDB_API_SERVER_PRECISION)
 )
 
 // DatagramHandle 流句柄, 用于数据流订阅
@@ -3105,7 +3105,7 @@ type ApiVersion struct {
 
 // RawRtdbGetApiVersionWarp 返回 ApiVersion 版本号
 //
-// ApiVersion 指的是数据库Client端动态库的版本号
+// ApiVersion 指的是 API库 的版本号
 func RawRtdbGetApiVersionWarp() (ApiVersion, error) {
 	major, minor, beta := C.rtdb_int32(0), C.rtdb_int32(0), C.rtdb_int32(0)
 	err := C.rtdb_get_api_version_warp(&major, &minor, &beta)
@@ -3117,11 +3117,7 @@ func RawRtdbGetApiVersionWarp() (ApiVersion, error) {
 	return version, RtdbError(err).GoError()
 }
 
-// RawRtdbSetOptionWarp 配置 api 行为参数，参见枚举 \ref RTDB_API_OPTION
-// \param [in] type  选项类别
-// \param [in] value 选项值
-// \return rtdb_error
-// \remark 选项设置后在下一次调用 api 时才生效
+// RawRtdbSetOptionWarp 配置 API库 的行为参数，详见 RtdbApiOption 枚举
 func RawRtdbSetOptionWarp(optionType RtdbApiOption, value int32) error {
 	err := C.rtdb_set_option_warp(C.rtdb_int32(optionType), C.rtdb_int32(value))
 	return RtdbError(err).GoError()

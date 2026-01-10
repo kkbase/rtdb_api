@@ -10,12 +10,21 @@ const Port = 6327
 const Username = "sa"
 const Password = "golden"
 
+// 获取 API库 版本
 func TestRawRtdbGetApiVersion(t *testing.T) {
 	apiVersion, err := RawRtdbGetApiVersionWarp()
 	if err != nil {
 		t.Error("获取版本号失败:", err)
 	}
 	fmt.Println("库版本号:", apiVersion)
+}
+
+// 设置 API库 基本参数
+func TestRawRtdbSetOptionWarp(t *testing.T) {
+	err := RawRtdbSetOptionWarp(RtdbApiOptionAutoReconn, 0)
+	if err != nil {
+		t.Error("设置 API库 基本参数失败：", err)
+	}
 }
 
 func TestRawRtdbConnectWarp(t *testing.T) {
