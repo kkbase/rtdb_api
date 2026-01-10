@@ -3156,6 +3156,836 @@ func (pg PrivGroup) Desc() string {
 // ConnectHandle 连接句柄, 用于描述一个 API库 与 数据库 之间的连接
 type ConnectHandle int32
 
+// RtdbParam 查询系统参数时对应的索引
+type RtdbParam int32
+
+const (
+	// RtdbParamTableFile 标签点表文件全路径，字符串最大长度为 RTDB_MAX_PATH
+	RtdbParamTableFile = RtdbParam(C.RTDB_PARAM_TABLE_FILE)
+
+	// RtdbParamBaseFile 基本标签点文件全路径，字符串最大长度为 RTDB_MAX_PATH
+	RtdbParamBaseFile = RtdbParam(C.RTDB_PARAM_BASE_FILE)
+
+	// RtdbParamScanFile 采集标签点文件全路径，字符串最大长度为 RTDB_MAX_PATH
+	RtdbParamScanFile = RtdbParam(C.RTDB_PARAM_SCAN_FILE)
+
+	// RtdbParamCalcFile 计算标签点文件全路径，字符串最大长度为 RTDB_MAX_PATH
+	RtdbParamCalcFile = RtdbParam(C.RTDB_PARAM_CALC_FILE)
+
+	// RtdbParamSnapFile 标签点快照文件全路径，字符串最大长度为 RTDB_MAX_PATH
+	RtdbParamSnapFile = RtdbParam(C.RTDB_PARAM_SNAP_FILE)
+
+	// RtdbParamLicFile 协议文件全路径，字符串最大长度为 RTDB_MAX_PATH
+	RtdbParamLicFile = RtdbParam(C.RTDB_PARAM_LIC_FILE)
+
+	// RtdbParamHisFile 历史信息文件全路径，字符串最大长度为 RTDB_MAX_PATH
+	RtdbParamHisFile = RtdbParam(C.RTDB_PARAM_HIS_FILE)
+
+	// RtdbParamLogDir 服务器端日志文件全路径，字符串最大长度为 RTDB_MAX_PATH
+	RtdbParamLogDir = RtdbParam(C.RTDB_PARAM_LOG_DIR)
+
+	// RtdbParamUserFile 用户权限信息文件全路径，字符串最大长度为 RTDB_MAX_PATH
+	RtdbParamUserFile = RtdbParam(C.RTDB_PARAM_USER_FILE)
+
+	// RtdbParamServerFile 网络服务进程与其它进程交互所用的共享内存文件，字符串最大长度为 RTDB_MAX_PATH
+	RtdbParamServerFile = RtdbParam(C.RTDB_PARAM_SERVER_FILE)
+
+	// RtdbParamEqautionFile 方程式服务进程与其它进程交互所用的共享内存文件，字符串最大长度为 RTDB_MAX_PATH
+	RtdbParamEqautionFile = RtdbParam(C.RTDB_PARAM_EQAUTION_FILE)
+
+	// RtdbParamArvPagesFile 历史数据缓存文件全路径，字符串最大长度为 RTDB_MAX_PATH
+	RtdbParamArvPagesFile = RtdbParam(C.RTDB_PARAM_ARV_PAGES_FILE)
+
+	// RtdbParamArvexPagesFile 补历史数据缓存文件全路径，字符串最大长度为 RTDB_MAX_PATH
+	RtdbParamArvexPagesFile = RtdbParam(C.RTDB_PARAM_ARVEX_PAGES_FILE)
+
+	// RtdbParamArvexPagesBlobFile 补历史数据blob、str缓存文件全路径，字符串最大长度为 RTDB_MAX_PATH
+	RtdbParamArvexPagesBlobFile = RtdbParam(C.RTDB_PARAM_ARVEX_PAGES_BLOB_FILE)
+
+	// RtdbParamAuthFile 信任连接段信息文件路径，字符串最大长度为 RTDB_MAX_PATH
+	RtdbParamAuthFile = RtdbParam(C.RTDB_PARAM_AUTH_FILE)
+
+	// RtdbParamRecycledBaseFile 可回收基本标签点文件全路径，字符串最大长度为 RTDB_MAX_PATH
+	RtdbParamRecycledBaseFile = RtdbParam(C.RTDB_PARAM_RECYCLED_BASE_FILE)
+
+	// RtdbParamRecycledScanFile 可回收采集标签点文件全路径，字符串最大长度为 RTDB_MAX_PATH
+	RtdbParamRecycledScanFile = RtdbParam(C.RTDB_PARAM_RECYCLED_SCAN_FILE)
+
+	// RtdbParamRecycledCalcFile 可回收计算标签点文件全路径，字符串最大长度为 RTDB_MAX_PATH
+	RtdbParamRecycledCalcFile = RtdbParam(C.RTDB_PARAM_RECYCLED_CALC_FILE)
+
+	// RtdbParamAutoBackupPath 自动备份目的地全路径，必须以“\”或“/”结束，字符串最大长度为 RTDB_MAX_PATH
+	RtdbParamAutoBackupPath = RtdbParam(C.RTDB_PARAM_AUTO_BACKUP_PATH)
+
+	// RtdbParamServerSenderIp 镜像发送地址，字符串最大长度为 RTDB_MAX_HOSTNAME_SIZE
+	RtdbParamServerSenderIp = RtdbParam(C.RTDB_PARAM_SERVER_SENDER_IP)
+
+	// RtdbParamBlacklistFile 连接黑名单文件路径，字符串最大长度为 RTDB_MAX_PATH
+	RtdbParamBlacklistFile = RtdbParam(C.RTDB_PARAM_BLACKLIST_FILE)
+
+	// RtdbParamDbVersion 数据库版本
+	RtdbParamDbVersion = RtdbParam(C.RTDB_PARAM_DB_VERSION)
+
+	// RtdbParamLicUser 授权单位
+	RtdbParamLicUser = RtdbParam(C.RTDB_PARAM_LIC_USER)
+
+	// RtdbParamLicType 授权方式
+	RtdbParamLicType = RtdbParam(C.RTDB_PARAM_LIC_TYPE)
+
+	// RtdbParamIndexDir 索引文件存放目录，字符串最大长度为 RTDB_MAX_PATH
+	RtdbParamIndexDir = RtdbParam(C.RTDB_PARAM_INDEX_DIR)
+
+	// RtdbParamMirrorBufferPath 镜像缓存文件全路径，字符串最大长度为 RTDB_MAX_PATH
+	RtdbParamMirrorBufferPath = RtdbParam(C.RTDB_PARAM_MIRROR_BUFFER_PATH)
+
+	// RtdbParamMirrorExBufferPath 补写镜像缓存文件全路径，字符串最大长度为 RTDB_MAX_PATH
+	RtdbParamMirrorExBufferPath = RtdbParam(C.RTDB_PARAM_MIRROR_EX_BUFFER_PATH)
+
+	// RtdbParamEqautionPathFile 方程式长度超过规定长度时进行保存的文件全路径，字符串最大长度为 RTDB_MAX_PATH
+	RtdbParamEqautionPathFile = RtdbParam(C.RTDB_PARAM_EQAUTION_PATH_FILE)
+
+	// RtdbParamTagsFile 标签点关键属性文件全路径，字符串最大长度为 RTDB_MAX_PATH
+	RtdbParamTagsFile = RtdbParam(C.RTDB_PARAM_TAGS_FILE)
+
+	// RtdbParamRecycledSnapFile 可回收标签点快照事件文件全路径，字符串最大长度为 RTDB_MAX_PATH
+	RtdbParamRecycledSnapFile = RtdbParam(C.RTDB_PARAM_RECYCLED_SNAP_FILE)
+
+	// RtdbParamSwapPageFile 历史数据交换页文件全路径，字符串最大长度为 RTDB_MAX_PATH
+	RtdbParamSwapPageFile = RtdbParam(C.RTDB_PARAM_SWAP_PAGE_FILE)
+
+	// RtdbParamPageAllocatorFile 活动存档数据页分配器文件全路径，字符串最大长度为 RTDB_MAX_PATH, 该系统配置项2.1版数据库在使用，3.0数据库已去掉，但为了保证系统选项索引号, 与2.1一致，此处不能去掉。便于java sdk统一调用
+	RtdbParamPageAllocatorFile = RtdbParam(C.RTDB_PARAM_PAGE_ALLOCATOR_FILE)
+
+	// RtdbParamNamedTypeFile 自定义类型配置信息全路径，字符串最大长度为 RTDB_MAX_PATH
+	RtdbParamNamedTypeFile = RtdbParam(C.RTDB_PARAM_NAMED_TYPE_FILE)
+
+	// RtdbParamStrblobMirrorPath BLOB/STRING镜像数据缓存文件全路径，字符串最大长度为 RTDB_MAX_PATH
+	RtdbParamStrblobMirrorPath = RtdbParam(C.RTDB_PARAM_STRBLOB_MIRROR_PATH)
+
+	// RtdbParamStrblobMirrorExPath 补写BLOB/STRING镜像数据缓存文件全路径，字符串最大长度为 RTDB_MAX_PATH
+	RtdbParamStrblobMirrorExPath = RtdbParam(C.RTDB_PARAM_STRBLOB_MIRROR_EX_PATH)
+
+	// RtdbParamBufferDir 临时数据缓存路径
+	RtdbParamBufferDir = RtdbParam(C.RTDB_PARAM_BUFFER_DIR)
+
+	// RtdbParamPoolCacheFlie 曲线池索引文件全路径，字符串最大长度为 RTDB_MAX_PATH
+	RtdbParamPoolCacheFlie = RtdbParam(C.RTDB_PARAM_POOL_CACHE_FLIE)
+
+	// RtdbParamPoolDataFileDir 曲线池缓存文件目录，字符串最大长度为 RTDB_MAX_PATH
+	RtdbParamPoolDataFileDir = RtdbParam(C.RTDB_PARAM_POOL_DATA_FILE_DIR)
+
+	// RtdbParamArchiveFilePath 存档文件低速存储区路径，字符串最大长度为 RTDB_MAX_PATH
+	RtdbParamArchiveFilePath = RtdbParam(C.RTDB_PARAM_ARCHIVE_FILE_PATH)
+
+	// RtdbParamLicVersionType 授权版本
+	RtdbParamLicVersionType = RtdbParam(C.RTDB_PARAM_LIC_VERSION_TYPE)
+
+	// RtdbParamAutoMovePath 自动移动目的地全路径，必须以“\”或“/”结束，字符串最大长度为 RTDB_MAX_PATH
+	RtdbParamAutoMovePath = RtdbParam(C.RTDB_PARAM_AUTO_MOVE_PATH)
+
+	// RtdbParamReplicationBufferPath 双活：数据同步缓存文件全路径，字符串最大长度为 RTDB_MAX_PATH
+	RtdbParamReplicationBufferPath = RtdbParam(C.RTDB_PARAM_REPLICATION_BUFFER_PATH)
+
+	// RtdbParamReplicationExBufferPath 双活：数据同步补写数据缓存文件全路径，字符串最大长度为 RTDB_MAX_PATH
+	RtdbParamReplicationExBufferPath = RtdbParam(C.RTDB_PARAM_REPLICATION_EX_BUFFER_PATH)
+
+	// RtdbParamStrblobReplicationBufferPath 双活：数据同步BLOB/STRING数据缓存文件全路径，字符串最大长度为 RTDB_MAX_PATH
+	RtdbParamStrblobReplicationBufferPath = RtdbParam(C.RTDB_PARAM_STRBLOB_REPLICATION_BUFFER_PATH)
+
+	// RtdbParamStrblobReplicationExBufferPath 双活：数据同步补写BLOB/STRING数据缓存文件全路径，字符串最大长度为 RTDB_MAX_PATH
+	RtdbParamStrblobReplicationExBufferPath = RtdbParam(C.RTDB_PARAM_STRBLOB_REPLICATION_EX_BUFFER_PATH)
+
+	// RtdbParamReplicationGroupIp 双活：同步组地址，字符串最大长度为 RTDB_MAX_HOSTNAME_SIZE
+	RtdbParamReplicationGroupIp = RtdbParam(C.RTDB_PARAM_REPLICATION_GROUP_IP)
+
+	// RtdbParamArcFilenamePrefixWhenUsingDate 是否归档文件使用日期作为文件名
+	RtdbParamArcFilenamePrefixWhenUsingDate = RtdbParam(C.RTDB_PARAM_ARC_FILENAME_PREFIX_WHEN_USING_DATE)
+
+	// RtdbParamHotArchiveFilePath 存档文件高速存储区路径，字符串最大长度为 RTDB_MAX_PATH
+	RtdbParamHotArchiveFilePath = RtdbParam(C.RTDB_PARAM_HOT_ARCHIVE_FILE_PATH)
+
+	// RtdbParamLicTablesCount 协议中限定的标签点表数量
+	RtdbParamLicTablesCount = RtdbParam(C.RTDB_PARAM_LIC_TABLES_COUNT)
+
+	// RtdbParamLicTagsCount 协议中限定的所有标签点数量
+	RtdbParamLicTagsCount = RtdbParam(C.RTDB_PARAM_LIC_TAGS_COUNT)
+
+	// RtdbParamLicScanCount 协议中限定的采集标签点数量
+	RtdbParamLicScanCount = RtdbParam(C.RTDB_PARAM_LIC_SCAN_COUNT)
+
+	// RtdbParamLicCalcCount 协议中限定的计算标签点数量
+	RtdbParamLicCalcCount = RtdbParam(C.RTDB_PARAM_LIC_CALC_COUNT)
+
+	// RtdbParamLicArchicveCount 协议中限定的历史存档文件数量
+	RtdbParamLicArchicveCount = RtdbParam(C.RTDB_PARAM_LIC_ARCHICVE_COUNT)
+
+	// RtdbParamServerIpcSize 网络服务进程与其它进程进行交互所使用的共享内存池的字节尺寸（单位：B）
+	RtdbParamServerIpcSize = RtdbParam(C.RTDB_PARAM_SERVER_IPC_SIZE)
+
+	// RtdbParamEquationIpcSize 方程式服务进程与其它进程进行交互所使用的共享内存池的字节尺寸（单位：B）
+	RtdbParamEquationIpcSize = RtdbParam(C.RTDB_PARAM_EQUATION_IPC_SIZE)
+
+	// RtdbParamHashTableSize 标签点求余哈希表的尺寸
+	RtdbParamHashTableSize = RtdbParam(C.RTDB_PARAM_HASH_TABLE_SIZE)
+
+	// RtdbParamTagDeleteTimes 可整库删除标签点的次数
+	RtdbParamTagDeleteTimes = RtdbParam(C.RTDB_PARAM_TAG_DELETE_TIMES)
+
+	// RtdbParamServerPort 网络服务独立服务器端口
+	RtdbParamServerPort = RtdbParam(C.RTDB_PARAM_SERVER_PORT)
+
+	// RtdbParamServerSenderPort 网络服务镜像发送端口
+	RtdbParamServerSenderPort = RtdbParam(C.RTDB_PARAM_SERVER_SENDER_PORT)
+
+	// RtdbParamServerReceiverPort 网络服务镜像接收端口
+	RtdbParamServerReceiverPort = RtdbParam(C.RTDB_PARAM_SERVER_RECEIVER_PORT)
+
+	// RtdbParamServerMode 网络服务启动模式
+	RtdbParamServerMode = RtdbParam(C.RTDB_PARAM_SERVER_MODE)
+
+	// RtdbParamServerConnectionCount 协议中限定网络服务连接并发数量
+	RtdbParamServerConnectionCount = RtdbParam(C.RTDB_PARAM_SERVER_CONNECTION_COUNT)
+
+	// RtdbParamArvPagesNumber 历史数据缓存中的页数量
+	RtdbParamArvPagesNumber = RtdbParam(C.RTDB_PARAM_ARV_PAGES_NUMBER)
+
+	// RtdbParamArvexPagesNumber 补历史数据缓存中的页数量
+	RtdbParamArvexPagesNumber = RtdbParam(C.RTDB_PARAM_ARVEX_PAGES_NUMBER)
+
+	// RtdbParamExceptionAtServer 是否由服务器进行例外判定
+	RtdbParamExceptionAtServer = RtdbParam(C.RTDB_PARAM_EXCEPTION_AT_SERVER)
+
+	// RtdbParamArvPageRecycleDelay 历史数据缓存页回收延时（毫秒）
+	RtdbParamArvPageRecycleDelay = RtdbParam(C.RTDB_PARAM_ARV_PAGE_RECYCLE_DELAY)
+
+	// RtdbParamExArchiveSize 历史数据存档文件文件自动增长大小（单位：MB）
+	RtdbParamExArchiveSize = RtdbParam(C.RTDB_PARAM_EX_ARCHIVE_SIZE)
+
+	// RtdbParamArchiveBatchSize 历史存储值分段查询个数
+	RtdbParamArchiveBatchSize = RtdbParam(C.RTDB_PARAM_ARCHIVE_BATCH_SIZE)
+
+	// RtdbParamDatafilePagesize 系统数据文件页大小
+	RtdbParamDatafilePagesize = RtdbParam(C.RTDB_PARAM_DATAFILE_PAGESIZE)
+
+	// RtdbParamArvAsyncQueueNormalDoor 历史数据缓存队列中速归档区（单位：百分比）
+	RtdbParamArvAsyncQueueNormalDoor = RtdbParam(C.RTDB_PARAM_ARV_ASYNC_QUEUE_NORMAL_DOOR)
+
+	// RtdbParamIndexAlwaysInMemory 常驻内存的历史数据索引大小（单位：MB）
+	RtdbParamIndexAlwaysInMemory = RtdbParam(C.RTDB_PARAM_INDEX_ALWAYS_IN_MEMORY)
+
+	// RtdbParamDiskMinRestSize 最低可用磁盘空间（单位：MB）
+	RtdbParamDiskMinRestSize = RtdbParam(C.RTDB_PARAM_DISK_MIN_REST_SIZE)
+
+	// RtdbParamMinSizeOfArchive 历史存档文件和附属文件的最小尺寸（单位：MB）
+	RtdbParamMinSizeOfArchive = RtdbParam(C.RTDB_PARAM_MIN_SIZE_OF_ARCHIVE)
+
+	// RtdbParamDelayOfAutoMergeOrArrange 自动合并/整理最小延迟（单位：小时）
+	RtdbParamDelayOfAutoMergeOrArrange = RtdbParam(C.RTDB_PARAM_DELAY_OF_AUTO_MERGE_OR_ARRANGE)
+
+	// RtdbParamStartOfAutoMergeOrArrange 自动合并/整理开始时间（单位：点钟）
+	RtdbParamStartOfAutoMergeOrArrange = RtdbParam(C.RTDB_PARAM_START_OF_AUTO_MERGE_OR_ARRANGE)
+
+	// RtdbParamStopOfAutoMergeOrArrange 自动合并/整理停止时间（单位：点钟）
+	RtdbParamStopOfAutoMergeOrArrange = RtdbParam(C.RTDB_PARAM_STOP_OF_AUTO_MERGE_OR_ARRANGE)
+
+	// RtdbParamStartOfAutoBackup 自动备份开始时间（单位：点钟）
+	RtdbParamStartOfAutoBackup = RtdbParam(C.RTDB_PARAM_START_OF_AUTO_BACKUP)
+
+	// RtdbParamStopOfAutoBackup 自动备份停止时间（单位：点钟）
+	RtdbParamStopOfAutoBackup = RtdbParam(C.RTDB_PARAM_STOP_OF_AUTO_BACKUP)
+
+	// RtdbParamMaxLatencyOfSnapshot 允许服务器时间之后多少小时内的数据进入快照（单位：小时）
+	RtdbParamMaxLatencyOfSnapshot = RtdbParam(C.RTDB_PARAM_MAX_LATENCY_OF_SNAPSHOT)
+
+	// RtdbParamPageAllocatorReserveSize 活动页分配器预留大小（单位：KB）， 0 表示使用操作系统视图大小
+	RtdbParamPageAllocatorReserveSize = RtdbParam(C.RTDB_PARAM_PAGE_ALLOCATOR_RESERVE_SIZE)
+
+	// RtdbParamIncludeSnapshotInQuery 决定取样本值和统计值时，快照是否应该出现在查询结果中
+	RtdbParamIncludeSnapshotInQuery = RtdbParam(C.RTDB_PARAM_INCLUDE_SNAPSHOT_IN_QUERY)
+
+	// RtdbParamLicBlobCount 协议中限定的字符串或BLOB类型标签点数量
+	RtdbParamLicBlobCount = RtdbParam(C.RTDB_PARAM_LIC_BLOB_COUNT)
+
+	// RtdbParamMirrorBufferSize 镜像文件大小（单位：GB）
+	RtdbParamMirrorBufferSize = RtdbParam(C.RTDB_PARAM_MIRROR_BUFFER_SIZE)
+
+	// RtdbParamBlobArvexPagesNumber blob、str补历史的默认缓存页数量
+	RtdbParamBlobArvexPagesNumber = RtdbParam(C.RTDB_PARAM_BLOB_ARVEX_PAGES_NUMBER)
+
+	// RtdbParamMirrorEventQueueCapacity 镜像缓存队列容量
+	RtdbParamMirrorEventQueueCapacity = RtdbParam(C.RTDB_PARAM_MIRROR_EVENT_QUEUE_CAPACITY)
+
+	// RtdbParamNotifyNotEnoughSpace 提示磁盘空间不足，一旦启用，设置为ON，则通过API返回大错误码，否则只记录日志
+	RtdbParamNotifyNotEnoughSpace = RtdbParam(C.RTDB_PARAM_NOTIFY_NOT_ENOUGH_SPACE)
+
+	// RtdbParamArchiveFixedRange 历史数据存档文件的固定时间范围，默认为0表示不使用固定时间范围（单位：分钟）
+	RtdbParamArchiveFixedRange = RtdbParam(C.RTDB_PARAM_ARCHIVE_FIXED_RANGE)
+
+	// RtdbParamOneClinetMaxConnectionCount 单个客户端允许的最大连接数，默认为0表示不限制
+	RtdbParamOneClinetMaxConnectionCount = RtdbParam(C.RTDB_PARAM_ONE_CLINET_MAX_CONNECTION_COUNT)
+
+	// RtdbParamArvPagesCapacity 历史数据缓存所占字节大小，单位：字节
+	RtdbParamArvPagesCapacity = RtdbParam(C.RTDB_PARAM_ARV_PAGES_CAPACITY)
+
+	// RtdbParamArvexPagesCapacity 历史数据补写缓存所占字节大小，单位：字节
+	RtdbParamArvexPagesCapacity = RtdbParam(C.RTDB_PARAM_ARVEX_PAGES_CAPACITY)
+
+	// RtdbParamBlobArvexPagesCapacity blob、string类型标签点历史数据补写缓存所占字节大小，单位：字节
+	RtdbParamBlobArvexPagesCapacity = RtdbParam(C.RTDB_PARAM_BLOB_ARVEX_PAGES_CAPACITY)
+
+	// RtdbParamLockedPagesMem 指定分配给数据库用的内存大小，单位：MB
+	RtdbParamLockedPagesMem = RtdbParam(C.RTDB_PARAM_LOCKED_PAGES_MEM)
+
+	// RtdbParamLicRecycleCount 协议中回收站的容量
+	RtdbParamLicRecycleCount = RtdbParam(C.RTDB_PARAM_LIC_RECYCLE_COUNT)
+
+	// RtdbParamArchivedPolicy 快照数据和补写数据的归档策略
+	RtdbParamArchivedPolicy = RtdbParam(C.RTDB_PARAM_ARCHIVED_POLICY)
+
+	// RtdbParamNetworkIsolationAckByte 网络隔离装置ACK字节
+	RtdbParamNetworkIsolationAckByte = RtdbParam(C.RTDB_PARAM_NETWORK_ISOLATION_ACK_BYTE)
+
+	// RtdbParamEnableLogger 启用日志输出，0为不启用
+	RtdbParamEnableLogger = RtdbParam(C.RTDB_PARAM_ENABLE_LOGGER)
+
+	// RtdbParamLogEncode 启用日志加密，0为不启用
+	RtdbParamLogEncode = RtdbParam(C.RTDB_PARAM_LOG_ENCODE)
+
+	// RtdbParamLoginTry 启用登录失败次数验证，0为不启用
+	RtdbParamLoginTry = RtdbParam(C.RTDB_PARAM_LOGIN_TRY)
+
+	// RtdbParamUserLog 启用用户详细日志，0为不启用
+	RtdbParamUserLog = RtdbParam(C.RTDB_PARAM_USER_LOG)
+
+	// RtdbParamCoverWriteLog 启用日志覆盖写功能，0为不启用
+	RtdbParamCoverWriteLog = RtdbParam(C.RTDB_PARAM_COVER_WRITE_LOG)
+
+	// RtdbParamLicNamedTypeCount 协议中限定的自定义类型标签点数量
+	RtdbParamLicNamedTypeCount = RtdbParam(C.RTDB_PARAM_LIC_NAMED_TYPE_COUNT)
+
+	// RtdbParamMirrorReceiverThreadpoolSize 镜像接收线程数量
+	RtdbParamMirrorReceiverThreadpoolSize = RtdbParam(C.RTDB_PARAM_MIRROR_RECEIVER_THREADPOOL_SIZE)
+
+	// RtdbParamSnapshotUseArchiveInterface 按照补历史流程归档快照数据页
+	RtdbParamSnapshotUseArchiveInterface = RtdbParam(C.RTDB_PARAM_SNAPSHOT_USE_ARCHIVE_INTERFACE)
+
+	// RtdbParamNoArcdataWriteLog 归档无对应存档文件的数据时记录日志
+	RtdbParamNoArcdataWriteLog = RtdbParam(C.RTDB_PARAM_NO_ARCDATA_WRITE_LOG)
+
+	// RtdbParamPutArchiveThreadNum 补历史归档线程数
+	RtdbParamPutArchiveThreadNum = RtdbParam(C.RTDB_PARAM_PUT_ARCHIVE_THREAD_NUM)
+
+	// RtdbParamArvexDataArchivedThreshold 单次补写数据归档阈值
+	RtdbParamArvexDataArchivedThreshold = RtdbParam(C.RTDB_PARAM_ARVEX_DATA_ARCHIVED_THRESHOLD)
+
+	// RtdbParamSnapshotFlushBufferDelay 快照服务的共享缓存刷新到磁盘的周期
+	RtdbParamSnapshotFlushBufferDelay = RtdbParam(C.RTDB_PARAM_SNAPSHOT_FLUSH_BUFFER_DELAY)
+
+	// RtdbParamDataSpeed 查询时使用加速统计
+	RtdbParamDataSpeed = RtdbParam(C.RTDB_PARAM_DATA_SPEED)
+
+	// RtdbParamUseNewPlotAlgo 启用新的曲线算法
+	RtdbParamUseNewPlotAlgo = RtdbParam(C.RTDB_PARAM_USE_NEW_PLOT_ALGO)
+
+	// RtdbParamQueryThreadPoolSize 曲线查询线程池中线程数量
+	RtdbParamQueryThreadPoolSize = RtdbParam(C.RTDB_PARAM_QUERY_THREAD_POOL_SIZE)
+
+	// RtdbParamArchivedValues 使用查询线程池查询历史数据
+	RtdbParamArchivedValues = RtdbParam(C.RTDB_PARAM_ARCHIVED_VALUES)
+
+	// RtdbParamArchivedValuesCount 使用查询线程池查询历史数据的条数
+	RtdbParamArchivedValuesCount = RtdbParam(C.RTDB_PARAM_ARCHIVED_VALUES_COUNT)
+
+	// RtdbParamPoolUseFlag 启用曲线池
+	RtdbParamPoolUseFlag = RtdbParam(C.RTDB_PARAM_POOL_USE_FLAG)
+
+	// RtdbParamPoolOutLogFlag 输出曲线池日志
+	RtdbParamPoolOutLogFlag = RtdbParam(C.RTDB_PARAM_POOL_OUT_LOG_FLAG)
+
+	// RtdbParamPoolTimeUsePoolFlag 使用曲线池缓存计算插值
+	RtdbParamPoolTimeUsePoolFlag = RtdbParam(C.RTDB_PARAM_POOL_TIME_USE_POOL_FLAG)
+
+	// RtdbParamPoolMaxPointCount 曲线池的标签点容量
+	RtdbParamPoolMaxPointCount = RtdbParam(C.RTDB_PARAM_POOL_MAX_POINT_COUNT)
+
+	// RtdbParamPoolOneFileSavePointCount 曲线池每个数据文件的标签点容量
+	RtdbParamPoolOneFileSavePointCount = RtdbParam(C.RTDB_PARAM_POOL_ONE_FILE_SAVE_POINT_COUNT)
+
+	// RtdbParamPoolSaveMemorySize 曲线缓存退出时临时缓冲区大小
+	RtdbParamPoolSaveMemorySize = RtdbParam(C.RTDB_PARAM_POOL_SAVE_MEMORY_SIZE)
+
+	// RtdbParamPoolMinTimeUnitSeconds 曲线池缓存数据当前时间单位
+	RtdbParamPoolMinTimeUnitSeconds = RtdbParam(C.RTDB_PARAM_POOL_MIN_TIME_UNIT_SECONDS)
+
+	// RtdbParamPoolTimeUnitViewRate 曲线池查询数据最小时间单位显示系数
+	RtdbParamPoolTimeUnitViewRate = RtdbParam(C.RTDB_PARAM_POOL_TIME_UNIT_VIEW_RATE)
+
+	// RtdbParamPoolTimerIntervalSeconds 曲线池定时器刷新周期
+	RtdbParamPoolTimerIntervalSeconds = RtdbParam(C.RTDB_PARAM_POOL_TIMER_INTERVAL_SECONDS)
+
+	// RtdbParamPoolPerfTimerIntervalSeconds 曲线池性能计算点刷新周期
+	RtdbParamPoolPerfTimerIntervalSeconds = RtdbParam(C.RTDB_PARAM_POOL_PERF_TIMER_INTERVAL_SECONDS)
+
+	// RtdbParamArchiveInitFileSize 存档文件初始大小
+	RtdbParamArchiveInitFileSize = RtdbParam(C.RTDB_PARAM_ARCHIVE_INIT_FILE_SIZE)
+
+	// RtdbParamArchiveIncreaseMode 存档文件增长模式
+	RtdbParamArchiveIncreaseMode = RtdbParam(C.RTDB_PARAM_ARCHIVE_INCREASE_MODE)
+
+	// RtdbParamArchiveIncreaseSize 固定模式下文件增长大小
+	RtdbParamArchiveIncreaseSize = RtdbParam(C.RTDB_PARAM_ARCHIVE_INCREASE_SIZE)
+
+	// RtdbParamArchiveIncreasePercent 百分比模式下增长百分比
+	RtdbParamArchiveIncreasePercent = RtdbParam(C.RTDB_PARAM_ARCHIVE_INCREASE_PERCENT)
+
+	// RtdbParamAllowConvertSklToRbtIndex 跳跃链表转换到红黑树
+	RtdbParamAllowConvertSklToRbtIndex = RtdbParam(C.RTDB_PARAM_ALLOW_CONVERT_SKL_TO_RBT_INDEX)
+
+	// RtdbParamEarlyDataTime 冷数据时间
+	RtdbParamEarlyDataTime = RtdbParam(C.RTDB_PARAM_EARLY_DATA_TIME)
+
+	// RtdbParamEarlyIndexTime 自动转换索引时间
+	RtdbParamEarlyIndexTime = RtdbParam(C.RTDB_PARAM_EARLY_INDEX_TIME)
+
+	// RtdbParamArrangeRbtTime 整理存档文件时决定索引格式的时间轴
+	RtdbParamArrangeRbtTime = RtdbParam(C.RTDB_PARAM_ARRANGE_RBT_TIME)
+
+	// RtdbParamEnableBigData 将存档文件全部读取到内存中
+	RtdbParamEnableBigData = RtdbParam(C.RTDB_PARAM_ENABLE_BIG_DATA)
+
+	// RtdbParamAutoArrangePercent 自动整理存档文件时的实际使用率
+	RtdbParamAutoArrangePercent = RtdbParam(C.RTDB_PARAM_AUTO_ARRANGE_PERCENT)
+
+	// RtdbParamEarlyArrangeTime 自动整理存档文件的时间
+	RtdbParamEarlyArrangeTime = RtdbParam(C.RTDB_PARAM_EARLY_ARRANGE_TIME)
+
+	// RtdbParamMinAutoArrangeArcfilePercent 自动整理存档文件时的最小使用率
+	RtdbParamMinAutoArrangeArcfilePercent = RtdbParam(C.RTDB_PARAM_MIN_AUTO_ARRANGE_ARCFILE_PERCENT)
+
+	// RtdbParamArrangeArcWithMemory 在内存中整理存档文件
+	RtdbParamArrangeArcWithMemory = RtdbParam(C.RTDB_PARAM_ARRANGE_ARC_WITH_MEMORY)
+
+	// RtdbParamAraangeArcMaxMemPercent 整理存档文件最大内存使用率
+	RtdbParamAraangeArcMaxMemPercent = RtdbParam(C.RTDB_PARAM_ARAANGE_ARC_MAX_MEM_PERCENT)
+
+	// RtdbParamMaxDiskSpacePercent 磁盘最大使用率
+	RtdbParamMaxDiskSpacePercent = RtdbParam(C.RTDB_PARAM_MAX_DISK_SPACE_PERCENT)
+
+	// RtdbParamUseDispath windows 用 linux 已禁用,是否启用转发服务
+	RtdbParamUseDispath = RtdbParam(C.RTDB_PARAM_USE_DISPATH)
+
+	// RtdbParamUseSmartParam windows 用 linux 已禁用,是否使用推荐参数
+	RtdbParamUseSmartParam = RtdbParam(C.RTDB_PARAM_USE_SMART_PARAM)
+
+	// RtdbParamSubscribeSnapshotCount 单连接快照事件订阅个数
+	RtdbParamSubscribeSnapshotCount = RtdbParam(C.RTDB_PARAM_SUBSCRIBE_SNAPSHOT_COUNT)
+
+	// RtdbParamSubscribeQueueSize 订阅事件队列大小
+	RtdbParamSubscribeQueueSize = RtdbParam(C.RTDB_PARAM_SUBSCRIBE_QUEUE_SIZE)
+
+	// RtdbParamSubscribeTimeout 订阅事件超时时间
+	RtdbParamSubscribeTimeout = RtdbParam(C.RTDB_PARAM_SUBSCRIBE_TIMEOUT)
+
+	// RtdbParamMirrorCompressOnoff 镜像报文压缩是否打开
+	RtdbParamMirrorCompressOnoff = RtdbParam(C.RTDB_PARAM_MIRROR_COMPRESS_ONOFF)
+
+	// RtdbParamMirrorCompressType 镜像报文压缩类型
+	RtdbParamMirrorCompressType = RtdbParam(C.RTDB_PARAM_MIRROR_COMPRESS_TYPE)
+
+	// RtdbParamMirrorCompressMin 镜像报文压缩最小值
+	RtdbParamMirrorCompressMin = RtdbParam(C.RTDB_PARAM_MIRROR_COMPRESS_MIN)
+
+	// RtdbParamArchiveRollTime 存档文件滚动时间轴
+	RtdbParamArchiveRollTime = RtdbParam(C.RTDB_PARAM_ARCHIVE_ROLL_TIME)
+
+	// RtdbParamHandleTimeOut 连接超时断开，单位：秒
+	RtdbParamHandleTimeOut = RtdbParam(C.RTDB_PARAM_HANDLE_TIME_OUT)
+
+	// RtdbParamMoveArvTime 移动存档文件时决定移动存档的时间轴
+	RtdbParamMoveArvTime = RtdbParam(C.RTDB_PARAM_MOVE_ARV_TIME)
+
+	// RtdbParamUseNewInterpAlgo 启用新的插值算法
+	RtdbParamUseNewInterpAlgo = RtdbParam(C.RTDB_PARAM_USE_NEW_INTERP_ALGO)
+
+	// RtdbParamEnableReplication 启用双活，0为不启用，1为启用
+	RtdbParamEnableReplication = RtdbParam(C.RTDB_PARAM_ENABLE_REPLICATION)
+
+	// RtdbParamReplicationGroupPort 双活：同步组端口
+	RtdbParamReplicationGroupPort = RtdbParam(C.RTDB_PARAM_REPLICATION_GROUP_PORT)
+
+	// RtdbParamReplicationThreadSize 双活：同步线程数
+	RtdbParamReplicationThreadSize = RtdbParam(C.RTDB_PARAM_REPLICATION_THREAD_SIZE)
+
+	// RtdbParamForceArchiveIncompleteDataPageDelay 强制归档补历史缓存里面未满数据页的延迟时间
+	RtdbParamForceArchiveIncompleteDataPageDelay = RtdbParam(C.RTDB_PARAM_FORCE_ARCHIVE_INCOMPLETE_DATA_PAGE_DELAY)
+
+	// RtdbParamArchiveRollDiskPercentage 存档文件滚动存储空间百分比
+	RtdbParamArchiveRollDiskPercentage = RtdbParam(C.RTDB_PARAM_ARCHIVE_ROLL_DISK_PERCENTAGE)
+
+	// RtdbParamEnableIpv6 启用ipv6设置
+	RtdbParamEnableIpv6 = RtdbParam(C.RTDB_PARAM_ENABLE_IPV6)
+
+	// RtdbParamEnableUseArchivedValue 按条件获取历史值时，是否直接获取条件中点的历史值，0:获取插值，1:获取历史值
+	RtdbParamEnableUseArchivedValue = RtdbParam(C.RTDB_PARAM_ENABLE_USE_ARCHIVED_VALUE)
+
+	// RtdbParamTimestampType 获取服务器时间戳类型
+	RtdbParamTimestampType = RtdbParam(C.RTDB_PARAM_TIMESTAMP_TYPE)
+
+	// RtdbParamArcFilenameUsingDate 是否归档文件使用日期作为文件名
+	RtdbParamArcFilenameUsingDate = RtdbParam(C.RTDB_PARAM_ARC_FILENAME_USING_DATE)
+
+	// RtdbParamLogMaxSpace 日志文件占用的最大磁盘空间
+	RtdbParamLogMaxSpace = RtdbParam(C.RTDB_PARAM_LOG_MAX_SPACE)
+
+	// RtdbParamLogFileSize 单个日志文件大小
+	RtdbParamLogFileSize = RtdbParam(C.RTDB_PARAM_LOG_FILE_SIZE)
+
+	// RtdbParamIgnoreToWriteNoarcbuffer 是否丢弃补历史数据
+	RtdbParamIgnoreToWriteNoarcbuffer = RtdbParam(C.RTDB_PARAM_IGNORE_TO_WRITE_NOARCBUFFER)
+
+	// RtdbParamArchivesCountForCalc 统计存档文件平均大小的存档文件个数
+	RtdbParamArchivesCountForCalc = RtdbParam(C.RTDB_PARAM_ARCHIVES_COUNT_FOR_CALC)
+
+	// RtdbParamMaxBlobSize blob、str类型数据在数据库中允许的最大长度
+	RtdbParamMaxBlobSize = RtdbParam(C.RTDB_PARAM_MAX_BLOB_SIZE)
+)
+
+func (rp RtdbParam) Desc() string {
+	switch rp {
+	case RtdbParamTableFile:
+		return "标签点表文件全路径，字符串最大长度为 RTDB_MAX_PATH"
+	case RtdbParamBaseFile:
+		return "基本标签点文件全路径，字符串最大长度为 RTDB_MAX_PATH"
+	case RtdbParamScanFile:
+		return "采集标签点文件全路径，字符串最大长度为 RTDB_MAX_PATH"
+	case RtdbParamCalcFile:
+		return "计算标签点文件全路径，字符串最大长度为 RTDB_MAX_PATH"
+	case RtdbParamSnapFile:
+		return "标签点快照文件全路径，字符串最大长度为 RTDB_MAX_PATH"
+	case RtdbParamLicFile:
+		return "协议文件全路径，字符串最大长度为 RTDB_MAX_PATH"
+	case RtdbParamHisFile:
+		return "历史信息文件全路径，字符串最大长度为 RTDB_MAX_PATH"
+	case RtdbParamLogDir:
+		return "服务器端日志文件全路径，字符串最大长度为 RTDB_MAX_PATH"
+	case RtdbParamUserFile:
+		return "用户权限信息文件全路径，字符串最大长度为 RTDB_MAX_PATH"
+	case RtdbParamServerFile:
+		return "网络服务进程与其它进程交互所用的共享内存文件，字符串最大长度为 RTDB_MAX_PATH"
+	case RtdbParamEqautionFile:
+		return "方程式服务进程与其它进程交互所用的共享内存文件，字符串最大长度为 RTDB_MAX_PATH"
+	case RtdbParamArvPagesFile:
+		return "历史数据缓存文件全路径，字符串最大长度为 RTDB_MAX_PATH"
+	case RtdbParamArvexPagesFile:
+		return "补历史数据缓存文件全路径，字符串最大长度为 RTDB_MAX_PATH"
+	case RtdbParamArvexPagesBlobFile:
+		return "补历史数据blob、str缓存文件全路径，字符串最大长度为 RTDB_MAX_PATH"
+	case RtdbParamAuthFile:
+		return "信任连接段信息文件路径，字符串最大长度为 RTDB_MAX_PATH"
+	case RtdbParamRecycledBaseFile:
+		return "可回收基本标签点文件全路径，字符串最大长度为 RTDB_MAX_PATH"
+	case RtdbParamRecycledScanFile:
+		return "可回收采集标签点文件全路径，字符串最大长度为 RTDB_MAX_PATH"
+	case RtdbParamRecycledCalcFile:
+		return "可回收计算标签点文件全路径，字符串最大长度为 RTDB_MAX_PATH"
+	case RtdbParamAutoBackupPath:
+		return "自动备份目的地全路径，必须以“\\”或“/”结束，字符串最大长度为 RTDB_MAX_PATH"
+	case RtdbParamServerSenderIp:
+		return "镜像发送地址，字符串最大长度为 RTDB_MAX_HOSTNAME_SIZE"
+	case RtdbParamBlacklistFile:
+		return "连接黑名单文件路径，字符串最大长度为 RTDB_MAX_PATH"
+	case RtdbParamDbVersion:
+		return "数据库版本"
+	case RtdbParamLicUser:
+		return "授权单位"
+	case RtdbParamLicType:
+		return "授权方式"
+	case RtdbParamIndexDir:
+		return "索引文件存放目录，字符串最大长度为 RTDB_MAX_PATH"
+	case RtdbParamMirrorBufferPath:
+		return "镜像缓存文件全路径，字符串最大长度为 RTDB_MAX_PATH"
+	case RtdbParamMirrorExBufferPath:
+		return "补写镜像缓存文件全路径，字符串最大长度为 RTDB_MAX_PATH"
+	case RtdbParamEqautionPathFile:
+		return "方程式长度超过规定长度时进行保存的文件全路径，字符串最大长度为 RTDB_MAX_PATH"
+	case RtdbParamTagsFile:
+		return "标签点关键属性文件全路径，字符串最大长度为 RTDB_MAX_PATH"
+	case RtdbParamRecycledSnapFile:
+		return "可回收标签点快照事件文件全路径，字符串最大长度为 RTDB_MAX_PATH"
+	case RtdbParamSwapPageFile:
+		return "历史数据交换页文件全路径，字符串最大长度为 RTDB_MAX_PATH"
+	case RtdbParamPageAllocatorFile:
+		return "活动存档数据页分配器文件全路径，字符串最大长度为 RTDB_MAX_PATH, 该系统配置项2.1版数据库在使用，3.0数据库已去掉，但为了保证系统选项索引号, 与2.1一致，此处不能去掉。便于java sdk统一调用"
+	case RtdbParamNamedTypeFile:
+		return "自定义类型配置信息全路径，字符串最大长度为 RTDB_MAX_PATH"
+	case RtdbParamStrblobMirrorPath:
+		return "BLOB/STRING镜像数据缓存文件全路径，字符串最大长度为 RTDB_MAX_PATH"
+	case RtdbParamStrblobMirrorExPath:
+		return "补写BLOB/STRING镜像数据缓存文件全路径，字符串最大长度为 RTDB_MAX_PATH"
+	case RtdbParamBufferDir:
+		return "临时数据缓存路径"
+	case RtdbParamPoolCacheFlie:
+		return "曲线池索引文件全路径，字符串最大长度为 RTDB_MAX_PATH"
+	case RtdbParamPoolDataFileDir:
+		return "曲线池缓存文件目录，字符串最大长度为 RTDB_MAX_PATH"
+	case RtdbParamArchiveFilePath:
+		return "存档文件低速存储区路径，字符串最大长度为 RTDB_MAX_PATH"
+	case RtdbParamLicVersionType:
+		return "授权版本"
+	case RtdbParamAutoMovePath:
+		return "自动移动目的地全路径，必须以“\\”或“/”结束，字符串最大长度为 RTDB_MAX_PATH"
+	case RtdbParamReplicationBufferPath:
+		return "双活：数据同步缓存文件全路径，字符串最大长度为 RTDB_MAX_PATH"
+	case RtdbParamReplicationExBufferPath:
+		return "双活：数据同步补写数据缓存文件全路径，字符串最大长度为 RTDB_MAX_PATH"
+	case RtdbParamStrblobReplicationBufferPath:
+		return "双活：数据同步BLOB/STRING数据缓存文件全路径，字符串最大长度为 RTDB_MAX_PATH"
+	case RtdbParamStrblobReplicationExBufferPath:
+		return "双活：数据同步补写BLOB/STRING数据缓存文件全路径，字符串最大长度为 RTDB_MAX_PATH"
+	case RtdbParamReplicationGroupIp:
+		return "双活：同步组地址，字符串最大长度为 RTDB_MAX_HOSTNAME_SIZE"
+	case RtdbParamArcFilenamePrefixWhenUsingDate:
+		return "是否归档文件使用日期作为文件名"
+	case RtdbParamHotArchiveFilePath:
+		return "存档文件高速存储区路径，字符串最大长度为 RTDB_MAX_PATH"
+	case RtdbParamLicTablesCount:
+		return "协议中限定的标签点表数量"
+	case RtdbParamLicTagsCount:
+		return "协议中限定的所有标签点数量"
+	case RtdbParamLicScanCount:
+		return "协议中限定的采集标签点数量"
+	case RtdbParamLicCalcCount:
+		return "协议中限定的计算标签点数量"
+	case RtdbParamLicArchicveCount:
+		return "协议中限定的历史存档文件数量"
+	case RtdbParamServerIpcSize:
+		return "网络服务进程与其它进程进行交互所使用的共享内存池的字节尺寸（单位：B）"
+	case RtdbParamEquationIpcSize:
+		return "方程式服务进程与其它进程进行交互所使用的共享内存池的字节尺寸（单位：B）"
+	case RtdbParamHashTableSize:
+		return "标签点求余哈希表的尺寸"
+	case RtdbParamTagDeleteTimes:
+		return "可整库删除标签点的次数"
+	case RtdbParamServerPort:
+		return "网络服务独立服务器端口"
+	case RtdbParamServerSenderPort:
+		return "网络服务镜像发送端口"
+	case RtdbParamServerReceiverPort:
+		return "网络服务镜像接收端口"
+	case RtdbParamServerMode:
+		return "网络服务启动模式"
+	case RtdbParamServerConnectionCount:
+		return "协议中限定网络服务连接并发数量"
+	case RtdbParamArvPagesNumber:
+		return "历史数据缓存中的页数量"
+	case RtdbParamArvexPagesNumber:
+		return "补历史数据缓存中的页数量"
+	case RtdbParamExceptionAtServer:
+		return "是否由服务器进行例外判定"
+	case RtdbParamArvPageRecycleDelay:
+		return "历史数据缓存页回收延时（毫秒）"
+	case RtdbParamExArchiveSize:
+		return "历史数据存档文件文件自动增长大小（单位：MB）"
+	case RtdbParamArchiveBatchSize:
+		return "历史存储值分段查询个数"
+	case RtdbParamDatafilePagesize:
+		return "系统数据文件页大小"
+	case RtdbParamArvAsyncQueueNormalDoor:
+		return "历史数据缓存队列中速归档区（单位：百分比）"
+	case RtdbParamIndexAlwaysInMemory:
+		return "常驻内存的历史数据索引大小（单位：MB）"
+	case RtdbParamDiskMinRestSize:
+		return "最低可用磁盘空间（单位：MB）"
+	case RtdbParamMinSizeOfArchive:
+		return "历史存档文件和附属文件的最小尺寸（单位：MB）"
+	case RtdbParamDelayOfAutoMergeOrArrange:
+		return "自动合并/整理最小延迟（单位：小时）"
+	case RtdbParamStartOfAutoMergeOrArrange:
+		return "自动合并/整理开始时间（单位：点钟）"
+	case RtdbParamStopOfAutoMergeOrArrange:
+		return "自动合并/整理停止时间（单位：点钟）"
+	case RtdbParamStartOfAutoBackup:
+		return "自动备份开始时间（单位：点钟）"
+	case RtdbParamStopOfAutoBackup:
+		return "自动备份停止时间（单位：点钟）"
+	case RtdbParamMaxLatencyOfSnapshot:
+		return "允许服务器时间之后多少小时内的数据进入快照（单位：小时）"
+	case RtdbParamPageAllocatorReserveSize:
+		return "活动页分配器预留大小（单位：KB）， 0 表示使用操作系统视图大小"
+	case RtdbParamIncludeSnapshotInQuery:
+		return "决定取样本值和统计值时，快照是否应该出现在查询结果中"
+	case RtdbParamLicBlobCount:
+		return "协议中限定的字符串或BLOB类型标签点数量"
+	case RtdbParamMirrorBufferSize:
+		return "镜像文件大小（单位：GB）"
+	case RtdbParamBlobArvexPagesNumber:
+		return "blob、str补历史的默认缓存页数量"
+	case RtdbParamMirrorEventQueueCapacity:
+		return "镜像缓存队列容量"
+	case RtdbParamNotifyNotEnoughSpace:
+		return "提示磁盘空间不足，一旦启用，设置为ON，则通过API返回大错误码，否则只记录日志"
+	case RtdbParamArchiveFixedRange:
+		return "历史数据存档文件的固定时间范围，默认为0表示不使用固定时间范围（单位：分钟）"
+	case RtdbParamOneClinetMaxConnectionCount:
+		return "单个客户端允许的最大连接数，默认为0表示不限制"
+	case RtdbParamArvPagesCapacity:
+		return "历史数据缓存所占字节大小，单位：字节"
+	case RtdbParamArvexPagesCapacity:
+		return "历史数据补写缓存所占字节大小，单位：字节"
+	case RtdbParamBlobArvexPagesCapacity:
+		return "blob、string类型标签点历史数据补写缓存所占字节大小，单位：字节"
+	case RtdbParamLockedPagesMem:
+		return "指定分配给数据库用的内存大小，单位：MB"
+	case RtdbParamLicRecycleCount:
+		return "协议中回收站的容量"
+	case RtdbParamArchivedPolicy:
+		return "快照数据和补写数据的归档策略"
+	case RtdbParamNetworkIsolationAckByte:
+		return "网络隔离装置ACK字节"
+	case RtdbParamEnableLogger:
+		return "启用日志输出，0为不启用"
+	case RtdbParamLogEncode:
+		return "启用日志加密，0为不启用"
+	case RtdbParamLoginTry:
+		return "启用登录失败次数验证，0为不启用"
+	case RtdbParamUserLog:
+		return "启用用户详细日志，0为不启用"
+	case RtdbParamCoverWriteLog:
+		return "启用日志覆盖写功能，0为不启用"
+	case RtdbParamLicNamedTypeCount:
+		return "协议中限定的自定义类型标签点数量"
+	case RtdbParamMirrorReceiverThreadpoolSize:
+		return "镜像接收线程数量"
+	case RtdbParamSnapshotUseArchiveInterface:
+		return "按照补历史流程归档快照数据页"
+	case RtdbParamNoArcdataWriteLog:
+		return "归档无对应存档文件的数据时记录日志"
+	case RtdbParamPutArchiveThreadNum:
+		return "补历史归档线程数"
+	case RtdbParamArvexDataArchivedThreshold:
+		return "单次补写数据归档阈值"
+	case RtdbParamSnapshotFlushBufferDelay:
+		return "快照服务的共享缓存刷新到磁盘的周期"
+	case RtdbParamDataSpeed:
+		return "查询时使用加速统计"
+	case RtdbParamUseNewPlotAlgo:
+		return "启用新的曲线算法"
+	case RtdbParamQueryThreadPoolSize:
+		return "曲线查询线程池中线程数量"
+	case RtdbParamArchivedValues:
+		return "使用查询线程池查询历史数据"
+	case RtdbParamArchivedValuesCount:
+		return "使用查询线程池查询历史数据的条数"
+	case RtdbParamPoolUseFlag:
+		return "启用曲线池"
+	case RtdbParamPoolOutLogFlag:
+		return "输出曲线池日志"
+	case RtdbParamPoolTimeUsePoolFlag:
+		return "使用曲线池缓存计算插值"
+	case RtdbParamPoolMaxPointCount:
+		return "曲线池的标签点容量"
+	case RtdbParamPoolOneFileSavePointCount:
+		return "曲线池每个数据文件的标签点容量"
+	case RtdbParamPoolSaveMemorySize:
+		return "曲线缓存退出时临时缓冲区大小"
+	case RtdbParamPoolMinTimeUnitSeconds:
+		return "曲线池缓存数据当前时间单位"
+	case RtdbParamPoolTimeUnitViewRate:
+		return "曲线池查询数据最小时间单位显示系数"
+	case RtdbParamPoolTimerIntervalSeconds:
+		return "曲线池定时器刷新周期"
+	case RtdbParamPoolPerfTimerIntervalSeconds:
+		return "曲线池性能计算点刷新周期"
+	case RtdbParamArchiveInitFileSize:
+		return "存档文件初始大小"
+	case RtdbParamArchiveIncreaseMode:
+		return "存档文件增长模式"
+	case RtdbParamArchiveIncreaseSize:
+		return "固定模式下文件增长大小"
+	case RtdbParamArchiveIncreasePercent:
+		return "百分比模式下增长百分比"
+	case RtdbParamAllowConvertSklToRbtIndex:
+		return "跳跃链表转换到红黑树"
+	case RtdbParamEarlyDataTime:
+		return "冷数据时间"
+	case RtdbParamEarlyIndexTime:
+		return "自动转换索引时间"
+	case RtdbParamArrangeRbtTime:
+		return "整理存档文件时决定索引格式的时间轴"
+	case RtdbParamEnableBigData:
+		return "将存档文件全部读取到内存中"
+	case RtdbParamAutoArrangePercent:
+		return "自动整理存档文件时的实际使用率"
+	case RtdbParamEarlyArrangeTime:
+		return "自动整理存档文件的时间"
+	case RtdbParamMinAutoArrangeArcfilePercent:
+		return "自动整理存档文件时的最小使用率"
+	case RtdbParamArrangeArcWithMemory:
+		return "在内存中整理存档文件"
+	case RtdbParamAraangeArcMaxMemPercent:
+		return "整理存档文件最大内存使用率"
+	case RtdbParamMaxDiskSpacePercent:
+		return "磁盘最大使用率"
+	case RtdbParamUseDispath:
+		return "windows 用 linux 已禁用,是否启用转发服务"
+	case RtdbParamUseSmartParam:
+		return "windows 用 linux 已禁用,是否使用推荐参数"
+	case RtdbParamSubscribeSnapshotCount:
+		return "单连接快照事件订阅个数"
+	case RtdbParamSubscribeQueueSize:
+		return "订阅事件队列大小"
+	case RtdbParamSubscribeTimeout:
+		return "订阅事件超时时间"
+	case RtdbParamMirrorCompressOnoff:
+		return "镜像报文压缩是否打开"
+	case RtdbParamMirrorCompressType:
+		return "镜像报文压缩类型"
+	case RtdbParamMirrorCompressMin:
+		return "镜像报文压缩最小值"
+	case RtdbParamArchiveRollTime:
+		return "存档文件滚动时间轴"
+	case RtdbParamHandleTimeOut:
+		return "连接超时断开，单位：秒"
+	case RtdbParamMoveArvTime:
+		return "移动存档文件时决定移动存档的时间轴"
+	case RtdbParamUseNewInterpAlgo:
+		return "启用新的插值算法"
+	case RtdbParamEnableReplication:
+		return "启用双活，0为不启用，1为启用"
+	case RtdbParamReplicationGroupPort:
+		return "双活：同步组端口"
+	case RtdbParamReplicationThreadSize:
+		return "双活：同步线程数"
+	case RtdbParamForceArchiveIncompleteDataPageDelay:
+		return "强制归档补历史缓存里面未满数据页的延迟时间"
+	case RtdbParamArchiveRollDiskPercentage:
+		return "存档文件滚动存储空间百分比"
+	case RtdbParamEnableIpv6:
+		return "启用ipv6设置"
+	case RtdbParamEnableUseArchivedValue:
+		return "按条件获取历史值时，是否直接获取条件中点的历史值，0:获取插值，1:获取历史值"
+	case RtdbParamTimestampType:
+		return "获取服务器时间戳类型"
+	case RtdbParamArcFilenameUsingDate:
+		return "是否归档文件使用日期作为文件名"
+	case RtdbParamLogMaxSpace:
+		return "日志文件占用的最大磁盘空间"
+	case RtdbParamLogFileSize:
+		return "单个日志文件大小"
+	case RtdbParamIgnoreToWriteNoarcbuffer:
+		return "是否丢弃补历史数据"
+	case RtdbParamArchivesCountForCalc:
+		return "统计存档文件平均大小的存档文件个数"
+	case RtdbParamMaxBlobSize:
+		return "blob、str类型数据在数据库中允许的最大长度"
+	default:
+		return "未知系统参数"
+	}
+}
+
+/**
+ */
+
 /////////////////////////////// 上面是结构定义 ////////////////////////////////////
 /////////////////////////////// -- 华丽的分割线 -- ////////////////////////////////
 /////////////////////////////// 下面是函数实现 ////////////////////////////////////

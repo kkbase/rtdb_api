@@ -74,3 +74,7 @@ func TestRawRtdbConnectionCountWarp(t *testing.T) {
 	}
 	fmt.Println("当前服务器连接个数: ", count)
 }
+
+func TestParam(t *testing.T) {
+	Param()
+}
