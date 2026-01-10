@@ -17,8 +17,6 @@ import (
 //go:embed clibrary/linux_amd64/librtdbapi.so
 var LinuxAmd64RtdbSo []byte
 
-// TODO, Windows, Linux
-
 func init() {
 	// 跨平台加载SO路径
 	data := make([]byte, 0)
