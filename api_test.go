@@ -27,13 +27,25 @@ func TestRawRtdbSetOptionWarp(t *testing.T) {
 	}
 }
 
-func TestRawRtdbConnectWarp(t *testing.T) {
+// 测试登录、登出，涉及到3个 原始API
+// - RawRtdbConnectWarp
+// - RawRtdbLoginWarp
+//
+// 创建 API库 和 数据库 之间的连接
+// 使用 用户名、密码 登录数据库
+// 断开 API库 和 数据库 之间的连接
+func TestLoginAndLogout(t *testing.T) {
 	handle, err := RawRtdbConnectWarp(Hostname, Port)
 	if err != nil {
-		fmt.Println("创建连接失败", err.Error())
+		t.Error("创建连接失败", err.Error())
 		return
 	}
-	fmt.Println(handle)
+	priv, err := RawRtdbLoginWarp(handle, Username, Password)
+	if err != nil {
+		t.Error("登录失败:", err)
+		return
+	}
+	fmt.Println("登录权限：", priv.Desc())
 }
 
 func TestRawRtdbConnectionCountWarp(t *testing.T) {
