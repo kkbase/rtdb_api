@@ -116,3 +116,44 @@ func TestRawRtdbGetDbInfo2Warp(t *testing.T) {
 	}
 	fmt.Println(param)
 }
+
+func TestRawRtdbSetDbInfo1Warp(t *testing.T) {
+	handle, err := RawRtdbConnectWarp(Hostname, Port)
+	if err != nil {
+		t.Error("创建连接失败", err.Error())
+		return
+	}
+	_, err = RawRtdbLoginWarp(handle, Username, Password)
+	if err != nil {
+		t.Error("登录失败:", err)
+		return
+	}
+	defer func() { _ = RawRtdbDisconnectWarp(handle) }()
+
+	// TODO
+	// err = RawRtdbSetDbInfo1Warp(handle, RtdbParamAutoBackupPath, "/tmp/rtdb")
+	// if err != nil {
+	// 	t.Error("设置Str参数失败")
+	// 	return
+	// }
+}
+
+func TestRawRtdbSetDbInfo2Warp(t *testing.T) {
+	handle, err := RawRtdbConnectWarp(Hostname, Port)
+	if err != nil {
+		t.Error("创建连接失败", err.Error())
+		return
+	}
+	_, err = RawRtdbLoginWarp(handle, Username, Password)
+	if err != nil {
+		t.Error("登录失败:", err)
+		return
+	}
+	defer func() { _ = RawRtdbDisconnectWarp(handle) }()
+
+	err = RawRtdbSetDbInfo2Warp(handle, RtdbParamArchiveIncreaseSize, 256)
+	if err != nil {
+		t.Error("设置Int参数失败")
+		return
+	}
+}
