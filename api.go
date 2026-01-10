@@ -3213,28 +3213,20 @@ func RawRtdbGetOwnConnectionWarp() {}
 // rtdb_error RTDBAPI_CALLRULE rtdb_get_connection_info_warp(rtdb_int32 handle, rtdb_int32 node_number, rtdb_int32 socket, RTDB_HOST_CONNECT_INFO *info)
 func RawRtdbGetConnectionInfoWarp() {}
 
-/*
-*
-  - \brief 获取 RTDB 服务器指定连接的ipv6版本
-  - \param [in] handle          连接句柄，参见 \ref rtdb_connect
-  - \param [in] node_number     双活模式下，指定节点编号，1为rtdb_connect中第1个IP，2为rtdb_connect中第2个IP，双活模式仅支持ipv4
-  - \param [in] socket          指定的连接
-  - \param [out] info           与连接相关的信息，参见 \ref RTDB_HOST_CONNECT_INFO_IPV6
-  - \return rtdb_error
-
-rtdb_error RTDBAPI_CALLRULE rtdb_get_connection_info_ipv6_warp(rtdb_int32 handle, rtdb_int32 node_number, rtdb_int32 socket, RTDB_HOST_CONNECT_INFO_IPV6* info)
-*/
+// RawRtdbGetConnectionInfoIpv6Warp 获取 RTDB 服务器指定连接的ipv6版本
+// * \param [in] handle          连接句柄，参见 \ref rtdb_connect
+// * \param [in] node_number     双活模式下，指定节点编号，1为rtdb_connect中第1个IP，2为rtdb_connect中第2个IP，双活模式仅支持ipv4
+// * \param [in] socket          指定的连接
+// * \param [out] info           与连接相关的信息，参见 \ref RTDB_HOST_CONNECT_INFO_IPV6
+// * \return rtdb_error
+// rtdb_error RTDBAPI_CALLRULE rtdb_get_connection_info_ipv6_warp(rtdb_int32 handle, rtdb_int32 node_number, rtdb_int32 socket, RTDB_HOST_CONNECT_INFO_IPV6* info)
 func RawRtdbGetConnectionInfoIpv6Warp() {}
 
-/*
-*
-  - \brief 断开同 RTDB 数据平台的连接
-  - \param handle  连接句柄
-  - \return rtdb_error
-  - \remark 完成对 RTDB 的访问后调用本函数断开连接。连接一旦断开，则需要重新连接后才能调用其他的接口函数。
-
-rtdb_error RTDBAPI_CALLRULE rtdb_disconnect_warp(rtdb_int32 handle)
-*/
+// RawRtdbDisconnectWarp 断开同 RTDB 数据平台的连接
+// * \param handle  连接句柄
+// * \return rtdb_error
+// * \remark 完成对 RTDB 的访问后调用本函数断开连接。连接一旦断开，则需要重新连接后才能调用其他的接口函数。
+// rtdb_error RTDBAPI_CALLRULE rtdb_disconnect_warp(rtdb_int32 handle)
 func RawRtdbDisconnectWarp() {}
 
 /*
