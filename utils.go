@@ -1,5 +1,6 @@
 package rtdb_api
 
+import "C"
 import (
 	"regexp"
 	"strings"

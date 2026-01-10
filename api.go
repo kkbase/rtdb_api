@@ -3305,6 +3305,67 @@ func RawRtdbConnectionCountWarp(handle ConnectHandle, nodeNumber int32) (int32, 
 	return int32(count), RtdbError(err).GoError()
 }
 
+// RawRtdbGetDbInfo1Warp 获得字符串型数据库系统参数
+// * \param handle    连接句柄
+// * \param index     整型，输入，要取得的参数索引，参见枚举 RTDB_DB_PARAM_INDEX。
+// * \param str       字符串型，输出，存放取得的字符串参数值。
+// * \param size      整型，输入，字符串缓冲区尺寸。
+// * \remark 本接口只接受 [RTDB_PARAM_STR_FIRST, RTDB_PARAM_STR_LAST) 范围之内参数索引。
+// rtdb_error RTDBAPI_CALLRULE rtdb_get_db_info1_warp(rtdb_int32 handle, rtdb_int32 index, char *str, rtdb_int32 size)
+func RawRtdbGetDbInfo1Warp() {}
+
+// RawRtdbGetDbInfo2Warp 获得整型数据库系统参数
+// * \param handle    连接句柄
+// * \param index     整型，输入，要取得的参数索引，参见枚举 RTDB_DB_PARAM_INDEX。
+// * \param value     无符号整型，输出，存放取得的整型参数值。
+// * \remark 本接口只接受 [RTDB_PARAM_INT_FIRST, RTDB_PARAM_INT_LAST) 范围之内参数索引。
+// rtdb_error RTDBAPI_CALLRULE rtdb_get_db_info2_warp(rtdb_int32 handle, rtdb_int32 index, rtdb_uint32 *value)
+func RawRtdbGetDbInfo2Warp() {}
+
+// RawRtdbSetDbInfo1Warp 设置字符串型数据库系统参数
+// * \param handle    连接句柄
+// * \param index     整型，输入，要设置的参数索引，参见枚举 RTDB_DB_PARAM_INDEX。
+// * 其中，仅以下列出的枚举值可用：
+// * RTDB_PARAM_AUTO_BACKUP_PATH,
+// * RTDB_PARAM_SERVER_SENDER_IP,
+// * \param str       字符串型，输入，新的参数值。
+// * \remark 如果修改了启动参数，将返回 RtE_DATABASE_NEED_RESTART 提示码。
+// rtdb_error RTDBAPI_CALLRULE rtdb_set_db_info1_warp(rtdb_int32 handle, rtdb_int32 index, const char *str)
+func RawRtdbSetDbInfo1Warp() {}
+
+// RawRtdbSetDbInfo2Warp 设置整型数据库系统参数
+// * \param handle    连接句柄
+// * \param index     整型，输入，要取得的参数索引，参见枚举 RTDB_DB_PARAM_INDEX。
+// * 其中，仅以下列出的枚举值可用：
+// * RTDB_PARAM_SERVER_IPC_SIZE,
+// * RTDB_PARAM_EQUATION_IPC_SIZE,
+// * RTDB_PARAM_HASH_TABLE_SIZE,
+// * RTDB_PARAM_TAG_DELETE_TIMES,
+// * RTDB_PARAM_SERVER_PORT,
+// * RTDB_PARAM_SERVER_SENDER_PORT,
+// * RTDB_PARAM_SERVER_RECEIVER_PORT,
+// * RTDB_PARAM_SERVER_MODE,
+// * RTDB_PARAM_ARV_PAGES_NUMBER,
+// * RTDB_PARAM_ARVEX_PAGES_NUMBER,
+// * RTDB_PARAM_EXCEPTION_AT_SERVER,
+// * RTDB_PARAM_EX_ARCHIVE_SIZE,
+// * RTDB_PARAM_ARCHIVE_BATCH_SIZE,
+// * RTDB_PARAM_ARV_ASYNC_QUEUE_SLOWER_DOOR,
+// * RTDB_PARAM_ARV_ASYNC_QUEUE_NORMAL_DOOR,
+// * RTDB_PARAM_INDEX_ALWAYS_IN_MEMORY,
+// * RTDB_PARAM_DISK_MIN_REST_SIZE,
+// * RTDB_PARAM_DELAY_OF_AUTO_MERGE_OR_ARRANGE,
+// * RTDB_PARAM_START_OF_AUTO_MERGE_OR_ARRANGE,
+// * RTDB_PARAM_STOP_OF_AUTO_MERGE_OR_ARRANGE,
+// * RTDB_PARAM_START_OF_AUTO_BACKUP,
+// * RTDB_PARAM_STOP_OF_AUTO_BACKUP,
+// * RTDB_PARAM_MAX_LATENCY_OF_SNAPSHOT,
+// * RTDB_PARAM_PAGE_ALLOCATOR_RESERVE_SIZE,
+// * \param value     无符号整型，输入，新的参数值。
+// * \remark 如果修改了启动参数，将返回 RtE_DATABASE_NEED_RESTART 提示码。
+// rtdb_error RTDBAPI_CALLRULE rtdb_set_db_info2_warp(rtdb_int32 handle, rtdb_int32 index, rtdb_uint32 value)
+func RawRtdbSetDbInfo2Warp() {}
+
 // RawRtdbGetConnectionsWarp 列出 RTDB 服务器的所有连接句柄
 // * \param [in] handle       连接句柄
 // * \param [in] node_number   双活模式下，指定节点编号，1为rtdb_connect中第1个IP，2为rtdb_connect中第2个IP
@@ -3313,7 +3374,9 @@ func RawRtdbConnectionCountWarp(handle ConnectHandle, nodeNumber int32) (int32, 
 // * \return rtdb_error
 // * \remark 用户须保证分配给 sockets 的空间与 count 相符。如果输入的 count 小于输出的 count，则只返回部分连接
 // rtdb_error RTDBAPI_CALLRULE rtdb_get_connections_warp(rtdb_int32 handle, rtdb_int32 node_number, rtdb_int32 *sockets, rtdb_int32 *count)
-func RawRtdbGetConnectionsWarp() {}
+// func RawRtdbGetConnectionsWarp(handle ConnectHandle, nodeNumber int32) ([]ConnectHandle, error) {
+// 	sockets := make([]ConnectHandle)
+// }
 
 // RawRtdbGetOwnConnectionWarp 获取当前连接的socket句柄
 // * \param [in] handle       连接句柄
@@ -3627,67 +3690,6 @@ func RawRtdbGetTimeoutWarp() {}
 // * \param socket    整型，输入，要断开的连接
 // rtdb_error RTDBAPI_CALLRULE rtdb_kill_connection_warp(rtdb_int32 handle, rtdb_int32 socket)
 func RawRtdbKillConnectionWarp() {}
-
-// RawRtdbGetDbInfo1Warp 获得字符串型数据库系统参数
-// * \param handle    连接句柄
-// * \param index     整型，输入，要取得的参数索引，参见枚举 RTDB_DB_PARAM_INDEX。
-// * \param str       字符串型，输出，存放取得的字符串参数值。
-// * \param size      整型，输入，字符串缓冲区尺寸。
-// * \remark 本接口只接受 [RTDB_PARAM_STR_FIRST, RTDB_PARAM_STR_LAST) 范围之内参数索引。
-// rtdb_error RTDBAPI_CALLRULE rtdb_get_db_info1_warp(rtdb_int32 handle, rtdb_int32 index, char *str, rtdb_int32 size)
-func RawRtdbGetDbInfo1Warp() {}
-
-// RawRtdbGetDbInfo2Warp 获得整型数据库系统参数
-// * \param handle    连接句柄
-// * \param index     整型，输入，要取得的参数索引，参见枚举 RTDB_DB_PARAM_INDEX。
-// * \param value     无符号整型，输出，存放取得的整型参数值。
-// * \remark 本接口只接受 [RTDB_PARAM_INT_FIRST, RTDB_PARAM_INT_LAST) 范围之内参数索引。
-// rtdb_error RTDBAPI_CALLRULE rtdb_get_db_info2_warp(rtdb_int32 handle, rtdb_int32 index, rtdb_uint32 *value)
-func RawRtdbGetDbInfo2Warp() {}
-
-// RawRtdbSetDbInfo1Warp 设置字符串型数据库系统参数
-// * \param handle    连接句柄
-// * \param index     整型，输入，要设置的参数索引，参见枚举 RTDB_DB_PARAM_INDEX。
-// * 其中，仅以下列出的枚举值可用：
-// * RTDB_PARAM_AUTO_BACKUP_PATH,
-// * RTDB_PARAM_SERVER_SENDER_IP,
-// * \param str       字符串型，输入，新的参数值。
-// * \remark 如果修改了启动参数，将返回 RtE_DATABASE_NEED_RESTART 提示码。
-// rtdb_error RTDBAPI_CALLRULE rtdb_set_db_info1_warp(rtdb_int32 handle, rtdb_int32 index, const char *str)
-func RawRtdbSetDbInfo1Warp() {}
-
-// RawRtdbSetDbInfo2Warp 设置整型数据库系统参数
-// * \param handle    连接句柄
-// * \param index     整型，输入，要取得的参数索引，参见枚举 RTDB_DB_PARAM_INDEX。
-// * 其中，仅以下列出的枚举值可用：
-// * RTDB_PARAM_SERVER_IPC_SIZE,
-// * RTDB_PARAM_EQUATION_IPC_SIZE,
-// * RTDB_PARAM_HASH_TABLE_SIZE,
-// * RTDB_PARAM_TAG_DELETE_TIMES,
-// * RTDB_PARAM_SERVER_PORT,
-// * RTDB_PARAM_SERVER_SENDER_PORT,
-// * RTDB_PARAM_SERVER_RECEIVER_PORT,
-// * RTDB_PARAM_SERVER_MODE,
-// * RTDB_PARAM_ARV_PAGES_NUMBER,
-// * RTDB_PARAM_ARVEX_PAGES_NUMBER,
-// * RTDB_PARAM_EXCEPTION_AT_SERVER,
-// * RTDB_PARAM_EX_ARCHIVE_SIZE,
-// * RTDB_PARAM_ARCHIVE_BATCH_SIZE,
-// * RTDB_PARAM_ARV_ASYNC_QUEUE_SLOWER_DOOR,
-// * RTDB_PARAM_ARV_ASYNC_QUEUE_NORMAL_DOOR,
-// * RTDB_PARAM_INDEX_ALWAYS_IN_MEMORY,
-// * RTDB_PARAM_DISK_MIN_REST_SIZE,
-// * RTDB_PARAM_DELAY_OF_AUTO_MERGE_OR_ARRANGE,
-// * RTDB_PARAM_START_OF_AUTO_MERGE_OR_ARRANGE,
-// * RTDB_PARAM_STOP_OF_AUTO_MERGE_OR_ARRANGE,
-// * RTDB_PARAM_START_OF_AUTO_BACKUP,
-// * RTDB_PARAM_STOP_OF_AUTO_BACKUP,
-// * RTDB_PARAM_MAX_LATENCY_OF_SNAPSHOT,
-// * RTDB_PARAM_PAGE_ALLOCATOR_RESERVE_SIZE,
-// * \param value     无符号整型，输入，新的参数值。
-// * \remark 如果修改了启动参数，将返回 RtE_DATABASE_NEED_RESTART 提示码。
-// rtdb_error RTDBAPI_CALLRULE rtdb_set_db_info2_warp(rtdb_int32 handle, rtdb_int32 index, rtdb_uint32 value)
-func RawRtdbSetDbInfo2Warp() {}
 
 // RawRtdbGetLogicalDriversWarp 获得逻辑盘符
 // * \param handle     连接句柄
