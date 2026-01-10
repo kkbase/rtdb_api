@@ -3229,80 +3229,58 @@ func RawRtdbGetConnectionInfoIpv6Warp() {}
 // rtdb_error RTDBAPI_CALLRULE rtdb_disconnect_warp(rtdb_int32 handle)
 func RawRtdbDisconnectWarp() {}
 
-// /*
-// *
-// * \brief 以有效帐户登录
+// RawRtdbLoginWarp 以有效帐户登录
 // * \param handle          连接句柄
 // * \param user            登录帐户
 // * \param password        帐户口令
 // * \param [out] priv     账户权限， 枚举 \ref RTDB_PRIV_GROUP 的值之一
 // * \return rtdb_error
 // rtdb_error RTDBAPI_CALLRULE rtdb_login_warp(rtdb_int32 handle, const char *user, const char *password, rtdb_int32 *priv)
-// */
 func RawRtdbLoginWarp() {}
 
-// /*
-// *
-//   - \brief 获取连接句柄所连接的服务器操作系统类型
-//   - \param     handle          连接句柄
-//   - \param     ostype   操作系统类型 枚举 \ref RTDB_OS_TYPE 的值之一
-//   - \return    rtdb_error
-//   - \remark 如句柄未链接任何服务器，返回RTDB_OS_INVALID(当前支持操作系统类型：windows、linux)。
-//
+// RawRTDBOSINVALID 获取连接句柄所连接的服务器操作系统类型
+// * \param     handle          连接句柄
+// * \param     ostype   操作系统类型 枚举 \ref RTDB_OS_TYPE 的值之一
+// * \return    rtdb_error
+// * \remark 如句柄未链接任何服务器，返回RTDB_OS_INVALID(当前支持操作系统类型：windows、linux)。
 // rtdb_error RTDBAPI_CALLRULE rtdb_get_linked_ostype_warp(rtdb_int32 handle, RTDB_OS_TYPE* ostype)
-// */
 func RawRTDBOSINVALID() {}
 
-// /*
-// *
-// * \brief 修改用户帐户口令
+// RawRtdbChangePasswordWarp 修改用户帐户口令
 // * \param handle    连接句柄
 // * \param user      已有帐户
 // * \param password  帐户新口令
 // * \return rtdb_error
 // * \remark 只有系统管理员可以修改其它用户的密码
 // rtdb_error RTDBAPI_CALLRULE rtdb_change_password_warp(rtdb_int32 handle, const char *user, const char *password)
-// */
 func RawRtdbChangePasswordWarp() {}
 
-// /*
-// *
-// * \brief 用户修改自己帐户口令
+// RawRtdbChangeMyPasswordWarp 用户修改自己帐户口令
 // * \param handle  连接句柄
 // * \param old_pwd 帐户原口令
 // * \param new_pwd 帐户新口令
 // * \return rtdb_error
 // rtdb_error RTDBAPI_CALLRULE rtdb_change_my_password_warp(rtdb_int32 handle, const char *old_pwd, const char *new_pwd)
-// */
 func RawRtdbChangeMyPasswordWarp() {}
 
-// /*
-// *
-//   - \brief 获取连接权限
-//   - \param handle          连接句柄
-//   - \param [out] priv  帐户权限， 枚举 \ref RTDB_PRIV_GROUP 的值之一
-//   - \return rtdb_error
-//   - \remark 如果还未登陆或不在服务器信任连接中，对应权限为-1，表示没有任何权限
-//
+// RawRtdbGetPrivWarp 获取连接权限
+// * \param handle          连接句柄
+// * \param [out] priv  帐户权限， 枚举 \ref RTDB_PRIV_GROUP 的值之一
+// * \return rtdb_error
+// * \remark 如果还未登陆或不在服务器信任连接中，对应权限为-1，表示没有任何权限
 // rtdb_error RTDBAPI_CALLRULE rtdb_get_priv_warp(rtdb_int32 handle, rtdb_int32 *priv)
-// */
 func RawRtdbGetPrivWarp() {}
 
-// /*
-// *
-// * \brief 修改用户帐户权限
+// RawRtdbChangePrivWarp 修改用户帐户权限
 // * \param handle  连接句柄
 // * \param user    已有帐户
 // * \param priv    帐户权限， 枚举 \ref RTDB_PRIV_GROUP 的值之一
 // * \return rtdb_error
 // * \remark 只有管理员有修改权限
 // rtdb_error RTDBAPI_CALLRULE rtdb_change_priv_warp(rtdb_int32 handle, const char *user, rtdb_int32 priv)
-// */
 func RawRtdbChangePrivWarp() {}
 
-// /*
-// *
-// * \brief 添加用户帐户
+// RawRtdbAddUserWarp 添加用户帐户
 // * \param handle    连接句柄
 // * \param user      帐户
 // * \param password  帐户初始口令
@@ -3310,49 +3288,36 @@ func RawRtdbChangePrivWarp() {}
 // * \return rtdb_error
 // * \remark 只有管理员有添加用户权限
 // rtdb_error RTDBAPI_CALLRULE rtdb_add_user_warp(rtdb_int32 handle, const char *user, const char *password, rtdb_int32 priv)
-// */
 func RawRtdbAddUserWarp() {}
 
-// /*
-// *
-// * \brief 删除用户帐户
+// RawRtdbRemoveUserWarp 删除用户帐户
 // * \param handle  连接句柄
 // * \param user    帐户
 // * \return rtdb_error
 // * \remark 只有管理员有删除用户权限
 // rtdb_error RTDBAPI_CALLRULE rtdb_remove_user_warp(rtdb_int32 handle, const char *user)
-// */
 func RawRtdbRemoveUserWarp() {}
 
-// /*
-// *
-// * \brief 启用或禁用用户
+// RawRtdbLockUserWarp 启用或禁用用户
 // * \param     handle    连接句柄
 // * \param     user      字符串，输入，帐户名
 // * \param     lock      布尔，输入，是否禁用
 // * \return    rtdb_error
 // * \remark 只有管理员有启用禁用权限
 // rtdb_error RTDBAPI_CALLRULE rtdb_lock_user_warp(rtdb_int32 handle, const char *user, rtdb_int8 lock)
-// */
 func RawRtdbLockUserWarp() {}
 
-// /*
-// *
-//   - \brief 获得所有用户
-//   - \param handle          连接句柄
-//   - \param [in,out]  count 输入时表示 users、privs 的长度，即用户个数；输出时表示成功返回的用户信息个数
-//   - \param [out] users     字符串指针数组，用户名称
-//   - \param [out] privs    整型数组，用户权限，枚举 \ref RTDB_PRIV_GROUP 的值之一
-//   - \return rtdb_error
-//   - \remark 用户须保证分配给 users, privs 的空间与 count 相符，如果输入的 count 小于总的用户数，则只返回部分用户信息。且每个指针指向的字符串缓冲区尺寸不小于 \ref RTDB_USER_SIZE。
-//
+// RawRtdbGetUsersWarp 获得所有用户
+// * \param handle          连接句柄
+// * \param [in,out]  count 输入时表示 users、privs 的长度，即用户个数；输出时表示成功返回的用户信息个数
+// * \param [out] users     字符串指针数组，用户名称
+// * \param [out] privs    整型数组，用户权限，枚举 \ref RTDB_PRIV_GROUP 的值之一
+// * \return rtdb_error
+// * \remark 用户须保证分配给 users, privs 的空间与 count 相符，如果输入的 count 小于总的用户数，则只返回部分用户信息。且每个指针指向的字符串缓冲区尺寸不小于 \ref RTDB_USER_SIZE。
 // rtdb_error RTDBAPI_CALLRULE rtdb_get_users_warp(rtdb_int32 handle, rtdb_int32 *count, RTDB_USER_INFO *infos)
-// */
 func RawRtdbGetUsersWarp() {}
 
-// /*
-// *
-// * \brief 添加连接黑名单项
+// RawRtdbAddBlacklistWarp 添加连接黑名单项
 // * \param handle  连接句柄
 // * \param [in] addr    阻止连接段地址
 // * \param [in] mask    阻止连接段子网掩码
@@ -3364,12 +3329,9 @@ func RawRtdbGetUsersWarp() {}
 // * 有效的子网掩码的所有 1 位于 0 左侧，例如："255.255.254.0"。
 // * 当全部为 1 时，表示该子网中只有 addr 一个地址；但不能全部为 0。
 // rtdb_error RTDBAPI_CALLRULE rtdb_add_blacklist_warp(rtdb_int32 handle, const char *addr, const char *mask, const char *desc)
-// */
 func RawRtdbAddBlacklistWarp() {}
 
-// /*
-// *
-// * \brief 更新连接连接黑名单项
+// RawRtdbUpdateBlacklistWarp 更新连接连接黑名单项
 // * \param handle    连接句柄
 // * \param addr      原阻止连接段地址
 // * \param mask      原阻止连接段子网掩码
@@ -3377,40 +3339,30 @@ func RawRtdbAddBlacklistWarp() {}
 // * \param mask_new  新的阻止连接段子网掩码
 // * \param desc      新的阻止连接段的说明，超过 511 字符将被截断
 // rtdb_error RTDBAPI_CALLRULE rtdb_update_blacklist_warp(rtdb_int32 handle, const char *addr, const char *mask, const char *addr_new, const char *mask_new, const char *desc)
-// */
 func RawRtdbUpdateBlacklistWarp() {}
 
-// /*
-// *
-// * \brief 删除连接黑名单项
+// RawRtdbRemoveBlacklistWarp 删除连接黑名单项
 // * \param handle  连接句柄
 // * \param addr    阻止连接段地址
 // * \param mask    阻止连接段子网掩码
 // * \remark 只有 addr 与 mask 完全相同才视为同一个阻止连接段
 // rtdb_error RTDBAPI_CALLRULE rtdb_remove_blacklist_warp(rtdb_int32 handle, const char *addr, const char *mask)
-// */
 func RawRtdbRemoveBlacklistWarp() {}
 
-// /*
-// *
-//   - \brief 获得连接黑名单
-//   - \param handle          连接句柄
-//   - \param addrs           字符串指针数组，输出，阻止连接段地址列表
-//   - \param masks           字符串指针数组，输出，阻止连接段子网掩码列表
-//   - \param descs           字符串指针数组，输出，阻止连接段的说明。
-//   - \param [in,out]  count 整型，输入/输出，用户个数
-//   - \remark 用户须保证分配给 addrs, masks, descs 的空间与 count 相符，
-//   - 如果输入的 count 小于输出的 count，则只返回部分阻止连接段，
-//   - addrs, masks 中每个字符串指针所指缓冲区尺寸不得小于 32 字节，
-//   - descs 中每个字符串指针所指缓冲区尺寸不得小于 512 字节。
-//
+// RawRtdbGetBlacklistWarp 获得连接黑名单
+// * \param handle          连接句柄
+// * \param addrs           字符串指针数组，输出，阻止连接段地址列表
+// * \param masks           字符串指针数组，输出，阻止连接段子网掩码列表
+// * \param descs           字符串指针数组，输出，阻止连接段的说明。
+// * \param [in,out]  count 整型，输入/输出，用户个数
+// * \remark 用户须保证分配给 addrs, masks, descs 的空间与 count 相符，
+// * 如果输入的 count 小于输出的 count，则只返回部分阻止连接段，
+// * addrs, masks 中每个字符串指针所指缓冲区尺寸不得小于 32 字节，
+// * descs 中每个字符串指针所指缓冲区尺寸不得小于 512 字节。
 // rtdb_error RTDBAPI_CALLRULE rtdb_get_blacklist_warp(rtdb_int32 handle, char* const* addrs, char* const* masks, char* const* descs, rtdb_int32 *count)
-// */
 func RawRtdbGetBlacklistWarp() {}
 
-// /*
-// *
-// * \brief 添加信任连接段
+// RawRtdbAddAuthorizationWarp 添加信任连接段
 // * \param handle  连接句柄
 // * \param addr    字符串，输入，信任连接段地址
 // * \param mask    字符串，输入，信任连接段子网掩码。
@@ -3425,12 +3377,9 @@ func RawRtdbGetBlacklistWarp() {}
 // *        表示该子网中只有 addr 一个地址；
 // *        但不能全部为 0。
 // rtdb_error RTDBAPI_CALLRULE rtdb_add_authorization_warp(rtdb_int32 handle, const char *addr, const char *mask, rtdb_int32 priv, const char *desc)
-// */
 func RawRtdbAddAuthorizationWarp() {}
 
-// /*
-// *
-// * \brief 更新信任连接段
+// RawRtdbUpdateAuthorizationWarp 更新信任连接段
 // * \param handle    连接句柄
 // * \param addr      字符串，输入，原信任连接段地址。
 // * \param mask      字符串，输入，原信任连接段子网掩码。
@@ -3439,48 +3388,35 @@ func RawRtdbAddAuthorizationWarp() {}
 // * \param priv      整数，输入，新的信任连接段拥有的用户权限。
 // * \param desc      字符串，输入，新的信任连接段的说明，超过 511 字符将被截断。
 // rtdb_error RTDBAPI_CALLRULE rtdb_update_authorization_warp(rtdb_int32 handle, const char *addr, const char *mask, const char *addr_new, const char *mask_new, rtdb_int32 priv, const char *desc)
-// */
 func RawRtdbUpdateAuthorizationWarp() {}
 
-// /*
-// *
-// * \brief 删除信任连接段
+// RawRtdbRemoveAuthorizationWarp 删除信任连接段
 // * \param handle  连接句柄
 // * \param addr    字符串，输入，信任连接段地址。
 // * \param mask    字符串，输入，信任连接段子网掩码。
 // * \remark 只有 addr 与 mask 完全相同才视为同一个信任连接段
 // rtdb_error RTDBAPI_CALLRULE rtdb_remove_authorization_warp(rtdb_int32 handle, const char *addr, const char *mask)
-// */
 func RawRtdbRemoveAuthorizationWarp() {}
 
-// /*
-// *
-//   - \brief 获得所有信任连接段
-//   - \param handle          连接句柄
-//   - \param addrs           字符串指针数组，输出，信任连接段地址列表
-//   - \param masks           字符串指针数组，输出，信任连接段子网掩码列表
-//   - \param [in,out]  privs 整型数组，输出，信任连接段权限列表
-//   - \param descs           字符串指针数组，输出，信任连接段的说明。
-//   - \param [in,out]  count 整型，输入/输出，用户个数
-//   - \remark 用户须保证分配给 addrs, masks, privs, descs 的空间与 count 相符，
-//   - 如果输入的 count 小于输出的 count，则只返回部分信任连接段，
-//   - addrs, masks 中每个字符串指针所指缓冲区尺寸不得小于 32 字节，
-//   - descs 中每个字符串指针所指缓冲区尺寸不得小于 512 字节。
-//
+// RawRtdbGetAuthorizationsWarp 获得所有信任连接段
+// * \param handle          连接句柄
+// * \param addrs           字符串指针数组，输出，信任连接段地址列表
+// * \param masks           字符串指针数组，输出，信任连接段子网掩码列表
+// * \param [in,out]  privs 整型数组，输出，信任连接段权限列表
+// * \param descs           字符串指针数组，输出，信任连接段的说明。
+// * \param [in,out]  count 整型，输入/输出，用户个数
+// * \remark 用户须保证分配给 addrs, masks, privs, descs 的空间与 count 相符，
+// * 如果输入的 count 小于输出的 count，则只返回部分信任连接段，
+// * addrs, masks 中每个字符串指针所指缓冲区尺寸不得小于 32 字节，
+// * descs 中每个字符串指针所指缓冲区尺寸不得小于 512 字节。
 // rtdb_error RTDBAPI_CALLRULE rtdb_get_authorizations_warp(rtdb_int32 handle, char* const* addrs, char* const* masks, rtdb_int32 *privs, char* const* descs, rtdb_int32 *count)
-// */
 func RawRtdbGetAuthorizationsWarp() {}
 
-// /*
-// *
-//   - \brief 获取 RTDB 服务器当前UTC时间
-//     *
-//   - \param handle       连接句柄
-//   - \param hosttime     整型，输出，Rtdb服务器的当前UTC时间，
-//   - 表示距离1970年1月1日08:00:00的秒数。
-//
+// RawRtdbHostTimeWarp 获取 RTDB 服务器当前UTC时间
+// * \param handle       连接句柄
+// * \param hosttime     整型，输出，Rtdb服务器的当前UTC时间，
+// * 表示距离1970年1月1日08:00:00的秒数。
 // rtdb_error RTDBAPI_CALLRULE rtdb_host_time_warp(rtdb_int32 handle, rtdb_int32 *hosttime)
-// */
 func RawRtdbHostTimeWarp() {}
 
 // /*
