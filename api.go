@@ -3229,1134 +3229,1122 @@ func RawRtdbGetConnectionInfoIpv6Warp() {}
 // rtdb_error RTDBAPI_CALLRULE rtdb_disconnect_warp(rtdb_int32 handle)
 func RawRtdbDisconnectWarp() {}
 
-/*
-*
-* \brief 以有效帐户登录
-* \param handle          连接句柄
-* \param user            登录帐户
-* \param password        帐户口令
-* \param [out] priv     账户权限， 枚举 \ref RTDB_PRIV_GROUP 的值之一
-* \return rtdb_error
-rtdb_error RTDBAPI_CALLRULE rtdb_login_warp(rtdb_int32 handle, const char *user, const char *password, rtdb_int32 *priv)
-*/
+// /*
+// *
+// * \brief 以有效帐户登录
+// * \param handle          连接句柄
+// * \param user            登录帐户
+// * \param password        帐户口令
+// * \param [out] priv     账户权限， 枚举 \ref RTDB_PRIV_GROUP 的值之一
+// * \return rtdb_error
+// rtdb_error RTDBAPI_CALLRULE rtdb_login_warp(rtdb_int32 handle, const char *user, const char *password, rtdb_int32 *priv)
+// */
 func RawRtdbLoginWarp() {}
 
-/*
-*
-  - \brief 获取连接句柄所连接的服务器操作系统类型
-  - \param     handle          连接句柄
-  - \param     ostype   操作系统类型 枚举 \ref RTDB_OS_TYPE 的值之一
-  - \return    rtdb_error
-  - \remark 如句柄未链接任何服务器，返回RTDB_OS_INVALID(当前支持操作系统类型：windows、linux)。
-
-rtdb_error RTDBAPI_CALLRULE rtdb_get_linked_ostype_warp(rtdb_int32 handle, RTDB_OS_TYPE* ostype)
-*/
+// /*
+// *
+//   - \brief 获取连接句柄所连接的服务器操作系统类型
+//   - \param     handle          连接句柄
+//   - \param     ostype   操作系统类型 枚举 \ref RTDB_OS_TYPE 的值之一
+//   - \return    rtdb_error
+//   - \remark 如句柄未链接任何服务器，返回RTDB_OS_INVALID(当前支持操作系统类型：windows、linux)。
+//
+// rtdb_error RTDBAPI_CALLRULE rtdb_get_linked_ostype_warp(rtdb_int32 handle, RTDB_OS_TYPE* ostype)
+// */
 func RawRTDBOSINVALID() {}
 
-/*
-*
-  - \brief 获取连接句柄所连接的服务器相关信息
-  - \param     handle          连接句柄
-  - \param     handle_info   服务器相关信息
-  - \return    rtdb_error
-  - \remark 如句柄未链接任何服务器，返回RTDB_OS_INVALID(当前支持操作系统类型：windows、linux)。
-
-rtdb_error RTDBAPI_CALLRULE rtdb_get_handle_info_warp(rtdb_int32 handle, RTDB_HANDLE_INFO* info)
-*/
-func RawRTDBOSINVALID() {}
-
-/*
-*
-* \brief 修改用户帐户口令
-* \param handle    连接句柄
-* \param user      已有帐户
-* \param password  帐户新口令
-* \return rtdb_error
-* \remark 只有系统管理员可以修改其它用户的密码
-rtdb_error RTDBAPI_CALLRULE rtdb_change_password_warp(rtdb_int32 handle, const char *user, const char *password)
-*/
+// /*
+// *
+// * \brief 修改用户帐户口令
+// * \param handle    连接句柄
+// * \param user      已有帐户
+// * \param password  帐户新口令
+// * \return rtdb_error
+// * \remark 只有系统管理员可以修改其它用户的密码
+// rtdb_error RTDBAPI_CALLRULE rtdb_change_password_warp(rtdb_int32 handle, const char *user, const char *password)
+// */
 func RawRtdbChangePasswordWarp() {}
 
-/*
-*
-* \brief 用户修改自己帐户口令
-* \param handle  连接句柄
-* \param old_pwd 帐户原口令
-* \param new_pwd 帐户新口令
-* \return rtdb_error
-rtdb_error RTDBAPI_CALLRULE rtdb_change_my_password_warp(rtdb_int32 handle, const char *old_pwd, const char *new_pwd)
-*/
+// /*
+// *
+// * \brief 用户修改自己帐户口令
+// * \param handle  连接句柄
+// * \param old_pwd 帐户原口令
+// * \param new_pwd 帐户新口令
+// * \return rtdb_error
+// rtdb_error RTDBAPI_CALLRULE rtdb_change_my_password_warp(rtdb_int32 handle, const char *old_pwd, const char *new_pwd)
+// */
 func RawRtdbChangeMyPasswordWarp() {}
 
-/*
-*
-  - \brief 获取连接权限
-  - \param handle          连接句柄
-  - \param [out] priv  帐户权限， 枚举 \ref RTDB_PRIV_GROUP 的值之一
-  - \return rtdb_error
-  - \remark 如果还未登陆或不在服务器信任连接中，对应权限为-1，表示没有任何权限
-
-rtdb_error RTDBAPI_CALLRULE rtdb_get_priv_warp(rtdb_int32 handle, rtdb_int32 *priv)
-*/
+// /*
+// *
+//   - \brief 获取连接权限
+//   - \param handle          连接句柄
+//   - \param [out] priv  帐户权限， 枚举 \ref RTDB_PRIV_GROUP 的值之一
+//   - \return rtdb_error
+//   - \remark 如果还未登陆或不在服务器信任连接中，对应权限为-1，表示没有任何权限
+//
+// rtdb_error RTDBAPI_CALLRULE rtdb_get_priv_warp(rtdb_int32 handle, rtdb_int32 *priv)
+// */
 func RawRtdbGetPrivWarp() {}
 
-/*
-*
-* \brief 修改用户帐户权限
-* \param handle  连接句柄
-* \param user    已有帐户
-* \param priv    帐户权限， 枚举 \ref RTDB_PRIV_GROUP 的值之一
-* \return rtdb_error
-* \remark 只有管理员有修改权限
-rtdb_error RTDBAPI_CALLRULE rtdb_change_priv_warp(rtdb_int32 handle, const char *user, rtdb_int32 priv)
-*/
+// /*
+// *
+// * \brief 修改用户帐户权限
+// * \param handle  连接句柄
+// * \param user    已有帐户
+// * \param priv    帐户权限， 枚举 \ref RTDB_PRIV_GROUP 的值之一
+// * \return rtdb_error
+// * \remark 只有管理员有修改权限
+// rtdb_error RTDBAPI_CALLRULE rtdb_change_priv_warp(rtdb_int32 handle, const char *user, rtdb_int32 priv)
+// */
 func RawRtdbChangePrivWarp() {}
 
-/*
-*
-* \brief 添加用户帐户
-* \param handle    连接句柄
-* \param user      帐户
-* \param password  帐户初始口令
-* \param priv      帐户权限， 枚举 \ref RTDB_PRIV_GROUP 的值之一
-* \return rtdb_error
-* \remark 只有管理员有添加用户权限
-rtdb_error RTDBAPI_CALLRULE rtdb_add_user_warp(rtdb_int32 handle, const char *user, const char *password, rtdb_int32 priv)
-*/
+// /*
+// *
+// * \brief 添加用户帐户
+// * \param handle    连接句柄
+// * \param user      帐户
+// * \param password  帐户初始口令
+// * \param priv      帐户权限， 枚举 \ref RTDB_PRIV_GROUP 的值之一
+// * \return rtdb_error
+// * \remark 只有管理员有添加用户权限
+// rtdb_error RTDBAPI_CALLRULE rtdb_add_user_warp(rtdb_int32 handle, const char *user, const char *password, rtdb_int32 priv)
+// */
 func RawRtdbAddUserWarp() {}
 
-/*
-*
-* \brief 删除用户帐户
-* \param handle  连接句柄
-* \param user    帐户
-* \return rtdb_error
-* \remark 只有管理员有删除用户权限
-rtdb_error RTDBAPI_CALLRULE rtdb_remove_user_warp(rtdb_int32 handle, const char *user)
-*/
+// /*
+// *
+// * \brief 删除用户帐户
+// * \param handle  连接句柄
+// * \param user    帐户
+// * \return rtdb_error
+// * \remark 只有管理员有删除用户权限
+// rtdb_error RTDBAPI_CALLRULE rtdb_remove_user_warp(rtdb_int32 handle, const char *user)
+// */
 func RawRtdbRemoveUserWarp() {}
 
-/*
-*
-* \brief 启用或禁用用户
-* \param     handle    连接句柄
-* \param     user      字符串，输入，帐户名
-* \param     lock      布尔，输入，是否禁用
-* \return    rtdb_error
-* \remark 只有管理员有启用禁用权限
-rtdb_error RTDBAPI_CALLRULE rtdb_lock_user_warp(rtdb_int32 handle, const char *user, rtdb_int8 lock)
-*/
+// /*
+// *
+// * \brief 启用或禁用用户
+// * \param     handle    连接句柄
+// * \param     user      字符串，输入，帐户名
+// * \param     lock      布尔，输入，是否禁用
+// * \return    rtdb_error
+// * \remark 只有管理员有启用禁用权限
+// rtdb_error RTDBAPI_CALLRULE rtdb_lock_user_warp(rtdb_int32 handle, const char *user, rtdb_int8 lock)
+// */
 func RawRtdbLockUserWarp() {}
 
-/*
-*
-  - \brief 获得所有用户
-  - \param handle          连接句柄
-  - \param [in,out]  count 输入时表示 users、privs 的长度，即用户个数；输出时表示成功返回的用户信息个数
-  - \param [out] users     字符串指针数组，用户名称
-  - \param [out] privs    整型数组，用户权限，枚举 \ref RTDB_PRIV_GROUP 的值之一
-  - \return rtdb_error
-  - \remark 用户须保证分配给 users, privs 的空间与 count 相符，如果输入的 count 小于总的用户数，则只返回部分用户信息。且每个指针指向的字符串缓冲区尺寸不小于 \ref RTDB_USER_SIZE。
-
-rtdb_error RTDBAPI_CALLRULE rtdb_get_users_warp(rtdb_int32 handle, rtdb_int32 *count, RTDB_USER_INFO *infos)
-*/
+// /*
+// *
+//   - \brief 获得所有用户
+//   - \param handle          连接句柄
+//   - \param [in,out]  count 输入时表示 users、privs 的长度，即用户个数；输出时表示成功返回的用户信息个数
+//   - \param [out] users     字符串指针数组，用户名称
+//   - \param [out] privs    整型数组，用户权限，枚举 \ref RTDB_PRIV_GROUP 的值之一
+//   - \return rtdb_error
+//   - \remark 用户须保证分配给 users, privs 的空间与 count 相符，如果输入的 count 小于总的用户数，则只返回部分用户信息。且每个指针指向的字符串缓冲区尺寸不小于 \ref RTDB_USER_SIZE。
+//
+// rtdb_error RTDBAPI_CALLRULE rtdb_get_users_warp(rtdb_int32 handle, rtdb_int32 *count, RTDB_USER_INFO *infos)
+// */
 func RawRtdbGetUsersWarp() {}
 
-/*
-*
-* \brief 添加连接黑名单项
-* \param handle  连接句柄
-* \param [in] addr    阻止连接段地址
-* \param [in] mask    阻止连接段子网掩码
-* \param [in] desc    阻止连接段的说明，超过 511 字符将被截断
-* \return rtdb_error
-* \remark addr 和 mask 进行与运算形成一个子网，
-* 来自该子网范围内的连接都将被阻止，黑名单的优先级高于信任连接，
-* 如果有连接既位于黑名单中，也位于信任连接中，则它将先被阻止。
-* 有效的子网掩码的所有 1 位于 0 左侧，例如："255.255.254.0"。
-* 当全部为 1 时，表示该子网中只有 addr 一个地址；但不能全部为 0。
-rtdb_error RTDBAPI_CALLRULE rtdb_add_blacklist_warp(rtdb_int32 handle, const char *addr, const char *mask, const char *desc)
-*/
+// /*
+// *
+// * \brief 添加连接黑名单项
+// * \param handle  连接句柄
+// * \param [in] addr    阻止连接段地址
+// * \param [in] mask    阻止连接段子网掩码
+// * \param [in] desc    阻止连接段的说明，超过 511 字符将被截断
+// * \return rtdb_error
+// * \remark addr 和 mask 进行与运算形成一个子网，
+// * 来自该子网范围内的连接都将被阻止，黑名单的优先级高于信任连接，
+// * 如果有连接既位于黑名单中，也位于信任连接中，则它将先被阻止。
+// * 有效的子网掩码的所有 1 位于 0 左侧，例如："255.255.254.0"。
+// * 当全部为 1 时，表示该子网中只有 addr 一个地址；但不能全部为 0。
+// rtdb_error RTDBAPI_CALLRULE rtdb_add_blacklist_warp(rtdb_int32 handle, const char *addr, const char *mask, const char *desc)
+// */
 func RawRtdbAddBlacklistWarp() {}
 
-/*
-*
-* \brief 更新连接连接黑名单项
-* \param handle    连接句柄
-* \param addr      原阻止连接段地址
-* \param mask      原阻止连接段子网掩码
-* \param addr_new  新的阻止连接段地址
-* \param mask_new  新的阻止连接段子网掩码
-* \param desc      新的阻止连接段的说明，超过 511 字符将被截断
-rtdb_error RTDBAPI_CALLRULE rtdb_update_blacklist_warp(rtdb_int32 handle, const char *addr, const char *mask, const char *addr_new, const char *mask_new, const char *desc)
-*/
+// /*
+// *
+// * \brief 更新连接连接黑名单项
+// * \param handle    连接句柄
+// * \param addr      原阻止连接段地址
+// * \param mask      原阻止连接段子网掩码
+// * \param addr_new  新的阻止连接段地址
+// * \param mask_new  新的阻止连接段子网掩码
+// * \param desc      新的阻止连接段的说明，超过 511 字符将被截断
+// rtdb_error RTDBAPI_CALLRULE rtdb_update_blacklist_warp(rtdb_int32 handle, const char *addr, const char *mask, const char *addr_new, const char *mask_new, const char *desc)
+// */
 func RawRtdbUpdateBlacklistWarp() {}
 
-/*
-*
-* \brief 删除连接黑名单项
-* \param handle  连接句柄
-* \param addr    阻止连接段地址
-* \param mask    阻止连接段子网掩码
-* \remark 只有 addr 与 mask 完全相同才视为同一个阻止连接段
-rtdb_error RTDBAPI_CALLRULE rtdb_remove_blacklist_warp(rtdb_int32 handle, const char *addr, const char *mask)
-*/
+// /*
+// *
+// * \brief 删除连接黑名单项
+// * \param handle  连接句柄
+// * \param addr    阻止连接段地址
+// * \param mask    阻止连接段子网掩码
+// * \remark 只有 addr 与 mask 完全相同才视为同一个阻止连接段
+// rtdb_error RTDBAPI_CALLRULE rtdb_remove_blacklist_warp(rtdb_int32 handle, const char *addr, const char *mask)
+// */
 func RawRtdbRemoveBlacklistWarp() {}
 
-/*
-*
-  - \brief 获得连接黑名单
-  - \param handle          连接句柄
-  - \param addrs           字符串指针数组，输出，阻止连接段地址列表
-  - \param masks           字符串指针数组，输出，阻止连接段子网掩码列表
-  - \param descs           字符串指针数组，输出，阻止连接段的说明。
-  - \param [in,out]  count 整型，输入/输出，用户个数
-  - \remark 用户须保证分配给 addrs, masks, descs 的空间与 count 相符，
-  - 如果输入的 count 小于输出的 count，则只返回部分阻止连接段，
-  - addrs, masks 中每个字符串指针所指缓冲区尺寸不得小于 32 字节，
-  - descs 中每个字符串指针所指缓冲区尺寸不得小于 512 字节。
-
-rtdb_error RTDBAPI_CALLRULE rtdb_get_blacklist_warp(rtdb_int32 handle, char* const* addrs, char* const* masks, char* const* descs, rtdb_int32 *count)
-*/
+// /*
+// *
+//   - \brief 获得连接黑名单
+//   - \param handle          连接句柄
+//   - \param addrs           字符串指针数组，输出，阻止连接段地址列表
+//   - \param masks           字符串指针数组，输出，阻止连接段子网掩码列表
+//   - \param descs           字符串指针数组，输出，阻止连接段的说明。
+//   - \param [in,out]  count 整型，输入/输出，用户个数
+//   - \remark 用户须保证分配给 addrs, masks, descs 的空间与 count 相符，
+//   - 如果输入的 count 小于输出的 count，则只返回部分阻止连接段，
+//   - addrs, masks 中每个字符串指针所指缓冲区尺寸不得小于 32 字节，
+//   - descs 中每个字符串指针所指缓冲区尺寸不得小于 512 字节。
+//
+// rtdb_error RTDBAPI_CALLRULE rtdb_get_blacklist_warp(rtdb_int32 handle, char* const* addrs, char* const* masks, char* const* descs, rtdb_int32 *count)
+// */
 func RawRtdbGetBlacklistWarp() {}
 
-/*
-*
-* \brief 添加信任连接段
-* \param handle  连接句柄
-* \param addr    字符串，输入，信任连接段地址
-* \param mask    字符串，输入，信任连接段子网掩码。
-* \param priv    整数，输入，信任连接段拥有的用户权限。
-* \param desc    字符串，输入，信任连接段的说明，超过 511 字符将被截断。
-* \remark addr 和 mask 进行与运算形成一个子网，
-*        来自该子网范围内的连接都被视为可信任的，
-*        可以不用登录 (rtdb_login)，就直接调用 API，
-*        它所拥有的权限在 priv 中指定。
-*        有效的子网掩码的所有 1 位于 0 左侧，
-*        例如："255.255.254.0"。当全部为 1 时，
-*        表示该子网中只有 addr 一个地址；
-*        但不能全部为 0。
-rtdb_error RTDBAPI_CALLRULE rtdb_add_authorization_warp(rtdb_int32 handle, const char *addr, const char *mask, rtdb_int32 priv, const char *desc)
-*/
+// /*
+// *
+// * \brief 添加信任连接段
+// * \param handle  连接句柄
+// * \param addr    字符串，输入，信任连接段地址
+// * \param mask    字符串，输入，信任连接段子网掩码。
+// * \param priv    整数，输入，信任连接段拥有的用户权限。
+// * \param desc    字符串，输入，信任连接段的说明，超过 511 字符将被截断。
+// * \remark addr 和 mask 进行与运算形成一个子网，
+// *        来自该子网范围内的连接都被视为可信任的，
+// *        可以不用登录 (rtdb_login)，就直接调用 API，
+// *        它所拥有的权限在 priv 中指定。
+// *        有效的子网掩码的所有 1 位于 0 左侧，
+// *        例如："255.255.254.0"。当全部为 1 时，
+// *        表示该子网中只有 addr 一个地址；
+// *        但不能全部为 0。
+// rtdb_error RTDBAPI_CALLRULE rtdb_add_authorization_warp(rtdb_int32 handle, const char *addr, const char *mask, rtdb_int32 priv, const char *desc)
+// */
 func RawRtdbAddAuthorizationWarp() {}
 
-/*
-*
-* \brief 更新信任连接段
-* \param handle    连接句柄
-* \param addr      字符串，输入，原信任连接段地址。
-* \param mask      字符串，输入，原信任连接段子网掩码。
-* \param addr_new  字符串，输入，新的信任连接段地址。
-* \param mask_new  字符串，输入，新的信任连接段子网掩码。
-* \param priv      整数，输入，新的信任连接段拥有的用户权限。
-* \param desc      字符串，输入，新的信任连接段的说明，超过 511 字符将被截断。
-rtdb_error RTDBAPI_CALLRULE rtdb_update_authorization_warp(rtdb_int32 handle, const char *addr, const char *mask, const char *addr_new, const char *mask_new, rtdb_int32 priv, const char *desc)
-*/
+// /*
+// *
+// * \brief 更新信任连接段
+// * \param handle    连接句柄
+// * \param addr      字符串，输入，原信任连接段地址。
+// * \param mask      字符串，输入，原信任连接段子网掩码。
+// * \param addr_new  字符串，输入，新的信任连接段地址。
+// * \param mask_new  字符串，输入，新的信任连接段子网掩码。
+// * \param priv      整数，输入，新的信任连接段拥有的用户权限。
+// * \param desc      字符串，输入，新的信任连接段的说明，超过 511 字符将被截断。
+// rtdb_error RTDBAPI_CALLRULE rtdb_update_authorization_warp(rtdb_int32 handle, const char *addr, const char *mask, const char *addr_new, const char *mask_new, rtdb_int32 priv, const char *desc)
+// */
 func RawRtdbUpdateAuthorizationWarp() {}
 
-/*
-*
-* \brief 删除信任连接段
-* \param handle  连接句柄
-* \param addr    字符串，输入，信任连接段地址。
-* \param mask    字符串，输入，信任连接段子网掩码。
-* \remark 只有 addr 与 mask 完全相同才视为同一个信任连接段
-rtdb_error RTDBAPI_CALLRULE rtdb_remove_authorization_warp(rtdb_int32 handle, const char *addr, const char *mask)
-*/
+// /*
+// *
+// * \brief 删除信任连接段
+// * \param handle  连接句柄
+// * \param addr    字符串，输入，信任连接段地址。
+// * \param mask    字符串，输入，信任连接段子网掩码。
+// * \remark 只有 addr 与 mask 完全相同才视为同一个信任连接段
+// rtdb_error RTDBAPI_CALLRULE rtdb_remove_authorization_warp(rtdb_int32 handle, const char *addr, const char *mask)
+// */
 func RawRtdbRemoveAuthorizationWarp() {}
 
-/*
-*
-  - \brief 获得所有信任连接段
-  - \param handle          连接句柄
-  - \param addrs           字符串指针数组，输出，信任连接段地址列表
-  - \param masks           字符串指针数组，输出，信任连接段子网掩码列表
-  - \param [in,out]  privs 整型数组，输出，信任连接段权限列表
-  - \param descs           字符串指针数组，输出，信任连接段的说明。
-  - \param [in,out]  count 整型，输入/输出，用户个数
-  - \remark 用户须保证分配给 addrs, masks, privs, descs 的空间与 count 相符，
-  - 如果输入的 count 小于输出的 count，则只返回部分信任连接段，
-  - addrs, masks 中每个字符串指针所指缓冲区尺寸不得小于 32 字节，
-  - descs 中每个字符串指针所指缓冲区尺寸不得小于 512 字节。
-
-rtdb_error RTDBAPI_CALLRULE rtdb_get_authorizations_warp(rtdb_int32 handle, char* const* addrs, char* const* masks, rtdb_int32 *privs, char* const* descs, rtdb_int32 *count)
-*/
+// /*
+// *
+//   - \brief 获得所有信任连接段
+//   - \param handle          连接句柄
+//   - \param addrs           字符串指针数组，输出，信任连接段地址列表
+//   - \param masks           字符串指针数组，输出，信任连接段子网掩码列表
+//   - \param [in,out]  privs 整型数组，输出，信任连接段权限列表
+//   - \param descs           字符串指针数组，输出，信任连接段的说明。
+//   - \param [in,out]  count 整型，输入/输出，用户个数
+//   - \remark 用户须保证分配给 addrs, masks, privs, descs 的空间与 count 相符，
+//   - 如果输入的 count 小于输出的 count，则只返回部分信任连接段，
+//   - addrs, masks 中每个字符串指针所指缓冲区尺寸不得小于 32 字节，
+//   - descs 中每个字符串指针所指缓冲区尺寸不得小于 512 字节。
+//
+// rtdb_error RTDBAPI_CALLRULE rtdb_get_authorizations_warp(rtdb_int32 handle, char* const* addrs, char* const* masks, rtdb_int32 *privs, char* const* descs, rtdb_int32 *count)
+// */
 func RawRtdbGetAuthorizationsWarp() {}
 
-/*
-*
-  - \brief 获取 RTDB 服务器当前UTC时间
-    *
-  - \param handle       连接句柄
-  - \param hosttime     整型，输出，Rtdb服务器的当前UTC时间，
-  - 表示距离1970年1月1日08:00:00的秒数。
-
-rtdb_error RTDBAPI_CALLRULE rtdb_host_time_warp(rtdb_int32 handle, rtdb_int32 *hosttime)
-*/
+// /*
+// *
+//   - \brief 获取 RTDB 服务器当前UTC时间
+//     *
+//   - \param handle       连接句柄
+//   - \param hosttime     整型，输出，Rtdb服务器的当前UTC时间，
+//   - 表示距离1970年1月1日08:00:00的秒数。
+//
+// rtdb_error RTDBAPI_CALLRULE rtdb_host_time_warp(rtdb_int32 handle, rtdb_int32 *hosttime)
+// */
 func RawRtdbHostTimeWarp() {}
 
-/*
-*
-  - \brief 获取 RTDB 服务器当前UTC时间
-    *
-  - \param handle       连接句柄
-  - \param hosttime     整型，输出，Rtdb服务器的当前UTC时间，
-  - 表示距离1970年1月1日08:00:00的秒数。
-
-rtdb_error RTDBAPI_CALLRULE rtdb_host_time64_warp(rtdb_int32 handle, rtdb_timestamp_type* hosttime)
-*/
+// /*
+// *
+//   - \brief 获取 RTDB 服务器当前UTC时间
+//     *
+//   - \param handle       连接句柄
+//   - \param hosttime     整型，输出，Rtdb服务器的当前UTC时间，
+//   - 表示距离1970年1月1日08:00:00的秒数。
+//
+// rtdb_error RTDBAPI_CALLRULE rtdb_host_time64_warp(rtdb_int32 handle, rtdb_timestamp_type* hosttime)
+// */
 func RawRtdbHostTime64Warp() {}
 
-/*
-*
-  - \brief 根据时间跨度值生成时间格式字符串
-    *
-  - \param str          字符串，输出，时间格式字符串，形如:
-  - "1d" 表示时间跨度为24小时。
-  - 具体含义参见 rtdb_parse_timespan 注释。
-  - \param timespan     整型，输入，要处理的时间跨度秒数。
-  - \remark 字符串缓冲区大小不应小于 32 字节。
-
-rtdb_error RTDBAPI_CALLRULE rtdb_format_timespan_warp(char *str, rtdb_int32 timespan)
-*/
+// /*
+// *
+//   - \brief 根据时间跨度值生成时间格式字符串
+//     *
+//   - \param str          字符串，输出，时间格式字符串，形如:
+//   - "1d" 表示时间跨度为24小时。
+//   - 具体含义参见 rtdb_parse_timespan 注释。
+//   - \param timespan     整型，输入，要处理的时间跨度秒数。
+//   - \remark 字符串缓冲区大小不应小于 32 字节。
+//
+// rtdb_error RTDBAPI_CALLRULE rtdb_format_timespan_warp(char *str, rtdb_int32 timespan)
+// */
 func RawRtdbFormatTimespanWarp() {}
 
-/*
-*
-* \brief 根据时间格式字符串解析时间跨度值
-*
-* \param str          字符串，输入，时间格式字符串，规则如下：
-*                     [time_span]
-*
-*                     时间跨度部分可以出现多次，
-*                     可用的时间跨度代码及含义如下：
-*                     ?y            ?年, 1年 = 365日
-*                     ?m            ?月, 1月 = 30 日
-*                     ?d            ?日
-*                     ?h            ?小时
-*                     ?n            ?分钟
-*                     ?s            ?秒
-*                     例如："1d" 表示时间跨度为24小时。
-*
-* \param timespan     整型，输出，返回解析得到的时间跨度秒数。
-rtdb_error RTDBAPI_CALLRULE rtdb_parse_timespan_warp(const char *str, rtdb_int32 *timespan)
-*/
+// /*
+// *
+// * \brief 根据时间格式字符串解析时间跨度值
+// *
+// * \param str          字符串，输入，时间格式字符串，规则如下：
+// *                     [time_span]
+// *
+// *                     时间跨度部分可以出现多次，
+// *                     可用的时间跨度代码及含义如下：
+// *                     ?y            ?年, 1年 = 365日
+// *                     ?m            ?月, 1月 = 30 日
+// *                     ?d            ?日
+// *                     ?h            ?小时
+// *                     ?n            ?分钟
+// *                     ?s            ?秒
+// *                     例如："1d" 表示时间跨度为24小时。
+// *
+// * \param timespan     整型，输出，返回解析得到的时间跨度秒数。
+// rtdb_error RTDBAPI_CALLRULE rtdb_parse_timespan_warp(const char *str, rtdb_int32 *timespan)
+// */
 func RawRtdbParseTimespanWarp() {}
 
-/*
-*
-* \brief 根据时间格式字符串解析时间值
-*
-* \param str          字符串，输入，时间格式字符串，规则如下：
-*                     base_time [+|- offset_time]
-*
-*                     其中 base_time 表示基本时间，有三种形式：
-*                     1. 时间字符串，如 "2010-1-1" 及 "2010-1-1 8:00:00"；
-*                     2. 时间代码，表示客户端相对时间；
-*                     可用的时间代码及含义如下：
-*                     td             当天零点
-*                     yd             昨天零点
-*                     tm             明天零点
-*                     mon            本周一零点
-*                     tue            本周二零点
-*                     wed            本周三零点
-*                     thu            本周四零点
-*                     fri            本周五零点
-*                     sat            本周六零点
-*                     sun            本周日零点
-*                     3. 星号('*')，表示客户端当前时间。
-*
-*                     offset_time 是可选的，可以出现多次，
-*                     可用的时间偏移代码及含义如下：
-*                     [+|-] ?y            偏移?年, 1年 = 365日
-*                     [+|-] ?m            偏移?月, 1月 = 30 日
-*                     [+|-] ?d            偏移?日
-*                     [+|-] ?h            偏移?小时
-*                     [+|-] ?n            偏移?分钟
-*                     [+|-] ?s            偏移?秒
-*                     [+|-] ?ms           偏移?毫秒
-*                     例如："*-1d" 表示当前时刻减去24小时。
-*
-* \param datetime     整型，输出，返回解析得到的时间值。
-* \param ms           短整型，输出，返回解析得到的时间毫秒值。
-*  备注：ms 可以为空指针，相应的毫秒信息将不再返回。
-rtdb_error RTDBAPI_CALLRULE rtdb_parse_time_warp(const char *str, rtdb_int64 *datetime, rtdb_int16 *ms)
-*/
+// /*
+// *
+// * \brief 根据时间格式字符串解析时间值
+// *
+// * \param str          字符串，输入，时间格式字符串，规则如下：
+// *                     base_time [+|- offset_time]
+// *
+// *                     其中 base_time 表示基本时间，有三种形式：
+// *                     1. 时间字符串，如 "2010-1-1" 及 "2010-1-1 8:00:00"；
+// *                     2. 时间代码，表示客户端相对时间；
+// *                     可用的时间代码及含义如下：
+// *                     td             当天零点
+// *                     yd             昨天零点
+// *                     tm             明天零点
+// *                     mon            本周一零点
+// *                     tue            本周二零点
+// *                     wed            本周三零点
+// *                     thu            本周四零点
+// *                     fri            本周五零点
+// *                     sat            本周六零点
+// *                     sun            本周日零点
+// *                     3. 星号('*')，表示客户端当前时间。
+// *
+// *                     offset_time 是可选的，可以出现多次，
+// *                     可用的时间偏移代码及含义如下：
+// *                     [+|-] ?y            偏移?年, 1年 = 365日
+// *                     [+|-] ?m            偏移?月, 1月 = 30 日
+// *                     [+|-] ?d            偏移?日
+// *                     [+|-] ?h            偏移?小时
+// *                     [+|-] ?n            偏移?分钟
+// *                     [+|-] ?s            偏移?秒
+// *                     [+|-] ?ms           偏移?毫秒
+// *                     例如："*-1d" 表示当前时刻减去24小时。
+// *
+// * \param datetime     整型，输出，返回解析得到的时间值。
+// * \param ms           短整型，输出，返回解析得到的时间毫秒值。
+// *  备注：ms 可以为空指针，相应的毫秒信息将不再返回。
+// rtdb_error RTDBAPI_CALLRULE rtdb_parse_time_warp(const char *str, rtdb_int64 *datetime, rtdb_int16 *ms)
+// */
 func RawRtdbParseTimeWarp() {}
 
-/*
-*
-  - \brief 获取 Rtdb API 调用返回值的简短描述
-    *
-  - \param ecode        无符号整型，输入，Rtdb API调用后的返回值，详见rtdb_error.h头文件
-  - \param message      字符串，输出，返回错误码简短描述
-  - \param name         字符串，输出，返回错误码宏名称
-  - \param size         整型，输入，message 参数的字节长度
-  - \remark 用户须保证分配给 message， name 的空间与 size 相符,
-  - name 或 message 可以为空指针，对应的信息将不再返回。
-
-void RTDBAPI_CALLRULE rtdb_format_message_warp(rtdb_error ecode, char *message, char *name, rtdb_int32 size)
-*/
+// /*
+// *
+//   - \brief 获取 Rtdb API 调用返回值的简短描述
+//     *
+//   - \param ecode        无符号整型，输入，Rtdb API调用后的返回值，详见rtdb_error.h头文件
+//   - \param message      字符串，输出，返回错误码简短描述
+//   - \param name         字符串，输出，返回错误码宏名称
+//   - \param size         整型，输入，message 参数的字节长度
+//   - \remark 用户须保证分配给 message， name 的空间与 size 相符,
+//   - name 或 message 可以为空指针，对应的信息将不再返回。
+//
+// void RTDBAPI_CALLRULE rtdb_format_message_warp(rtdb_error ecode, char *message, char *name, rtdb_int32 size)
+// */
 func RawRtdbFormatMessageWarp() {}
 
-/*
-*
-  - \brief 获取任务的简短描述
-    *
-  - \param job_id       整型，输入，RTDB_HOST_CONNECT_INFO::job 字段所表示的最近任务的描述
-  - \param desc         字符串，输出，返回任务描述
-  - \param name         字符串，输出，返回任务名称
-  - \param size         整型，输入，desc、name 参数的字节长度
-  - \remark 用户须保证分配给 desc、name 的空间与 size 相符，
-  - name 或 message 可以为空指针，对应的信息将不再返回。
-
-void RTDBAPI_CALLRULE rtdb_job_message_warp(rtdb_int32 job_id, char *desc, char *name, rtdb_int32 size)
-*/
+// /*
+// *
+//   - \brief 获取任务的简短描述
+//     *
+//   - \param job_id       整型，输入，RTDB_HOST_CONNECT_INFO::job 字段所表示的最近任务的描述
+//   - \param desc         字符串，输出，返回任务描述
+//   - \param name         字符串，输出，返回任务名称
+//   - \param size         整型，输入，desc、name 参数的字节长度
+//   - \remark 用户须保证分配给 desc、name 的空间与 size 相符，
+//   - name 或 message 可以为空指针，对应的信息将不再返回。
+//
+// void RTDBAPI_CALLRULE rtdb_job_message_warp(rtdb_int32 job_id, char *desc, char *name, rtdb_int32 size)
+// */
 func RawRtdbJobMessageWarp() {}
 
-/*
-*
-  - \brief 设置连接超时时间
-    *
-  - \param handle   连接句柄
-  - \param socket   整型，输入，要设置超时时间的连接
-  - \param timeout  整型，输入，超时时间，单位为秒，0 表示始终保持
-
-rtdb_error RTDBAPI_CALLRULE rtdb_set_timeout_warp(rtdb_int32 handle, rtdb_int32 socket, rtdb_int32 timeout)
-*/
+// /*
+// *
+//   - \brief 设置连接超时时间
+//     *
+//   - \param handle   连接句柄
+//   - \param socket   整型，输入，要设置超时时间的连接
+//   - \param timeout  整型，输入，超时时间，单位为秒，0 表示始终保持
+//
+// rtdb_error RTDBAPI_CALLRULE rtdb_set_timeout_warp(rtdb_int32 handle, rtdb_int32 socket, rtdb_int32 timeout)
+// */
 func RawRtdbSetTimeoutWarp() {}
 
-/*
-*
-  - \brief 获得连接超时时间
-    *
-  - \param handle   连接句柄
-  - \param socket   整型，输入，要获取超时时间的连接
-  - \param timeout  整型，输出，超时时间，单位为秒，0 表示始终保持
-
-rtdb_error RTDBAPI_CALLRULE rtdb_get_timeout_warp(rtdb_int32 handle, rtdb_int32 socket, rtdb_int32 *timeout)
-*/
+// /*
+// *
+//   - \brief 获得连接超时时间
+//     *
+//   - \param handle   连接句柄
+//   - \param socket   整型，输入，要获取超时时间的连接
+//   - \param timeout  整型，输出，超时时间，单位为秒，0 表示始终保持
+//
+// rtdb_error RTDBAPI_CALLRULE rtdb_get_timeout_warp(rtdb_int32 handle, rtdb_int32 socket, rtdb_int32 *timeout)
+// */
 func RawRtdbGetTimeoutWarp() {}
 
-/*
-*
-  - \brief 断开已知连接
-    *
-  - \param handle    连接句柄
-  - \param socket    整型，输入，要断开的连接
-
-rtdb_error RTDBAPI_CALLRULE rtdb_kill_connection_warp(rtdb_int32 handle, rtdb_int32 socket)
-*/
+// /*
+// *
+//   - \brief 断开已知连接
+//     *
+//   - \param handle    连接句柄
+//   - \param socket    整型，输入，要断开的连接
+//
+// rtdb_error RTDBAPI_CALLRULE rtdb_kill_connection_warp(rtdb_int32 handle, rtdb_int32 socket)
+// */
 func RawRtdbKillConnectionWarp() {}
 
-/*
-*
-  - \brief 获得字符串型数据库系统参数
-    *
-  - \param handle    连接句柄
-  - \param index     整型，输入，要取得的参数索引，参见枚举 RTDB_DB_PARAM_INDEX。
-  - \param str       字符串型，输出，存放取得的字符串参数值。
-  - \param size      整型，输入，字符串缓冲区尺寸。
-  - \remark 本接口只接受 [RTDB_PARAM_STR_FIRST, RTDB_PARAM_STR_LAST) 范围之内参数索引。
-
-rtdb_error RTDBAPI_CALLRULE rtdb_get_db_info1_warp(rtdb_int32 handle, rtdb_int32 index, char *str, rtdb_int32 size)
-*/
+// /*
+// *
+//   - \brief 获得字符串型数据库系统参数
+//     *
+//   - \param handle    连接句柄
+//   - \param index     整型，输入，要取得的参数索引，参见枚举 RTDB_DB_PARAM_INDEX。
+//   - \param str       字符串型，输出，存放取得的字符串参数值。
+//   - \param size      整型，输入，字符串缓冲区尺寸。
+//   - \remark 本接口只接受 [RTDB_PARAM_STR_FIRST, RTDB_PARAM_STR_LAST) 范围之内参数索引。
+//
+// rtdb_error RTDBAPI_CALLRULE rtdb_get_db_info1_warp(rtdb_int32 handle, rtdb_int32 index, char *str, rtdb_int32 size)
+// */
 func RawRtdbGetDbInfo1Warp() {}
 
-/*
-*
-  - \brief 获得整型数据库系统参数
-    *
-  - \param handle    连接句柄
-  - \param index     整型，输入，要取得的参数索引，参见枚举 RTDB_DB_PARAM_INDEX。
-  - \param value     无符号整型，输出，存放取得的整型参数值。
-  - \remark 本接口只接受 [RTDB_PARAM_INT_FIRST, RTDB_PARAM_INT_LAST) 范围之内参数索引。
-
-rtdb_error RTDBAPI_CALLRULE rtdb_get_db_info2_warp(rtdb_int32 handle, rtdb_int32 index, rtdb_uint32 *value)
-*/
+// /*
+// *
+//   - \brief 获得整型数据库系统参数
+//     *
+//   - \param handle    连接句柄
+//   - \param index     整型，输入，要取得的参数索引，参见枚举 RTDB_DB_PARAM_INDEX。
+//   - \param value     无符号整型，输出，存放取得的整型参数值。
+//   - \remark 本接口只接受 [RTDB_PARAM_INT_FIRST, RTDB_PARAM_INT_LAST) 范围之内参数索引。
+//
+// rtdb_error RTDBAPI_CALLRULE rtdb_get_db_info2_warp(rtdb_int32 handle, rtdb_int32 index, rtdb_uint32 *value)
+// */
 func RawRtdbGetDbInfo2Warp() {}
 
-/*
-*
-  - \brief 设置字符串型数据库系统参数
-    *
-  - \param handle    连接句柄
-  - \param index     整型，输入，要设置的参数索引，参见枚举 RTDB_DB_PARAM_INDEX。
-  - 其中，仅以下列出的枚举值可用：
-  - RTDB_PARAM_AUTO_BACKUP_PATH,
-  - RTDB_PARAM_SERVER_SENDER_IP,
-  - \param str       字符串型，输入，新的参数值。
-  - \remark 如果修改了启动参数，将返回 RtE_DATABASE_NEED_RESTART 提示码。
-
-rtdb_error RTDBAPI_CALLRULE rtdb_set_db_info1_warp(rtdb_int32 handle, rtdb_int32 index, const char *str)
-*/
+// /*
+// *
+//   - \brief 设置字符串型数据库系统参数
+//     *
+//   - \param handle    连接句柄
+//   - \param index     整型，输入，要设置的参数索引，参见枚举 RTDB_DB_PARAM_INDEX。
+//   - 其中，仅以下列出的枚举值可用：
+//   - RTDB_PARAM_AUTO_BACKUP_PATH,
+//   - RTDB_PARAM_SERVER_SENDER_IP,
+//   - \param str       字符串型，输入，新的参数值。
+//   - \remark 如果修改了启动参数，将返回 RtE_DATABASE_NEED_RESTART 提示码。
+//
+// rtdb_error RTDBAPI_CALLRULE rtdb_set_db_info1_warp(rtdb_int32 handle, rtdb_int32 index, const char *str)
+// */
 func RawRtdbSetDbInfo1Warp() {}
 
-/*
-*
-  - \brief 设置整型数据库系统参数
-    *
-  - \param handle    连接句柄
-  - \param index     整型，输入，要取得的参数索引，参见枚举 RTDB_DB_PARAM_INDEX。
-  - 其中，仅以下列出的枚举值可用：
-  - RTDB_PARAM_SERVER_IPC_SIZE,
-  - RTDB_PARAM_EQUATION_IPC_SIZE,
-  - RTDB_PARAM_HASH_TABLE_SIZE,
-  - RTDB_PARAM_TAG_DELETE_TIMES,
-  - RTDB_PARAM_SERVER_PORT,
-  - RTDB_PARAM_SERVER_SENDER_PORT,
-  - RTDB_PARAM_SERVER_RECEIVER_PORT,
-  - RTDB_PARAM_SERVER_MODE,
-  - RTDB_PARAM_ARV_PAGES_NUMBER,
-  - RTDB_PARAM_ARVEX_PAGES_NUMBER,
-  - RTDB_PARAM_EXCEPTION_AT_SERVER,
-  - RTDB_PARAM_EX_ARCHIVE_SIZE,
-  - RTDB_PARAM_ARCHIVE_BATCH_SIZE,
-  - RTDB_PARAM_ARV_ASYNC_QUEUE_SLOWER_DOOR,
-  - RTDB_PARAM_ARV_ASYNC_QUEUE_NORMAL_DOOR,
-  - RTDB_PARAM_INDEX_ALWAYS_IN_MEMORY,
-  - RTDB_PARAM_DISK_MIN_REST_SIZE,
-  - RTDB_PARAM_DELAY_OF_AUTO_MERGE_OR_ARRANGE,
-  - RTDB_PARAM_START_OF_AUTO_MERGE_OR_ARRANGE,
-  - RTDB_PARAM_STOP_OF_AUTO_MERGE_OR_ARRANGE,
-  - RTDB_PARAM_START_OF_AUTO_BACKUP,
-  - RTDB_PARAM_STOP_OF_AUTO_BACKUP,
-  - RTDB_PARAM_MAX_LATENCY_OF_SNAPSHOT,
-  - RTDB_PARAM_PAGE_ALLOCATOR_RESERVE_SIZE,
-  - \param value     无符号整型，输入，新的参数值。
-  - \remark 如果修改了启动参数，将返回 RtE_DATABASE_NEED_RESTART 提示码。
-
-rtdb_error RTDBAPI_CALLRULE rtdb_set_db_info2_warp(rtdb_int32 handle, rtdb_int32 index, rtdb_uint32 value)
-*/
+// /*
+// *
+//   - \brief 设置整型数据库系统参数
+//     *
+//   - \param handle    连接句柄
+//   - \param index     整型，输入，要取得的参数索引，参见枚举 RTDB_DB_PARAM_INDEX。
+//   - 其中，仅以下列出的枚举值可用：
+//   - RTDB_PARAM_SERVER_IPC_SIZE,
+//   - RTDB_PARAM_EQUATION_IPC_SIZE,
+//   - RTDB_PARAM_HASH_TABLE_SIZE,
+//   - RTDB_PARAM_TAG_DELETE_TIMES,
+//   - RTDB_PARAM_SERVER_PORT,
+//   - RTDB_PARAM_SERVER_SENDER_PORT,
+//   - RTDB_PARAM_SERVER_RECEIVER_PORT,
+//   - RTDB_PARAM_SERVER_MODE,
+//   - RTDB_PARAM_ARV_PAGES_NUMBER,
+//   - RTDB_PARAM_ARVEX_PAGES_NUMBER,
+//   - RTDB_PARAM_EXCEPTION_AT_SERVER,
+//   - RTDB_PARAM_EX_ARCHIVE_SIZE,
+//   - RTDB_PARAM_ARCHIVE_BATCH_SIZE,
+//   - RTDB_PARAM_ARV_ASYNC_QUEUE_SLOWER_DOOR,
+//   - RTDB_PARAM_ARV_ASYNC_QUEUE_NORMAL_DOOR,
+//   - RTDB_PARAM_INDEX_ALWAYS_IN_MEMORY,
+//   - RTDB_PARAM_DISK_MIN_REST_SIZE,
+//   - RTDB_PARAM_DELAY_OF_AUTO_MERGE_OR_ARRANGE,
+//   - RTDB_PARAM_START_OF_AUTO_MERGE_OR_ARRANGE,
+//   - RTDB_PARAM_STOP_OF_AUTO_MERGE_OR_ARRANGE,
+//   - RTDB_PARAM_START_OF_AUTO_BACKUP,
+//   - RTDB_PARAM_STOP_OF_AUTO_BACKUP,
+//   - RTDB_PARAM_MAX_LATENCY_OF_SNAPSHOT,
+//   - RTDB_PARAM_PAGE_ALLOCATOR_RESERVE_SIZE,
+//   - \param value     无符号整型，输入，新的参数值。
+//   - \remark 如果修改了启动参数，将返回 RtE_DATABASE_NEED_RESTART 提示码。
+//
+// rtdb_error RTDBAPI_CALLRULE rtdb_set_db_info2_warp(rtdb_int32 handle, rtdb_int32 index, rtdb_uint32 value)
+// */
 func RawRtdbSetDbInfo2Warp() {}
 
-/*
-*
-  - \brief 获得逻辑盘符
-    *
-  - \param handle     连接句柄
-  - \param drivers    字符数组，输出，
-  - 返回逻辑盘符组成的字符串，每个盘符占一个字符。
-  - \remark drivers 的内存空间由用户负责维护，长度应不小于 32。
-
-rtdb_error RTDBAPI_CALLRULE rtdb_get_logical_drivers_warp(rtdb_int32 handle, char *drivers)
-*/
+// /*
+// *
+//   - \brief 获得逻辑盘符
+//     *
+//   - \param handle     连接句柄
+//   - \param drivers    字符数组，输出，
+//   - 返回逻辑盘符组成的字符串，每个盘符占一个字符。
+//   - \remark drivers 的内存空间由用户负责维护，长度应不小于 32。
+//
+// rtdb_error RTDBAPI_CALLRULE rtdb_get_logical_drivers_warp(rtdb_int32 handle, char *drivers)
+// */
 func RawRtdbGetLogicalDriversWarp() {}
 
-/*
-*
-* \brief 打开目录以便遍历其中的文件和子目录。
-*
-* \param handle       连接句柄
-* \param dir          字符串，输入，要打开的目录
-rtdb_error RTDBAPI_CALLRULE rtdb_open_path_warp(rtdb_int32 handle, const char *dir)
-*/
+// /*
+// *
+// * \brief 打开目录以便遍历其中的文件和子目录。
+// *
+// * \param handle       连接句柄
+// * \param dir          字符串，输入，要打开的目录
+// rtdb_error RTDBAPI_CALLRULE rtdb_open_path_warp(rtdb_int32 handle, const char *dir)
+// */
 func RawRtdbOpenPathWarp() {}
 
-/*
-*
-  - \brief 读取目录中的文件或子目录
-    *
-  - \param handle      连接句柄
-  - \param path        字符数组，输出，返回的文件、子目录全路径
-  - \param is_dir      短整数，输出，返回 1 为目录，0 为文件
-  - \param atime       整数，输出，为文件时，返回访问时间
-  - \param ctime       整数，输出，为文件时，返回建立时间
-  - \param mtime       整数，输出，为文件时，返回修改时间
-  - \param size        64 位整数，输出，为文件时，返回文件大小
-  - \remark path 的内存空间由用户负责维护，尺寸应不小于 RTDB_MAX_PATH。
-  - 当返回值为 RtE_BATCH_END 时表示目录下所有子目录和文件已经遍历完毕。
-
-rtdb_error RTDBAPI_CALLRULE rtdb_read_path_warp(rtdb_int32 handle, char *path, rtdb_int16 *is_dir, rtdb_int32 *atime, rtdb_int32 *ctime, rtdb_int32 *mtime, rtdb_int64 *size)
-*/
+// /*
+// *
+//   - \brief 读取目录中的文件或子目录
+//     *
+//   - \param handle      连接句柄
+//   - \param path        字符数组，输出，返回的文件、子目录全路径
+//   - \param is_dir      短整数，输出，返回 1 为目录，0 为文件
+//   - \param atime       整数，输出，为文件时，返回访问时间
+//   - \param ctime       整数，输出，为文件时，返回建立时间
+//   - \param mtime       整数，输出，为文件时，返回修改时间
+//   - \param size        64 位整数，输出，为文件时，返回文件大小
+//   - \remark path 的内存空间由用户负责维护，尺寸应不小于 RTDB_MAX_PATH。
+//   - 当返回值为 RtE_BATCH_END 时表示目录下所有子目录和文件已经遍历完毕。
+//
+// rtdb_error RTDBAPI_CALLRULE rtdb_read_path_warp(rtdb_int32 handle, char *path, rtdb_int16 *is_dir, rtdb_int32 *atime, rtdb_int32 *ctime, rtdb_int32 *mtime, rtdb_int64 *size)
+// */
 func RawRtdbReadPathWarp() {}
 
-/*
-*
-  - \brief 读取目录中的文件或子目录
-    *
-  - \param handle      连接句柄
-  - \param path        字符数组，输出，返回的文件、子目录全路径
-  - \param is_dir      短整数，输出，返回 1 为目录，0 为文件
-  - \param atime       整数，输出，为文件时，返回访问时间
-  - \param ctime       整数，输出，为文件时，返回建立时间
-  - \param mtime       整数，输出，为文件时，返回修改时间
-  - \param size        64 位整数，输出，为文件时，返回文件大小
-  - \remark path 的内存空间由用户负责维护，尺寸应不小于 RTDB_MAX_PATH。
-  - 当返回值为 RtE_BATCH_END 时表示目录下所有子目录和文件已经遍历完毕。
-
-rtdb_error RTDBAPI_CALLRULE rtdb_read_path64_warp(rtdb_int32 handle, char* path, rtdb_int16* is_dir, rtdb_timestamp_type* atime, rtdb_timestamp_type* ctime, rtdb_timestamp_type* mtime, rtdb_int64* size)
-*/
+// /*
+// *
+//   - \brief 读取目录中的文件或子目录
+//     *
+//   - \param handle      连接句柄
+//   - \param path        字符数组，输出，返回的文件、子目录全路径
+//   - \param is_dir      短整数，输出，返回 1 为目录，0 为文件
+//   - \param atime       整数，输出，为文件时，返回访问时间
+//   - \param ctime       整数，输出，为文件时，返回建立时间
+//   - \param mtime       整数，输出，为文件时，返回修改时间
+//   - \param size        64 位整数，输出，为文件时，返回文件大小
+//   - \remark path 的内存空间由用户负责维护，尺寸应不小于 RTDB_MAX_PATH。
+//   - 当返回值为 RtE_BATCH_END 时表示目录下所有子目录和文件已经遍历完毕。
+//
+// rtdb_error RTDBAPI_CALLRULE rtdb_read_path64_warp(rtdb_int32 handle, char* path, rtdb_int16* is_dir, rtdb_timestamp_type* atime, rtdb_timestamp_type* ctime, rtdb_timestamp_type* mtime, rtdb_int64* size)
+// */
 func RawRtdbReadPath64Warp() {}
 
-/*
-*
-
-	*
-	* \brief 关闭当前遍历的目录
-	*
-	* \param handle      连接句柄
-
-rtdb_error RTDBAPI_CALLRULE rtdb_close_path_warp(rtdb_int32 handle)
-*/
+// /*
+// *
+//
+//	*
+//	* \brief 关闭当前遍历的目录
+//	*
+//	* \param handle      连接句柄
+//
+// rtdb_error RTDBAPI_CALLRULE rtdb_close_path_warp(rtdb_int32 handle)
+// */
 func RawRtdbClosePathWarp() {}
 
-/*
-*
-*
-* \brief 建立目录
-*
-* \param handle       连接句柄
-* \param dir          字符串，输入，新建目录的全路径
-rtdb_error RTDBAPI_CALLRULE rtdb_mkdir_warp(rtdb_int32 handle, const char *dir)
-*/
+// /*
+// *
+// *
+// * \brief 建立目录
+// *
+// * \param handle       连接句柄
+// * \param dir          字符串，输入，新建目录的全路径
+// rtdb_error RTDBAPI_CALLRULE rtdb_mkdir_warp(rtdb_int32 handle, const char *dir)
+// */
 func RawRtdbMkdirWarp() {}
 
-/*
-*
-*
-* \brief 获得指定服务器端文件的大小
-*
-* \param handle     连接句柄
-* \param file       字符串，输入，文件名
-* \param size       64 位整数，输出，文件大小
-rtdb_error RTDBAPI_CALLRULE rtdb_get_file_size_warp(rtdb_int32 handle, const char *file, rtdb_int64 *size)
-*/
+// /*
+// *
+// *
+// * \brief 获得指定服务器端文件的大小
+// *
+// * \param handle     连接句柄
+// * \param file       字符串，输入，文件名
+// * \param size       64 位整数，输出，文件大小
+// rtdb_error RTDBAPI_CALLRULE rtdb_get_file_size_warp(rtdb_int32 handle, const char *file, rtdb_int64 *size)
+// */
 func RawRtdbGetFileSizeWarp() {}
 
-/*
-*
-*
-* \brief 读取服务器端指定文件的内容
-*
-* \param handle       连接句柄
-* \param file         字符串，输入，要读取内容的文件名
-* \param content      字符数组，输出，文件内容
-* \param pos          64 位整型，输入，读取文件的起始位置
-* \param size         整型，输入/输出，
-*                     输入时表示要读取文件内容的字节大小；
-*                     输出时表示实际读取的字节数
-* \remark 用户须保证分配给 content 的空间与 size 相符。
-rtdb_error RTDBAPI_CALLRULE rtdb_read_file_warp(rtdb_int32 handle, const char *file, char *content, rtdb_int64 pos, rtdb_int64 *size)
-*/
+// /*
+// *
+// *
+// * \brief 读取服务器端指定文件的内容
+// *
+// * \param handle       连接句柄
+// * \param file         字符串，输入，要读取内容的文件名
+// * \param content      字符数组，输出，文件内容
+// * \param pos          64 位整型，输入，读取文件的起始位置
+// * \param size         整型，输入/输出，
+// *                     输入时表示要读取文件内容的字节大小；
+// *                     输出时表示实际读取的字节数
+// * \remark 用户须保证分配给 content 的空间与 size 相符。
+// rtdb_error RTDBAPI_CALLRULE rtdb_read_file_warp(rtdb_int32 handle, const char *file, char *content, rtdb_int64 pos, rtdb_int64 *size)
+// */
 func RawRtdbReadFileWarp() {}
 
-/*
-*
-
-	*
-	* \brief 取得数据库允许的blob与str类型测点的最大长度
-	*
-	* \param handle       连接句柄
-	* \param len          整形，输出参数，代表数据库允许的blob、str类型测点的最大长度
-
-rtdb_error RTDBAPI_CALLRULE rtdb_get_max_blob_len_warp(rtdb_int32 handle, rtdb_int32 *len)
-*/
+// /*
+// *
+//
+//	*
+//	* \brief 取得数据库允许的blob与str类型测点的最大长度
+//	*
+//	* \param handle       连接句柄
+//	* \param len          整形，输出参数，代表数据库允许的blob、str类型测点的最大长度
+//
+// rtdb_error RTDBAPI_CALLRULE rtdb_get_max_blob_len_warp(rtdb_int32 handle, rtdb_int32 *len)
+// */
 func RawRtdbGetMaxBlobLenWarp() {}
 
-/*
-*
-
-	*
-	* \brief 取得质量码对应的定义
-	*
-	* \param handle       连接句柄
-	* \param count        质量码个数，输入参数，
-	* \param qualities    质量码，输入参数
-	* \param definitions  输出参数，0~255为RTDB质量码（参加rtdb.h文件），256~511为OPC质量码，大于511为用户自定义质量码
-	* \param lens         输出参数，每个定义对应的长度
-	* \remark OPC质量码把8位分3部分定义：XX XXXX XX，对应着：品质位域 分状态位域 限定位域
-	* 品质位域：00（Bad）01（Uncertain）10（N/A）11（Good）
-	* 分状态位域：不同品质位域对应各自的分状态位域
-	* 限定位域：00（Not limited）01（Low limited）10（high limited）11（Constant）
-	* 三个域之间用逗号隔开，输出到definitions参数中，前面有有RTDB，OPC或者USER标识，说明标签点类别
-
-rtdb_error RTDBAPI_CALLRULE rtdb_format_quality_warp(rtdb_int32 handle, rtdb_int32 *count, rtdb_int16 *qualities, rtdb_byte **definitions, rtdb_int32 *lens)
-*/
+// /*
+// *
+//
+//	*
+//	* \brief 取得质量码对应的定义
+//	*
+//	* \param handle       连接句柄
+//	* \param count        质量码个数，输入参数，
+//	* \param qualities    质量码，输入参数
+//	* \param definitions  输出参数，0~255为RTDB质量码（参加rtdb.h文件），256~511为OPC质量码，大于511为用户自定义质量码
+//	* \param lens         输出参数，每个定义对应的长度
+//	* \remark OPC质量码把8位分3部分定义：XX XXXX XX，对应着：品质位域 分状态位域 限定位域
+//	* 品质位域：00（Bad）01（Uncertain）10（N/A）11（Good）
+//	* 分状态位域：不同品质位域对应各自的分状态位域
+//	* 限定位域：00（Not limited）01（Low limited）10（high limited）11（Constant）
+//	* 三个域之间用逗号隔开，输出到definitions参数中，前面有有RTDB，OPC或者USER标识，说明标签点类别
+//
+// rtdb_error RTDBAPI_CALLRULE rtdb_format_quality_warp(rtdb_int32 handle, rtdb_int32 *count, rtdb_int16 *qualities, rtdb_byte **definitions, rtdb_int32 *lens)
+// */
 func RawRtdbFormatQualityWarp() {}
 
-/*
-*
-
-	*
-	* \brief 判断连接是否可用
-	* \param handle   连接句柄
-
-rtdb_error RTDBAPI_CALLRULE rtdb_judge_connect_status_warp(rtdb_int32 handle, rtdb_int8* change_connection GAPI_DEFAULT_VALUE(0), char* current_ip_addr GAPI_DEFAULT_VALUE(0), rtdb_int32 size GAPI_DEFAULT_VALUE(0))
-*/
+// /*
+// *
+//
+//	*
+//	* \brief 判断连接是否可用
+//	* \param handle   连接句柄
+//
+// rtdb_error RTDBAPI_CALLRULE rtdb_judge_connect_status_warp(rtdb_int32 handle, rtdb_int8* change_connection GAPI_DEFAULT_VALUE(0), char* current_ip_addr GAPI_DEFAULT_VALUE(0), rtdb_int32 size GAPI_DEFAULT_VALUE(0))
+// */
 func RawRtdbJudgeConnectStatusWarp() {}
 
-/*
-*
-  - 命名：rtdb_format_ipaddr
-  - 功能：将整形IP转换为字符串形式的IP
-  - 参数：
-  - [ip]        无符号整型，输入，整形的IP地址
-  - [ip_addr]      字符串，输出，字符串IP地址缓冲区
-  - [size]         整型，输入，ip_addr 参数的字节长度
-  - 备注：用户须保证分配给 ip_addr 的空间与 size 相符
-
-void RTDBAPI_CALLRULE rtdb_format_ipaddr_warp(rtdb_uint32 ip, char* ip_addr, rtdb_int32 size)
-*/
+// /*
+// *
+//   - 命名：rtdb_format_ipaddr
+//   - 功能：将整形IP转换为字符串形式的IP
+//   - 参数：
+//   - [ip]        无符号整型，输入，整形的IP地址
+//   - [ip_addr]      字符串，输出，字符串IP地址缓冲区
+//   - [size]         整型，输入，ip_addr 参数的字节长度
+//   - 备注：用户须保证分配给 ip_addr 的空间与 size 相符
+//
+// void RTDBAPI_CALLRULE rtdb_format_ipaddr_warp(rtdb_uint32 ip, char* ip_addr, rtdb_int32 size)
+// */
 func RawRtdbFormatIpaddrWarp() {}
 
-/*
-*
-* 命名：rtdbb_get_equation_by_file_name
-* 功能：根据文件名获取方程式
-* 参数：
-*      [handle]   连接句柄
-*      [file_name] 输入，字符串，方程式路径
-*      [equation]  输出，返回的方程式长度最长为RTDB_MAX_EQUATION_SIZE-1
-*备注：用户调用时为equation分配的空间不得小于RTDB_MAX_EQUATION_SIZE
-rtdb_error RTDBAPI_CALLRULE rtdbb_get_equation_by_file_name_warp(rtdb_int32 handle, const char* file_name, char equation[RTDB_MAX_EQUATION_SIZE])
-*/
+// /*
+// *
+// * 命名：rtdbb_get_equation_by_file_name
+// * 功能：根据文件名获取方程式
+// * 参数：
+// *      [handle]   连接句柄
+// *      [file_name] 输入，字符串，方程式路径
+// *      [equation]  输出，返回的方程式长度最长为RTDB_MAX_EQUATION_SIZE-1
+// *备注：用户调用时为equation分配的空间不得小于RTDB_MAX_EQUATION_SIZE
+// rtdb_error RTDBAPI_CALLRULE rtdbb_get_equation_by_file_name_warp(rtdb_int32 handle, const char* file_name, char equation[RTDB_MAX_EQUATION_SIZE])
+// */
 func RawRtdbbGetEquationByFileNameWarp() {}
 
-/*
-*
-  - 命名：rtdbb_get_equation_by_id
-  - 功能：根ID径获取方程式
-  - 参数：
-  - [handle]   连接句柄
-  - [id]				输入，整型，方程式ID
-  - [equation] 输出，返回的方程式长度最长为RTDB_MAX_EQUATION_SIZE-1
-    *
-    *备注：用户调用时为equation分配的空间不得小于RTDB_MAX_EQUATION_SIZE
-
-rtdb_error RTDBAPI_CALLRULE rtdbb_get_equation_by_id_warp(rtdb_int32 handle, rtdb_int32 id, char equation[RTDB_MAX_EQUATION_SIZE])
-*/
+// /*
+// *
+//   - 命名：rtdbb_get_equation_by_id
+//   - 功能：根ID径获取方程式
+//   - 参数：
+//   - [handle]   连接句柄
+//   - [id]				输入，整型，方程式ID
+//   - [equation] 输出，返回的方程式长度最长为RTDB_MAX_EQUATION_SIZE-1
+//     *
+//     *备注：用户调用时为equation分配的空间不得小于RTDB_MAX_EQUATION_SIZE
+//
+// rtdb_error RTDBAPI_CALLRULE rtdbb_get_equation_by_id_warp(rtdb_int32 handle, rtdb_int32 id, char equation[RTDB_MAX_EQUATION_SIZE])
+// */
 func RawRtdbbGetEquationByIdWarp() {}
 
-/*
-*
-
-	*
-	* \brief 添加新表
-	*
-	* \param handle   连接句柄
-	* \param field    RTDB_TABLE 结构，输入/输出，表信息。
-	*                 在输入时，type、name、desc 字段有效；
-	*                 输出时，id 字段由系统自动分配并返回给用户。
-
-rtdb_error RTDBAPI_CALLRULE rtdbb_append_table_warp(rtdb_int32 handle, RTDB_TABLE *field)
-*/
+// /*
+// *
+//
+//	*
+//	* \brief 添加新表
+//	*
+//	* \param handle   连接句柄
+//	* \param field    RTDB_TABLE 结构，输入/输出，表信息。
+//	*                 在输入时，type、name、desc 字段有效；
+//	*                 输出时，id 字段由系统自动分配并返回给用户。
+//
+// rtdb_error RTDBAPI_CALLRULE rtdbb_append_table_warp(rtdb_int32 handle, RTDB_TABLE *field)
+// */
 func RawRtdbbAppendTableWarp() {}
 
-/*
-*
-
-	*
-	* \brief 取得标签点表总数
-	*
-	* \param handle   连接句柄
-	* \param count    整型，输出，标签点表总数
-
-rtdb_error RTDBAPI_CALLRULE rtdbb_tables_count_warp(rtdb_int32 handle, rtdb_int32 *count)
-*/
+// /*
+// *
+//
+//	*
+//	* \brief 取得标签点表总数
+//	*
+//	* \param handle   连接句柄
+//	* \param count    整型，输出，标签点表总数
+//
+// rtdb_error RTDBAPI_CALLRULE rtdbb_tables_count_warp(rtdb_int32 handle, rtdb_int32 *count)
+// */
 func RawRtdbbTablesCountWarp() {}
 
-/*
-*
-
-	*
-	* \brief 取得所有标签点表的ID
-	*
-	* \param handle   连接句柄
-	* \param ids      整型数组，输出，标签点表的id
-	* \param count    整型，输入/输出，
-	*                 输入表示 ids 的长度，输出表示标签点表个数
-	* \remark 用户须保证分配给 ids 的空间与 count 相符
-	*      如果输入的 count 小于输出的 count，则只返回部分表id
-
-rtdb_error RTDBAPI_CALLRULE rtdbb_get_tables_warp(rtdb_int32 handle, rtdb_int32 *ids, rtdb_int32 *count)
-*/
+// /*
+// *
+//
+//	*
+//	* \brief 取得所有标签点表的ID
+//	*
+//	* \param handle   连接句柄
+//	* \param ids      整型数组，输出，标签点表的id
+//	* \param count    整型，输入/输出，
+//	*                 输入表示 ids 的长度，输出表示标签点表个数
+//	* \remark 用户须保证分配给 ids 的空间与 count 相符
+//	*      如果输入的 count 小于输出的 count，则只返回部分表id
+//
+// rtdb_error RTDBAPI_CALLRULE rtdbb_get_tables_warp(rtdb_int32 handle, rtdb_int32 *ids, rtdb_int32 *count)
+// */
 func RawRtdbbGetTablesWarp() {}
 
-/*
-*
-
-	*
-	* \brief 根据表 id 获取表中包含的标签点数量
-	*
-	* \param handle   连接句柄
-	* \param id       整型，输入，表ID
-	* \param size     整型，输出，表中标签点数量
-
-rtdb_error RTDBAPI_CALLRULE rtdbb_get_table_size_by_id_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32 *size)
-*/
+// /*
+// *
+//
+//	*
+//	* \brief 根据表 id 获取表中包含的标签点数量
+//	*
+//	* \param handle   连接句柄
+//	* \param id       整型，输入，表ID
+//	* \param size     整型，输出，表中标签点数量
+//
+// rtdb_error RTDBAPI_CALLRULE rtdbb_get_table_size_by_id_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32 *size)
+// */
 func RawRtdbbGetTableSizeByIdWarp() {}
 
-/*
-*
-*
-* \brief 根据表名称获取表中包含的标签点数量
-*
-* \param handle   连接句柄
-* \param name     字符串，输入，表名称
-* \param size     整型，输出，表中标签点数量
-rtdb_error RTDBAPI_CALLRULE rtdbb_get_table_size_by_name_warp(rtdb_int32 handle, const char *name, rtdb_int32 *size)
-*/
+// /*
+// *
+// *
+// * \brief 根据表名称获取表中包含的标签点数量
+// *
+// * \param handle   连接句柄
+// * \param name     字符串，输入，表名称
+// * \param size     整型，输出，表中标签点数量
+// rtdb_error RTDBAPI_CALLRULE rtdbb_get_table_size_by_name_warp(rtdb_int32 handle, const char *name, rtdb_int32 *size)
+// */
 func RawRtdbbGetTableSizeByNameWarp() {}
 
-/*
-*
-
-	*
-	* \brief 根据表 id 获取表中实际包含的标签点数量
-	*
-	* \param handle   连接句柄
-	* \param id       整型，输入，表ID
-	* \param size     整型，输出，表中标签点数量
-	* 注意：通过此API获取标签点数量，然后搜索此表中的标签点得到的数量可能会不一致，这是由于服务内部批量建点采取了异步的方式。
-	*       一般情况下请使用rtdbb_get_table_size_by_id来获取表中的标签点数量。
-
-rtdb_error RTDBAPI_CALLRULE rtdbb_get_table_real_size_by_id_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32 *size)
-*/
+// /*
+// *
+//
+//	*
+//	* \brief 根据表 id 获取表中实际包含的标签点数量
+//	*
+//	* \param handle   连接句柄
+//	* \param id       整型，输入，表ID
+//	* \param size     整型，输出，表中标签点数量
+//	* 注意：通过此API获取标签点数量，然后搜索此表中的标签点得到的数量可能会不一致，这是由于服务内部批量建点采取了异步的方式。
+//	*       一般情况下请使用rtdbb_get_table_size_by_id来获取表中的标签点数量。
+//
+// rtdb_error RTDBAPI_CALLRULE rtdbb_get_table_real_size_by_id_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32 *size)
+// */
 func RawRtdbbGetTableRealSizeByIdWarp() {}
 
-/*
-*
-
-	*
-	* \brief 根据标签点表 id 获取表属性
-	*
-	* \param handle 连接句柄
-	* \param field  RTDB_TABLE 结构，输入/输出，标签点表属性，
-	*               输入时指定 id 字段，输出时返回 type、name、desc 字段。
-
-rtdb_error RTDBAPI_CALLRULE rtdbb_get_table_property_by_id_warp(rtdb_int32 handle, RTDB_TABLE *field)
-*/
+// /*
+// *
+//
+//	*
+//	* \brief 根据标签点表 id 获取表属性
+//	*
+//	* \param handle 连接句柄
+//	* \param field  RTDB_TABLE 结构，输入/输出，标签点表属性，
+//	*               输入时指定 id 字段，输出时返回 type、name、desc 字段。
+//
+// rtdb_error RTDBAPI_CALLRULE rtdbb_get_table_property_by_id_warp(rtdb_int32 handle, RTDB_TABLE *field)
+// */
 func RawRtdbbGetTablePropertyByIdWarp() {}
 
-/*
-*
-
-	*
-	* \brief 根据表名获取标签点表属性
-	*
-	* \param handle 连接句柄
-	* \param field  RTDB_TABLE 结构，输入/输出，标签点表属性
-	*               输入时指定 name 字段，输出时返回 id、type、desc 字段。
-
-rtdb_error RTDBAPI_CALLRULE rtdbb_get_table_property_by_name_warp(rtdb_int32 handle, RTDB_TABLE *field)
-*/
+// /*
+// *
+//
+//	*
+//	* \brief 根据表名获取标签点表属性
+//	*
+//	* \param handle 连接句柄
+//	* \param field  RTDB_TABLE 结构，输入/输出，标签点表属性
+//	*               输入时指定 name 字段，输出时返回 id、type、desc 字段。
+//
+// rtdb_error RTDBAPI_CALLRULE rtdbb_get_table_property_by_name_warp(rtdb_int32 handle, RTDB_TABLE *field)
+// */
 func RawRtdbbGetTablePropertyByNameWarp() {}
 
-/*
-*
-
-	*
-	* \brief 使用完整的属性集来创建单个标签点
-	*
-	* \param handle 连接句柄
-	* \param base RTDB_POINT 结构，输入/输出，
-	*      输入除 id, createdate, creator, changedate, changer 字段外的其它字段，输出 id 字段。
-	* \param scan RTDB_SCAN_POINT 结构，输入，采集标签点扩展属性集。
-	* \param calc RTDB_CALC_POINT 结构，输入，计算标签点扩展属性集。
-	* \remark 如果新建的标签点没有对应的扩展属性集，可置为空指针。
-
-rtdb_error RTDBAPI_CALLRULE rtdbb_insert_point_warp(rtdb_int32 handle, RTDB_POINT *base, RTDB_SCAN_POINT *scan, RTDB_CALC_POINT *calc)
-*/
+// /*
+// *
+//
+//	*
+//	* \brief 使用完整的属性集来创建单个标签点
+//	*
+//	* \param handle 连接句柄
+//	* \param base RTDB_POINT 结构，输入/输出，
+//	*      输入除 id, createdate, creator, changedate, changer 字段外的其它字段，输出 id 字段。
+//	* \param scan RTDB_SCAN_POINT 结构，输入，采集标签点扩展属性集。
+//	* \param calc RTDB_CALC_POINT 结构，输入，计算标签点扩展属性集。
+//	* \remark 如果新建的标签点没有对应的扩展属性集，可置为空指针。
+//
+// rtdb_error RTDBAPI_CALLRULE rtdbb_insert_point_warp(rtdb_int32 handle, RTDB_POINT *base, RTDB_SCAN_POINT *scan, RTDB_CALC_POINT *calc)
+// */
 func RawRtdbbInsertPointWarp() {}
 
-/*
-*
-  - 命名：rtdbb_insert_max_point
-  - 功能：使用最大长度的完整属性集来创建单个标签点
-  - 参数：
-  - [handle] 连接句柄
-  - [base] RTDB_POINT 结构，输入/输出，
-  - 输入除 id, createdate, creator, changedate, changer 字段外的其它字段，输出 id 字段。
-  - [scan] RTDB_SCAN_POINT 结构，输入，采集标签点扩展属性集。
-  - [calc] RTDB_MAX_CALC_POINT 结构，输入，计算标签点扩展属性集。
-  - 备注：如果新建的标签点没有对应的扩展属性集，可置为空指针。
-
-rtdb_error RTDBAPI_CALLRULE rtdbb_insert_max_point_warp(rtdb_int32 handle, RTDB_POINT *base, RTDB_SCAN_POINT *scan, RTDB_MAX_CALC_POINT *calc)
-*/
+// /*
+// *
+//   - 命名：rtdbb_insert_max_point
+//   - 功能：使用最大长度的完整属性集来创建单个标签点
+//   - 参数：
+//   - [handle] 连接句柄
+//   - [base] RTDB_POINT 结构，输入/输出，
+//   - 输入除 id, createdate, creator, changedate, changer 字段外的其它字段，输出 id 字段。
+//   - [scan] RTDB_SCAN_POINT 结构，输入，采集标签点扩展属性集。
+//   - [calc] RTDB_MAX_CALC_POINT 结构，输入，计算标签点扩展属性集。
+//   - 备注：如果新建的标签点没有对应的扩展属性集，可置为空指针。
+//
+// rtdb_error RTDBAPI_CALLRULE rtdbb_insert_max_point_warp(rtdb_int32 handle, RTDB_POINT *base, RTDB_SCAN_POINT *scan, RTDB_MAX_CALC_POINT *calc)
+// */
 func RawRtdbbInsertMaxPointWarp() {}
 
-/*
-*
-  - 命名：rtdbb_insert_max_points
-  - 功能：使用最大长度的完整属性集来批量创建标签点
-  - 参数：
-  - [handle] 连接句柄
-  - [count] count, 输入，base/scan/calc数组的长度；输出，成功的个数
-  - [bases] RTDB_POINT 数组，输入/输出，
-  - 输入除 id, createdate, creator, changedate, changer 字段外的其它字段，输出 id 字段。
-  - [scans] RTDB_SCAN_POINT 数组，输入，采集标签点扩展属性集。
-  - [calcs] RTDB_MAX_CALC_POINT 数组，输入，计算标签点扩展属性集。
-  - [errors] rtdb_error数组，输出，对应每个标签点的结果
-  - 备注：如果新建的标签点没有对应的扩展属性集，可置为空指针。
-
-rtdb_error RTDBAPI_CALLRULE rtdbb_insert_max_points_warp(rtdb_int32 handle, rtdb_int32* count, RTDB_POINT* bases, RTDB_SCAN_POINT* scans, RTDB_MAX_CALC_POINT* calcs, rtdb_error* errors)
-*/
+// /*
+// *
+//   - 命名：rtdbb_insert_max_points
+//   - 功能：使用最大长度的完整属性集来批量创建标签点
+//   - 参数：
+//   - [handle] 连接句柄
+//   - [count] count, 输入，base/scan/calc数组的长度；输出，成功的个数
+//   - [bases] RTDB_POINT 数组，输入/输出，
+//   - 输入除 id, createdate, creator, changedate, changer 字段外的其它字段，输出 id 字段。
+//   - [scans] RTDB_SCAN_POINT 数组，输入，采集标签点扩展属性集。
+//   - [calcs] RTDB_MAX_CALC_POINT 数组，输入，计算标签点扩展属性集。
+//   - [errors] rtdb_error数组，输出，对应每个标签点的结果
+//   - 备注：如果新建的标签点没有对应的扩展属性集，可置为空指针。
+//
+// rtdb_error RTDBAPI_CALLRULE rtdbb_insert_max_points_warp(rtdb_int32 handle, rtdb_int32* count, RTDB_POINT* bases, RTDB_SCAN_POINT* scans, RTDB_MAX_CALC_POINT* calcs, rtdb_error* errors)
+// */
 func RawRtdbbInsertMaxPointsWarp() {}
 
-/*
-*
-*
-* 功能  使用最小的属性集来创建单个标签点
-*
-* \param handle     连接句柄
-* \param tag        字符串，输入，标签点名称
-* \param type       整型，输入，标签点数据类型，取值 RTDB_BOOL、RTDB_UINT8、RTDB_INT8、
-*                   RTDB_CHAR、RTDB_UINT16、RTDB_UINT32、RTDB_INT32、RTDB_INT64、
-*                   RTDB_REAL16、RTDB_REAL32、RTDB_REAL64、RTDB_COOR、RTDB_STRING、RTDB_BLOB 之一。
-* \param table_id   整型，输入，标签点所属表 id
-* \param use_ms     短整型，输入，标签点时间戳精度，0 为秒；1 为纳秒。
-* \param point_id   整型，输出，标签点 id
-* \remark 标签点的其余属性将取默认值。
-rtdb_error RTDBAPI_CALLRULE rtdbb_insert_base_point_warp(rtdb_int32 handle, const char *tag, rtdb_int32 type, rtdb_int32 table_id, rtdb_int16 use_ms, rtdb_int32 *point_id)
-*/
+// /*
+// *
+// *
+// * 功能  使用最小的属性集来创建单个标签点
+// *
+// * \param handle     连接句柄
+// * \param tag        字符串，输入，标签点名称
+// * \param type       整型，输入，标签点数据类型，取值 RTDB_BOOL、RTDB_UINT8、RTDB_INT8、
+// *                   RTDB_CHAR、RTDB_UINT16、RTDB_UINT32、RTDB_INT32、RTDB_INT64、
+// *                   RTDB_REAL16、RTDB_REAL32、RTDB_REAL64、RTDB_COOR、RTDB_STRING、RTDB_BLOB 之一。
+// * \param table_id   整型，输入，标签点所属表 id
+// * \param use_ms     短整型，输入，标签点时间戳精度，0 为秒；1 为纳秒。
+// * \param point_id   整型，输出，标签点 id
+// * \remark 标签点的其余属性将取默认值。
+// rtdb_error RTDBAPI_CALLRULE rtdbb_insert_base_point_warp(rtdb_int32 handle, const char *tag, rtdb_int32 type, rtdb_int32 table_id, rtdb_int16 use_ms, rtdb_int32 *point_id)
+// */
 func RawRtdbbInsertBasePointWarp() {}
 
-/*
-*
-  - 命名：rtdbb_insert_named_type_point
-  - 功能：使用完整的属性集来创建单个自定义数据类型标签点
-  - 参数：
-  - [handle] 连接句柄
-  - [base] RTDB_POINT 结构，输入/输出，
-  - 输入除 id, createdate, creator, changedate, changer 字段外的其它字段，输出 id 字段。
-  - [scan] RTDB_SCAN_POINT 结构，输入，采集标签点扩展属性集。
-  - [name] 字符串，输入，自定义数据类型的名字。
-  - 备注：如果新建的标签点没有对应的扩展属性集，可置为空指针。
-
-rtdb_error RTDBAPI_CALLRULE rtdbb_insert_named_type_point_warp(rtdb_int32 handle, RTDB_POINT *base, RTDB_SCAN_POINT *scan, const char* name)
-*/
+// /*
+// *
+//   - 命名：rtdbb_insert_named_type_point
+//   - 功能：使用完整的属性集来创建单个自定义数据类型标签点
+//   - 参数：
+//   - [handle] 连接句柄
+//   - [base] RTDB_POINT 结构，输入/输出，
+//   - 输入除 id, createdate, creator, changedate, changer 字段外的其它字段，输出 id 字段。
+//   - [scan] RTDB_SCAN_POINT 结构，输入，采集标签点扩展属性集。
+//   - [name] 字符串，输入，自定义数据类型的名字。
+//   - 备注：如果新建的标签点没有对应的扩展属性集，可置为空指针。
+//
+// rtdb_error RTDBAPI_CALLRULE rtdbb_insert_named_type_point_warp(rtdb_int32 handle, RTDB_POINT *base, RTDB_SCAN_POINT *scan, const char* name)
+// */
 func RawRtdbbInsertNamedTypePointWarp() {}
 
-/*
-*
-
-	*
-	* \brief 根据 id 删除单个标签点
-	*
-	* \param handle 连接句柄
-	* \param id     整型，输入，标签点标识
-	* \remark 通过本接口删除的标签点为可回收标签点，
-	*        可以通过 rtdbb_recover_point 接口恢复。
-
-rtdb_error RTDBAPI_CALLRULE rtdbb_remove_point_by_id_warp(rtdb_int32 handle, rtdb_int32 id)
-*/
+// /*
+// *
+//
+//	*
+//	* \brief 根据 id 删除单个标签点
+//	*
+//	* \param handle 连接句柄
+//	* \param id     整型，输入，标签点标识
+//	* \remark 通过本接口删除的标签点为可回收标签点，
+//	*        可以通过 rtdbb_recover_point 接口恢复。
+//
+// rtdb_error RTDBAPI_CALLRULE rtdbb_remove_point_by_id_warp(rtdb_int32 handle, rtdb_int32 id)
+// */
 func RawRtdbbRemovePointByIdWarp() {}
 
-/*
-*
-*
-* \brief 根据标签点全名删除单个标签点
-* \param handle        连接句柄
-* \param table_dot_tag  字符串，输入，标签点全名称："表名.标签点名"
-* \remark 通过本接口删除的标签点为可回收标签点，
-*        可以通过 rtdbb_recover_point 接口恢复。
-rtdb_error RTDBAPI_CALLRULE rtdbb_remove_point_by_name_warp(rtdb_int32 handle, const char *table_dot_tag)
-*/
+// /*
+// *
+// *
+// * \brief 根据标签点全名删除单个标签点
+// * \param handle        连接句柄
+// * \param table_dot_tag  字符串，输入，标签点全名称："表名.标签点名"
+// * \remark 通过本接口删除的标签点为可回收标签点，
+// *        可以通过 rtdbb_recover_point 接口恢复。
+// rtdb_error RTDBAPI_CALLRULE rtdbb_remove_point_by_name_warp(rtdb_int32 handle, const char *table_dot_tag)
+// */
 func RawRtdbbRemovePointByNameWarp() {}
 
-/*
-*
-  - 命名：rtdbb_move_point_by_id
-  - 功能：根据 id 移动单个标签点到其他表
-  - 参数：
-  - [handle] 连接句柄
-  - [id]     整型，输入，标签点标识
-  - [dest_table_name] 字符串，输入，移动的目标表名称
-  - 备注：通过本接口移动标签点后不改变标签点的id，且快照
-  - 和历史数据都不受影响
-
-rtdb_error RTDBAPI_CALLRULE rtdbb_move_point_by_id_warp(rtdb_int32 handle, rtdb_int32 id, const char* dest_table_name)
-*/
+// /*
+// *
+//   - 命名：rtdbb_move_point_by_id
+//   - 功能：根据 id 移动单个标签点到其他表
+//   - 参数：
+//   - [handle] 连接句柄
+//   - [id]     整型，输入，标签点标识
+//   - [dest_table_name] 字符串，输入，移动的目标表名称
+//   - 备注：通过本接口移动标签点后不改变标签点的id，且快照
+//   - 和历史数据都不受影响
+//
+// rtdb_error RTDBAPI_CALLRULE rtdbb_move_point_by_id_warp(rtdb_int32 handle, rtdb_int32 id, const char* dest_table_name)
+// */
 func RawRtdbbMovePointByIdWarp() {}
 
-/*
-*
-
-	*
-	* \brief 批量获取标签点属性
-	*
-	* \param handle 连接句柄
-	* \param count  整数，输入，表示标签点个数。
-	* \param base   RTDB_POINT 结构数组，输入/输出，标签点基本属性列表，
-	*                 输入时，id 字段指定需要得到属性的标签点，输出时，其它字段返回标签点属性值。
-	* \param scan   RTDB_SCAN_POINT 结构数组，输出，采集标签点扩展属性列表
-	* \param calc   RTDB_CALC_POINT 结构数组，输出，计算标签点扩展属性列表
-	* \param errors 无符号整型数组，输出，获取标签属性的返回值列表，参考rtdb_error.h
-	* \remark 用户须保证分配给 base、scan、calc、errors 的空间与 count 相符，
-	*        扩展属性集 scan、calc 可为空指针，此时将不返回对应的扩展属性集。
-
-rtdb_error RTDBAPI_CALLRULE rtdbb_get_points_property_warp(rtdb_int32 handle, rtdb_int32 count, RTDB_POINT *base, RTDB_SCAN_POINT *scan, RTDB_CALC_POINT *calc, rtdb_error *errors)
-*/
+// /*
+// *
+//
+//	*
+//	* \brief 批量获取标签点属性
+//	*
+//	* \param handle 连接句柄
+//	* \param count  整数，输入，表示标签点个数。
+//	* \param base   RTDB_POINT 结构数组，输入/输出，标签点基本属性列表，
+//	*                 输入时，id 字段指定需要得到属性的标签点，输出时，其它字段返回标签点属性值。
+//	* \param scan   RTDB_SCAN_POINT 结构数组，输出，采集标签点扩展属性列表
+//	* \param calc   RTDB_CALC_POINT 结构数组，输出，计算标签点扩展属性列表
+//	* \param errors 无符号整型数组，输出，获取标签属性的返回值列表，参考rtdb_error.h
+//	* \remark 用户须保证分配给 base、scan、calc、errors 的空间与 count 相符，
+//	*        扩展属性集 scan、calc 可为空指针，此时将不返回对应的扩展属性集。
+//
+// rtdb_error RTDBAPI_CALLRULE rtdbb_get_points_property_warp(rtdb_int32 handle, rtdb_int32 count, RTDB_POINT *base, RTDB_SCAN_POINT *scan, RTDB_CALC_POINT *calc, rtdb_error *errors)
+// */
 func RawRtdbbGetPointsPropertyWarp() {}
 
-/*
-*
-  - 命名：rtdbb_get_max_points_property
-  - 功能：按最大长度批量获取标签点属性
-  - 参数：
-  - [handle] 连接句柄
-  - [count]  整数，输入，表示标签点个数。
-  - [base]   RTDB_POINT 结构数组，输入/输出，标签点基本属性列表，
-  - 输入时，id 字段指定需要得到属性的标签点，输出时，其它字段返回标签点属性值。
-  - [scan]   RTDB_SCAN_POINT 结构数组，输出，采集标签点扩展属性列表
-  - [calc]   RTDB_MAX_CALC_POINT 结构数组，输出，计算标签点扩展属性列表
-  - [errors] 无符号整型数组，输出，获取标签属性的返回值列表，参考rtdb_error.h
-  - 备注：用户须保证分配给 base、scan、calc、errors 的空间与 count 相符，
-  - 扩展属性集 scan、calc 可为空指针，此时将不返回对应的扩展属性集。
-
-rtdb_error RTDBAPI_CALLRULE rtdbb_get_max_points_property_warp(rtdb_int32 handle, rtdb_int32 count, RTDB_POINT *base, RTDB_SCAN_POINT *scan, RTDB_MAX_CALC_POINT *calc, rtdb_error *errors)
-*/
+// /*
+// *
+//   - 命名：rtdbb_get_max_points_property
+//   - 功能：按最大长度批量获取标签点属性
+//   - 参数：
+//   - [handle] 连接句柄
+//   - [count]  整数，输入，表示标签点个数。
+//   - [base]   RTDB_POINT 结构数组，输入/输出，标签点基本属性列表，
+//   - 输入时，id 字段指定需要得到属性的标签点，输出时，其它字段返回标签点属性值。
+//   - [scan]   RTDB_SCAN_POINT 结构数组，输出，采集标签点扩展属性列表
+//   - [calc]   RTDB_MAX_CALC_POINT 结构数组，输出，计算标签点扩展属性列表
+//   - [errors] 无符号整型数组，输出，获取标签属性的返回值列表，参考rtdb_error.h
+//   - 备注：用户须保证分配给 base、scan、calc、errors 的空间与 count 相符，
+//   - 扩展属性集 scan、calc 可为空指针，此时将不返回对应的扩展属性集。
+//
+// rtdb_error RTDBAPI_CALLRULE rtdbb_get_max_points_property_warp(rtdb_int32 handle, rtdb_int32 count, RTDB_POINT *base, RTDB_SCAN_POINT *scan, RTDB_MAX_CALC_POINT *calc, rtdb_error *errors)
+// */
 func RawRtdbbGetMaxPointsPropertyWarp() {}
 
-/*
-*
-*
-* \brief 搜索符合条件的标签点，使用标签点名时支持通配符
-*
-* \param handle        连接句柄
-* \param tagmask       字符串，输入，标签点名称掩码，支持"*"和"?"通配符，缺省设置为"*"，长度不得超过 RTDB_TAG_SIZE，支持多个搜索条件，以空格分隔。
-* \param tablemask     字符串，输入，标签点表名称掩码，支持"*"和"?"通配符，缺省设置为"*"，长度不得超过 RTDB_TAG_SIZE，支持多个搜索条件，以空格分隔。
-* \param source        字符串，输入，数据源集合，字符串中的每个字符均表示一个数据源，
-*                        空字符串表示不用数据源作搜索条件，缺省设置为空，长度不得超过 RTDB_DESC_SIZE。
-* \param unit          字符串，输入，标签点工程单位的子集，工程单位中包含该参数的标签点均满足条件，
-*                        空字符串表示不用工程单位作搜索条件，缺省设置为空，长度不得超过 RTDB_UNIT_SIZE。
-* \param desc          字符串，输入，标签点描述的子集，描述中包含该参数的标签点均满足条件，
-*                        空字符串表示不用描述作搜索条件，缺省设置为空，长度不得超过 RTDB_SOURCE_SIZE。
-* \param instrument    字符串，输入参数，标签点设备名称。缺省设置为空，长度不得超过 RTDB_INSTRUMENT_SIZE。
-* \param mode          整型，RTDB_SORT_BY_TABLE、RTDB_SORT_BY_TAG、RTDB_SORT_BY_ID 之一，
-*                        搜索结果的排序模式，输入，缺省值为RTDB_SORT_BY_TABLE
-* \param ids           整型数组，输出，返回搜索到的标签点标识列表
-* \param count         整型，输入/输出，输入时表示 ids 的长度，输出时表示搜索到的标签点个数
-* \remark 用户须保证分配给 ids 的空间与 count 相符，各参数中包含的搜索条件之间的关系为"与"的关系，
-*        用包含通配符的标签点名称作搜索条件时，如果第一个字符不是通配符(如"ai67*")，会得到最快的搜索速度。
-*        如果 tagmask、tablemask 为空指针，则表示使用缺省设置"*",
-*        多个搜索条件可以通过空格分隔，比如"demo_*1 demo_*2"，会将满足demo_*1或者demo_*2条件的标签点搜索出来。
-rtdb_error RTDBAPI_CALLRULE rtdbb_search_warp(rtdb_int32 handle, const char *tagmask, const char *tablemask, const char *source, const char *unit, const char *desc, const char *instrument, rtdb_int32 mode, rtdb_int32 *ids, rtdb_int32 *count)
-*/
+// /*
+// *
+// *
+// * \brief 搜索符合条件的标签点，使用标签点名时支持通配符
+// *
+// * \param handle        连接句柄
+// * \param tagmask       字符串，输入，标签点名称掩码，支持"*"和"?"通配符，缺省设置为"*"，长度不得超过 RTDB_TAG_SIZE，支持多个搜索条件，以空格分隔。
+// * \param tablemask     字符串，输入，标签点表名称掩码，支持"*"和"?"通配符，缺省设置为"*"，长度不得超过 RTDB_TAG_SIZE，支持多个搜索条件，以空格分隔。
+// * \param source        字符串，输入，数据源集合，字符串中的每个字符均表示一个数据源，
+// *                        空字符串表示不用数据源作搜索条件，缺省设置为空，长度不得超过 RTDB_DESC_SIZE。
+// * \param unit          字符串，输入，标签点工程单位的子集，工程单位中包含该参数的标签点均满足条件，
+// *                        空字符串表示不用工程单位作搜索条件，缺省设置为空，长度不得超过 RTDB_UNIT_SIZE。
+// * \param desc          字符串，输入，标签点描述的子集，描述中包含该参数的标签点均满足条件，
+// *                        空字符串表示不用描述作搜索条件，缺省设置为空，长度不得超过 RTDB_SOURCE_SIZE。
+// * \param instrument    字符串，输入参数，标签点设备名称。缺省设置为空，长度不得超过 RTDB_INSTRUMENT_SIZE。
+// * \param mode          整型，RTDB_SORT_BY_TABLE、RTDB_SORT_BY_TAG、RTDB_SORT_BY_ID 之一，
+// *                        搜索结果的排序模式，输入，缺省值为RTDB_SORT_BY_TABLE
+// * \param ids           整型数组，输出，返回搜索到的标签点标识列表
+// * \param count         整型，输入/输出，输入时表示 ids 的长度，输出时表示搜索到的标签点个数
+// * \remark 用户须保证分配给 ids 的空间与 count 相符，各参数中包含的搜索条件之间的关系为"与"的关系，
+// *        用包含通配符的标签点名称作搜索条件时，如果第一个字符不是通配符(如"ai67*")，会得到最快的搜索速度。
+// *        如果 tagmask、tablemask 为空指针，则表示使用缺省设置"*",
+// *        多个搜索条件可以通过空格分隔，比如"demo_*1 demo_*2"，会将满足demo_*1或者demo_*2条件的标签点搜索出来。
+// rtdb_error RTDBAPI_CALLRULE rtdbb_search_warp(rtdb_int32 handle, const char *tagmask, const char *tablemask, const char *source, const char *unit, const char *desc, const char *instrument, rtdb_int32 mode, rtdb_int32 *ids, rtdb_int32 *count)
+// */
 func RawRtdbbSearchWarp() {}
 
-/*
-*
-
-	*
-	* \brief 分批继续搜索符合条件的标签点，使用标签点名时支持通配符
-	*
-	* \param handle        连接句柄
-	* \param start         整型，输入，搜索起始位置。
-	* \param tagmask       字符串，输入，标签点名称掩码，支持"*"和"?"通配符，缺省设置为"*"，长度不得超过 RTDB_TAG_SIZE，支持多个搜索条件，以空格分隔。
-	* \param tablemask     字符串，输入，标签点表名称掩码，支持"*"和"?"通配符，缺省设置为"*"，长度不得超过 RTDB_TAG_SIZE，支持多个搜索条件，以空格分隔。
-	* \param source        字符串，输入，数据源集合，字符串中的每个字符均表示一个数据源，
-	*                        空字符串表示不用数据源作搜索条件，缺省设置为空，长度不得超过 RTDB_DESC_SIZE。
-	* \param unit          字符串，输入，标签点工程单位的子集，工程单位中包含该参数的标签点均满足条件，
-	*                        空字符串表示不用工程单位作搜索条件，缺省设置为空，长度不得超过 RTDB_UNIT_SIZE。
-	* \param desc          字符串，输入，标签点描述的子集，描述中包含该参数的标签点均满足条件，
-	*                        空字符串表示不用描述作搜索条件，缺省设置为空，长度不得超过 RTDB_SOURCE_SIZE。
-	* \param instrument    字符串，输入参数，标签点设备名称。缺省设置为空，长度不得超过 RTDB_INSTRUMENT_SIZE。
-	* \param mode          整型，RTDB_SORT_BY_TABLE、RTDB_SORT_BY_TAG、RTDB_SORT_BY_ID 之一，
-	*                        搜索结果的排序模式，输入，缺省值为RTDB_SORT_BY_TABLE
-	* \param ids           整型数组，输出，返回搜索到的标签点标识列表
-	* \param count         整型，输入/输出，输入时表示 ids 的长度，输出时表示搜索到的标签点个数
-	* \remark 用户须保证分配给 ids 的空间与 count 相符，各参数中包含的搜索条件之间的关系为"与"的关系，
-	*        用包含通配符的标签点名称作搜索条件时，如果第一个字符不是通配符(如"ai67*")，会得到最快的搜索速度。
-	*        如果 tagmask、tablemask 为空指针，则表示使用缺省设置"*"。
-	*        当搜索到的标签点数比提供的要小时，表示这是最后一批符合条件的标签点 (即全部搜索完毕),
-	*        多个搜索条件可以通过空格分隔，比如"demo_*1 demo_*2"，会将满足demo_*1或者demo_*2条件的标签点搜索出来。
-
-rtdb_error RTDBAPI_CALLRULE rtdbb_search_in_batches_warp(rtdb_int32 handle, rtdb_int32 start, const char *tagmask, const char *tablemask, const char *source, const char *unit, const char *desc, const char *instrument, rtdb_int32 mode, rtdb_int32 *ids, rtdb_int32 *count)
-*/
+// /*
+// *
+//
+//	*
+//	* \brief 分批继续搜索符合条件的标签点，使用标签点名时支持通配符
+//	*
+//	* \param handle        连接句柄
+//	* \param start         整型，输入，搜索起始位置。
+//	* \param tagmask       字符串，输入，标签点名称掩码，支持"*"和"?"通配符，缺省设置为"*"，长度不得超过 RTDB_TAG_SIZE，支持多个搜索条件，以空格分隔。
+//	* \param tablemask     字符串，输入，标签点表名称掩码，支持"*"和"?"通配符，缺省设置为"*"，长度不得超过 RTDB_TAG_SIZE，支持多个搜索条件，以空格分隔。
+//	* \param source        字符串，输入，数据源集合，字符串中的每个字符均表示一个数据源，
+//	*                        空字符串表示不用数据源作搜索条件，缺省设置为空，长度不得超过 RTDB_DESC_SIZE。
+//	* \param unit          字符串，输入，标签点工程单位的子集，工程单位中包含该参数的标签点均满足条件，
+//	*                        空字符串表示不用工程单位作搜索条件，缺省设置为空，长度不得超过 RTDB_UNIT_SIZE。
+//	* \param desc          字符串，输入，标签点描述的子集，描述中包含该参数的标签点均满足条件，
+//	*                        空字符串表示不用描述作搜索条件，缺省设置为空，长度不得超过 RTDB_SOURCE_SIZE。
+//	* \param instrument    字符串，输入参数，标签点设备名称。缺省设置为空，长度不得超过 RTDB_INSTRUMENT_SIZE。
+//	* \param mode          整型，RTDB_SORT_BY_TABLE、RTDB_SORT_BY_TAG、RTDB_SORT_BY_ID 之一，
+//	*                        搜索结果的排序模式，输入，缺省值为RTDB_SORT_BY_TABLE
+//	* \param ids           整型数组，输出，返回搜索到的标签点标识列表
+//	* \param count         整型，输入/输出，输入时表示 ids 的长度，输出时表示搜索到的标签点个数
+//	* \remark 用户须保证分配给 ids 的空间与 count 相符，各参数中包含的搜索条件之间的关系为"与"的关系，
+//	*        用包含通配符的标签点名称作搜索条件时，如果第一个字符不是通配符(如"ai67*")，会得到最快的搜索速度。
+//	*        如果 tagmask、tablemask 为空指针，则表示使用缺省设置"*"。
+//	*        当搜索到的标签点数比提供的要小时，表示这是最后一批符合条件的标签点 (即全部搜索完毕),
+//	*        多个搜索条件可以通过空格分隔，比如"demo_*1 demo_*2"，会将满足demo_*1或者demo_*2条件的标签点搜索出来。
+//
+// rtdb_error RTDBAPI_CALLRULE rtdbb_search_in_batches_warp(rtdb_int32 handle, rtdb_int32 start, const char *tagmask, const char *tablemask, const char *source, const char *unit, const char *desc, const char *instrument, rtdb_int32 mode, rtdb_int32 *ids, rtdb_int32 *count)
+// */
 func RawRtdbbSearchInBatchesWarp() {}
 
-/*
-*
-*
-* \brief 搜索符合条件的标签点，使用标签点名时支持通配符
-*
-* \param handle        连接句柄
-* \param tagmask       字符串，输入，标签点名称掩码，支持"*"和"?"通配符，缺省设置为"*"，长度不得超过 RTDB_TAG_SIZE，支持多个搜索条件，以空格分隔。
-* \param tablemask     字符串，输入，标签点表名称掩码，支持"*"和"?"通配符，缺省设置为"*"，长度不得超过 RTDB_TAG_SIZE，支持多个搜索条件，以空格分隔。
-* \param source        字符串，输入，数据源集合，字符串中的每个字符均表示一个数据源，
-*                        空字符串表示不用数据源作搜索条件，缺省设置为空，长度不得超过 RTDB_DESC_SIZE。
-* \param unit          字符串，输入，标签点工程单位的子集，工程单位中包含该参数的标签点均满足条件，
-*                        空字符串表示不用工程单位作搜索条件，缺省设置为空，长度不得超过 RTDB_UNIT_SIZE。
-* \param desc          字符串，输入，标签点描述的子集，描述中包含该参数的标签点均满足条件，
-*                        空字符串表示不用描述作搜索条件，缺省设置为空，长度不得超过 RTDB_SOURCE_SIZE。
-* \param instrument    字符串，输入参数，标签点设备名称。缺省设置为空，长度不得超过 RTDB_INSTRUMENT_SIZE。
-* \param typemask      字符串，输入参数，标签点类型名称。缺省设置为空，长度不得超过 RTDB_TYPE_NAME_SIZE,
-*                        内置的普通数据类型可以使用 bool、uint8、datetime等字符串表示，不区分大小写，支持模糊搜索。
-* \param classofmask   整型，输入参数，标签点的类别，缺省设置为-1，表示可以是任意类型的标签点，
-*                        当使用标签点类型作为搜索条件时，必须是RTDB_CLASS枚举中的一项或者多项的组合。
-* \param timeunitmask  整型，输入参数，标签点的时间戳精度，缺省设置为-1，表示可以是任意时间戳精度，
-*                        当使用此时间戳精度作为搜索条件时，timeunitmask的值可以为0或1，0表示时间戳精度为秒，1表示纳秒
-* \param othertypemask 整型，输入参数，使用其他标签点属性作为搜索条件，缺省设置为0，表示不作为搜索条件，
-*                        当使用此参数作为搜索条件时，othertypemaskvalue作为对应的搜索值，
-*                        此参数的取值可以参考rtdb.h文件中的RTDB_SEARCH_MASK。
-* \param othertypemaskvalue
-*                        字符串，输入参数，当使用其他标签点属性作为搜索条件时，此参数作为对应的搜索值，缺省设置为0，表示不作为搜索条件，
-*                        如果othertypemask的值为0，或者RTDB_SEARCH_NULL，则此参数被忽略,
-*                        当othertypemask对应的标签点属性为数值类型时，此搜索值只支持相等判断，
-*                        当othertypemask对应的标签点属性为字符串类型时，此搜索值支持模糊搜索。
-* \param mode          整型，RTDB_SORT_BY_TABLE、RTDB_SORT_BY_TAG、RTDB_SORT_BY_ID 之一，
-*                        搜索结果的排序模式，输入，缺省值为RTDB_SORT_BY_TABLE
-* \param ids           整型数组，输出，返回搜索到的标签点标识列表
-* \param count         整型，输入/输出，输入时表示 ids 的长度，输出时表示搜索到的标签点个数
-* \remark 用户须保证分配给 ids 的空间与 count 相符，各参数中包含的搜索条件之间的关系为"与"的关系，
-*        用包含通配符的标签点名称作搜索条件时，如果第一个字符不是通配符(如"ai67*")，会得到最快的搜索速度。
-*        如果 tagmask、tablemask 为空指针，则表示使用缺省设置"*",
-*        多个搜索条件可以通过空格分隔，比如"demo_*1 demo_*2"，会将满足demo_*1或者demo_*2条件的标签点搜索出来。
-rtdb_error RTDBAPI_CALLRULE rtdbb_search_ex_warp(rtdb_int32 handle, const char *tagmask, const char *tablemask, const char *source, const char *unit, const char *desc, const char *instrument, const char *typemask, rtdb_int32 classofmask, rtdb_int32 timeunitmask, rtdb_int32 othertypemask, const char *othertypemaskvalue, rtdb_int32 mode, rtdb_int32 *ids, rtdb_int32 *count)
-*/
+// /*
+// *
+// *
+// * \brief 搜索符合条件的标签点，使用标签点名时支持通配符
+// *
+// * \param handle        连接句柄
+// * \param tagmask       字符串，输入，标签点名称掩码，支持"*"和"?"通配符，缺省设置为"*"，长度不得超过 RTDB_TAG_SIZE，支持多个搜索条件，以空格分隔。
+// * \param tablemask     字符串，输入，标签点表名称掩码，支持"*"和"?"通配符，缺省设置为"*"，长度不得超过 RTDB_TAG_SIZE，支持多个搜索条件，以空格分隔。
+// * \param source        字符串，输入，数据源集合，字符串中的每个字符均表示一个数据源，
+// *                        空字符串表示不用数据源作搜索条件，缺省设置为空，长度不得超过 RTDB_DESC_SIZE。
+// * \param unit          字符串，输入，标签点工程单位的子集，工程单位中包含该参数的标签点均满足条件，
+// *                        空字符串表示不用工程单位作搜索条件，缺省设置为空，长度不得超过 RTDB_UNIT_SIZE。
+// * \param desc          字符串，输入，标签点描述的子集，描述中包含该参数的标签点均满足条件，
+// *                        空字符串表示不用描述作搜索条件，缺省设置为空，长度不得超过 RTDB_SOURCE_SIZE。
+// * \param instrument    字符串，输入参数，标签点设备名称。缺省设置为空，长度不得超过 RTDB_INSTRUMENT_SIZE。
+// * \param typemask      字符串，输入参数，标签点类型名称。缺省设置为空，长度不得超过 RTDB_TYPE_NAME_SIZE,
+// *                        内置的普通数据类型可以使用 bool、uint8、datetime等字符串表示，不区分大小写，支持模糊搜索。
+// * \param classofmask   整型，输入参数，标签点的类别，缺省设置为-1，表示可以是任意类型的标签点，
+// *                        当使用标签点类型作为搜索条件时，必须是RTDB_CLASS枚举中的一项或者多项的组合。
+// * \param timeunitmask  整型，输入参数，标签点的时间戳精度，缺省设置为-1，表示可以是任意时间戳精度，
+// *                        当使用此时间戳精度作为搜索条件时，timeunitmask的值可以为0或1，0表示时间戳精度为秒，1表示纳秒
+// * \param othertypemask 整型，输入参数，使用其他标签点属性作为搜索条件，缺省设置为0，表示不作为搜索条件，
+// *                        当使用此参数作为搜索条件时，othertypemaskvalue作为对应的搜索值，
+// *                        此参数的取值可以参考rtdb.h文件中的RTDB_SEARCH_MASK。
+// * \param othertypemaskvalue
+// *                        字符串，输入参数，当使用其他标签点属性作为搜索条件时，此参数作为对应的搜索值，缺省设置为0，表示不作为搜索条件，
+// *                        如果othertypemask的值为0，或者RTDB_SEARCH_NULL，则此参数被忽略,
+// *                        当othertypemask对应的标签点属性为数值类型时，此搜索值只支持相等判断，
+// *                        当othertypemask对应的标签点属性为字符串类型时，此搜索值支持模糊搜索。
+// * \param mode          整型，RTDB_SORT_BY_TABLE、RTDB_SORT_BY_TAG、RTDB_SORT_BY_ID 之一，
+// *                        搜索结果的排序模式，输入，缺省值为RTDB_SORT_BY_TABLE
+// * \param ids           整型数组，输出，返回搜索到的标签点标识列表
+// * \param count         整型，输入/输出，输入时表示 ids 的长度，输出时表示搜索到的标签点个数
+// * \remark 用户须保证分配给 ids 的空间与 count 相符，各参数中包含的搜索条件之间的关系为"与"的关系，
+// *        用包含通配符的标签点名称作搜索条件时，如果第一个字符不是通配符(如"ai67*")，会得到最快的搜索速度。
+// *        如果 tagmask、tablemask 为空指针，则表示使用缺省设置"*",
+// *        多个搜索条件可以通过空格分隔，比如"demo_*1 demo_*2"，会将满足demo_*1或者demo_*2条件的标签点搜索出来。
+// rtdb_error RTDBAPI_CALLRULE rtdbb_search_ex_warp(rtdb_int32 handle, const char *tagmask, const char *tablemask, const char *source, const char *unit, const char *desc, const char *instrument, const char *typemask, rtdb_int32 classofmask, rtdb_int32 timeunitmask, rtdb_int32 othertypemask, const char *othertypemaskvalue, rtdb_int32 mode, rtdb_int32 *ids, rtdb_int32 *count)
+// */
 func RawRtdbbSearchExWarp() {}
 
-/*
-*
-*
-* \brief 搜索符合条件的标签点，使用标签点名时支持通配符
-*
-* \param handle        连接句柄
-* \param tagmask       字符串，输入，标签点名称掩码，支持"*"和"?"通配符，缺省设置为"*"，长度不得超过 RTDB_TAG_SIZE，支持多个搜索条件，以空格分隔。
-* \param tablemask     字符串，输入，标签点表名称掩码，支持"*"和"?"通配符，缺省设置为"*"，长度不得超过 RTDB_TAG_SIZE，支持多个搜索条件，以空格分隔。
-* \param source        字符串，输入，数据源集合，字符串中的每个字符均表示一个数据源，
-*                        空字符串表示不用数据源作搜索条件，缺省设置为空，长度不得超过 RTDB_DESC_SIZE。
-* \param unit          字符串，输入，标签点工程单位的子集，工程单位中包含该参数的标签点均满足条件，
-*                        空字符串表示不用工程单位作搜索条件，缺省设置为空，长度不得超过 RTDB_UNIT_SIZE。
-* \param desc          字符串，输入，标签点描述的子集，描述中包含该参数的标签点均满足条件，
-*                        空字符串表示不用描述作搜索条件，缺省设置为空，长度不得超过 RTDB_SOURCE_SIZE。
-* \param instrument    字符串，输入参数，标签点设备名称。缺省设置为空，长度不得超过 RTDB_INSTRUMENT_SIZE。
-* \param typemask      字符串，输入参数，标签点类型名称。缺省设置为空，长度不得超过 RTDB_TYPE_NAME_SIZE,
-*                        内置的普通数据类型可以使用 bool、uint8、datetime等字符串表示，不区分大小写，支持模糊搜索。
-* \param classofmask   整型，输入参数，标签点的类别，缺省设置为-1，表示可以是任意类型的标签点，
-*                        当使用标签点类型作为搜索条件时，必须是RTDB_CLASS枚举中的一项或者多项的组合。
-* \param timeunitmask  整型，输入参数，标签点的时间戳精度，缺省设置为-1，表示可以是任意时间戳精度，
-*                        当使用此时间戳精度作为搜索条件时，timeunitmask的值可以为0或1，0表示时间戳精度为秒，1表示纳秒
-* \param othertypemask 整型，输入参数，使用其他标签点属性作为搜索条件，缺省设置为0，表示不作为搜索条件，
-*                        当使用此参数作为搜索条件时，othertypemaskvalue作为对应的搜索值，
-*                        此参数的取值可以参考rtdb.h文件中的RTDB_SEARCH_MASK。
-* \param othertypemaskvalue
-*                        字符串，输入参数，当使用其他标签点属性作为搜索条件时，此参数作为对应的搜索值，缺省设置为0，表示不作为搜索条件，
-*                        如果othertypemask的值为0，或者RTDB_SEARCH_NULL，则此参数被忽略,
-*                        当othertypemask对应的标签点属性为数值类型时，此搜索值只支持相等判断，
-*                        当othertypemask对应的标签点属性为字符串类型时，此搜索值支持模糊搜索。
-* \param count         整型，输出，表示搜索到的标签点个数
-* \remark  各参数中包含的搜索条件之间的关系为"与"的关系，
-*        用包含通配符的标签点名称作搜索条件时，如果第一个字符不是通配符(如"ai67*")，会得到最快的搜索速度。
-*        如果 tagmask、tablemask 为空指针，则表示使用缺省设置"*",
-*        多个搜索条件可以通过空格分隔，比如"demo_*1 demo_*2"，会将满足demo_*1或者demo_*2条件的标签点搜索出来。
-rtdb_error RTDBAPI_CALLRULE rtdbb_search_points_count_warp(rtdb_int32 handle, const char *tagmask, const char *tablemask, const char *source, const char *unit, const char *desc, const char *instrument, const char *typemask, rtdb_int32 classofmask, rtdb_int32 timeunitmask, rtdb_int32 othertypemask, const char *othertypemaskvalue, rtdb_int32 *count)
-*/
+// /*
+// *
+// *
+// * \brief 搜索符合条件的标签点，使用标签点名时支持通配符
+// *
+// * \param handle        连接句柄
+// * \param tagmask       字符串，输入，标签点名称掩码，支持"*"和"?"通配符，缺省设置为"*"，长度不得超过 RTDB_TAG_SIZE，支持多个搜索条件，以空格分隔。
+// * \param tablemask     字符串，输入，标签点表名称掩码，支持"*"和"?"通配符，缺省设置为"*"，长度不得超过 RTDB_TAG_SIZE，支持多个搜索条件，以空格分隔。
+// * \param source        字符串，输入，数据源集合，字符串中的每个字符均表示一个数据源，
+// *                        空字符串表示不用数据源作搜索条件，缺省设置为空，长度不得超过 RTDB_DESC_SIZE。
+// * \param unit          字符串，输入，标签点工程单位的子集，工程单位中包含该参数的标签点均满足条件，
+// *                        空字符串表示不用工程单位作搜索条件，缺省设置为空，长度不得超过 RTDB_UNIT_SIZE。
+// * \param desc          字符串，输入，标签点描述的子集，描述中包含该参数的标签点均满足条件，
+// *                        空字符串表示不用描述作搜索条件，缺省设置为空，长度不得超过 RTDB_SOURCE_SIZE。
+// * \param instrument    字符串，输入参数，标签点设备名称。缺省设置为空，长度不得超过 RTDB_INSTRUMENT_SIZE。
+// * \param typemask      字符串，输入参数，标签点类型名称。缺省设置为空，长度不得超过 RTDB_TYPE_NAME_SIZE,
+// *                        内置的普通数据类型可以使用 bool、uint8、datetime等字符串表示，不区分大小写，支持模糊搜索。
+// * \param classofmask   整型，输入参数，标签点的类别，缺省设置为-1，表示可以是任意类型的标签点，
+// *                        当使用标签点类型作为搜索条件时，必须是RTDB_CLASS枚举中的一项或者多项的组合。
+// * \param timeunitmask  整型，输入参数，标签点的时间戳精度，缺省设置为-1，表示可以是任意时间戳精度，
+// *                        当使用此时间戳精度作为搜索条件时，timeunitmask的值可以为0或1，0表示时间戳精度为秒，1表示纳秒
+// * \param othertypemask 整型，输入参数，使用其他标签点属性作为搜索条件，缺省设置为0，表示不作为搜索条件，
+// *                        当使用此参数作为搜索条件时，othertypemaskvalue作为对应的搜索值，
+// *                        此参数的取值可以参考rtdb.h文件中的RTDB_SEARCH_MASK。
+// * \param othertypemaskvalue
+// *                        字符串，输入参数，当使用其他标签点属性作为搜索条件时，此参数作为对应的搜索值，缺省设置为0，表示不作为搜索条件，
+// *                        如果othertypemask的值为0，或者RTDB_SEARCH_NULL，则此参数被忽略,
+// *                        当othertypemask对应的标签点属性为数值类型时，此搜索值只支持相等判断，
+// *                        当othertypemask对应的标签点属性为字符串类型时，此搜索值支持模糊搜索。
+// * \param count         整型，输出，表示搜索到的标签点个数
+// * \remark  各参数中包含的搜索条件之间的关系为"与"的关系，
+// *        用包含通配符的标签点名称作搜索条件时，如果第一个字符不是通配符(如"ai67*")，会得到最快的搜索速度。
+// *        如果 tagmask、tablemask 为空指针，则表示使用缺省设置"*",
+// *        多个搜索条件可以通过空格分隔，比如"demo_*1 demo_*2"，会将满足demo_*1或者demo_*2条件的标签点搜索出来。
+// rtdb_error RTDBAPI_CALLRULE rtdbb_search_points_count_warp(rtdb_int32 handle, const char *tagmask, const char *tablemask, const char *source, const char *unit, const char *desc, const char *instrument, const char *typemask, rtdb_int32 classofmask, rtdb_int32 timeunitmask, rtdb_int32 othertypemask, const char *othertypemaskvalue, rtdb_int32 *count)
+// */
 func RawRtdbbSearchPointsCountWarp() {}
 
-/*
-*
-  - 命名：rtdbb_remove_table_by_id
-  - \brief 根据表 id 删除表及表中标签点
-    *
-  - \param handle        连接句柄
-  - \param id            整型，输入，表 id
-  - \remark 删除的表不可恢复，删除的标签点可以通过 rtdbb_recover_point 接口恢复。
-
-rtdb_error RTDBAPI_CALLRULE rtdbb_remove_table_by_id_warp(rtdb_int32 handle, rtdb_int32 id)
-*/
+// /*
+// *
+//   - 命名：rtdbb_remove_table_by_id
+//   - \brief 根据表 id 删除表及表中标签点
+//     *
+//   - \param handle        连接句柄
+//   - \param id            整型，输入，表 id
+//   - \remark 删除的表不可恢复，删除的标签点可以通过 rtdbb_recover_point 接口恢复。
+//
+// rtdb_error RTDBAPI_CALLRULE rtdbb_remove_table_by_id_warp(rtdb_int32 handle, rtdb_int32 id)
+// */
 func RawRtdbbRemoveTableByIdWarp() {}
 
 /*
