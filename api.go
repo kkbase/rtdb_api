@@ -5663,7 +5663,17 @@ func RawRtdbbGetTablePropertyByIdWarp(handle ConnectHandle, tableID TableID) (Rt
 // *  \param field  RTDB_TABLE 结构，输入/输出，标签点表属性
 // *                输入时指定 name 字段，输出时返回 id、type、desc 字段。
 // rtdb_error RTDBAPI_CALLRULE rtdbb_get_table_property_by_name_warp(rtdb_int32 handle, RTDB_TABLE *field)
-func RawRtdbbGetTablePropertyByNameWarp() {}
+func RawRtdbbGetTablePropertyByNameWarp(handle ConnectHandle, tableName string) (RtdbTable, error) {
+	table := C.RTDB_TABLE{}
+	for i, c := range []byte(tableName) {
+		if i >= C.RTDB_TAG_SIZE {
+			break
+		}
+		table.name[i] = C.char(c)
+	}
+	err := C.rtdbb_get_table_property_by_name_warp(C.rtdb_int32(handle), &table)
+	return cToRtdbTable(&table), RtdbError(err).GoError()
+}
 
 // RawRtdbbInsertPointWarp 使用完整的属性集来创建单个标签点
 // *  \param handle 连接句柄
