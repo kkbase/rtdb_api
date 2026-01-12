@@ -4205,14 +4205,14 @@ type RtdbUserInfo struct {
 
 func cToRtdbUserInfo(cInfo *C.RTDB_USER_INFO) RtdbUserInfo {
 	locked := false
-	if int8(cInfo.is_locked) != 0 {
+	if int8(cInfo.islocked) != 0 {
 		locked = true
 	}
 	goInfo := RtdbUserInfo{
 		User:      CCharArrayToString(&cInfo.user[0], len(cInfo.user)),
 		Length:    int32(cInfo.length),
 		Privilege: int32(cInfo.privilege),
-		IsLocked:  C.rtdb_int8(locked),
+		IsLocked:  locked,
 	}
 	return goInfo
 }
