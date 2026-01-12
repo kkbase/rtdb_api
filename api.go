@@ -4542,12 +4542,20 @@ func RawRtdbChangeMyPasswordWarp(handle ConnectHandle, oldPwd string, newPwd str
 }
 
 // RawRtdbGetPrivWarp 获取连接权限
-// * \param handle          连接句柄
-// * \param [out] priv  帐户权限， 枚举 \ref RTDB_PRIV_GROUP 的值之一
-// * \return rtdb_error
-// * \remark 如果还未登陆或不在服务器信任连接中，对应权限为-1，表示没有任何权限
-// rtdb_error RTDBAPI_CALLRULE rtdb_get_priv_warp(rtdb_int32 handle, rtdb_int32 *priv)
-func RawRtdbGetPrivWarp() {}
+//
+// input:
+//   - handle 连接句柄
+//
+// output:
+//   - PrivGroup 用户权限
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdb_get_priv_warp(rtdb_int32 handle, rtdb_int32 *priv)
+func RawRtdbGetPrivWarp(handle ConnectHandle) (PrivGroup, error) {
+	priv := C.rtdb_int32(0)
+	err := C.rtdb_get_priv_warp(C.rtdb_int32(handle), &priv)
+	return PrivGroup(priv), RtdbError(err).GoError()
+}
 
 // RawRtdbChangePrivWarp 修改用户帐户权限
 // * \param handle  连接句柄
