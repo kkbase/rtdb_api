@@ -5549,10 +5549,20 @@ func RawRtdbbRemoveTableByNameWarp(handle ConnectHandle, name string) error {
 }
 
 // RawRtdbbTablesCountWarp 取得标签点表总数
-// * \param handle   连接句柄
-// * \param count    整型，输出，标签点表总数
-// rtdb_error RTDBAPI_CALLRULE rtdbb_tables_count_warp(rtdb_int32 handle, rtdb_int32 *count)
-func RawRtdbbTablesCountWarp() {}
+//
+// input:
+//   - handle 连接句柄
+//
+// output:
+//   - in32 标签点表总数
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbb_tables_count_warp(rtdb_int32 handle, rtdb_int32 *count)
+func RawRtdbbTablesCountWarp(handle ConnectHandle) (int32, error) {
+	cCount := C.rtdb_int32(0)
+	err := C.rtdbb_tables_count_warp(C.rtdb_int32(handle), &cCount)
+	return int32(cCount), RtdbError(err).GoError()
+}
 
 // RawRtdbbGetTablesWarp 取得所有标签点表的ID
 // *
