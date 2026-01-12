@@ -4826,7 +4826,7 @@ func RawRtdbAddAuthorizationWarp(handle ConnectHandle, addr string, mask string,
 	defer C.free(unsafe.Pointer(cMask))
 	cDesc := C.CString(desc)
 	defer C.free(unsafe.Pointer(cDesc))
-	err := C.rtdb_add_authorization_warp(C.rtdb_int32(handle), cAddr, cMask, cDesc, C.rtdb_int32(priv))
+	err := C.rtdb_add_authorization_warp(C.rtdb_int32(handle), cAddr, cMask, C.rtdb_int32(priv), cDesc)
 	return RtdbError(err).GoError()
 }
 
@@ -4854,7 +4854,7 @@ func RawRtdbUpdateAuthorizationWarp(handle ConnectHandle, oldAddr string, oldMas
 	defer C.free(unsafe.Pointer(cNewMask))
 	cNewDesc := C.CString(newDesc)
 	defer C.free(unsafe.Pointer(cNewDesc))
-	err := C.rtdb_update_authorization_warp(C.rtdb_int32(handle), oldAddr, oldMask, newAddr, newMask, C.rtdb_int32(priv), newDesc)
+	err := C.rtdb_update_authorization_warp(C.rtdb_int32(handle), cOldAddr, cOldMask, cNewAddr, cNewMask, C.rtdb_int32(priv), cNewDesc)
 	return RtdbError(err).GoError()
 }
 
