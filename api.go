@@ -3156,6 +3156,9 @@ func (pg PrivGroup) Desc() string {
 // ConnectHandle 连接句柄, 用于描述一个 API库 与 数据库 之间的连接
 type ConnectHandle int32
 
+// SocketHandle socket连接句柄
+type SocketHandle int32
+
 // RtdbParam 查询系统参数时对应的索引
 type RtdbParam int32
 
@@ -4313,35 +4316,45 @@ func RawRtdbSetDbInfo2Warp(handle ConnectHandle, param RtdbParam, value ParamInt
 	return RtdbError(err).GoError()
 }
 
-// RawRtdbGetConnectionsWarp 列出 RTDB 服务器的所有连接句柄
+// RawRtdbGetConnectionsWarp 列出 RTDB 服务器的所有socket连接句柄, 注意这里指的是socket连接，区分于ConnectHandle
 //
 // input:
 //   - handle 连接句柄
 //   - nodeNumber 双活模式下，指定节点编号，1为rtdb_connect中第1个IP，2为rtdb_connect中第2个IP, 单机模式下写0
 //
 // output:
-//   - []ConnectHandle 连接数组
+//   - []SocketHandle socket连接数组
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_get_connections_warp(rtdb_int32 handle, rtdb_int32 node_number, rtdb_int32 *sockets, rtdb_int32 *count)
-func RawRtdbGetConnectionsWarp(handle ConnectHandle, nodeNumber int32) ([]ConnectHandle, error) {
+func RawRtdbGetConnectionsWarp(handle ConnectHandle, nodeNumber int32) ([]SocketHandle, error) {
 	connectionCount, err := RawRtdbGetDbInfo2Warp(handle, RtdbParamServerConnectionCount)
 	if err != nil {
 		return nil, err
 	}
 	cCount := C.rtdb_int32(connectionCount)
-	sockets := make([]ConnectHandle, int32(cCount))
+	sockets := make([]SocketHandle, int32(cCount))
 	cSockets := (*C.rtdb_int32)(unsafe.Pointer(&sockets[0]))
 	err2 := C.rtdb_get_connections_warp(C.rtdb_int32(handle), C.rtdb_int32(nodeNumber), cSockets, &cCount)
 	return sockets[0:cCount], RtdbError(err2).GoError()
 }
 
 // RawRtdbGetOwnConnectionWarp 获取当前连接的socket句柄
-// * \param [in] handle       连接句柄
-// * \param [in] node_number   双活模式下，指定节点编号，1为rtdb_connect中第1个IP，2为rtdb_connect中第2个IP
-// * \param [out] sockets    整形数组，所有连接的套接字句柄
-// rtdb_error RTDBAPI_CALLRULE rtdb_get_own_connection_warp(rtdb_int32 handle, rtdb_int32 node_number, rtdb_int32* socket)
-func RawRtdbGetOwnConnectionWarp() {}
+//
+// input:
+//   - handle 连接句柄
+//   - nodeNumber 双活模式下，指定节点编号，1为rtdb_connect中第1个IP，2为rtdb_connect中第2个IP, 单机模式下写0
+//
+// output:
+//   - SocketHandle socket连接
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdb_get_own_connection_warp(rtdb_int32 handle, rtdb_int32 node_number, rtdb_int32* socket)
+func RawRtdbGetOwnConnectionWarp(handle ConnectHandle, nodeNumber int32) (SocketHandle, error) {
+	socket := C.rtdb_int32(0)
+	err := C.rtdb_get_own_connection_warp(C.rtdb_int32(handle), C.rtdb_int32(nodeNumber), &socket)
+	return SocketHandle(socket), RtdbError(err).GoError()
+}
 
 // RawRtdbGetConnectionInfoWarp 获取 RTDB 服务器指定连接的信息
 // * \param [in] handle          连接句柄，参见 \ref rtdb_connect
