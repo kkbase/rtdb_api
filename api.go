@@ -4607,14 +4607,25 @@ func RawRtdbRemoveUserWarp(handle ConnectHandle, user string) error {
 	return RtdbError(err).GoError()
 }
 
-// RawRtdbLockUserWarp 启用或禁用用户
-// * \param     handle    连接句柄
-// * \param     user      字符串，输入，帐户名
-// * \param     lock      布尔，输入，是否禁用
-// * \return    rtdb_error
-// * \remark 只有管理员有启用禁用权限
-// rtdb_error RTDBAPI_CALLRULE rtdb_lock_user_warp(rtdb_int32 handle, const char *user, rtdb_int8 lock)
-func RawRtdbLockUserWarp() {}
+// RawRtdbLockUserWarp 启用或禁用用户, 只有管理员有启用禁用权限
+//
+// input:
+//   - handle 连接句柄
+//   - user 帐户名
+//   - lock 是否禁用
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdb_lock_user_warp(rtdb_int32 handle, const char *user, rtdb_int8 lock)
+func RawRtdbLockUserWarp(handle ConnectHandle, user string, lock bool) error {
+	cUser := C.CString(user)
+	defer C.free(unsafe.Pointer(cUser))
+	cLock := int8(0)
+	if lock {
+		cLock = 1
+	}
+	err := C.rtdb_lock_user_warp(C.rtdb_int32(handle), cUser, C.rtdb_int8(cLock))
+	return RtdbError(err).GoError()
+}
 
 // RawRtdbGetUsersWarp 获得所有用户
 // * \param handle          连接句柄
