@@ -4612,6 +4612,48 @@ type RtdbPoint struct {
 	Precision RtdbPrecision
 }
 
+func goToCRtdbPoint(p *RtdbPoint) C.RTDB_POINT {
+	rtn := C.RTDB_POINT{}
+	GoStringToCCharArray(p.Tag, &rtn.tag[0], int(C.RTDB_TAG_SIZE))
+	rtn.id = C.int(p.ID)
+	rtn._type = C.int(p.Type)
+	rtn.table = C.int(p.Table)
+	GoStringToCCharArray(p.Desc, &rtn.desc[0], int(C.RTDB_DESC_SIZE))
+	GoStringToCCharArray(p.Unit, &rtn.unit[0], int(C.RTDB_UNIT_SIZE))
+	rtn.archive = C.rtdb_byte(p.Archive)
+	rtn.digits = C.short(p.Digits)
+	rtn.shutdown = C.rtdb_byte(p.Shutdown)
+	rtn.lowlimit = C.float(p.LowLimit)
+	rtn.highlimit = C.float(p.HighLimit)
+	rtn.step = C.rtdb_byte(p.Step)
+	rtn.typical = C.float(p.Typical)
+	rtn.compress = C.rtdb_byte(p.Compress)
+	rtn.compdev = C.float(p.CompDev)
+	rtn.compdevpercent = C.float(p.CompDevPercent)
+	rtn.comptimemax = C.int(p.CompTimeMax)
+	rtn.comptimemin = C.int(p.CompTimeMin)
+	rtn.excdev = C.float(p.ExcDev)
+	rtn.excdevpercent = C.float(p.ExcDevPercent)
+	rtn.exctimemax = C.int(p.ExcTimeMax)
+	rtn.exctimemin = C.int(p.ExcTimeMin)
+	rtn.classof = C.uint(p.Class)
+	rtn.changedate = C.rtdb_datetime_type(p.ChangeDate)
+	GoStringToCCharArray(p.Changer, &rtn.changer[0], int(C.RTDB_USER_SIZE))
+	rtn.createdate = C.rtdb_datetime_type(p.CreateDate)
+	GoStringToCCharArray(p.Creator, &p.creator[0], int(C.RTDB_USER_SIZE))
+	rtn.mirror = C.rtdb_byte(p.Mirror)
+	rtn.millisecond = C.rtdb_byte(p.MilliSecond)
+	rtn.scanindex = C.uint(p.ScanIndex)
+	rtn.calcindex = C.uint(p.CalcIndex)
+	rtn.alarmindex = C.uint(p.AlarmIndex)
+	GoStringToCCharArray(p.TableDotTag, &p.table_dot_tag[0], int(C.RTDB_TAG_SIZE+C.RTDB_TAG_SIZE))
+	rtn.summary = C.rtdb_byte(p.Summary)
+	rtn.named_type_id = C.rtdb_uint16(p.NamedTypeID)
+	rtn.precision = C.rtdb_precision_type(p.Precision)
+
+	return rtn
+}
+
 func cToRtdbPoint(p *C.RTDB_POINT) RtdbPoint {
 	rtn := RtdbPoint{
 		Tag:            CCharArrayToString((*C.char)(&p.tag[0]), int(C.RTDB_TAG_SIZE)),
