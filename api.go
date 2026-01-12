@@ -4101,6 +4101,66 @@ const (
 	RtdbPerOfUsefulMemSize = RtdbConst(C.RTDB_PER_OF_USEFUL_MEM_SIZE)
 )
 
+// DateTimeType 32位时间戳类型，秒级时间戳
+type DateTimeType int32
+
+// RtdbHostConnectInfo 连接到RTDB数据库服务器的连接信息
+type RtdbHostConnectInfo struct {
+	IpAddr      int32        // 连接的客户端IP地址
+	Port        uint16       // 连接端口
+	Job         int32        // 连接最近处理的任务
+	JobTime     DateTimeType // 最近处理任务的时间
+	ConnectTime DateTimeType // 客户端连接时间
+	Client      string       // 连接的客户端主机名称
+	Process     string       // 连接的客户端程序名
+	User        string       // 登录的用户
+	Length      int32        // 记录用户名长度，用于加密传输
+}
+
+func cToRtdbHostConnectInfo(cInfo *C.RTDB_HOST_CONNECT_INFO) RtdbHostConnectInfo {
+	goInfo := RtdbHostConnectInfo{
+		IpAddr:      int32(cInfo.ipaddr),
+		Port:        uint16(cInfo.port),
+		Job:         int32(cInfo.job),
+		JobTime:     DateTimeType(cInfo.job_time),
+		ConnectTime: DateTimeType(cInfo.connect_time),
+		Client:      CCharArrayToString(&cInfo.client[0], len(cInfo.client)),
+		Process:     CCharArrayToString(&cInfo.process[0], len(cInfo.process)),
+		User:        CCharArrayToString(&cInfo.user[0], len(cInfo.user)),
+		Length:      int32(cInfo.length),
+	}
+	return goInfo
+}
+
+/*
+typedef struct _RTDB_HOST_CONNECT_INFO
+{
+    char client[RTDB_MAX_HOSTNAME_SIZE];                          //!<
+    char process[RTDB_PATH_SIZE + RTDB_FILE_NAME_SIZE];           //!<
+    char user[RTDB_USER_SIZE];                                    //!<
+    rtdb_int32 length;                                            //!<
+} RTDB_HOST_CONNECT_INFO, *PRTDB_HOST_CONNECT_INFO;
+*/
+
+/**
+* \ingroup dstruct
+* \brief 连接到RTDB数据库服务器的连接信息, IPV6版本
+
+typedef struct _RTDB_HOST_CONNECT_INFO_IPV6
+{
+rtdb_int32 ipaddr;                                            //!< 连接的客户端IP地址
+char ipaddr6[RTDB_IPV6_ADDR_SIZE];                            //!<ipv6地址
+rtdb_uint16 port;                                             //!< 连接端口
+rtdb_int32 job;                                               //!< 连接最近处理的任务
+rtdb_datetime_type job_time;                                  //!< 最近处理任务的时间
+rtdb_datetime_type connect_time;                              //!< 客户端连接时间
+char client[RTDB_MAX_HOSTNAME_SIZE];                          //!< 连接的客户端主机名称
+char process[RTDB_PATH_SIZE + RTDB_FILE_NAME_SIZE];           //!< 连接的客户端程序名
+char user[RTDB_USER_SIZE];                                    //!< 登录的用户
+rtdb_int32 length;                                            //!< 记录用户名长度，用于加密传输
+} RTDB_HOST_CONNECT_INFO_IPV6, * PRTDB_HOST_CONNECT_INFO_IPV6;
+*/
+
 /////////////////////////////// 上面是结构定义 ////////////////////////////////////
 /////////////////////////////// -- 华丽的分割线 -- ////////////////////////////////
 /////////////////////////////// 下面是函数实现 ////////////////////////////////////
@@ -4357,13 +4417,23 @@ func RawRtdbGetOwnConnectionWarp(handle ConnectHandle, nodeNumber int32) (Socket
 }
 
 // RawRtdbGetConnectionInfoWarp 获取 RTDB 服务器指定连接的信息
-// * \param [in] handle          连接句柄，参见 \ref rtdb_connect
-// * \param [in] node_number   双活模式下，指定节点编号，1为rtdb_connect中第1个IP，2为rtdb_connect中第2个IP
-// * \param [in] socket          指定的连接
-// * \param [out] info          与连接相关的信息，参见 \ref RTDB_HOST_CONNECT_INFO
-// * \return rtdb_error
-// rtdb_error RTDBAPI_CALLRULE rtdb_get_connection_info_warp(rtdb_int32 handle, rtdb_int32 node_number, rtdb_int32 socket, RTDB_HOST_CONNECT_INFO *info)
-func RawRtdbGetConnectionInfoWarp() {}
+//
+// input:
+//   - handle 连接句柄
+//   - nodeNumber 双活模式下，指定节点编号，1为rtdb_connect中第1个IP，2为rtdb_connect中第2个IP
+//   - socket socket连接句柄
+//
+// output:
+//   - RtdbHostConnectInfo 连接信息
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdb_get_connection_info_warp(rtdb_int32 handle, rtdb_int32 node_number, rtdb_int32 socket, RTDB_HOST_CONNECT_INFO *info)
+func RawRtdbGetConnectionInfoWarp(handle ConnectHandle, nodeNumber int32, socket SocketHandle) (RtdbHostConnectInfo, error) {
+	cInfo := C.RTDB_HOST_CONNECT_INFO{}
+	err := C.rtdb_get_connection_info_warp(C.rtdb_int32(handle), C.rtdb_int32(nodeNumber), C.rtdb_int32(socket), &cInfo)
+	goInfo := cToRtdbHostConnectInfo(&cInfo)
+	return goInfo, RtdbError(err).GoError()
+}
 
 // RawRtdbGetConnectionInfoIpv6Warp 获取 RTDB 服务器指定连接的ipv6版本
 // * \param [in] handle          连接句柄，参见 \ref rtdb_connect
