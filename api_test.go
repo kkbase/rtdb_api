@@ -533,10 +533,17 @@ func TestTime(t *testing.T) {
 	}
 	defer func() { _ = RawRtdbDisconnectWarp(handle) }()
 
-	hTime, err := RawRtdbHostTimeWarp(handle)
+	// hTime, err := RawRtdbHostTimeWarp(handle)
+	// if err != nil {
+	// 	t.Error("获取系统时间: ", err)
+	// 	return
+	// }
+	// fmt.Println(hTime)
+
+	hTime2, err := RawRtdbHostTime64Warp(handle)
 	if err != nil {
-		t.Error("获取系统时间: ", err)
+		t.Error("获取系统时间：", err)
 		return
 	}
-	fmt.Println(hTime)
+	fmt.Println(hTime2)
 }

@@ -4104,6 +4104,15 @@ const (
 // DateTimeType 32位时间戳类型，秒级时间戳
 type DateTimeType int32
 
+// TimestampType 64位时间戳类型，秒级时间戳
+type TimestampType int64
+
+// SubtimeType 时间戳，小于秒的部分，根据设置的全局时间戳精度，表示毫秒、微秒、纳秒的部分
+type SubtimeType int32
+
+// PrecisionType 时间戳精度类型，0秒，1毫秒，2微秒，3纳秒
+type PrecisionType int8
+
 // RtdbHostConnectInfo 连接到RTDB数据库服务器的连接信息
 // 备注， IPv6版本兼容此 RtdbHostConnectInfo ， 因此暂时注释掉
 // type RtdbHostConnectInfo struct {
@@ -4938,24 +4947,31 @@ func RawRtdbGetAuthorizationsWarp(handle ConnectHandle) ([]AuthorizationsList, e
 }
 
 // RawRtdbHostTimeWarp 获取 RTDB 服务器当前UTC时间
+// 备注：32和64位时间戳，统一使用64位, 因此屏蔽32位时间戳
 //
 // input:
 //   - handle       连接句柄
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_host_time_warp(rtdb_int32 handle, rtdb_int32 *hosttime)
-func RawRtdbHostTimeWarp(handle ConnectHandle) (DateTimeType, error) {
-	hostTime := C.rtdb_int32(0)
-	err := C.rtdb_host_time_warp(C.rtdb_int32(handle), &hostTime)
-	return DateTimeType(hostTime), RtdbError(err).GoError()
-}
+// func RawRtdbHostTimeWarp(handle ConnectHandle) (DateTimeType, error) {
+// 	hostTime := C.rtdb_int32(0)
+// 	err := C.rtdb_host_time_warp(C.rtdb_int32(handle), &hostTime)
+// 	return DateTimeType(hostTime), RtdbError(err).GoError()
+// }
 
 // RawRtdbHostTime64Warp 获取 RTDB 服务器当前UTC时间
-// * \param handle       连接句柄
-// * \param hosttime     整型，输出，Rtdb服务器的当前UTC时间，
-// * 表示距离1970年1月1日08:00:00的秒数。
-// rtdb_error RTDBAPI_CALLRULE rtdb_host_time64_warp(rtdb_int32 handle, rtdb_timestamp_type* hosttime)
-func RawRtdbHostTime64Warp() {}
+//
+// input:
+//   - handle       连接句柄
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdb_host_time64_warp(rtdb_int32 handle, rtdb_timestamp_type* hosttime)
+func RawRtdbHostTime64Warp(handle ConnectHandle) (TimestampType, error) {
+	ts := C.rtdb_timestamp_type(0)
+	err := C.rtdb_host_time64_warp(C.rtdb_int32(handle), &ts)
+	return TimestampType(ts), RtdbError(err).GoError()
+}
 
 // RawRtdbFormatTimespanWarp 根据时间跨度值生成时间格式字符串
 // * \param str          字符串，输出，时间格式字符串，形如:
