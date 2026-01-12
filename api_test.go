@@ -607,3 +607,28 @@ func TestRawRtdbGetSetTimeoutWarp(t *testing.T) {
 		return
 	}
 }
+
+func TestRawRtdbKillConnectionWarp(t *testing.T) {
+	handle, err := RawRtdbConnectWarp(Hostname, Port)
+	if err != nil {
+		t.Error("创建连接失败", err)
+		return
+	}
+	_, err = RawRtdbLoginWarp(handle, Username, Password)
+	if err != nil {
+		t.Error("登录失败:", err)
+		return
+	}
+	defer func() { _ = RawRtdbDisconnectWarp(handle) }()
+	socket, err := RawRtdbGetOwnConnectionWarp(handle, 0)
+	if err != nil {
+		t.Error("获取连接失败：", err)
+		return
+	}
+
+	err = RawRtdbKillConnectionWarp(handle, socket)
+	if err != nil {
+		t.Error("Kill套接字失败: ", err)
+		return
+	}
+}

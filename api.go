@@ -5139,10 +5139,16 @@ func RawRtdbGetTimeoutWarp(handle ConnectHandle, socket SocketHandle) (DateTimeT
 }
 
 // RawRtdbKillConnectionWarp 断开已知连接
-// * \param handle    连接句柄
-// * \param socket    整型，输入，要断开的连接
-// rtdb_error RTDBAPI_CALLRULE rtdb_kill_connection_warp(rtdb_int32 handle, rtdb_int32 socket)
-func RawRtdbKillConnectionWarp() {}
+// input:
+//   - handle 连接句柄
+//   - socket 要断开的连接
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdb_kill_connection_warp(rtdb_int32 handle, rtdb_int32 socket)
+func RawRtdbKillConnectionWarp(handle ConnectHandle, socket SocketHandle) error {
+	err := C.rtdb_kill_connection_warp(C.rtdb_int32(handle), C.rtdb_int32(socket))
+	return RtdbError(err).GoError()
+}
 
 // RawRtdbGetLogicalDriversWarp 获得逻辑盘符
 // * \param handle     连接句柄
