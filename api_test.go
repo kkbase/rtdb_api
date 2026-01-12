@@ -546,4 +546,11 @@ func TestTime(t *testing.T) {
 		return
 	}
 	fmt.Println(hTime2)
+
+	tStr, err := RawRtdbFormatTimespanWarp(10)
+	if err != nil {
+		t.Error("获取跨度时间:", err)
+		return
+	}
+	fmt.Println(tStr)
 }

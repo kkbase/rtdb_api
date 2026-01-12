@@ -4973,14 +4973,28 @@ func RawRtdbHostTime64Warp(handle ConnectHandle) (TimestampType, error) {
 	return TimestampType(ts), RtdbError(err).GoError()
 }
 
-// RawRtdbFormatTimespanWarp 根据时间跨度值生成时间格式字符串
-// * \param str          字符串，输出，时间格式字符串，形如:
-// * "1d" 表示时间跨度为24小时。
-// * 具体含义参见 rtdb_parse_timespan 注释。
-// * \param timespan     整型，输入，要处理的时间跨度秒数。
-// * \remark 字符串缓冲区大小不应小于 32 字节。
-// rtdb_error RTDBAPI_CALLRULE rtdb_format_timespan_warp(char *str, rtdb_int32 timespan)
-func RawRtdbFormatTimespanWarp() {}
+// RawRtdbFormatTimespanWarp 根据时间跨度值生成时间格式字符串, 如：输入10， 输出10s, 输入60，输出1n
+// 跨度单位如下，备注：这是遵循工业Pi数据库的标准, 和通用标准稍有不同
+// *   ?y    ?年, 1年 = 365日
+// *   ?m    ?月, 1月 = 30 日
+// *   ?d    ?日
+// *   ?h    ?小时
+// *   ?n    ?分钟
+// *   ?s    ?秒
+//
+// input:
+//   - timespan 要处理的时间跨度秒数
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdb_format_timespan_warp(char *str, rtdb_int32 timespan)
+func RawRtdbFormatTimespanWarp(timespan int32) (string, error) {
+	cgoStr := (*C.char)(C.CBytes(make([]byte, 512)))
+	defer C.free(unsafe.Pointer(cgoStr))
+	cgoDatetime := C.rtdb_int32(timespan)
+	err := C.rtdb_format_timespan_warp(cgoStr, cgoDatetime)
+	tStr := C.GoString(cgoStr)
+	return tStr, RtdbError(err).GoError()
+}
 
 // RawRtdbParseTimespanWarp 根据时间格式字符串解析时间跨度值
 // * \param str          字符串，输入，时间格式字符串，规则如下：
