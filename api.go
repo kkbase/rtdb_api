@@ -5151,12 +5151,26 @@ func RawRtdbKillConnectionWarp(handle ConnectHandle, socket SocketHandle) error 
 }
 
 // RawRtdbGetLogicalDriversWarp 获得逻辑盘符
-// * \param handle     连接句柄
-// * \param drivers    字符数组，输出，
-// * 返回逻辑盘符组成的字符串，每个盘符占一个字符。
-// * \remark drivers 的内存空间由用户负责维护，长度应不小于 32。
-// rtdb_error RTDBAPI_CALLRULE rtdb_get_logical_drivers_warp(rtdb_int32 handle, char *drivers)
-func RawRtdbGetLogicalDriversWarp() {}
+//
+// input:
+//   - handle 连接句柄
+//
+// output:
+//   - []string 盘符数组
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdb_get_logical_drivers_warp(rtdb_int32 handle, char *drivers)
+func RawRtdbGetLogicalDriversWarp(handle ConnectHandle) ([]string, error) {
+	drives := make([]byte, 512)
+	cDrives := (*C.char)(unsafe.Pointer(&drives[0]))
+	err := C.rtdb_get_logical_drivers_warp(C.rtdb_int32(handle), cDrives)
+	sDs := C.GoString(cDrives)
+	rtn := make([]string, 0)
+	for _, c := range sDs {
+		rtn = append(rtn, string(c))
+	}
+	return rtn, RtdbError(err).GoError()
+}
 
 // RawRtdbOpenPathWarp 打开目录以便遍历其中的文件和子目录。
 // * \param handle       连接句柄

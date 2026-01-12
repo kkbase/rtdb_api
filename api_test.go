@@ -632,3 +632,24 @@ func TestRawRtdbKillConnectionWarp(t *testing.T) {
 		return
 	}
 }
+
+func TestRawRtdbGetLogicalDriversWarp(t *testing.T) {
+	handle, err := RawRtdbConnectWarp(Hostname, Port)
+	if err != nil {
+		t.Error("创建连接失败", err)
+		return
+	}
+	_, err = RawRtdbLoginWarp(handle, Username, Password)
+	if err != nil {
+		t.Error("登录失败:", err)
+		return
+	}
+	defer func() { _ = RawRtdbDisconnectWarp(handle) }()
+
+	ds, err := RawRtdbGetLogicalDriversWarp(handle)
+	if err != nil {
+		t.Error("获取盘符：", err)
+		return
+	}
+	fmt.Println(ds)
+}
