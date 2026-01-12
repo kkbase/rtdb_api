@@ -1,6 +1,7 @@
 package rtdb_api
 
 import (
+	"errors"
 	"fmt"
 	"testing"
 )
@@ -652,4 +653,38 @@ func TestRawRtdbGetLogicalDriversWarp(t *testing.T) {
 		return
 	}
 	fmt.Println(ds)
+}
+
+func TestDir(t *testing.T) {
+	handle, err := RawRtdbConnectWarp(Hostname, Port)
+	if err != nil {
+		t.Error("创建连接失败", err)
+		return
+	}
+	_, err = RawRtdbLoginWarp(handle, Username, Password)
+	if err != nil {
+		t.Error("登录失败:", err)
+		return
+	}
+	defer func() { _ = RawRtdbDisconnectWarp(handle) }()
+
+	err = RawRtdbOpenPathWarp(handle, "/")
+	if err != nil {
+		t.Error("打开目录失败：", err)
+		return
+	}
+	defer func() { _ = RawRtdbClosePathWarp(handle) }()
+
+	for {
+		dir, err := RawRtdbReadPath64Warp(handle)
+		if err != nil {
+			if errors.Is(err, RteBatchEnd) {
+				break
+			} else {
+				t.Error("读取目录失败：", err)
+				return
+			}
+		}
+		fmt.Println(dir)
+	}
 }

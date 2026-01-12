@@ -4241,6 +4241,29 @@ type AuthorizationsList struct {
 	Priv PrivGroup
 }
 
+// DirItem 目录项，表示目录下面的子条目，可能是子目录也可能是子文件
+type DirItem struct {
+	Path  string        // 文件、子目录全路径
+	IsDir bool          // true为目录，false为文件
+	ATime TimestampType // 访问时间
+	CTime TimestampType // 建立时间
+	MTime TimestampType // 修改时间
+	Size  int64         // 文件大小
+}
+
+/**
+ * \ingroup dmacro
+ * \def RTDB_MAX_PATH
+ * \brief .
+ */
+const (
+	// RtdbMaxPath 系统支持的最大路径长度
+	RtdbMaxPath = int32(2048)
+
+	// RtdbMaxHostnameSize 系统支持的最大主机名长度
+	RtdbMaxHostnameSize = int32(1024)
+)
+
 /////////////////////////////// 上面是结构定义 ////////////////////////////////////
 /////////////////////////////// -- 华丽的分割线 -- ////////////////////////////////
 /////////////////////////////// 下面是函数实现 ////////////////////////////////////
@@ -5173,41 +5196,121 @@ func RawRtdbGetLogicalDriversWarp(handle ConnectHandle) ([]string, error) {
 }
 
 // RawRtdbOpenPathWarp 打开目录以便遍历其中的文件和子目录。
-// * \param handle       连接句柄
-// * \param dir          字符串，输入，要打开的目录
-// rtdb_error RTDBAPI_CALLRULE rtdb_open_path_warp(rtdb_int32 handle, const char *dir)
-func RawRtdbOpenPathWarp() {}
+//
+// input:
+//   - handle 连接句柄
+//   - dir 要打开的目录
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdb_open_path_warp(rtdb_int32 handle, const char *dir)
+func RawRtdbOpenPathWarp(handle ConnectHandle, dir string) error {
+	cDir := C.CString(dir)
+	defer C.free(unsafe.Pointer(cDir))
+	err := C.rtdb_open_path_warp(C.rtdb_int32(handle), cDir)
+	return RtdbError(err).GoError()
+}
 
 // RawRtdbReadPathWarp 读取目录中的文件或子目录
-// * \param handle      连接句柄
-// * \param path        字符数组，输出，返回的文件、子目录全路径
-// * \param is_dir      短整数，输出，返回 1 为目录，0 为文件
-// * \param atime       整数，输出，为文件时，返回访问时间
-// * \param ctime       整数，输出，为文件时，返回建立时间
-// * \param mtime       整数，输出，为文件时，返回修改时间
-// * \param size        64 位整数，输出，为文件时，返回文件大小
-// * \remark path 的内存空间由用户负责维护，尺寸应不小于 RTDB_MAX_PATH。
-// * 当返回值为 RtE_BATCH_END 时表示目录下所有子目录和文件已经遍历完毕。
-// rtdb_error RTDBAPI_CALLRULE rtdb_read_path_warp(rtdb_int32 handle, char *path, rtdb_int16 *is_dir, rtdb_int32 *atime, rtdb_int32 *ctime, rtdb_int32 *mtime, rtdb_int64 *size)
-func RawRtdbReadPathWarp() {}
+// 备注：此函数返回的时间戳是 32位的，暂不实现，统一使用64位时间戳
+//
+// input:
+//   - handle 连接句柄
+//
+// output:
+//   - DirItem
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdb_read_path_warp(rtdb_int32 handle, char *path, rtdb_int16 *is_dir, rtdb_int32 *atime, rtdb_int32 *ctime, rtdb_int32 *mtime, rtdb_int64 *size)
+// func RawRtdbReadPathWarp(handle ConnectHandle) (DirItem, error) {
+// 	cgoHandle := C.rtdb_int32(handle)
+// 	cgoPath := (*C.char)(C.CBytes(make([]byte, RtdbMaxPath)))
+// 	defer C.free(unsafe.Pointer(cgoPath))
+// 	cgoIsDir := C.rtdb_int16(0)
+// 	cgoATime := C.rtdb_int32(0)
+// 	cgoCTime := C.rtdb_int32(0)
+// 	cgoMTime := C.rtdb_int32(0)
+// 	cgoSize := C.rtdb_int64(0)
+// 	err := C.rtdb_read_path(cgoHandle, cgoPath, &cgoIsDir, &cgoATime, &cgoCTime, &cgoMTime, &cgoSize)
+//
+// 	rtnPath := C.GoString(cgoPath)
+// 	rtnIsDir := false
+// 	if cgoIsDir > 0 {
+// 		rtnIsDir = true
+// 	}
+// 	rtnATime := int32(cgoATime)
+// 	rtnCTime := int32(cgoCTime)
+// 	rtnMTime := int32(cgoMTime)
+// 	rtnSize := int64(cgoSize)
+//
+// 	item := DirItem{
+// 		Path:  rtnPath,
+// 		IsDir: rtnIsDir,
+// 		ATime: DateTimeType(rtnATime),
+// 		CTime: DateTimeType(rtnCTime),
+// 		MTime: DateTimeType(rtnMTime),
+// 		Size:  rtnSize,
+// 	}
+//
+// 	return item, RtdbError(err).GoError()
+// }
 
 // RawRtdbReadPath64Warp 读取目录中的文件或子目录
-// * \param handle      连接句柄
-// * \param path        字符数组，输出，返回的文件、子目录全路径
-// * \param is_dir      短整数，输出，返回 1 为目录，0 为文件
-// * \param atime       整数，输出，为文件时，返回访问时间
-// * \param ctime       整数，输出，为文件时，返回建立时间
-// * \param mtime       整数，输出，为文件时，返回修改时间
-// * \param size        64 位整数，输出，为文件时，返回文件大小
-// * \remark path 的内存空间由用户负责维护，尺寸应不小于 RTDB_MAX_PATH。
-// * 当返回值为 RtE_BATCH_END 时表示目录下所有子目录和文件已经遍历完毕。
-// rtdb_error RTDBAPI_CALLRULE rtdb_read_path64_warp(rtdb_int32 handle, char* path, rtdb_int16* is_dir, rtdb_timestamp_type* atime, rtdb_timestamp_type* ctime, rtdb_timestamp_type* mtime, rtdb_int64* size)
-func RawRtdbReadPath64Warp() {}
+//
+// input:
+//   - handle 连接句柄
+//
+// output:
+//   - DirItem 目录项
+//
+// err_code:
+//   - 当返回值为 RteBatchEnd 时表示目录下所有子目录和文件已经遍历完毕。
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdb_read_path64_warp(rtdb_int32 handle, char* path, rtdb_int16* is_dir, rtdb_timestamp_type* atime, rtdb_timestamp_type* ctime, rtdb_timestamp_type* mtime, rtdb_int64* size)
+func RawRtdbReadPath64Warp(handle ConnectHandle) (DirItem, error) {
+	cgoHandle := C.rtdb_int32(handle)
+	cgoPath := (*C.char)(C.CBytes(make([]byte, RtdbMaxPath)))
+	defer C.free(unsafe.Pointer(cgoPath))
+	cgoIsDir := C.rtdb_int16(0)
+	cgoATime := C.rtdb_timestamp_type(0)
+	cgoCTime := C.rtdb_timestamp_type(0)
+	cgoMTime := C.rtdb_timestamp_type(0)
+	cgoSize := C.rtdb_int64(0)
+	err := C.rtdb_read_path64_warp(cgoHandle, cgoPath, &cgoIsDir, &cgoATime, &cgoCTime, &cgoMTime, &cgoSize)
+
+	rtnPath := C.GoString(cgoPath)
+	rtnIsDir := false
+	if cgoIsDir > 0 {
+		rtnIsDir = true
+	}
+	rtnATime := TimestampType(cgoATime)
+	rtnCTime := TimestampType(cgoCTime)
+	rtnMTime := TimestampType(cgoMTime)
+	rtnSize := int64(cgoSize)
+
+	item := DirItem{
+		Path:  rtnPath,
+		IsDir: rtnIsDir,
+		ATime: rtnATime,
+		CTime: rtnCTime,
+		MTime: rtnMTime,
+		Size:  rtnSize,
+	}
+
+	return item, RtdbError(err).GoError()
+}
 
 // RawRtdbClosePathWarp 关闭当前遍历的目录
-// * \param handle      连接句柄
-// rtdb_error RTDBAPI_CALLRULE rtdb_close_path_warp(rtdb_int32 handle)
-func RawRtdbClosePathWarp() {}
+//
+// input:
+//   - handle 连接句柄
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdb_close_path_warp(rtdb_int32 handle)
+func RawRtdbClosePathWarp(handle ConnectHandle) error {
+	err := C.rtdb_close_path_warp(C.rtdb_int32(handle))
+	return RtdbError(err).GoError()
+}
 
 // RawRtdbMkdirWarp 建立目录
 // * \param handle       连接句柄
