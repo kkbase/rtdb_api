@@ -519,3 +519,24 @@ func TestAuthorizations(t *testing.T) {
 	}
 	fmt.Println(aList)
 }
+
+func TestTime(t *testing.T) {
+	handle, err := RawRtdbConnectWarp(Hostname, Port)
+	if err != nil {
+		t.Error("创建连接失败", err)
+		return
+	}
+	_, err = RawRtdbLoginWarp(handle, Username, Password)
+	if err != nil {
+		t.Error("登录失败:", err)
+		return
+	}
+	defer func() { _ = RawRtdbDisconnectWarp(handle) }()
+
+	hTime, err := RawRtdbHostTimeWarp(handle)
+	if err != nil {
+		t.Error("获取系统时间: ", err)
+		return
+	}
+	fmt.Println(hTime)
+}

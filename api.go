@@ -4938,11 +4938,17 @@ func RawRtdbGetAuthorizationsWarp(handle ConnectHandle) ([]AuthorizationsList, e
 }
 
 // RawRtdbHostTimeWarp 获取 RTDB 服务器当前UTC时间
-// * \param handle       连接句柄
-// * \param hosttime     整型，输出，Rtdb服务器的当前UTC时间，
-// * 表示距离1970年1月1日08:00:00的秒数。
-// rtdb_error RTDBAPI_CALLRULE rtdb_host_time_warp(rtdb_int32 handle, rtdb_int32 *hosttime)
-func RawRtdbHostTimeWarp() {}
+//
+// input:
+//   - handle       连接句柄
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdb_host_time_warp(rtdb_int32 handle, rtdb_int32 *hosttime)
+func RawRtdbHostTimeWarp(handle ConnectHandle) (DateTimeType, error) {
+	hostTime := C.rtdb_int32(0)
+	err := C.rtdb_host_time_warp(C.rtdb_int32(handle), &hostTime)
+	return DateTimeType(hostTime), RtdbError(err).GoError()
+}
 
 // RawRtdbHostTime64Warp 获取 RTDB 服务器当前UTC时间
 // * \param handle       连接句柄
