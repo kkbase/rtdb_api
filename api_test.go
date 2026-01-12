@@ -253,3 +253,23 @@ func TestRawRtdbOsType(t *testing.T) {
 	}
 	fmt.Println(osType.Desc())
 }
+
+func TestRawRtdbChangePasswordWarp(t *testing.T) {
+	handle, err := RawRtdbConnectWarp(Hostname, Port)
+	if err != nil {
+		t.Error("创建连接失败", err.Error())
+		return
+	}
+	_, err = RawRtdbLoginWarp(handle, Username, Password)
+	if err != nil {
+		t.Error("登录失败:", err)
+		return
+	}
+	defer func() { _ = RawRtdbDisconnectWarp(handle) }()
+
+	err = RawRtdbChangePasswordWarp(handle, "sa", "golden")
+	if err != nil {
+		t.Error("修改密码失败：", err)
+		return
+	}
+}

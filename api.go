@@ -4506,13 +4506,22 @@ func RawRtdbOsType(handle ConnectHandle) (RtdbOsType, error) {
 }
 
 // RawRtdbChangePasswordWarp 修改用户帐户口令
-// * \param handle    连接句柄
-// * \param user      已有帐户
-// * \param password  帐户新口令
-// * \return rtdb_error
-// * \remark 只有系统管理员可以修改其它用户的密码
-// rtdb_error RTDBAPI_CALLRULE rtdb_change_password_warp(rtdb_int32 handle, const char *user, const char *password)
-func RawRtdbChangePasswordWarp() {}
+//
+// input:
+//   - handle 连接句柄
+//   - user 已有帐户
+//   - password 帐户新口令
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdb_change_password_warp(rtdb_int32 handle, const char *user, const char *password)
+func RawRtdbChangePasswordWarp(handle ConnectHandle, user string, password string) error {
+	cUser := C.CString(user)
+	defer C.free(unsafe.Pointer(cUser))
+	cPassword := C.CString(password)
+	defer C.free(unsafe.Pointer(cPassword))
+	err := C.rtdb_change_password_warp(C.rtdb_int32(handle), cUser, cPassword)
+	return RtdbError(err).GoError()
+}
 
 // RawRtdbChangeMyPasswordWarp 用户修改自己帐户口令
 // * \param handle  连接句柄
