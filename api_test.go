@@ -708,3 +708,45 @@ func TestDir(t *testing.T) {
 	}
 	fmt.Println(string(data))
 }
+
+func TestRawRtdbGetMaxBlobLenWarp(t *testing.T) {
+	handle, err := RawRtdbConnectWarp(Hostname, Port)
+	if err != nil {
+		t.Error("创建连接失败", err)
+		return
+	}
+	_, err = RawRtdbLoginWarp(handle, Username, Password)
+	if err != nil {
+		t.Error("登录失败:", err)
+		return
+	}
+	defer func() { _ = RawRtdbDisconnectWarp(handle) }()
+
+	l, err := RawRtdbGetMaxBlobLenWarp(handle)
+	if err != nil {
+		t.Error("获取Blob最大长度失败：", err)
+		return
+	}
+	fmt.Println(l)
+}
+
+func TestRawRtdbFormatQualityWarp(t *testing.T) {
+	handle, err := RawRtdbConnectWarp(Hostname, Port)
+	if err != nil {
+		t.Error("创建连接失败", err)
+		return
+	}
+	_, err = RawRtdbLoginWarp(handle, Username, Password)
+	if err != nil {
+		t.Error("登录失败:", err)
+		return
+	}
+	defer func() { _ = RawRtdbDisconnectWarp(handle) }()
+
+	ds, err := RawRtdbFormatQualityWarp(handle, []Quality{1, 2, 3})
+	if err != nil {
+		t.Error("获取质量码说明失败: ", err)
+		return
+	}
+	fmt.Println(ds)
+}

@@ -4251,11 +4251,6 @@ type DirItem struct {
 	Size  int64         // 文件大小
 }
 
-/**
- * \ingroup dmacro
- * \def RTDB_MAX_PATH
- * \brief .
- */
 const (
 	// RtdbMaxPath 系统支持的最大路径长度
 	RtdbMaxPath = int32(2048)
@@ -4263,6 +4258,9 @@ const (
 	// RtdbMaxHostnameSize 系统支持的最大主机名长度
 	RtdbMaxHostnameSize = int32(1024)
 )
+
+// Quality 质量码
+type Quality int16
 
 /////////////////////////////// 上面是结构定义 ////////////////////////////////////
 /////////////////////////////// -- 华丽的分割线 -- ////////////////////////////////
@@ -5369,24 +5367,65 @@ func RawRtdbReadFileWarp(handle ConnectHandle, filePath string, pos int64, cache
 }
 
 // RawRtdbGetMaxBlobLenWarp 取得数据库允许的blob与str类型测点的最大长度
-// * \param handle       连接句柄
-// * \param len          整形，输出参数，代表数据库允许的blob、str类型测点的最大长度
-// rtdb_error RTDBAPI_CALLRULE rtdb_get_max_blob_len_warp(rtdb_int32 handle, rtdb_int32 *len)
-func RawRtdbGetMaxBlobLenWarp() {}
+//
+// input:
+//   - handle       连接句柄
+//
+// output:
+//   - int32 blob/str最大长度
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdb_get_max_blob_len_warp(rtdb_int32 handle, rtdb_int32 *len)
+func RawRtdbGetMaxBlobLenWarp(handle ConnectHandle) (int32, error) {
+	cLen := C.rtdb_int32(0)
+	err := C.rtdb_get_max_blob_len_warp(C.rtdb_int32(handle), &cLen)
+	return int32(cLen), RtdbError(err).GoError()
+}
 
 // RawRtdbFormatQualityWarp 取得质量码对应的定义
-// * \param handle       连接句柄
-// * \param count        质量码个数，输入参数，
-// * \param qualities    质量码，输入参数
-// * \param definitions  输出参数，0~255为RTDB质量码（参加rtdb.h文件），256~511为OPC质量码，大于511为用户自定义质量码
-// * \param lens         输出参数，每个定义对应的长度
-// * \remark OPC质量码把8位分3部分定义：XX XXXX XX，对应着：品质位域 分状态位域 限定位域
-// * 品质位域：00（Bad）01（Uncertain）10（N/A）11（Good）
-// * 分状态位域：不同品质位域对应各自的分状态位域
-// * 限定位域：00（Not limited）01（Low limited）10（high limited）11（Constant）
-// * 三个域之间用逗号隔开，输出到definitions参数中，前面有有RTDB，OPC或者USER标识，说明标签点类别
-// rtdb_error RTDBAPI_CALLRULE rtdb_format_quality_warp(rtdb_int32 handle, rtdb_int32 *count, rtdb_int16 *qualities, rtdb_byte **definitions, rtdb_int32 *lens)
-func RawRtdbFormatQualityWarp() {}
+//
+// input:
+//   - handle       连接句柄
+//   - qualities    质量码数组
+//     OPC质量码把8位分3部分定义：XX XXXX XX，对应着：品质位域 分状态位域 限定位域
+//     品质位域：00（Bad）01（Uncertain）10（N/A）11（Good）
+//     分状态位域：不同品质位域对应各自的分状态位域
+//     限定位域：00（Not limited）01（Low limited）10（high limited）11（Constant）
+//     三个域之间用逗号隔开，输出到definitions参数中，前面有有RTDB，OPC或者USER标识，说明标签点类别
+//
+// output:
+//   - []string 质量码对应的说明
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdb_format_quality_warp(rtdb_int32 handle, rtdb_int32 *count, rtdb_int16 *qualities, rtdb_byte **definitions, rtdb_int32 *lens)
+func RawRtdbFormatQualityWarp(handle ConnectHandle, qualities []Quality) ([]string, error) {
+	cgoHandle := C.rtdb_int32(handle)
+	count := len(qualities)
+	cgoCount := C.rtdb_int32(count)
+	cgoQualities := (*C.rtdb_int16)(unsafe.Pointer(&qualities[0]))
+	definitions := make([]*C.rtdb_byte, count)
+	defer func() {
+		for i := 0; i < int(count); i++ {
+			C.free(unsafe.Pointer(definitions[i]))
+		}
+	}()
+	for i := 0; i < int(cgoCount); i++ {
+		definitions[i] = (*C.rtdb_byte)(C.CBytes(make([]byte, 256)))
+	}
+	cgoDefinitions := (**C.rtdb_byte)(unsafe.Pointer(&definitions[0]))
+	lens := make([]int32, count)
+	cgoLens := (*C.rtdb_int32)(unsafe.Pointer(&lens[0]))
+	err := C.rtdb_format_quality_warp(cgoHandle, &cgoCount, cgoQualities, cgoDefinitions, cgoLens)
+
+	rtnDefinitions := make([]string, 0)
+	for i := 0; i < int(cgoCount); i++ {
+		bs := C.GoBytes(unsafe.Pointer(definitions[i]), 256)
+		st := string(bs[3:lens[i]])
+		rtnDefinitions = append(rtnDefinitions, st)
+	}
+
+	return rtnDefinitions, RtdbError(err).GoError()
+}
 
 // RawRtdbJudgeConnectStatusWarp 判断连接是否可用
 // * \param handle   连接句柄
