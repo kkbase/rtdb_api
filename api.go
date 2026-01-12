@@ -5328,11 +5328,23 @@ func RawRtdbMkdirWarp(handle ConnectHandle, dirName string) error {
 }
 
 // RawRtdbGetFileSizeWarp 获得指定服务器端文件的大小
-// * \param handle     连接句柄
-// * \param file       字符串，输入，文件名
-// * \param size       64 位整数，输出，文件大小
-// rtdb_error RTDBAPI_CALLRULE rtdb_get_file_size_warp(rtdb_int32 handle, const char *file, rtdb_int64 *size)
-func RawRtdbGetFileSizeWarp() {}
+//
+// input:
+//   - handle 连接句柄
+//   - file 文件名
+//
+// output:
+//   - int64 文件大小
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdb_get_file_size_warp(rtdb_int32 handle, const char *file, rtdb_int64 *size)
+func RawRtdbGetFileSizeWarp(handle ConnectHandle, filePath string) (int64, error) {
+	cFilePath := C.CString(filePath)
+	defer C.free(unsafe.Pointer(cFilePath))
+	cSize := C.rtdb_int64(0)
+	err := C.rtdb_get_file_size_warp(C.rtdb_int32(handle), cFilePath, &cSize)
+	return int64(cSize), RtdbError(err).GoError()
+}
 
 // RawRtdbReadFileWarp 读取服务器端指定文件的内容
 // * \param handle       连接句柄

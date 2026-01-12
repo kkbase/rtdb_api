@@ -693,4 +693,11 @@ func TestDir(t *testing.T) {
 		t.Error("创建目录失败", err)
 		return
 	}
+
+	s, err := RawRtdbGetFileSizeWarp(handle, "/opt/rtdb/bin/gstart")
+	if err != nil {
+		t.Error("获取size失败：", err)
+		return
+	}
+	fmt.Println(s)
 }
