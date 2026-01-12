@@ -5313,10 +5313,19 @@ func RawRtdbClosePathWarp(handle ConnectHandle) error {
 }
 
 // RawRtdbMkdirWarp 建立目录
-// * \param handle       连接句柄
-// * \param dir          字符串，输入，新建目录的全路径
-// rtdb_error RTDBAPI_CALLRULE rtdb_mkdir_warp(rtdb_int32 handle, const char *dir)
-func RawRtdbMkdirWarp() {}
+//
+// input:
+//   - handle 连接句柄
+//   - dirName 新建目录的全路径
+//
+// output:
+//   - rtdb_error RTDBAPI_CALLRULE rtdb_mkdir_warp(rtdb_int32 handle, const char *dir)
+func RawRtdbMkdirWarp(handle ConnectHandle, dirName string) error {
+	cDirName := C.CString(dirName)
+	defer C.free(unsafe.Pointer(cDirName))
+	err := C.rtdb_mkdir_warp(C.rtdb_int32(handle), cDirName)
+	return RtdbError(err).GoError()
+}
 
 // RawRtdbGetFileSizeWarp 获得指定服务器端文件的大小
 // * \param handle     连接句柄

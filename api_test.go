@@ -687,4 +687,10 @@ func TestDir(t *testing.T) {
 		}
 		fmt.Println(dir)
 	}
+
+	err = RawRtdbMkdirWarp(handle, "/tttAAA")
+	if err != nil {
+		t.Error("创建目录失败", err)
+		return
+	}
 }
