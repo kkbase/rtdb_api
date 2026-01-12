@@ -4195,6 +4195,28 @@ func cToRtdbHandleInfo(cOsType *C.RTDB_HANDLE_INFO) RtdbHandleInfo {
 	return goHandleInfo
 }
 
+// RtdbUserInfo 用户信息
+type RtdbUserInfo struct {
+	User      string
+	Length    int32
+	Privilege int32
+	IsLocked  bool
+}
+
+func cToRtdbUserInfo(cInfo *C.RTDB_USER_INFO) RtdbUserInfo {
+	locked := false
+	if int8(cInfo.is_locked) != 0 {
+		locked = true
+	}
+	goInfo := RtdbUserInfo{
+		User:      CCharArrayToString(&cInfo.user[0], len(cInfo.user)),
+		Length:    int32(cInfo.length),
+		Privilege: int32(cInfo.privilege),
+		IsLocked:  C.rtdb_int8(locked),
+	}
+	return goInfo
+}
+
 /////////////////////////////// 上面是结构定义 ////////////////////////////////////
 /////////////////////////////// -- 华丽的分割线 -- ////////////////////////////////
 /////////////////////////////// 下面是函数实现 ////////////////////////////////////
@@ -4628,14 +4650,25 @@ func RawRtdbLockUserWarp(handle ConnectHandle, user string, lock bool) error {
 }
 
 // RawRtdbGetUsersWarp 获得所有用户
-// * \param handle          连接句柄
-// * \param [in,out]  count 输入时表示 users、privs 的长度，即用户个数；输出时表示成功返回的用户信息个数
-// * \param [out] users     字符串指针数组，用户名称
-// * \param [out] privs    整型数组，用户权限，枚举 \ref RTDB_PRIV_GROUP 的值之一
-// * \return rtdb_error
-// * \remark 用户须保证分配给 users, privs 的空间与 count 相符，如果输入的 count 小于总的用户数，则只返回部分用户信息。且每个指针指向的字符串缓冲区尺寸不小于 \ref RTDB_USER_SIZE。
-// rtdb_error RTDBAPI_CALLRULE rtdb_get_users_warp(rtdb_int32 handle, rtdb_int32 *count, RTDB_USER_INFO *infos)
-func RawRtdbGetUsersWarp() {}
+//
+// input:
+//   - handle 连接句柄
+//
+// output:
+//   - []RtdbUserInfo 用户列表
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdb_get_users_warp(rtdb_int32 handle, rtdb_int32 *count, RTDB_USER_INFO *infos)
+func RawRtdbGetUsersWarp(handle ConnectHandle) ([]RtdbUserInfo, error) {
+	cCount := C.rtdb_int32(RtdbMaxUserCount)
+	cInfos := make([]C.RTDB_USER_INFO, RtdbMaxUserCount)
+	err := C.rtdb_get_users_warp(C.rtdb_int32(handle), &cCount, &cInfos[0])
+	goInfos := make([]RtdbUserInfo, 0)
+	for i := 0; i < int(cCount); i++ {
+		goInfos = append(goInfos, cToRtdbUserInfo(&cInfos[i]))
+	}
+	return goInfos, RtdbError(err).GoError()
+}
 
 // RawRtdbAddBlacklistWarp 添加连接黑名单项
 // * \param handle  连接句柄

@@ -392,3 +392,24 @@ func TestRawRtdbLockUserWarp(t *testing.T) {
 		return
 	}
 }
+
+func TestRawRtdbGetUsersWarp(t *testing.T) {
+	handle, err := RawRtdbConnectWarp(Hostname, Port)
+	if err != nil {
+		t.Error("创建连接失败", err.Error())
+		return
+	}
+	_, err = RawRtdbLoginWarp(handle, Username, Password)
+	if err != nil {
+		t.Error("登录失败:", err)
+		return
+	}
+	defer func() { _ = RawRtdbDisconnectWarp(handle) }()
+
+	users, err := RawRtdbGetUsersWarp(handle)
+	if err != nil {
+		t.Error("获取用户列表失败：", err)
+		return
+	}
+	fmt.Println(users)
+}
