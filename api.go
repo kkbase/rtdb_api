@@ -5428,17 +5428,37 @@ func RawRtdbFormatQualityWarp(handle ConnectHandle, qualities []Quality) ([]stri
 }
 
 // RawRtdbJudgeConnectStatusWarp 判断连接是否可用
-// * \param handle   连接句柄
-// rtdb_error RTDBAPI_CALLRULE rtdb_judge_connect_status_warp(rtdb_int32 handle, rtdb_int8* change_connection GAPI_DEFAULT_VALUE(0), char* current_ip_addr GAPI_DEFAULT_VALUE(0), rtdb_int32 size GAPI_DEFAULT_VALUE(0))
-func RawRtdbJudgeConnectStatusWarp() {}
+//
+// input:
+//   - handle   连接句柄
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdb_judge_connect_status_warp(rtdb_int32 handle, rtdb_int8* change_connection GAPI_DEFAULT_VALUE(0), char* current_ip_addr GAPI_DEFAULT_VALUE(0), rtdb_int32 size GAPI_DEFAULT_VALUE(0))
+func RawRtdbJudgeConnectStatusWarp(handle ConnectHandle) error {
+	cgoHandle := C.rtdb_int32(handle)
+	cgoChangeConnection := C.rtdb_int8(0)
+	cgoAddr := (*C.char)(C.CBytes(make([]byte, 1024)))
+	defer C.free(unsafe.Pointer(cgoAddr))
+	err := C.rtdb_judge_connect_status_warp(cgoHandle, &cgoChangeConnection, cgoAddr, 1024)
+	return RtdbError(err).GoError()
+}
 
 // RawRtdbFormatIpaddrWarp 将整形IP转换为字符串形式的IP
-// * [ip]        无符号整型，输入，整形的IP地址
-// * [ip_addr]      字符串，输出，字符串IP地址缓冲区
-// * [size]         整型，输入，ip_addr 参数的字节长度
-// * 备注：用户须保证分配给 ip_addr 的空间与 size 相符
-// void RTDBAPI_CALLRULE rtdb_format_ipaddr_warp(rtdb_uint32 ip, char* ip_addr, rtdb_int32 size)
-func RawRtdbFormatIpaddrWarp() {}
+//
+// input:
+//   - ip 整数类型IP(IPv4)
+//
+// output:
+//   - string 字符串型IP(IPv4)
+//
+// raw_fn:
+//   - void RTDBAPI_CALLRULE rtdb_format_ipaddr_warp(rtdb_uint32 ip, char* ip_addr, rtdb_int32 size)
+func RawRtdbFormatIpaddrWarp(ip uint32) string {
+	addr := make([]byte, 128)
+	cAddr := (*C.char)(unsafe.Pointer(&addr[0]))
+	C.rtdb_format_ipaddr_warp(C.rtdb_uint32(ip), cAddr, 128)
+	return C.GoString(cAddr)
+}
 
 // RawRtdbbGetEquationByFileNameWarp 根据文件名获取方程式
 // *      [handle]   连接句柄

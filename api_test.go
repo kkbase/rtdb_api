@@ -750,3 +750,40 @@ func TestRawRtdbFormatQualityWarp(t *testing.T) {
 	}
 	fmt.Println(ds)
 }
+
+func TestRawRtdbJudgeConnectStatusWarp(t *testing.T) {
+	handle, err := RawRtdbConnectWarp(Hostname, Port)
+	if err != nil {
+		t.Error("创建连接失败", err)
+		return
+	}
+	_, err = RawRtdbLoginWarp(handle, Username, Password)
+	if err != nil {
+		t.Error("登录失败:", err)
+		return
+	}
+	defer func() { _ = RawRtdbDisconnectWarp(handle) }()
+
+	err = RawRtdbJudgeConnectStatusWarp(handle)
+	if err != nil {
+		t.Error("获取连接状态失败:", err)
+		return
+	}
+}
+
+func TestRawRtdbFormatIpaddrWarp(t *testing.T) {
+	handle, err := RawRtdbConnectWarp(Hostname, Port)
+	if err != nil {
+		t.Error("创建连接失败", err)
+		return
+	}
+	_, err = RawRtdbLoginWarp(handle, Username, Password)
+	if err != nil {
+		t.Error("登录失败:", err)
+		return
+	}
+	defer func() { _ = RawRtdbDisconnectWarp(handle) }()
+
+	addr := RawRtdbFormatIpaddrWarp(0x11221122)
+	fmt.Println(addr)
+}
