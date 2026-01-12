@@ -560,4 +560,11 @@ func TestTime(t *testing.T) {
 		return
 	}
 	fmt.Println(d)
+
+	ts, ms, err := RawRtdbParseTimeWarp("2010-1-1 8:00:00")
+	if err != nil {
+		t.Error("解析时间失败:", err)
+		return
+	}
+	fmt.Println(ts, ms)
 }

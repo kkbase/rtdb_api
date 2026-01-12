@@ -5022,39 +5022,46 @@ func RawRtdbParseTimespanWarp(tStr string) (DateTimeType, error) {
 }
 
 // RawRtdbParseTimeWarp 根据时间格式字符串解析时间值
-// * \param str          字符串，输入，时间格式字符串，规则如下：
-// *                     base_time [+|- offset_time]
-// *
-// *                     其中 base_time 表示基本时间，有三种形式：
-// *                     1. 时间字符串，如 "2010-1-1" 及 "2010-1-1 8:00:00"；
-// *                     2. 时间代码，表示客户端相对时间；
-// *                     可用的时间代码及含义如下：
-// *                     td             当天零点
-// *                     yd             昨天零点
-// *                     tm             明天零点
-// *                     mon            本周一零点
-// *                     tue            本周二零点
-// *                     wed            本周三零点
-// *                     thu            本周四零点
-// *                     fri            本周五零点
-// *                     sat            本周六零点
-// *                     sun            本周日零点
-// *                     3. 星号('*')，表示客户端当前时间。
-// *                     offset_time 是可选的，可以出现多次，
-// *                     可用的时间偏移代码及含义如下：
-// *                     [+|-] ?y            偏移?年, 1年 = 365日
-// *                     [+|-] ?m            偏移?月, 1月 = 30 日
-// *                     [+|-] ?d            偏移?日
-// *                     [+|-] ?h            偏移?小时
-// *                     [+|-] ?n            偏移?分钟
-// *                     [+|-] ?s            偏移?秒
-// *                     [+|-] ?ms           偏移?毫秒
-// *                     例如："*-1d" 表示当前时刻减去24小时。
-// * \param datetime     整型，输出，返回解析得到的时间值。
-// * \param ms           短整型，输出，返回解析得到的时间毫秒值。
-// *  备注：ms 可以为空指针，相应的毫秒信息将不再返回。
-// rtdb_error RTDBAPI_CALLRULE rtdb_parse_time_warp(const char *str, rtdb_int64 *datetime, rtdb_int16 *ms)
-func RawRtdbParseTimeWarp() {}
+//
+// input:
+//   - str          字符串，输入，时间格式字符串，规则如下：
+//     base_time [+|- offset_time]
+//     其中 base_time 表示基本时间，有三种形式：
+//     1. 时间字符串，如 "2010-1-1" 及 "2010-1-1 8:00:00"；
+//     2. 时间代码，表示客户端相对时间；
+//     可用的时间代码及含义如下：
+//     td             当天零点
+//     yd             昨天零点
+//     tm             明天零点
+//     mon            本周一零点
+//     tue            本周二零点
+//     wed            本周三零点
+//     thu            本周四零点
+//     fri            本周五零点
+//     sat            本周六零点
+//     sun            本周日零点
+//     3. 星号('*')，表示客户端当前时间。
+//     offset_time 是可选的，可以出现多次，
+//     可用的时间偏移代码及含义如下：
+//     [+|-] ?y            偏移?年, 1年 = 365日
+//     [+|-] ?m            偏移?月, 1月 = 30 日
+//     [+|-] ?d            偏移?日
+//     [+|-] ?h            偏移?小时
+//     [+|-] ?n            偏移?分钟
+//     [+|-] ?s            偏移?秒
+//     [+|-] ?ms           偏移?毫秒
+//     例如："*-1d" 表示当前时刻减去24小时。
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdb_parse_time_warp(const char *str, rtdb_int64 *datetime, rtdb_int16 *ms)
+func RawRtdbParseTimeWarp(tStr string) (TimestampType, SubtimeType, error) {
+	cStr := C.CString(tStr)
+	defer C.free(unsafe.Pointer(cStr))
+	ts := C.rtdb_int64(0)
+	ms := C.rtdb_int16(0)
+	err := C.rtdb_parse_time_warp(cStr, &ts, &ms)
+	return TimestampType(ts), SubtimeType(st), RtdbError(err).GoError()
+}
 
 // RawRtdbFormatMessageWarp 获取 Rtdb API 调用返回值的简短描述
 // * \param ecode        无符号整型，输入，Rtdb API调用后的返回值，详见rtdb_error.h头文件
