@@ -5534,11 +5534,19 @@ func RawRtdbbRemoveTableByIdWarp(handle ConnectHandle, tableID int32) error {
 }
 
 // RawRtdbbRemoveTableByNameWarp 根据表名删除表及表中标签点
-// * \param handle        连接句柄
-// * \param name          字符串，输入，表名称
-// * \remark 删除的表不可恢复，删除的标签点可以通过 rtdbb_recover_point 接口恢复。
-// rtdb_error RTDBAPI_CALLRULE rtdbb_remove_table_by_name_warp(rtdb_int32 handle, const char *name)
-func RawRtdbbRemoveTableByNameWarp() {}
+//
+// input:
+//   - handle 连接句柄
+//   - name 表名称
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbb_remove_table_by_name_warp(rtdb_int32 handle, const char *name)
+func RawRtdbbRemoveTableByNameWarp(handle ConnectHandle, name string) error {
+	cName := C.CString(name)
+	defer C.free(unsafe.Pointer(cName))
+	err := C.rtdbb_remove_table_by_name_warp(C.rtdb_int32(handle), cName)
+	return RtdbError(err).GoError()
+}
 
 // RawRtdbbTablesCountWarp 取得标签点表总数
 // * \param handle   连接句柄

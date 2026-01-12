@@ -812,4 +812,16 @@ func TestRawRtdbbAppendTableWarp(t *testing.T) {
 		t.Error("删除表失败：", err)
 		return
 	}
+
+	table2, err := RawRtdbbAppendTableWarp(handle, "aaa", "aaa test")
+	if err != nil {
+		t.Error("添加表失败: ", err)
+		return
+	}
+
+	err = RawRtdbbRemoveTableByNameWarp(handle, table2.Name)
+	if err != nil {
+		t.Error("删除表失败:", err)
+		return
+	}
 }
