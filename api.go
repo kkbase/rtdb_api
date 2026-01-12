@@ -4262,12 +4262,14 @@ const (
 // Quality 质量码
 type Quality int16
 
+type TableID int32
+
 // RtdbTable 表
 type RtdbTable struct {
-	ID   int32  // 表ID
-	Type int32  // 表类型，暂时无用
-	Name string // 表名
-	Desc string // 表描述
+	ID   TableID // 表ID
+	Type int32   // 表类型，暂时无用
+	Name string  // 表名
+	Desc string  // 表描述
 }
 
 func cToRtdbTable(table *C.RTDB_TABLE) RtdbTable {
@@ -4293,7 +4295,7 @@ func cToRtdbTable(table *C.RTDB_TABLE) RtdbTable {
 	}
 	tableDesc := string(tableDescByte)
 
-	return RtdbTable{ID: int32(table.id), Type: int32(table._type), Name: tableName, Desc: tableDesc}
+	return RtdbTable{ID: TableID(table.id), Type: int32(table._type), Name: tableName, Desc: tableDesc}
 }
 
 /////////////////////////////// 上面是结构定义 ////////////////////////////////////
@@ -5528,7 +5530,7 @@ func RawRtdbbAppendTableWarp(handle ConnectHandle, tableName, tableDesc string) 
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_remove_table_by_id_warp(rtdb_int32 handle, rtdb_int32 id)
-func RawRtdbbRemoveTableByIdWarp(handle ConnectHandle, tableID int32) error {
+func RawRtdbbRemoveTableByIdWarp(handle ConnectHandle, tableID TableID) error {
 	err := C.rtdbb_remove_table_by_id_warp(C.rtdb_int32(handle), C.rtdb_int32(tableID))
 	return RtdbError(err).GoError()
 }
@@ -5565,15 +5567,26 @@ func RawRtdbbTablesCountWarp(handle ConnectHandle) (int32, error) {
 }
 
 // RawRtdbbGetTablesWarp 取得所有标签点表的ID
-// *
-// * \param handle   连接句柄
-// * \param ids      整型数组，输出，标签点表的id
-// * \param count    整型，输入/输出，
-// *                 输入表示 ids 的长度，输出表示标签点表个数
-// * \remark 用户须保证分配给 ids 的空间与 count 相符
-// *      如果输入的 count 小于输出的 count，则只返回部分表id
-// rtdb_error RTDBAPI_CALLRULE rtdbb_get_tables_warp(rtdb_int32 handle, rtdb_int32 *ids, rtdb_int32 *count)
-func RawRtdbbGetTablesWarp() {}
+//
+// input:
+//   - handle 连接句柄
+//
+// output:
+//   - []TableID 获取表ID列表
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbb_get_tables_warp(rtdb_int32 handle, rtdb_int32 *ids, rtdb_int32 *count)
+func RawRtdbbGetTablesWarp(handle ConnectHandle) ([]TableID, error) {
+	count, err := RawRtdbbTablesCountWarp(handle)
+	if err != nil {
+		return nil, err
+	}
+	ids := make([]TableID, count)
+	cgoIDs := (*C.rtdb_int32)(unsafe.Pointer(&ids[0]))
+	cgoCount := C.rtdb_int32(count)
+	e := C.rtdbb_get_tables_warp(C.rtdb_int32(handle), cgoIDs, &cgoCount)
+	return ids[:cgoCount], RtdbError(e).GoError()
+}
 
 // RawRtdbbGetTableSizeByIdWarp 根据表 id 获取表中包含的标签点数量
 // * \param handle   连接句柄

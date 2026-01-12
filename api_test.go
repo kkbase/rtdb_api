@@ -826,6 +826,13 @@ func TestRawRtdbbAppendTableWarp(t *testing.T) {
 	}
 	fmt.Println("表数量：", count)
 
+	ids, err := RawRtdbbGetTablesWarp(handle)
+	if err != nil {
+		t.Error("获取表ID列表", err)
+		return
+	}
+	fmt.Println("表ID列表: ", ids)
+
 	err = RawRtdbbRemoveTableByNameWarp(handle, table2.Name)
 	if err != nil {
 		t.Error("删除表失败:", err)
