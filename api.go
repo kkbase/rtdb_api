@@ -4569,7 +4569,7 @@ func RawRtdbGetPrivWarp(handle ConnectHandle) (PrivGroup, error) {
 func RawRtdbChangePrivWarp(handle ConnectHandle, user string, priv PrivGroup) error {
 	cUser := C.CString(user)
 	defer C.free(unsafe.Pointer(cUser))
-	err := C.rtdb_change_priv_warp(handle, cUser, C.rtdb_int32(priv))
+	err := C.rtdb_change_priv_warp(C.rtdb_int32(handle), cUser, C.rtdb_int32(priv))
 	return RtdbError(err).GoError()
 }
 
