@@ -578,3 +578,32 @@ func TestRawRtdbJobMessageWarp(t *testing.T) {
 	name, desc := RawRtdbJobMessageWarp(1)
 	fmt.Println(name, desc)
 }
+
+func TestRawRtdbGetSetTimeoutWarp(t *testing.T) {
+	handle, err := RawRtdbConnectWarp(Hostname, Port)
+	if err != nil {
+		t.Error("创建连接失败", err)
+		return
+	}
+	_, err = RawRtdbLoginWarp(handle, Username, Password)
+	if err != nil {
+		t.Error("登录失败:", err)
+		return
+	}
+	defer func() { _ = RawRtdbDisconnectWarp(handle) }()
+
+	socket, err := RawRtdbGetOwnConnectionWarp(handle, 0)
+	if err != nil {
+		t.Error("获取连接失败：", err)
+		return
+	}
+
+	timeout, err := RawRtdbGetTimeoutWarp(handle, socket)
+	fmt.Println(timeout)
+
+	err = RawRtdbSetTimeoutWarp(handle, socket, timeout)
+	if err != nil {
+		t.Error("设置超时时间: ", err)
+		return
+	}
+}

@@ -5108,18 +5108,35 @@ func RawRtdbJobMessageWarp(jobID int32) (string, string) {
 }
 
 // RawRtdbSetTimeoutWarp 设置连接超时时间
-// * \param handle   连接句柄
-// * \param socket   整型，输入，要设置超时时间的连接
-// * \param timeout  整型，输入，超时时间，单位为秒，0 表示始终保持
-// rtdb_error RTDBAPI_CALLRULE rtdb_set_timeout_warp(rtdb_int32 handle, rtdb_int32 socket, rtdb_int32 timeout)
-func RawRtdbSetTimeoutWarp() {}
+//
+// input:
+//   - handle   连接句柄
+//   - socket   整型，输入，要设置超时时间的连接
+//   - timeout  整型，输入，超时时间，单位为秒，0 表示始终保持
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdb_set_timeout_warp(rtdb_int32 handle, rtdb_int32 socket, rtdb_int32 timeout)
+func RawRtdbSetTimeoutWarp(handle ConnectHandle, socket SocketHandle, timeout DateTimeType) error {
+	err := C.rtdb_set_timeout_warp(C.rtdb_int32(handle), C.rtdb_int32(socket), C.rtdb_int32(timeout))
+	return RtdbError(err).GoError()
+}
 
 // RawRtdbGetTimeoutWarp 获得连接超时时间
-// * \param handle   连接句柄
-// * \param socket   整型，输入，要获取超时时间的连接
-// * \param timeout  整型，输出，超时时间，单位为秒，0 表示始终保持
-// rtdb_error RTDBAPI_CALLRULE rtdb_get_timeout_warp(rtdb_int32 handle, rtdb_int32 socket, rtdb_int32 *timeout)
-func RawRtdbGetTimeoutWarp() {}
+//
+// input:
+//   - handle   连接句柄
+//   - sockt 要获取超时时间的连接
+//
+// output:
+//   - DateTimeType 连接超时时间
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdb_get_timeout_warp(rtdb_int32 handle, rtdb_int32 socket, rtdb_int32 *timeout)
+func RawRtdbGetTimeoutWarp(handle ConnectHandle, socket SocketHandle) (DateTimeType, error) {
+	timeout := C.rtdb_int32(0)
+	err := C.rtdb_get_timeout_warp(C.rtdb_int32(handle), C.rtdb_int32(socket), &timeout)
+	return DateTimeType(timeout), RtdbError(err).GoError()
+}
 
 // RawRtdbKillConnectionWarp 断开已知连接
 // * \param handle    连接句柄
