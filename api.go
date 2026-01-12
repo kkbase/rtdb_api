@@ -5606,11 +5606,23 @@ func RawRtdbbGetTableSizeByIdWarp(handle ConnectHandle, tableID TableID) (int32,
 }
 
 // RawRtdbbGetTableSizeByNameWarp 根据表名称获取表中包含的标签点数量
-// * \param handle   连接句柄
-// * \param name     字符串，输入，表名称
-// * \param size     整型，输出，表中标签点数量
+//
+// input:
+//   - handle 连接句柄
+//   - tableName 表名
+//
+// output:
+//   - int32 表中标签点的数量
+//
+// raw_fn:
 // rtdb_error RTDBAPI_CALLRULE rtdbb_get_table_size_by_name_warp(rtdb_int32 handle, const char *name, rtdb_int32 *size)
-func RawRtdbbGetTableSizeByNameWarp() {}
+func RawRtdbbGetTableSizeByNameWarp(handle ConnectHandle, tableName string) (int32, error) {
+	cSize := C.rtdb_int32(0)
+	cName := C.CString(tableName)
+	defer C.free(unsafe.Pointer(cName))
+	err := C.rtdbb_get_table_size_by_name_warp(C.rtdb_int32(handle), cName, &cSize)
+	return int32(cSize), RtdbError(err).GoError()
+}
 
 // RawRtdbbGetTableRealSizeByIdWarp 根据表 id 获取表中实际包含的标签点数量
 // *
