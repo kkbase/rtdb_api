@@ -5347,16 +5347,26 @@ func RawRtdbGetFileSizeWarp(handle ConnectHandle, filePath string) (int64, error
 }
 
 // RawRtdbReadFileWarp 读取服务器端指定文件的内容
-// * \param handle       连接句柄
-// * \param file         字符串，输入，要读取内容的文件名
-// * \param content      字符数组，输出，文件内容
-// * \param pos          64 位整型，输入，读取文件的起始位置
-// * \param size         整型，输入/输出，
-// *                     输入时表示要读取文件内容的字节大小；
-// *                     输出时表示实际读取的字节数
-// * \remark 用户须保证分配给 content 的空间与 size 相符。
-// rtdb_error RTDBAPI_CALLRULE rtdb_read_file_warp(rtdb_int32 handle, const char *file, char *content, rtdb_int64 pos, rtdb_int64 *size)
-func RawRtdbReadFileWarp() {}
+//
+// input:
+//   - handle 连接句柄
+//   - fileName 要读取内容的文件名
+//   - pos 读取文件的起始位置
+//
+// output:
+//   - []byte 读取出来的数据
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdb_read_file_warp(rtdb_int32 handle, const char *file, char *content, rtdb_int64 pos, rtdb_int64 *size)
+func RawRtdbReadFileWarp(handle ConnectHandle, filePath string, pos int64, cacheSize int64) ([]byte, error) {
+	cFilePath := C.CString(filePath)
+	defer C.free(unsafe.Pointer(cFilePath))
+	buf := make([]byte, cacheSize)
+	cBuf := (*C.char)(unsafe.Pointer(&buf[0]))
+	cSize := C.rtdb_int64(cacheSize)
+	err := C.rtdb_read_file_warp(C.rtdb_int32(handle), cFilePath, cBuf, C.rtdb_int64(pos), &cSize)
+	return buf[:int64(cSize)], RtdbError(err).GoError()
+}
 
 // RawRtdbGetMaxBlobLenWarp 取得数据库允许的blob与str类型测点的最大长度
 // * \param handle       连接句柄

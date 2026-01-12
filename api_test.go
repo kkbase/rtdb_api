@@ -700,4 +700,11 @@ func TestDir(t *testing.T) {
 		return
 	}
 	fmt.Println(s)
+
+	data, err := RawRtdbReadFileWarp(handle, "/opt/rtdb/bin/gstart.ini.example", 0, 1024)
+	if err != nil {
+		t.Error("读取文件失败：", err)
+		return
+	}
+	fmt.Println(string(data))
 }
