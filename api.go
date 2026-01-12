@@ -4574,22 +4574,38 @@ func RawRtdbChangePrivWarp(handle ConnectHandle, user string, priv PrivGroup) er
 }
 
 // RawRtdbAddUserWarp 添加用户帐户
-// * \param handle    连接句柄
-// * \param user      帐户
-// * \param password  帐户初始口令
-// * \param priv      帐户权限， 枚举 \ref RTDB_PRIV_GROUP 的值之一
-// * \return rtdb_error
-// * \remark 只有管理员有添加用户权限
-// rtdb_error RTDBAPI_CALLRULE rtdb_add_user_warp(rtdb_int32 handle, const char *user, const char *password, rtdb_int32 priv)
-func RawRtdbAddUserWarp() {}
+//
+// input:
+//   - handle 连接句柄
+//   - user 帐户
+//   - password 帐户初始口令
+//   - priv 帐户权限
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdb_add_user_warp(rtdb_int32 handle, const char *user, const char *password, rtdb_int32 priv)
+func RawRtdbAddUserWarp(handle ConnectHandle, user string, password string, priv PrivGroup) error {
+	cUser := C.CString(user)
+	defer C.free(unsafe.Pointer(cUser))
+	cPassword := C.CString(password)
+	defer C.free(unsafe.Pointer(cPassword))
+	err := C.rtdb_add_user_warp(C.rtdb_int32(handle), cUser, cPassword, C.rtdb_int32(priv))
+	return RtdbError(err).GoError()
+}
 
 // RawRtdbRemoveUserWarp 删除用户帐户
-// * \param handle  连接句柄
-// * \param user    帐户
-// * \return rtdb_error
-// * \remark 只有管理员有删除用户权限
-// rtdb_error RTDBAPI_CALLRULE rtdb_remove_user_warp(rtdb_int32 handle, const char *user)
-func RawRtdbRemoveUserWarp() {}
+//
+// input:
+//   - handle 连接句柄
+//   - user 帐户
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdb_remove_user_warp(rtdb_int32 handle, const char *user)
+func RawRtdbRemoveUserWarp(handle ConnectHandle, user string) error {
+	cUser := C.CString(user)
+	defer C.free(unsafe.Pointer(cUser))
+	err := C.rtdb_remove_user_warp(C.rtdb_int32(handle), cUser)
+	return RtdbError(err).GoError()
+}
 
 // RawRtdbLockUserWarp 启用或禁用用户
 // * \param     handle    连接句柄

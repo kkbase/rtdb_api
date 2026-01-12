@@ -334,3 +334,29 @@ func TestRawRawRtdbChangePrivWarp(t *testing.T) {
 		return
 	}
 }
+
+func TestRawRtdbAddDelUserWarp(t *testing.T) {
+	handle, err := RawRtdbConnectWarp(Hostname, Port)
+	if err != nil {
+		t.Error("创建连接失败", err.Error())
+		return
+	}
+	_, err = RawRtdbLoginWarp(handle, Username, Password)
+	if err != nil {
+		t.Error("登录失败:", err)
+		return
+	}
+	defer func() { _ = RawRtdbDisconnectWarp(handle) }()
+
+	err = RawRtdbAddUserWarp(handle, "t1", "golden", PrivGroupRtdbSA)
+	if err != nil {
+		t.Error("添加用户失败:", err)
+		return
+	}
+
+	err = RawRtdbRemoveUserWarp(handle, "t1")
+	if err != nil {
+		t.Error("删除用户失败:", err)
+		return
+	}
+}
