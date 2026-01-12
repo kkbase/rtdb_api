@@ -568,3 +568,8 @@ func TestTime(t *testing.T) {
 	}
 	fmt.Println(ts, ms)
 }
+
+func TestRawRtdbFormatMessageWarp(t *testing.T) {
+	name, message := RawRtdbFormatMessageWarp(RteCantLoadBase)
+	fmt.Println(name, message)
+}

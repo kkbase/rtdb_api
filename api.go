@@ -5063,15 +5063,27 @@ func RawRtdbParseTimeWarp(tStr string) (TimestampType, SubtimeType, error) {
 	return TimestampType(ts), SubtimeType(ms), RtdbError(err).GoError()
 }
 
-// RawRtdbFormatMessageWarp 获取 Rtdb API 调用返回值的简短描述
-// * \param ecode        无符号整型，输入，Rtdb API调用后的返回值，详见rtdb_error.h头文件
-// * \param message      字符串，输出，返回错误码简短描述
-// * \param name         字符串，输出，返回错误码宏名称
-// * \param size         整型，输入，message 参数的字节长度
-// * \remark 用户须保证分配给 message， name 的空间与 size 相符,
-// * name 或 message 可以为空指针，对应的信息将不再返回。
-// void RTDBAPI_CALLRULE rtdb_format_message_warp(rtdb_error ecode, char *message, char *name, rtdb_int32 size)
-func RawRtdbFormatMessageWarp() {}
+// RawRtdbFormatMessageWarp 获取 Rtdb API 调用返回值的简短描述(错误码对应的Desc)
+//
+// input:
+//   - err 错误码
+//
+// output:
+//   - name 函数名
+//   - message 函数描述
+//
+// raw_fn:
+//   - void RTDBAPI_CALLRULE rtdb_format_message_warp(rtdb_error ecode, char *message, char *name, rtdb_int32 size)
+func RawRtdbFormatMessageWarp(err RtdbError) (string, string) {
+	cgoErr := C.rtdb_error(err)
+	cgoMessage := (*C.char)(C.CBytes(make([]byte, 10240)))
+	defer C.free(unsafe.Pointer(cgoMessage))
+	cgoName := (*C.char)(C.CBytes(make([]byte, 10240)))
+	defer C.free(unsafe.Pointer(cgoName))
+	cgoSize := C.rtdb_int32(10240)
+	C.rtdb_format_message_warp(cgoErr, cgoMessage, cgoName, cgoSize)
+	return C.GoString(cgoName), C.GoString(cgoMessage)
+}
 
 // RawRtdbJobMessageWarp 获取任务的简短描述
 // * \param job_id       整型，输入，RTDB_HOST_CONNECT_INFO::job 字段所表示的最近任务的描述
