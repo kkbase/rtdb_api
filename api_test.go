@@ -225,3 +225,31 @@ func TestRawRtdbGetConnectionInfoIpv6Warp(t *testing.T) {
 	}
 	fmt.Println(infoV6)
 }
+
+func TestRawRtdbOsType(t *testing.T) {
+	handle, err := RawRtdbConnectWarp(Hostname, Port)
+	if err != nil {
+		t.Error("创建连接失败", err.Error())
+		return
+	}
+	_, err = RawRtdbLoginWarp(handle, Username, Password)
+	if err != nil {
+		t.Error("登录失败:", err)
+		return
+	}
+	defer func() { _ = RawRtdbDisconnectWarp(handle) }()
+
+	socket, err := RawRtdbGetOwnConnectionWarp(handle, 0)
+	if err != nil {
+		t.Error("获取连接失败：", err)
+		return
+	}
+	fmt.Println(socket)
+
+	osType, err := RawRtdbOsType(handle)
+	if err != nil {
+		t.Error("获取操作系统失败:", err)
+		return
+	}
+	fmt.Println(osType.Desc())
+}

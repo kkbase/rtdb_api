@@ -4161,6 +4161,40 @@ func cToRtdbHostConnectInfoIpv6(cInfo *C.RTDB_HOST_CONNECT_INFO_IPV6) RtdbHostCo
 	return goInfo
 }
 
+type RtdbOsType int8
+
+const (
+	RtdbOsWindows = RtdbOsType(C.RTDB_OS_WINDOWS)
+	RtdbOsLinux   = RtdbOsType(C.RTDB_OS_LINUX)
+	RtdbOsInvalid = RtdbOsType(C.RTDB_OS_INVALID)
+)
+
+func (ost RtdbOsType) Desc() string {
+	switch ost {
+	case RtdbOsWindows:
+		return "windows"
+	case RtdbOsLinux:
+		return "linux"
+	case RtdbOsInvalid:
+		return "未知操作系统"
+	default:
+		return "无效OsType"
+	}
+}
+
+type RtdbHandleInfo struct {
+	OsType RtdbOsType // 当前连接数据库的系统，参考 RTDB_OS_TYPE
+	NewDB  int8       // 当前连接数据库的版本，0表示旧版本，1表示新版本
+}
+
+func cToRtdbHandleInfo(cOsType *C.RTDB_HANDLE_INFO) RtdbHandleInfo {
+	goHandleInfo := RtdbHandleInfo{
+		OsType: RtdbOsType(cOsType.os_type),
+		NewDB:  int8(cOsType.new_db),
+	}
+	return goHandleInfo
+}
+
 /////////////////////////////// 上面是结构定义 ////////////////////////////////////
 /////////////////////////////// -- 华丽的分割线 -- ////////////////////////////////
 /////////////////////////////// 下面是函数实现 ////////////////////////////////////
@@ -4455,13 +4489,21 @@ func RawRtdbGetConnectionInfoIpv6Warp(handle ConnectHandle, nodeNumber int32, so
 	return goInfo, RtdbError(err).GoError()
 }
 
-// RawRTDBOSINVALID 获取连接句柄所连接的服务器操作系统类型
-// * \param     handle          连接句柄
-// * \param     ostype   操作系统类型 枚举 \ref RTDB_OS_TYPE 的值之一
-// * \return    rtdb_error
-// * \remark 如句柄未链接任何服务器，返回RTDB_OS_INVALID(当前支持操作系统类型：windows、linux)。
-// rtdb_error RTDBAPI_CALLRULE rtdb_get_linked_ostype_warp(rtdb_int32 handle, RTDB_OS_TYPE* ostype)
-func RawRTDBOSINVALID() {}
+// RawRtdbOsType 获取连接句柄所连接的服务器操作系统类型
+//
+// input:
+//   - handle 连接句柄
+//
+// output:
+//   - RtdbOsType 操作系统类型
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdb_get_linked_ostype_warp(rtdb_int32 handle, RTDB_OS_TYPE* ostype)
+func RawRtdbOsType(handle ConnectHandle) (RtdbOsType, error) {
+	osType := C.RTDB_OS_TYPE(C.RTDB_OS_INVALID)
+	err := C.rtdb_get_linked_ostype_warp(C.rtdb_int32(handle), &osType)
+	return RtdbOsType(osType), RtdbError(err).GoError()
+}
 
 // RawRtdbChangePasswordWarp 修改用户帐户口令
 // * \param handle    连接句柄
