@@ -4298,245 +4298,362 @@ func cToRtdbTable(table *C.RTDB_TABLE) RtdbTable {
 	return RtdbTable{ID: TableID(table.id), Type: int32(table._type), Name: tableName, Desc: tableDesc}
 }
 
+// PointID 点ID
+type PointID int32
 
-// ttypedef struct _RTDB_POINT
-// {
-// /**
-//  *  标签点名称。
-//  *  用于在表中唯一标识一个标签点；
-//  *  该属性允许被修改；
-//  *  命名规则：
-//  *  1、第一个字符必须是26个字母之一或数字0-9之一或者"_"、"%"；
-//  *  2、不允许使用控制字符，比如换行符或制表符；
-//  *  3、不允许使用以下字符（'*'、'''、'?'、';'、'('、')'、'{'、'}'、'['、']'、'|'、'\'、'`'、'''、'"'、'.'）；
-//  *  4、字节长度不要超出 \b RTDB_TAG_SIZE，如果超出，系统会自动将后面的字符截断。
-//  */
-// char tag[RTDB_TAG_SIZE];
-// /**
-//  *  全库唯一标识。
-//  *  只读属性，创建标签点时系统会自动为标签点分配的唯一标识，即标签点ID，标签点ID一经创建后永不更改。
-//  */
-// int id;
-// /**
-//  *  标签点的数值类型。
-//  *  只读属性，在创建标签点时指定。
-//  */
-// int type;
-// /**
-//  *  标签点所属表ID。
-//  */
-// int table;
-// /**
-//  *  有关标签点的描述性文字。
-//  *  字节长度不要超出 \b RTDB_DESC_SIZE，多余的部分会被截断。
-//  */
-// char desc[RTDB_DESC_SIZE];
-// /**
-//  *  工程单位。
-//  *  字节长度不要超出 \b RTDB_UNIT_SIZE，多余的部分会被截断。
-//  */
-// char unit[RTDB_UNIT_SIZE];
-// /**
-//  *  是否存档。
-//  *  缺省值：ON，1；
-//  *  ON或1表示存档，OFF或0表示不存档。
-//  */
-// rtdb_byte archive;
-// /**
-//  *  数值位数。
-//  *  缺省值：-5；
-//  *  范围：>=-20、<=10；
-//  *  用来控制数值的显示格式；
-//  *  如果为0或正数，表示数值的小数位数，如果为负数，表示数值的有效位数。
-//  */
-// short digits;
-// /**
-//  *  停机状态字（Shutdown）
-//  *  缺省值：0；
-//  *  定义该点在停机状态下是否补写停机状态值。
-//  *  1 表示补写；0 表示不补写。
-//  */
-// rtdb_byte shutdown;
-// /**
-//  *  量程下限。
-//  *  缺省值：0；
-//  *  单位：标签点工程单位。
-//  */
-// float lowlimit;
-// /**
-//  *  量程上限。
-//  *  缺省值：100；
-//  *  单位：标签点工程单位。
-//  */
-// float highlimit;
-// /**
-//  *  是否阶跃。
-//  *  缺省值：OFF，0；
-//  *  该属性决定了中间值的计算是用阶梯还是连续的内插值替换；
-//  *  缺省情况下该属性为OFF，即中间值的计算是用内插值替换；
-//  *  如果被设置为ON，则中间值的数值同前一个有记录的数值相同。
-//  *  在历史数据检索中，本设置可能被外部输入的阶跃开关覆盖。
-//  */
-// rtdb_byte step;
-// /**
-//  *  典型值。
-//  *  缺省值：50；
-//  *  大于等于量程下限，小于等于量程上限。
-//  */
-// float typical;
-// /**
-//  *  是否压缩。
-//  *  缺省值：ON，1；
-//  *  如果该属性被关闭（OFF，0），任何到达数据存储服务器Server的数据都会被提交到历史数据库；否则（ON，1），只有满足压缩条件的数据才会被提交到历史数据库。
-//  *  需要手工录入的标签点应该将该属性设置为OFF，0。
-//  */
-// rtdb_byte compress;
-// /**
-//  *  压缩偏差。
-//  *  单位：标签点工程单位；
-//  *  缺省值：1；
-//  *  当有新的数值被提交到数据存储服务器Server，如果从上一个被提交到历史数据库的数值开始有数值超出了压缩偏差外，则上一个被提交到数据存储服务器Server的数值被视为关键数值；
-//  *  该属性与[压缩偏差百分比（the percent of compression deviation）]属性含义相同，该属性与量程（high
-//  *  limit - low limit）的百分比即[压缩偏差百分比（the percent of compression
-//  *  deviation）]属性的值；
-//  *  对该属性的修改将导致对[压缩偏差百分比（the percent of compression
-//  *  deviation）]的修改，同样，对[压缩偏差百分比（the percent of compression
-//  *  deviation）]的修改也将修改该属性，如果两个同时被修改，[压缩偏差百分比（the percent of compression
-//  *  deviation）]具有更高的优先权。
-//  */
-// float compdev;
-// /**
-//  *  压缩偏差百分比。
-//  *  单位：百分比；
-//  *  \see compdev。
-//  */
-// float compdevpercent;
-// /**
-//  *  最大压缩间隔。
-//  *  单位：秒；
-//  *  缺省值：28800；
-//  *  如果某个数值与上一个被提交到历史数据库的数值的时间间隔大于或等于最大压缩间隔，无论是否满足压缩条件，该数值都应该被视为关键数值从而被提交到历史数据库的数据队列；
-//  *  数据库中两个标签点间的时间间隔有可能超出该属性值，因为数据存储服务器Server可能长时间接收不到提交的数据，而且任何系统绝对不会自己创造数据。
-//  */
-// int comptimemax;
-// /**
-//  *  最短压缩间隔。
-//  *  单位：秒；
-//  *  缺省值：0；
-//  *  如果某个数值与上一个被提交到历史数据库的数值的时间间隔小于最短压缩间隔，该数值会被忽略；
-//  *  该属性有降噪（suppress noise）的作用。
-//  */
-// int comptimemin;
-// /**
-//  *  例外偏差。
-//  *  单位：标签点工程单位；
-//  *  缺省值：0.5；
-//  *  如果某个数值与上一个被提交到数据存储服务器Server的数值的偏差大于该例外偏差（以数值的工程单位为准），则该数值被视为例外数值，应该被提交到数据存储服务器Server；
-//  *  建议例外偏差应该小于等于压缩偏差的一半；
-//  *  该属性与[例外偏差百分比（The Percent of Exception Deviation）]属性含义相同，该属性与量程（high
-//  *  limit - low limit）的百分比即[例外偏差百分比（The Percent of Exception
-//  *  Deviation）]属性的值；
-//  *  对该属性的修改将导致对[例外偏差百分比（The Percent of Exception
-//  *  Deviation）]的修改，同样，对[例外偏差百分比（The Percent of Exception
-//  *  Deviation）]的修改也将修改该属性，如果两个同时被修改，[例外偏差百分比（The Percent of Exception
-//  *  Deviation）]具有更高的优先权。
-//  */
-// float excdev;
-// /**
-//  *  例外偏差百分比。
-//  *  单位：百分比；
-//  *  \see excdev。
-//  */
-// float excdevpercent;
-// /**
-//  *  最大例外间隔。
-//  *  单位：秒；
-//  *  缺省值：600；
-//  *  如果某个数值与上一个被提交到数据存储服务器Server的数值的时间间隔大于或等于最大例外间隔，无论是否满足例外条件，该数值都应该被视为例外数值从而被提交到数据存储服务器Server；
-//  *  数据库中两个标签点间的时间间隔有可能超出该属性值，因为接口可能长时间采集不到数据，而且任何系统绝对不会自己创造数据；
-//  *  如果要关闭例外过滤，设置该属性为0即可。
-//  */
-// int exctimemax;
-// /**
-//  *  最短例外间隔。
-//  *  单位：秒；
-//  *  缺省值：0；
-//  *  如果某个数值与上一个被提交到数据存储服务器Server的数值的时间间隔小于最短例外间隔，无论是否满足例外条件，该数值都会被忽略；
-//  *  该属性有降噪（suppress noise）的作用。
-//  */
-// int exctimemin;
-// /**
-//  *  标签点类别。
-//  *  RTDB_CLASS类型的组合，最多可以扩展至32种类型的组合；
-//  *  所有类别标签点均继承自"基本"类型标签点。
-//  *  不同类别的标签点具有不同的属性集，"采集"类别的标签点具有"设备标签"、"位号"、"自定义整数"和"自定义浮点数"等扩展属性，"计算"类别的标签点具有"扩展描述"、"触发机制"等扩展属性。
-//  */
-// unsigned int classof;
-// /**
-//  *  标签点属性最后一次被修改的时间。
-//  */
-// rtdb_datetime_type changedate;
-// /**
-//  *  标签点属性最后一次被修改的用户名。
-//  */
-// char changer[RTDB_USER_SIZE];
-// /**
-//  *  标签点被创建的时间。
-//  */
-// rtdb_datetime_type createdate;
-// /**
-//  *  标签点创建者的用户名。
-//  */
-// char creator[RTDB_USER_SIZE];
-// /**
-//  *  镜像收发控制。
-//  *  默认值：关闭，0
-//  *  开启镜像收发，1，既接收，又发送
-//  *  开启镜像接收，2，只接收，不发送
-//  *  开启镜像发送，3，只发送，不接收
-//  */
-// rtdb_byte mirror;
-// /**
-//  *  时间戳精度。
-//  *  默认值：秒，0；
-//  *  用于设定标签点的历史值在存储中精确到"秒"（0）还是"毫秒/纳秒"（1）。
-//  *  标签点一经创建就不允许修改该属性。
-//  */
-// rtdb_byte millisecond;
-// /**
-//  *  采集点扩展属性集存储地址索引。
-//  */
-// unsigned int scanindex;
-// /**
-//  *  计算点扩展属性集存储地址索引。
-//  */
-// unsigned int calcindex;
-// /**
-//  *  报警点扩展属性集存储地址索引。
-//  */
-// unsigned int alarmindex;
-// /**
-//  *  标签点全名，格式为“表名称.标签点名称”。
-//  */
-// char table_dot_tag[RTDB_TAG_SIZE + RTDB_TAG_SIZE];
-// /**
-//  * 统计加速。
-//  * 默认值：关，0；
-//  * 用于设定是否生成标签点统计信息，从而加速历史数据统计过程。
-//  */
-// rtdb_byte summary;
-// /**
-//  *  标签点对应自定义类型id，只用标签点类别为自定义类型时，才有意义。
-//  */
-// rtdb_uint16 named_type_id;
-//
-// // 时间戳精度，0秒、1毫秒、2微秒、3纳秒
-// rtdb_precision_type precision;
-// /**
-//  *  基本标签点备用字节。
-//  */
-// rtdb_byte padding[RTDB_PACK_OF_POINT];
-// } RTDB_POINT;
+// RtdbType 数据类型
+type RtdbType int32
+
+const (
+	// RtdbBool 布尔类型，0值或1值
+	RtdbBool = RtdbType(C.RTDB_BOOL)
+
+	// RtdbUint8 无符号8位整数，占用1字节
+	RtdbUint8 = RtdbType(C.RTDB_UINT8)
+
+	// RtdbInt8 有符号8位整数，占用1字节
+	RtdbInt8 = RtdbType(C.RTDB_INT8)
+
+	// RtdbChar 单字节字符，占用1字节
+	RtdbChar = RtdbType(C.RTDB_CHAR)
+
+	// RtdbUint16 无符号16位整数，占用2字节
+	RtdbUint16 = RtdbType(C.RTDB_UINT16)
+
+	// RtdbInt16 有符号16位整数，占用2字节
+	RtdbInt16 = RtdbType(C.RTDB_INT16)
+
+	// RtdbUint32 无符号32位整数，占用4字节
+	RtdbUint32 = RtdbType(C.RTDB_UINT32)
+
+	// RtdbInt32 有符号32位整数，占用4字节
+	RtdbInt32 = RtdbType(C.RTDB_INT32)
+
+	// RtdbInt64 有符号64位整数，占用8字节
+	RtdbInt64 = RtdbType(C.RTDB_INT64)
+
+	// RtdbReal16 16位浮点数，占用2字节
+	RtdbReal16 = RtdbType(C.RTDB_REAL16)
+
+	// RtdbReal32 32位单精度浮点数，占用4字节
+	RtdbReal32 = RtdbType(C.RTDB_REAL32)
+
+	// RtdbReal64 64位双精度浮点数，占用8字节
+	RtdbReal64 = RtdbType(C.RTDB_REAL64)
+
+	// RtdbCoor 二维坐标，具有x、y两个维度的浮点数，占用8字节
+	RtdbCoor = RtdbType(C.RTDB_COOR)
+
+	// RtdbString 字符串，长度不超过存储页面大小
+	RtdbString = RtdbType(C.RTDB_STRING)
+
+	// RtdbBlob 二进制数据块，占用字节不超过存储页面大小
+	RtdbBlob = RtdbType(C.RTDB_BLOB)
+
+	// RtdbNamedT 自定义类型，由用户创建时确定字节长度
+	RtdbNamedT = RtdbType(C.RTDB_NAMED_T)
+
+	// RtdbDatetime 时间格式类型
+	RtdbDatetime = RtdbType(C.RTDB_DATETIME)
+
+	// RtdbFp16 定点数，占用2字节
+	RtdbFp16 = RtdbType(C.RTDB_FP16)
+
+	// RtdbFp32 定点数，占用4字节
+	RtdbFp32 = RtdbType(C.RTDB_FP32)
+
+	// RtdbFp64 定点数，占用8字节
+	RtdbFp64 = RtdbType(C.RTDB_FP64)
+)
+
+type RtdbMirror int8
+
+const (
+	// RtdbMirrorPointOff 镜像关闭
+	RtdbMirrorPointOff = RtdbMirror(C.RTDB_POINT_OFF)
+
+	// RtdbPointSendRecv 镜像收发
+	RtdbPointSendRecv = RtdbMirror(C.RTDB_POINT_SEND_RECV)
+
+	// RtdbPointRecv 镜像接收
+	RtdbPointRecv = RtdbMirror(C.RTDB_POINT_RECV)
+
+	// RtdbPointSend 镜像发送
+	RtdbPointSend = RtdbMirror(C.RTDB_POINT_SEND)
+)
+
+type RtdbPrecision int8
+
+const (
+	// RtdbPrecisionSecond 秒
+	RtdbPrecisionSecond = RtdbPrecision(0)
+
+	// RtdbPrecisionMilli 毫秒
+	RtdbPrecisionMilli = RtdbPrecision(1)
+
+	// RtdbPrecisionMicro 微秒
+	RtdbPrecisionMicro = RtdbPrecision(2)
+
+	// RtdbPrecisionNano 纳秒
+	RtdbPrecisionNano = RtdbPrecision(3)
+)
+
+type RtdbClass uint32
+
+const (
+	// RtdbBase 基本标签点，所有类别标签点均在基本标签点的属性集上扩展自己的属性集。
+	RtdbBase = RtdbClass(C.RTDB_BASE)
+
+	// RtdbScan 采集标签点。
+	RtdbScan = RtdbClass(C.RTDB_SCAN)
+
+	// RtdbCalc 计算标签点
+	RtdbCalc = RtdbClass(C.RTDB_CALC)
+
+	// RtdbAlarm 报警标签点
+	RtdbAlarm = RtdbClass(C.RTDB_ALARM)
+)
+
+type RtdbPoint struct {
+	// 标签点名称。
+	// 用于在表中唯一标识一个标签点；
+	// 该属性允许被修改；
+	// 命名规则：
+	// 1、第一个字符必须是26个字母之一或数字0-9之一或者"_"、"%"；
+	// 2、不允许使用控制字符，比如换行符或制表符；
+	// 3、不允许使用以下字符（'*'、'''、'?'、';'、'('、')'、'{'、'}'、'['、']'、'|'、'\'、'`'、'''、'"'、'.'）；
+	// 4、字节长度不要超出 \b RTDB_TAG_SIZE，如果超出，系统会自动将后面的字符截断。
+	Tag string
+
+	// 全库唯一标识。
+	// 只读属性，创建标签点时系统会自动为标签点分配的唯一标识，即标签点ID，标签点ID一经创建后永不更改。
+	ID PointID
+
+	// 标签点的数值类型。
+	// 只读属性，在创建标签点时指定。
+	Type RtdbType
+
+	// 标签点所属表ID。
+	Table TableID
+
+	// 有关标签点的描述性文字。
+	// 字节长度不要超出 \b RTDB_DESC_SIZE，多余的部分会被截断。
+	Desc string
+
+	// 工程单位。
+	// 字节长度不要超出 \b RTDB_UNIT_SIZE，多余的部分会被截断。
+	Unit string
+
+	// 是否存档。
+	// 缺省值：ON，1；
+	// ON或1表示存档，OFF或0表示不存档。
+	Archive byte
+
+	// 数值位数。
+	// 缺省值：-5；
+	// 范围：>=-20、<=10；
+	// 用来控制数值的显示格式；
+	// 如果为0或正数，表示数值的小数位数，如果为负数，表示数值的有效位数。
+	Digits int16
+
+	// 停机状态字（Shutdown）
+	// 缺省值：0；
+	// 定义该点在停机状态下是否补写停机状态值。
+	// 1 表示补写；0 表示不补写。
+	Shutdown byte
+
+	// 量程下限。
+	// 缺省值：0；
+	// 单位：标签点工程单位。
+	LowLimit float32
+
+	// 量程上限。
+	// 缺省值：100；
+	// 单位：标签点工程单位。
+	HighLimit float32
+
+	// 是否阶跃。
+	// 缺省值：OFF，0；
+	// 该属性决定了中间值的计算是用阶梯还是连续的内插值替换；
+	// 缺省情况下该属性为OFF，即中间值的计算是用内插值替换；
+	// 如果被设置为ON，则中间值的数值同前一个有记录的数值相同。
+	// 在历史数据检索中，本设置可能被外部输入的阶跃开关覆盖。
+	Step byte
+
+	// 典型值。
+	// 缺省值：50；
+	// 大于等于量程下限，小于等于量程上限。
+	Typical float32
+
+	// 是否压缩。
+	// 缺省值：ON，1；
+	// 如果该属性被关闭（OFF，0），任何到达数据存储服务器Server的数据都会被提交到历史数据库；否则（ON，1），只有满足压缩条件的数据才会被提交到历史数据库。
+	// 需要手工录入的标签点应该将该属性设置为OFF，0。
+	Compress byte
+
+	// 压缩偏差。
+	// 单位：标签点工程单位；
+	// 缺省值：1；
+	// 当有新的数值被提交到数据存储服务器Server，如果从上一个被提交到历史数据库的数值开始有数值超出了压缩偏差外，则上一个被提交到数据存储服务器Server的数值被视为关键数值；
+	// 该属性与[压缩偏差百分比（the percent of compression deviation）]属性含义相同，该属性与量程（high
+	// limit - low limit）的百分比即[压缩偏差百分比（the percent of compression
+	// deviation）]属性的值；
+	// 对该属性的修改将导致对[压缩偏差百分比（the percent of compression
+	// deviation）]的修改，同样，对[压缩偏差百分比（the percent of compression
+	// deviation）]的修改也将修改该属性，如果两个同时被修改，[压缩偏差百分比（the percent of compression
+	// deviation）]具有更高的优先权。
+	CompDev float32
+
+	// 压缩偏差百分比。
+	// 单位：百分比；
+	// \see compdev。
+	CompDevPercent float32
+
+	// 最大压缩间隔。
+	// 单位：秒；
+	// 缺省值：28800；
+	// 如果某个数值与上一个被提交到历史数据库的数值的时间间隔大于或等于最大压缩间隔，无论是否满足压缩条件，该数值都应该被视为关键数值从而被提交到历史数据库的数据队列；
+	// 数据库中两个标签点间的时间间隔有可能超出该属性值，因为数据存储服务器Server可能长时间接收不到提交的数据，而且任何系统绝对不会自己创造数据。
+	CompTimeMax int32
+
+	// 最短压缩间隔。
+	// 单位：秒；
+	// 缺省值：0；
+	// 如果某个数值与上一个被提交到历史数据库的数值的时间间隔小于最短压缩间隔，该数值会被忽略；
+	// 该属性有降噪（suppress noise）的作用。
+	CompTimeMin int32
+
+	// 例外偏差。
+	// 单位：标签点工程单位；
+	// 缺省值：0.5；
+	// 如果某个数值与上一个被提交到数据存储服务器Server的数值的偏差大于该例外偏差（以数值的工程单位为准），则该数值被视为例外数值，应该被提交到数据存储服务器Server；
+	// 建议例外偏差应该小于等于压缩偏差的一半；
+	// 该属性与[例外偏差百分比（The Percent of Exception Deviation）]属性含义相同，该属性与量程（high
+	// limit - low limit）的百分比即[例外偏差百分比（The Percent of Exception
+	// Deviation）]属性的值；
+	// 对该属性的修改将导致对[例外偏差百分比（The Percent of Exception
+	// Deviation）]的修改，同样，对[例外偏差百分比（The Percent of Exception
+	// Deviation）]的修改也将修改该属性，如果两个同时被修改，[例外偏差百分比（The Percent of Exception
+	// Deviation）]具有更高的优先权。
+	ExcDev float32
+
+	// 例外偏差百分比。
+	// 单位：百分比；
+	// \see excdev。
+	ExcDevPercent float32
+
+	// 最大例外间隔。
+	// 单位：秒；
+	// 缺省值：600；
+	// 如果某个数值与上一个被提交到数据存储服务器Server的数值的时间间隔大于或等于最大例外间隔，无论是否满足例外条件，该数值都应该被视为例外数值从而被提交到数据存储服务器Server；
+	// 数据库中两个标签点间的时间间隔有可能超出该属性值，因为接口可能长时间采集不到数据，而且任何系统绝对不会自己创造数据；
+	// 如果要关闭例外过滤，设置该属性为0即可。
+	ExcTimeMax int32
+
+	// 最短例外间隔。
+	// 单位：秒；
+	// 缺省值：0；
+	// 如果某个数值与上一个被提交到数据存储服务器Server的数值的时间间隔小于最短例外间隔，无论是否满足例外条件，该数值都会被忽略；
+	// 该属性有降噪（suppress noise）的作用。
+	ExcTimeMin int32
+
+	// 标签点类别。
+	// RTDB_CLASS类型的组合，最多可以扩展至32种类型的组合；
+	// 所有类别标签点均继承自"基本"类型标签点。
+	// 不同类别的标签点具有不同的属性集，"采集"类别的标签点具有"设备标签"、"位号"、"自定义整数"和"自定义浮点数"等扩展属性，"计算"类别的标签点具有"扩展描述"、"触发机制"等扩展属性。
+	Class RtdbClass
+
+	// 标签点属性最后一次被修改的时间。
+	ChangeDate DateTimeType
+
+	// 标签点属性最后一次被修改的用户名。
+	Changer string
+
+	// 标签点被创建的时间。
+	CreateDate DateTimeType
+
+	// 标签点创建者的用户名。
+	Creator string
+
+	// 镜像收发控制。
+	// 默认值：关闭，0
+	// 开启镜像收发，1，既接收，又发送
+	// 开启镜像接收，2，只接收，不发送
+	// 开启镜像发送，3，只发送，不接收
+	Mirror RtdbMirror
+
+	// 时间戳精度。
+	// 默认值：秒，0；
+	// 用于设定标签点的历史值在存储中精确到"秒"（0）还是"毫秒/纳秒"（1）。
+	// 标签点一经创建就不允许修改该属性。
+	MilliSecond byte
+
+	// 采集点扩展属性集存储地址索引。
+	ScanIndex uint32
+
+	// 计算点扩展属性集存储地址索引。
+	CalcIndex uint32
+
+	// 报警点扩展属性集存储地址索引。
+	AlarmIndex uint32
+
+	// 标签点全名，格式为“表名称.标签点名称”。
+	TableDotTag string
+
+	// 统计加速。
+	// 默认值：关，0；
+	// 用于设定是否生成标签点统计信息，从而加速历史数据统计过程。
+	Summary byte
+
+	// 标签点对应自定义类型id，只用标签点类别为自定义类型时，才有意义。
+	NamedTypeID uint16
+
+	// 时间戳精度，0秒、1毫秒、2微秒、3纳秒
+	Precision RtdbPrecision
+}
+
+func cToRtdbPoint(p *C.RTDB_POINT) RtdbPoint {
+	rtn := RtdbPoint{
+		Tag:            CCharArrayToString((*C.char)(&p.tag[0]), int(C.RTDB_TAG_SIZE)),
+		ID:             PointID(p.id),
+		Type:           RtdbType(p._type),
+		Table:          TableID(p.table),
+		Desc:           CCharArrayToString((*C.char)(&p.desc[0]), int(C.RTDB_DESC_SIZE)),
+		Unit:           CCharArrayToString((*C.char)(&p.unit[0]), int(C.RTDB_UNIT_SIZE)),
+		Archive:        byte(p.archive),
+		Digits:         int16(p.digits),
+		Shutdown:       byte(p.shutdown),
+		LowLimit:       float32(p.lowlimit),
+		HighLimit:      float32(p.highlimit),
+		Step:           byte(p.step),
+		Typical:        float32(p.typical),
+		Compress:       byte(p.compress),
+		CompDev:        float32(p.compdev),
+		CompDevPercent: float32(p.compdevpercent),
+		CompTimeMax:    int32(p.comptimemax),
+		CompTimeMin:    int32(p.comptimemin),
+		ExcDev:         float32(p.excdev),
+		ExcDevPercent:  float32(p.excdevpercent),
+		ExcTimeMax:     int32(p.exctimemax),
+		ExcTimeMin:     int32(p.exctimemin),
+		Class:          RtdbClass(p.classof),
+		ChangeDate:     DateTimeType(p.changedate),
+		Changer:        CCharArrayToString((*C.char)(&p.changer[0]), int(C.RTDB_USER_SIZE)),
+		CreateDate:     DateTimeType(p.createdate),
+		Creator:        CCharArrayToString((*C.char)(&p.creator[0]), int(C.RTDB_USER_SIZE)),
+		Mirror:         RtdbMirror(p.mirror),
+		MilliSecond:    byte(p.millisecond),
+		ScanIndex:      uint32(p.scanindex),
+		CalcIndex:      uint32(p.calcindex),
+		AlarmIndex:     uint32(p.alarmindex),
+		TableDotTag:    CCharArrayToString((*C.char)(&p.table_dot_tag[0]), int(C.RTDB_TAG_SIZE+C.RTDB_TAG_SIZE)),
+		Summary:        byte(p.summary),
+		NamedTypeID:    uint16(p.named_type_id),
+		Precision:      RtdbPrecision(p.precision),
+	}
+
+	return rtn
+}
 
 /////////////////////////////// 上面是结构定义 ////////////////////////////////////
 /////////////////////////////// -- 华丽的分割线 -- ////////////////////////////////
