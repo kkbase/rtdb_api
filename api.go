@@ -5060,7 +5060,7 @@ func RawRtdbParseTimeWarp(tStr string) (TimestampType, SubtimeType, error) {
 	ts := C.rtdb_int64(0)
 	ms := C.rtdb_int16(0)
 	err := C.rtdb_parse_time_warp(cStr, &ts, &ms)
-	return TimestampType(ts), SubtimeType(st), RtdbError(err).GoError()
+	return TimestampType(ts), SubtimeType(ms), RtdbError(err).GoError()
 }
 
 // RawRtdbFormatMessageWarp 获取 Rtdb API 调用返回值的简短描述
