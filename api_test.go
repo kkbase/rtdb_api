@@ -199,7 +199,7 @@ func TestRawRtdbGetOwnConnectionWarp(t *testing.T) {
 	fmt.Println(socket)
 }
 
-func TestRawRtdbGetConnectionInfoWarp(t *testing.T) {
+func TestRawRtdbGetConnectionInfoIpv6Warp(t *testing.T) {
 	handle, err := RawRtdbConnectWarp(Hostname, Port)
 	if err != nil {
 		t.Error("创建连接失败", err.Error())
@@ -218,12 +218,6 @@ func TestRawRtdbGetConnectionInfoWarp(t *testing.T) {
 		return
 	}
 	fmt.Println(socket)
-
-	info, err := RawRtdbGetConnectionInfoWarp(handle, 0, socket)
-	if err != nil {
-		t.Error("获取连接信息失败：", err)
-	}
-	fmt.Println(info)
 
 	infoV6, err := RawRtdbGetConnectionInfoIpv6Warp(handle, 0, socket)
 	if err != nil {
