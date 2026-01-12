@@ -157,3 +157,24 @@ func TestRawRtdbSetDbInfo2Warp(t *testing.T) {
 		return
 	}
 }
+
+func TestRawRtdbGetConnectionsWarp(t *testing.T) {
+	handle, err := RawRtdbConnectWarp(Hostname, Port)
+	if err != nil {
+		t.Error("创建连接失败", err.Error())
+		return
+	}
+	_, err = RawRtdbLoginWarp(handle, Username, Password)
+	if err != nil {
+		t.Error("登录失败:", err)
+		return
+	}
+	defer func() { _ = RawRtdbDisconnectWarp(handle) }()
+
+	sockets, err := RawRtdbGetConnectionsWarp(handle, 0)
+	if err != nil {
+		t.Error("获取连接失败：", err)
+		return
+	}
+	fmt.Println(sockets)
+}

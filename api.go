@@ -4314,16 +4314,27 @@ func RawRtdbSetDbInfo2Warp(handle ConnectHandle, param RtdbParam, value ParamInt
 }
 
 // RawRtdbGetConnectionsWarp 列出 RTDB 服务器的所有连接句柄
-// * \param [in] handle       连接句柄
-// * \param [in] node_number   双活模式下，指定节点编号，1为rtdb_connect中第1个IP，2为rtdb_connect中第2个IP
-// * \param [out] sockets    整形数组，所有连接的套接字句柄
-// * \param [in,out]  count   输入时表示sockets的长度，输出时表示返回的连接个数
-// * \return rtdb_error
-// * \remark 用户须保证分配给 sockets 的空间与 count 相符。如果输入的 count 小于输出的 count，则只返回部分连接
-// rtdb_error RTDBAPI_CALLRULE rtdb_get_connections_warp(rtdb_int32 handle, rtdb_int32 node_number, rtdb_int32 *sockets, rtdb_int32 *count)
-// func RawRtdbGetConnectionsWarp(handle ConnectHandle, nodeNumber int32) ([]ConnectHandle, error) {
-// 	sockets := make([]ConnectHandle)
-// }
+//
+// input:
+//   - handle 连接句柄
+//   - nodeNumber 双活模式下，指定节点编号，1为rtdb_connect中第1个IP，2为rtdb_connect中第2个IP, 单机模式下写0
+//
+// output:
+//   - []ConnectHandle 连接数组
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdb_get_connections_warp(rtdb_int32 handle, rtdb_int32 node_number, rtdb_int32 *sockets, rtdb_int32 *count)
+func RawRtdbGetConnectionsWarp(handle ConnectHandle, nodeNumber int32) ([]ConnectHandle, error) {
+	connectionCount, err := RawRtdbGetDbInfo2Warp(handle, RtdbParamServerConnectionCount)
+	if err != nil {
+		return nil, err
+	}
+	cCount := C.rtdb_int32(connectionCount)
+	sockets := make([]ConnectHandle, int32(cCount))
+	cSockets := (*C.rtdb_int32)(unsafe.Pointer(&sockets[0]))
+	err2 := C.rtdb_get_connections_warp(C.rtdb_int32(handle), C.rtdb_int32(nodeNumber), cSockets, &cCount)
+	return sockets[0:cCount], RtdbError(err2).GoError()
+}
 
 // RawRtdbGetOwnConnectionWarp 获取当前连接的socket句柄
 // * \param [in] handle       连接句柄
