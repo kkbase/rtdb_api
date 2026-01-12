@@ -807,6 +807,13 @@ func TestRawRtdbbAppendTableWarp(t *testing.T) {
 		return
 	}
 
+	tt, err := RawRtdbbGetTablePropertyByIdWarp(handle, table.ID)
+	if err != nil {
+		t.Error("获取表失败：", err)
+		return
+	}
+	fmt.Println("表信息：", tt)
+
 	err = RawRtdbbRemoveTableByIdWarp(handle, table.ID)
 	if err != nil {
 		t.Error("删除表失败：", err)

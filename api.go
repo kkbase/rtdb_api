@@ -5642,11 +5642,21 @@ func RawRtdbbGetTableRealSizeByIdWarp(handle ConnectHandle, tableID TableID) (in
 }
 
 // RawRtdbbGetTablePropertyByIdWarp 根据标签点表 id 获取表属性
-// * \param handle 连接句柄
-// * \param field  RTDB_TABLE 结构，输入/输出，标签点表属性，
-// *               输入时指定 id 字段，输出时返回 type、name、desc 字段。
-// rtdb_error RTDBAPI_CALLRULE rtdbb_get_table_property_by_id_warp(rtdb_int32 handle, RTDB_TABLE *field)
-func RawRtdbbGetTablePropertyByIdWarp() {}
+//
+// input:
+//   - handle 连接句柄
+//
+// output:
+//   - RtdbTable 表属性
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbb_get_table_property_by_id_warp(rtdb_int32 handle, RTDB_TABLE *field)
+func RawRtdbbGetTablePropertyByIdWarp(handle ConnectHandle, tableID TableID) (RtdbTable, error) {
+	table := C.RTDB_TABLE{}
+	table.id = C.rtdb_int32(tableID)
+	err := C.rtdbb_get_table_property_by_id_warp(C.rtdb_int32(handle), &table)
+	return cToRtdbTable(&table), RtdbError(err).GoError()
+}
 
 // RawRtdbbGetTablePropertyByNameWarp 根据表名获取标签点表属性
 // *  \param handle 连接句柄
