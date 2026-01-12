@@ -4974,16 +4974,16 @@ func RawRtdbHostTime64Warp(handle ConnectHandle) (TimestampType, error) {
 }
 
 // RawRtdbFormatTimespanWarp 根据时间跨度值生成时间格式字符串, 如：输入10， 输出10s, 输入60，输出1n
-// 跨度单位如下，备注：这是遵循工业Pi数据库的标准, 和通用标准稍有不同
-// *   ?y    ?年, 1年 = 365日
-// *   ?m    ?月, 1月 = 30 日
-// *   ?d    ?日
-// *   ?h    ?小时
-// *   ?n    ?分钟
-// *   ?s    ?秒
 //
 // input:
-//   - timespan 要处理的时间跨度秒数
+//
+//   - timespan 要处理的时间跨度秒数, 跨度单位如下，备注：这是遵循工业Pi数据库的标准, 和通用标准稍有不同
+//     ?y    ?年, 1年 = 365日
+//     ?m    ?月, 1月 = 30 日
+//     ?d    ?日
+//     ?h    ?小时
+//     ?n    ?分钟
+//     ?s    ?秒
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_format_timespan_warp(char *str, rtdb_int32 timespan)
@@ -4996,21 +4996,30 @@ func RawRtdbFormatTimespanWarp(timespan int32) (string, error) {
 	return tStr, RtdbError(err).GoError()
 }
 
-// RawRtdbParseTimespanWarp 根据时间格式字符串解析时间跨度值
-// * \param str          字符串，输入，时间格式字符串，规则如下：
-// *                     [time_span]
-// *                     时间跨度部分可以出现多次，
-// *                     可用的时间跨度代码及含义如下：
-// *                     ?y            ?年, 1年 = 365日
-// *                     ?m            ?月, 1月 = 30 日
-// *                     ?d            ?日
-// *                     ?h            ?小时
-// *                     ?n            ?分钟
-// *                     ?s            ?秒
-// *                     例如："1d" 表示时间跨度为24小时。
-// * \param timespan     整型，输出，返回解析得到的时间跨度秒数。
-// rtdb_error RTDBAPI_CALLRULE rtdb_parse_timespan_warp(const char *str, rtdb_int32 *timespan)
-func RawRtdbParseTimespanWarp() {}
+// RawRtdbParseTimespanWarp 根据时间格式字符串解析时间跨度值, 如：输入2n，输出120，表示2分钟
+//
+// input:
+//   - 时间格式字符串，规则如下：
+//     [time_span]
+//     时间跨度部分可以出现多次，
+//     可用的时间跨度代码及含义如下：
+//     ?y            ?年, 1年 = 365日
+//     ?m            ?月, 1月 = 30 日
+//     ?d            ?日
+//     ?h            ?小时
+//     ?n            ?分钟
+//     ?s            ?秒
+//     例如："1d" 表示时间跨度为24小时。
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdb_parse_timespan_warp(const char *str, rtdb_int32 *timespan)
+func RawRtdbParseTimespanWarp(tStr string) (DateTimeType, error) {
+	cStr := C.CString(tStr)
+	defer C.free(unsafe.Pointer(cStr))
+	ts := C.rtdb_int32(0)
+	err := C.rtdb_parse_timespan_warp(cStr, &ts)
+	return DateTimeType(ts), RtdbError(err).GoError()
+}
 
 // RawRtdbParseTimeWarp 根据时间格式字符串解析时间值
 // * \param str          字符串，输入，时间格式字符串，规则如下：
