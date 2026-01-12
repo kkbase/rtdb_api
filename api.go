@@ -4262,6 +4262,40 @@ const (
 // Quality 质量码
 type Quality int16
 
+// RtdbTable 表
+type RtdbTable struct {
+	ID   int32  // 表ID
+	Type int32  // 表类型，暂时无用
+	Name string // 表名
+	Desc string // 表描述
+}
+
+func cToRtdbTable(table *C.RTDB_TABLE) RtdbTable {
+	tableNameByte := make([]byte, 0)
+	for i := 0; i < C.RTDB_TAG_SIZE; i++ {
+		c := table.name[i]
+		if c != 0 {
+			tableNameByte = append(tableNameByte, byte(c))
+		} else {
+			break
+		}
+	}
+	tableName := string(tableNameByte)
+
+	tableDescByte := make([]byte, 0)
+	for i := 0; i < C.RTDB_DESC_SIZE; i++ {
+		c := table.desc[i]
+		if c != 0 {
+			tableDescByte = append(tableDescByte, byte(c))
+		} else {
+			break
+		}
+	}
+	tableDesc := string(tableDescByte)
+
+	return RtdbTable{ID: int32(table.id), Type: int32(table._type), Name: tableName, Desc: tableDesc}
+}
+
 /////////////////////////////// 上面是结构定义 ////////////////////////////////////
 /////////////////////////////// -- 华丽的分割线 -- ////////////////////////////////
 /////////////////////////////// 下面是函数实现 ////////////////////////////////////
@@ -5460,29 +5494,51 @@ func RawRtdbFormatIpaddrWarp(ip uint32) string {
 	return C.GoString(cAddr)
 }
 
-// RawRtdbbGetEquationByFileNameWarp 根据文件名获取方程式
-// *      [handle]   连接句柄
-// *      [file_name] 输入，字符串，方程式路径
-// *      [equation]  输出，返回的方程式长度最长为RTDB_MAX_EQUATION_SIZE-1
-// *备注：用户调用时为equation分配的空间不得小于RTDB_MAX_EQUATION_SIZE
-// rtdb_error RTDBAPI_CALLRULE rtdbb_get_equation_by_file_name_warp(rtdb_int32 handle, const char* file_name, char equation[RTDB_MAX_EQUATION_SIZE])
-func RawRtdbbGetEquationByFileNameWarp() {}
-
-// RawRtdbbGetEquationByIdWarp 根ID径获取方程式
-// * [handle]   连接句柄
-// * [id]				输入，整型，方程式ID
-// * [equation] 输出，返回的方程式长度最长为RTDB_MAX_EQUATION_SIZE-1
-// * 备注：用户调用时为equation分配的空间不得小于RTDB_MAX_EQUATION_SIZE
-// rtdb_error RTDBAPI_CALLRULE rtdbb_get_equation_by_id_warp(rtdb_int32 handle, rtdb_int32 id, char equation[RTDB_MAX_EQUATION_SIZE])
-func RawRtdbbGetEquationByIdWarp() {}
-
 // RawRtdbbAppendTableWarp 添加新表
-// * \param handle   连接句柄
-// * \param field    RTDB_TABLE 结构，输入/输出，表信息。
-// *               在输入时，type、name、desc 字段有效；
-// *               输出时，id 字段由系统自动分配并返回给用户。
-// rtdb_error RTDBAPI_CALLRULE rtdbb_append_table_warp(rtdb_int32 handle, RTDB_TABLE *field)
-func RawRtdbbAppendTableWarp() {}
+// input:
+//   - handle   连接句柄
+//   - tableName 表名
+//   - tableDesc 表描述
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbb_append_table_warp(rtdb_int32 handle, RTDB_TABLE *field)
+func RawRtdbbAppendTableWarp(handle ConnectHandle, tableName, tableDesc string) (RtdbTable, error) {
+	cgoHandle := C.rtdb_int32(handle)
+	table := C.RTDB_TABLE{}
+	for i, c := range []byte(tableName) {
+		if i >= C.RTDB_TAG_SIZE {
+			break
+		}
+		table.name[i] = C.char(c)
+	}
+	for i, c := range []byte(tableDesc) {
+		if i >= C.RTDB_DESC_SIZE {
+			break
+		}
+		table.desc[i] = C.char(c)
+	}
+	err := C.rtdbb_append_table(cgoHandle, &table)
+	return cToRtdbTable(&table), RtdbError(err).GoError()
+}
+
+// RawRtdbbRemoveTableByIdWarp 根据表 id 删除表及表中标签点
+// input:
+//   - handle        连接句柄
+//   - id            整型，输入，表 id
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbb_remove_table_by_id_warp(rtdb_int32 handle, rtdb_int32 id)
+func RawRtdbbRemoveTableByIdWarp(handle ConnectHandle, tableID int32) error {
+	err := C.rtdbb_remove_table_by_id_warp(C.rtdb_int32(handle), C.rtdb_int32(tableID))
+	return RtdbError(err).GoError()
+}
+
+// RawRtdbbRemoveTableByNameWarp 根据表名删除表及表中标签点
+// * \param handle        连接句柄
+// * \param name          字符串，输入，表名称
+// * \remark 删除的表不可恢复，删除的标签点可以通过 rtdbb_recover_point 接口恢复。
+// rtdb_error RTDBAPI_CALLRULE rtdbb_remove_table_by_name_warp(rtdb_int32 handle, const char *name)
+func RawRtdbbRemoveTableByNameWarp() {}
 
 // RawRtdbbTablesCountWarp 取得标签点表总数
 // * \param handle   连接句柄
@@ -5762,20 +5818,6 @@ func RawRtdbbSearchExWarp() {}
 // *        多个搜索条件可以通过空格分隔，比如"demo_*1 demo_*2"，会将满足demo_*1或者demo_*2条件的标签点搜索出来。
 // rtdb_error RTDBAPI_CALLRULE rtdbb_search_points_count_warp(rtdb_int32 handle, const char *tagmask, const char *tablemask, const char *source, const char *unit, const char *desc, const char *instrument, const char *typemask, rtdb_int32 classofmask, rtdb_int32 timeunitmask, rtdb_int32 othertypemask, const char *othertypemaskvalue, rtdb_int32 *count)
 func RawRtdbbSearchPointsCountWarp() {}
-
-// RawRtdbbRemoveTableByIdWarp 根据表 id 删除表及表中标签点
-// * \param handle        连接句柄
-// * \param id            整型，输入，表 id
-// * \remark 删除的表不可恢复，删除的标签点可以通过 rtdbb_recover_point 接口恢复。
-// rtdb_error RTDBAPI_CALLRULE rtdbb_remove_table_by_id_warp(rtdb_int32 handle, rtdb_int32 id)
-func RawRtdbbRemoveTableByIdWarp() {}
-
-// RawRtdbbRemoveTableByNameWarp 根据表名删除表及表中标签点
-// * \param handle        连接句柄
-// * \param name          字符串，输入，表名称
-// * \remark 删除的表不可恢复，删除的标签点可以通过 rtdbb_recover_point 接口恢复。
-// rtdb_error RTDBAPI_CALLRULE rtdbb_remove_table_by_name_warp(rtdb_int32 handle, const char *name)
-func RawRtdbbRemoveTableByNameWarp() {}
 
 // RawRtdbbUpdatePointPropertyWarp 更新单个标签点属性
 // * \param handle        连接句柄
@@ -7854,6 +7896,22 @@ func RawRtdbhPutArchivedNamedTypeValues64Warp() {}
 //
 // rtdb_error RTDBAPI_CALLRULE rtdbe_compute_history64_warp(rtdb_int32 handle, rtdb_int32* count, rtdb_int16 flag, rtdb_timestamp_type datetime1, rtdb_subtime_type subtime1, rtdb_timestamp_type datetime2, rtdb_subtime_type subtime2, const rtdb_int32* ids, rtdb_error* errors)
 func RawRtdbeComputeHistory64Warp() {}
+
+// RawRtdbbGetEquationByFileNameWarp 根据文件名获取方程式
+// *      [handle]   连接句柄
+// *      [file_name] 输入，字符串，方程式路径
+// *      [equation]  输出，返回的方程式长度最长为RTDB_MAX_EQUATION_SIZE-1
+// *备注：用户调用时为equation分配的空间不得小于RTDB_MAX_EQUATION_SIZE
+// rtdb_error RTDBAPI_CALLRULE rtdbb_get_equation_by_file_name_warp(rtdb_int32 handle, const char* file_name, char equation[RTDB_MAX_EQUATION_SIZE])
+func RawRtdbbGetEquationByFileNameWarp() {}
+
+// RawRtdbbGetEquationByIdWarp 根ID径获取方程式
+// * [handle]   连接句柄
+// * [id]				输入，整型，方程式ID
+// * [equation] 输出，返回的方程式长度最长为RTDB_MAX_EQUATION_SIZE-1
+// * 备注：用户调用时为equation分配的空间不得小于RTDB_MAX_EQUATION_SIZE
+// rtdb_error RTDBAPI_CALLRULE rtdbb_get_equation_by_id_warp(rtdb_int32 handle, rtdb_int32 id, char equation[RTDB_MAX_EQUATION_SIZE])
+func RawRtdbbGetEquationByIdWarp() {}
 
 // RawRtdbeGetEquationGraphCountWarp 根据标签点 id 获取相关联方程式键值对数量
 //   - 参数：

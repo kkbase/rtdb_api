@@ -787,3 +787,29 @@ func TestRawRtdbFormatIpaddrWarp(t *testing.T) {
 	addr := RawRtdbFormatIpaddrWarp(0x11221122)
 	fmt.Println(addr)
 }
+
+func TestRawRtdbbAppendTableWarp(t *testing.T) {
+	handle, err := RawRtdbConnectWarp(Hostname, Port)
+	if err != nil {
+		t.Error("创建连接失败", err)
+		return
+	}
+	_, err = RawRtdbLoginWarp(handle, Username, Password)
+	if err != nil {
+		t.Error("登录失败:", err)
+		return
+	}
+	defer func() { _ = RawRtdbDisconnectWarp(handle) }()
+
+	table, err := RawRtdbbAppendTableWarp(handle, "aaa", "aaa test")
+	if err != nil {
+		t.Error("添加表失败: ", err)
+		return
+	}
+
+	err = RawRtdbbRemoveTableByIdWarp(handle, table.ID)
+	if err != nil {
+		t.Error("删除表失败：", err)
+		return
+	}
+}
