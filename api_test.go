@@ -413,3 +413,53 @@ func TestRawRtdbGetUsersWarp(t *testing.T) {
 	}
 	fmt.Println(users)
 }
+
+func TestBlackList(t *testing.T) {
+	handle, err := RawRtdbConnectWarp(Hostname, Port)
+	if err != nil {
+		t.Error("创建连接失败", err.Error())
+		return
+	}
+	_, err = RawRtdbLoginWarp(handle, Username, Password)
+	if err != nil {
+		t.Error("登录失败:", err)
+		return
+	}
+	defer func() { _ = RawRtdbDisconnectWarp(handle) }()
+
+	err = RawRtdbAddBlacklistWarp(handle, "192.168.10.11", "255.255.255.0", "test desc")
+	if err != nil {
+		t.Error("添加黑名单失败：", err)
+		return
+	}
+	bList, err := RawRtdbGetBlacklistWarp(handle)
+	if err != nil {
+		t.Error("获取黑名单失败：", err)
+		return
+	}
+	fmt.Println(bList)
+
+	err = RawRtdbUpdateBlacklistWarp(handle, "192.168.10.11", "255.255.255.0", "192.168.10.11", "255.255.255.0", "test update")
+	if err != nil {
+		t.Error("更新黑名单失败：", err)
+		return
+	}
+	bList, err = RawRtdbGetBlacklistWarp(handle)
+	if err != nil {
+		t.Error("获取黑名单失败：", err)
+		return
+	}
+	fmt.Println(bList)
+
+	err = RawRtdbRemoveBlacklistWarp(handle, "192.168.10.11", "255.255.255.0")
+	if err != nil {
+		t.Error("删除黑名单:", err)
+		return
+	}
+	bList, err = RawRtdbGetBlacklistWarp(handle)
+	if err != nil {
+		t.Error("获取黑名单失败：", err)
+		return
+	}
+	fmt.Println(bList)
+}
