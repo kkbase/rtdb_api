@@ -4557,14 +4557,21 @@ func RawRtdbGetPrivWarp(handle ConnectHandle) (PrivGroup, error) {
 	return PrivGroup(priv), RtdbError(err).GoError()
 }
 
-// RawRtdbChangePrivWarp 修改用户帐户权限
-// * \param handle  连接句柄
-// * \param user    已有帐户
-// * \param priv    帐户权限， 枚举 \ref RTDB_PRIV_GROUP 的值之一
-// * \return rtdb_error
-// * \remark 只有管理员有修改权限
-// rtdb_error RTDBAPI_CALLRULE rtdb_change_priv_warp(rtdb_int32 handle, const char *user, rtdb_int32 priv)
-func RawRtdbChangePrivWarp() {}
+// RawRtdbChangePrivWarp 修改用户帐户权限, 只有管理员有修改权限
+//
+// input:
+//   - handle 连接句柄
+//   - user 已有帐户
+//   - priv 帐户权限
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdb_change_priv_warp(rtdb_int32 handle, const char *user, rtdb_int32 priv)
+func RawRtdbChangePrivWarp(handle ConnectHandle, user string, priv PrivGroup) error {
+	cUser := C.CString(user)
+	defer C.free(unsafe.Pointer(cUser))
+	err := C.rtdb_change_priv_warp(handle, cUser, C.rtdb_int32(priv))
+	return RtdbError(err).GoError()
+}
 
 // RawRtdbAddUserWarp 添加用户帐户
 // * \param handle    连接句柄

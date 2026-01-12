@@ -314,3 +314,23 @@ func TestRawRtdbGetPrivWarp(t *testing.T) {
 	}
 	fmt.Println(priv.Desc())
 }
+
+func TestRawRawRtdbChangePrivWarp(t *testing.T) {
+	handle, err := RawRtdbConnectWarp(Hostname, Port)
+	if err != nil {
+		t.Error("创建连接失败", err.Error())
+		return
+	}
+	_, err = RawRtdbLoginWarp(handle, Username, Password)
+	if err != nil {
+		t.Error("登录失败:", err)
+		return
+	}
+	defer func() { _ = RawRtdbDisconnectWarp(handle) }()
+
+	err = RawRtdbChangePrivWarp(handle, "sa", PrivGroupRtdbSA)
+	if err != nil {
+		t.Error("获取权限失败：", err)
+		return
+	}
+}
