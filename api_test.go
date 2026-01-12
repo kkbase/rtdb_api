@@ -573,3 +573,8 @@ func TestRawRtdbFormatMessageWarp(t *testing.T) {
 	name, message := RawRtdbFormatMessageWarp(RteCantLoadBase)
 	fmt.Println(name, message)
 }
+
+func TestRawRtdbJobMessageWarp(t *testing.T) {
+	name, desc := RawRtdbJobMessageWarp(1)
+	fmt.Println(name, desc)
+}

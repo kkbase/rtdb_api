@@ -5086,14 +5086,26 @@ func RawRtdbFormatMessageWarp(err RtdbError) (string, string) {
 }
 
 // RawRtdbJobMessageWarp 获取任务的简短描述
-// * \param job_id       整型，输入，RTDB_HOST_CONNECT_INFO::job 字段所表示的最近任务的描述
-// * \param desc         字符串，输出，返回任务描述
-// * \param name         字符串，输出，返回任务名称
-// * \param size         整型，输入，desc、name 参数的字节长度
-// * \remark 用户须保证分配给 desc、name 的空间与 size 相符，
-// * name 或 message 可以为空指针，对应的信息将不再返回。
-// void RTDBAPI_CALLRULE rtdb_job_message_warp(rtdb_int32 job_id, char *desc, char *name, rtdb_int32 size)
-func RawRtdbJobMessageWarp() {}
+//
+// input:
+//   - jobID RTDB_HOST_CONNECT_INFO::job 字段所表示的最近任务的描述
+//
+// output:
+//   - name Job名称
+//   - desc Job描述
+//
+// raw_fn:
+//   - void RTDBAPI_CALLRULE rtdb_job_message_warp(rtdb_int32 job_id, char *desc, char *name, rtdb_int32 size)
+func RawRtdbJobMessageWarp(jobID int32) (string, string) {
+	cgoDesc := (*C.char)(C.CBytes(make([]byte, 1024)))
+	defer C.free(unsafe.Pointer(cgoDesc))
+	cgoName := (*C.char)(C.CBytes(make([]byte, 1024)))
+	defer C.free(unsafe.Pointer(cgoName))
+	cgoSize := C.rtdb_int32(1024)
+	cgoJob := C.rtdb_int32(jobID)
+	C.rtdb_job_message_warp(cgoJob, cgoDesc, cgoName, cgoSize)
+	return C.GoString(cgoName), C.GoString(cgoDesc)
+}
 
 // RawRtdbSetTimeoutWarp 设置连接超时时间
 // * \param handle   连接句柄
