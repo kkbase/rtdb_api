@@ -5588,7 +5588,7 @@ func RawRtdbbGetTablesWarp(handle ConnectHandle) ([]TableID, error) {
 	return ids[:cgoCount], RtdbError(e).GoError()
 }
 
-// RawRtdbbGetTableSizeByIdWarp 根据表 id 获取表中包含的标签点数量
+// RawRtdbbGetTableSizeByIdWarp 根据表 id 获取表中包含的标签点数量(大概数量, 包含被标记删除的点)
 //
 // input:
 //   - handle 连接句柄
@@ -5605,7 +5605,7 @@ func RawRtdbbGetTableSizeByIdWarp(handle ConnectHandle, tableID TableID) (int32,
 	return int32(cSize), RtdbError(err).GoError()
 }
 
-// RawRtdbbGetTableSizeByNameWarp 根据表名称获取表中包含的标签点数量
+// RawRtdbbGetTableSizeByNameWarp 根据表名称获取表中包含的标签点数量(大概数量, 包含被标记删除的点)
 //
 // input:
 //   - handle 连接句柄
@@ -5624,15 +5624,22 @@ func RawRtdbbGetTableSizeByNameWarp(handle ConnectHandle, tableName string) (int
 	return int32(cSize), RtdbError(err).GoError()
 }
 
-// RawRtdbbGetTableRealSizeByIdWarp 根据表 id 获取表中实际包含的标签点数量
-// *
-// *  \param handle   连接句柄
-// *  \param id       整型，输入，表ID
-// *  \param size     整型，输出，表中标签点数量
-// *  注意：通过此API获取标签点数量，然后搜索此表中的标签点得到的数量可能会不一致，这是由于服务内部批量建点采取了异步的方式。
-// *        一般情况下请使用rtdbb_get_table_size_by_id来获取表中的标签点数量。
+// RawRtdbbGetTableRealSizeByIdWarp 根据表 id 获取表中实际包含的标签点数量(实际数量, 不含被删除的点)
+//
+// input:
+//   - handle 连接句柄
+//   - tableID 表ID
+//
+// output:
+//   - int32 表中标签点的实际数量
+//
+// raw_fn:
 // rtdb_error RTDBAPI_CALLRULE rtdbb_get_table_real_size_by_id_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32 *size)
-func RawRtdbbGetTableRealSizeByIdWarp() {}
+func RawRtdbbGetTableRealSizeByIdWarp(handle ConnectHandle, tableID TableID) (int32, error) {
+	cSize := C.rtdb_int32(0)
+	err := C.rtdbb_get_table_real_size_by_id_warp(C.rtdb_int32(handle), C.rtdb_int32(tableID), &cSize)
+	return int32(cSize), RtdbError(err).GoError()
+}
 
 // RawRtdbbGetTablePropertyByIdWarp 根据标签点表 id 获取表属性
 // * \param handle 连接句柄

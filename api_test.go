@@ -840,7 +840,7 @@ func TestRawRtdbbAppendTableWarp(t *testing.T) {
 	}
 }
 
-func TestPoint(t *testing.T) {
+func TestPointCount(t *testing.T) {
 	handle, err := RawRtdbConnectWarp(Hostname, Port)
 	if err != nil {
 		t.Error("创建连接失败", err)
@@ -880,4 +880,11 @@ func TestPoint(t *testing.T) {
 		return
 	}
 	fmt.Println("point count by name: ", pCount2)
+
+	pCount3, err := RawRtdbbGetTableRealSizeByIdWarp(handle, table.ID)
+	if err != nil {
+		t.Error("获取Table中Point数量失败：", err)
+		return
+	}
+	fmt.Println("point count by name:", pCount3)
 }
