@@ -4273,29 +4273,13 @@ type RtdbTable struct {
 }
 
 func cToRtdbTable(table *C.RTDB_TABLE) RtdbTable {
-	tableNameByte := make([]byte, 0)
-	for i := 0; i < C.RTDB_TAG_SIZE; i++ {
-		c := table.name[i]
-		if c != 0 {
-			tableNameByte = append(tableNameByte, byte(c))
-		} else {
-			break
-		}
+	rtn := RtdbTable{
+		ID:   TableID(table.id),
+		Type: int32(table._type),
+		Name: CCharArrayToString(&table.name[0], int(C.RTDB_TAG_SIZE)),
+		Desc: CCharArrayToString(&table.desc[0], int(C.RTDB_DESC_SIZE)),
 	}
-	tableName := string(tableNameByte)
-
-	tableDescByte := make([]byte, 0)
-	for i := 0; i < C.RTDB_DESC_SIZE; i++ {
-		c := table.desc[i]
-		if c != 0 {
-			tableDescByte = append(tableDescByte, byte(c))
-		} else {
-			break
-		}
-	}
-	tableDesc := string(tableDescByte)
-
-	return RtdbTable{ID: TableID(table.id), Type: int32(table._type), Name: tableName, Desc: tableDesc}
+	return rtn
 }
 
 // PointID 点ID
@@ -4656,12 +4640,12 @@ func goToCRtdbPoint(p *RtdbPoint) C.RTDB_POINT {
 
 func cToRtdbPoint(p *C.RTDB_POINT) RtdbPoint {
 	rtn := RtdbPoint{
-		Tag:            CCharArrayToString((*C.char)(&p.tag[0]), int(C.RTDB_TAG_SIZE)),
+		Tag:            CCharArrayToString(&p.tag[0], int(C.RTDB_TAG_SIZE)),
 		ID:             PointID(p.id),
 		Type:           RtdbType(p._type),
 		Table:          TableID(p.table),
-		Desc:           CCharArrayToString((*C.char)(&p.desc[0]), int(C.RTDB_DESC_SIZE)),
-		Unit:           CCharArrayToString((*C.char)(&p.unit[0]), int(C.RTDB_UNIT_SIZE)),
+		Desc:           CCharArrayToString(&p.desc[0], int(C.RTDB_DESC_SIZE)),
+		Unit:           CCharArrayToString(&p.unit[0], int(C.RTDB_UNIT_SIZE)),
 		Archive:        byte(p.archive),
 		Digits:         int16(p.digits),
 		Shutdown:       byte(p.shutdown),
@@ -4680,15 +4664,15 @@ func cToRtdbPoint(p *C.RTDB_POINT) RtdbPoint {
 		ExcTimeMin:     int32(p.exctimemin),
 		Class:          RtdbClass(p.classof),
 		ChangeDate:     DateTimeType(p.changedate),
-		Changer:        CCharArrayToString((*C.char)(&p.changer[0]), int(C.RTDB_USER_SIZE)),
+		Changer:        CCharArrayToString(&p.changer[0], int(C.RTDB_USER_SIZE)),
 		CreateDate:     DateTimeType(p.createdate),
-		Creator:        CCharArrayToString((*C.char)(&p.creator[0]), int(C.RTDB_USER_SIZE)),
+		Creator:        CCharArrayToString(&p.creator[0], int(C.RTDB_USER_SIZE)),
 		Mirror:         RtdbMirror(p.mirror),
 		MilliSecond:    byte(p.millisecond),
 		ScanIndex:      uint32(p.scanindex),
 		CalcIndex:      uint32(p.calcindex),
 		AlarmIndex:     uint32(p.alarmindex),
-		TableDotTag:    CCharArrayToString((*C.char)(&p.table_dot_tag[0]), int(C.RTDB_TAG_SIZE+C.RTDB_TAG_SIZE)),
+		TableDotTag:    CCharArrayToString(&p.table_dot_tag[0], int(C.RTDB_TAG_SIZE+C.RTDB_TAG_SIZE)),
 		Summary:        byte(p.summary),
 		NamedTypeID:    uint16(p.named_type_id),
 		Precision:      RtdbPrecision(p.precision),
@@ -5906,18 +5890,8 @@ func RawRtdbFormatIpaddrWarp(ip uint32) string {
 func RawRtdbbAppendTableWarp(handle ConnectHandle, tableName, tableDesc string) (RtdbTable, error) {
 	cgoHandle := C.rtdb_int32(handle)
 	table := C.RTDB_TABLE{}
-	for i, c := range []byte(tableName) {
-		if i >= C.RTDB_TAG_SIZE {
-			break
-		}
-		table.name[i] = C.char(c)
-	}
-	for i, c := range []byte(tableDesc) {
-		if i >= C.RTDB_DESC_SIZE {
-			break
-		}
-		table.desc[i] = C.char(c)
-	}
+	GoStringToCCharArray(tableName, &table.name[0], int(C.RTDB_TAG_SIZE))
+	GoStringToCCharArray(tableDesc, &table.desc[0], int(C.RTDB_DESC_SIZE))
 	err := C.rtdbb_append_table_warp(cgoHandle, &table)
 	return cToRtdbTable(&table), RtdbError(err).GoError()
 }
@@ -6064,12 +6038,7 @@ func RawRtdbbGetTablePropertyByIdWarp(handle ConnectHandle, tableID TableID) (Rt
 // rtdb_error RTDBAPI_CALLRULE rtdbb_get_table_property_by_name_warp(rtdb_int32 handle, RTDB_TABLE *field)
 func RawRtdbbGetTablePropertyByNameWarp(handle ConnectHandle, tableName string) (RtdbTable, error) {
 	table := C.RTDB_TABLE{}
-	for i, c := range []byte(tableName) {
-		if i >= C.RTDB_TAG_SIZE {
-			break
-		}
-		table.name[i] = C.char(c)
-	}
+	GoStringToCCharArray(tableName, &table.name[0], int(C.RTDB_TAG_SIZE))
 	err := C.rtdbb_get_table_property_by_name_warp(C.rtdb_int32(handle), &table)
 	return cToRtdbTable(&table), RtdbError(err).GoError()
 }
