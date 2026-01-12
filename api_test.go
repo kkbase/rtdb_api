@@ -37,7 +37,7 @@ func TestRawRtdbSetOptionWarp(t *testing.T) {
 func TestLoginAndLogout(t *testing.T) {
 	handle, err := RawRtdbConnectWarp(Hostname, Port)
 	if err != nil {
-		t.Error("创建连接失败", err.Error())
+		t.Error("创建连接失败", err)
 		return
 	}
 	priv, err := RawRtdbLoginWarp(handle, Username, Password)
@@ -57,7 +57,7 @@ func TestLoginAndLogout(t *testing.T) {
 func TestRawRtdbConnectionCountWarp(t *testing.T) {
 	handle, err := RawRtdbConnectWarp(Hostname, Port)
 	if err != nil {
-		t.Error("创建连接失败", err.Error())
+		t.Error("创建连接失败", err)
 		return
 	}
 	_, err = RawRtdbLoginWarp(handle, Username, Password)
@@ -69,7 +69,7 @@ func TestRawRtdbConnectionCountWarp(t *testing.T) {
 
 	count, err := RawRtdbConnectionCountWarp(handle, 0)
 	if err != nil {
-		t.Error("获取Count失败", err.Error())
+		t.Error("获取Count失败", err)
 		return
 	}
 	fmt.Println("当前服务器连接个数: ", count)
@@ -78,7 +78,7 @@ func TestRawRtdbConnectionCountWarp(t *testing.T) {
 func TestRawRtdbGetDbInfo1Warp(t *testing.T) {
 	handle, err := RawRtdbConnectWarp(Hostname, Port)
 	if err != nil {
-		t.Error("创建连接失败", err.Error())
+		t.Error("创建连接失败", err)
 		return
 	}
 	_, err = RawRtdbLoginWarp(handle, Username, Password)
@@ -99,7 +99,7 @@ func TestRawRtdbGetDbInfo1Warp(t *testing.T) {
 func TestRawRtdbGetDbInfo2Warp(t *testing.T) {
 	handle, err := RawRtdbConnectWarp(Hostname, Port)
 	if err != nil {
-		t.Error("创建连接失败", err.Error())
+		t.Error("创建连接失败", err)
 		return
 	}
 	_, err = RawRtdbLoginWarp(handle, Username, Password)
@@ -120,7 +120,7 @@ func TestRawRtdbGetDbInfo2Warp(t *testing.T) {
 func TestRawRtdbSetDbInfo1Warp(t *testing.T) {
 	handle, err := RawRtdbConnectWarp(Hostname, Port)
 	if err != nil {
-		t.Error("创建连接失败", err.Error())
+		t.Error("创建连接失败", err)
 		return
 	}
 	_, err = RawRtdbLoginWarp(handle, Username, Password)
@@ -141,7 +141,7 @@ func TestRawRtdbSetDbInfo1Warp(t *testing.T) {
 func TestRawRtdbSetDbInfo2Warp(t *testing.T) {
 	handle, err := RawRtdbConnectWarp(Hostname, Port)
 	if err != nil {
-		t.Error("创建连接失败", err.Error())
+		t.Error("创建连接失败", err)
 		return
 	}
 	_, err = RawRtdbLoginWarp(handle, Username, Password)
@@ -161,7 +161,7 @@ func TestRawRtdbSetDbInfo2Warp(t *testing.T) {
 func TestRawRtdbGetConnectionsWarp(t *testing.T) {
 	handle, err := RawRtdbConnectWarp(Hostname, Port)
 	if err != nil {
-		t.Error("创建连接失败", err.Error())
+		t.Error("创建连接失败", err)
 		return
 	}
 	_, err = RawRtdbLoginWarp(handle, Username, Password)
@@ -182,7 +182,7 @@ func TestRawRtdbGetConnectionsWarp(t *testing.T) {
 func TestRawRtdbGetOwnConnectionWarp(t *testing.T) {
 	handle, err := RawRtdbConnectWarp(Hostname, Port)
 	if err != nil {
-		t.Error("创建连接失败", err.Error())
+		t.Error("创建连接失败", err)
 		return
 	}
 	_, err = RawRtdbLoginWarp(handle, Username, Password)
@@ -202,7 +202,7 @@ func TestRawRtdbGetOwnConnectionWarp(t *testing.T) {
 func TestRawRtdbGetConnectionInfoIpv6Warp(t *testing.T) {
 	handle, err := RawRtdbConnectWarp(Hostname, Port)
 	if err != nil {
-		t.Error("创建连接失败", err.Error())
+		t.Error("创建连接失败", err)
 		return
 	}
 	_, err = RawRtdbLoginWarp(handle, Username, Password)
@@ -229,7 +229,7 @@ func TestRawRtdbGetConnectionInfoIpv6Warp(t *testing.T) {
 func TestRawRtdbOsType(t *testing.T) {
 	handle, err := RawRtdbConnectWarp(Hostname, Port)
 	if err != nil {
-		t.Error("创建连接失败", err.Error())
+		t.Error("创建连接失败", err)
 		return
 	}
 	_, err = RawRtdbLoginWarp(handle, Username, Password)
@@ -257,7 +257,7 @@ func TestRawRtdbOsType(t *testing.T) {
 func TestRawRtdbChangePasswordWarp(t *testing.T) {
 	handle, err := RawRtdbConnectWarp(Hostname, Port)
 	if err != nil {
-		t.Error("创建连接失败", err.Error())
+		t.Error("创建连接失败", err)
 		return
 	}
 	_, err = RawRtdbLoginWarp(handle, Username, Password)
@@ -277,7 +277,7 @@ func TestRawRtdbChangePasswordWarp(t *testing.T) {
 func TestRawRtdbChangeMyPasswordWarp(t *testing.T) {
 	handle, err := RawRtdbConnectWarp(Hostname, Port)
 	if err != nil {
-		t.Error("创建连接失败", err.Error())
+		t.Error("创建连接失败", err)
 		return
 	}
 	_, err = RawRtdbLoginWarp(handle, Username, Password)
@@ -297,7 +297,7 @@ func TestRawRtdbChangeMyPasswordWarp(t *testing.T) {
 func TestRawRtdbGetPrivWarp(t *testing.T) {
 	handle, err := RawRtdbConnectWarp(Hostname, Port)
 	if err != nil {
-		t.Error("创建连接失败", err.Error())
+		t.Error("创建连接失败", err)
 		return
 	}
 	_, err = RawRtdbLoginWarp(handle, Username, Password)
@@ -318,7 +318,7 @@ func TestRawRtdbGetPrivWarp(t *testing.T) {
 func TestRawRawRtdbChangePrivWarp(t *testing.T) {
 	handle, err := RawRtdbConnectWarp(Hostname, Port)
 	if err != nil {
-		t.Error("创建连接失败", err.Error())
+		t.Error("创建连接失败", err)
 		return
 	}
 	_, err = RawRtdbLoginWarp(handle, Username, Password)
@@ -338,7 +338,7 @@ func TestRawRawRtdbChangePrivWarp(t *testing.T) {
 func TestRawRtdbAddDelUserWarp(t *testing.T) {
 	handle, err := RawRtdbConnectWarp(Hostname, Port)
 	if err != nil {
-		t.Error("创建连接失败", err.Error())
+		t.Error("创建连接失败", err)
 		return
 	}
 	_, err = RawRtdbLoginWarp(handle, Username, Password)
@@ -364,7 +364,7 @@ func TestRawRtdbAddDelUserWarp(t *testing.T) {
 func TestRawRtdbLockUserWarp(t *testing.T) {
 	handle, err := RawRtdbConnectWarp(Hostname, Port)
 	if err != nil {
-		t.Error("创建连接失败", err.Error())
+		t.Error("创建连接失败", err)
 		return
 	}
 	_, err = RawRtdbLoginWarp(handle, Username, Password)
@@ -396,7 +396,7 @@ func TestRawRtdbLockUserWarp(t *testing.T) {
 func TestRawRtdbGetUsersWarp(t *testing.T) {
 	handle, err := RawRtdbConnectWarp(Hostname, Port)
 	if err != nil {
-		t.Error("创建连接失败", err.Error())
+		t.Error("创建连接失败", err)
 		return
 	}
 	_, err = RawRtdbLoginWarp(handle, Username, Password)
@@ -417,7 +417,7 @@ func TestRawRtdbGetUsersWarp(t *testing.T) {
 func TestBlackList(t *testing.T) {
 	handle, err := RawRtdbConnectWarp(Hostname, Port)
 	if err != nil {
-		t.Error("创建连接失败", err.Error())
+		t.Error("创建连接失败", err)
 		return
 	}
 	_, err = RawRtdbLoginWarp(handle, Username, Password)
@@ -427,6 +427,7 @@ func TestBlackList(t *testing.T) {
 	}
 	defer func() { _ = RawRtdbDisconnectWarp(handle) }()
 
+	// 添加&查看
 	err = RawRtdbAddBlacklistWarp(handle, "192.168.10.11", "255.255.255.0", "test desc")
 	if err != nil {
 		t.Error("添加黑名单失败：", err)
@@ -439,6 +440,7 @@ func TestBlackList(t *testing.T) {
 	}
 	fmt.Println(bList)
 
+	// 修改&查看
 	err = RawRtdbUpdateBlacklistWarp(handle, "192.168.10.11", "255.255.255.0", "192.168.10.11", "255.255.255.0", "test update")
 	if err != nil {
 		t.Error("更新黑名单失败：", err)
@@ -451,6 +453,7 @@ func TestBlackList(t *testing.T) {
 	}
 	fmt.Println(bList)
 
+	// 删除&查看
 	err = RawRtdbRemoveBlacklistWarp(handle, "192.168.10.11", "255.255.255.0")
 	if err != nil {
 		t.Error("删除黑名单:", err)
@@ -462,4 +465,57 @@ func TestBlackList(t *testing.T) {
 		return
 	}
 	fmt.Println(bList)
+}
+
+func TestAuthorizations(t *testing.T) {
+	handle, err := RawRtdbConnectWarp(Hostname, Port)
+	if err != nil {
+		t.Error("创建连接失败", err)
+		return
+	}
+	_, err = RawRtdbLoginWarp(handle, Username, Password)
+	if err != nil {
+		t.Error("登录失败:", err)
+		return
+	}
+	defer func() { _ = RawRtdbDisconnectWarp(handle) }()
+
+	// 添加&查看
+	err = RawRtdbAddAuthorizationWarp(handle, "192.168.12.12", "255.255.255.0", "test desc", PrivGroupRtdbSA)
+	if err != nil {
+		t.Error("添加白名单失败", err)
+		return
+	}
+	aList, err := RawRtdbGetAuthorizationsWarp(handle)
+	if err != nil {
+		t.Error("获取白名单失败", err)
+		return
+	}
+	fmt.Println(aList)
+
+	// 修改&查看
+	err = RawRtdbUpdateAuthorizationWarp(handle, "192.168.12.12", "255.255.255.0", "192.168.12.12", "255.255.255.0", "test update", PrivGroupRtdbSA)
+	if err != nil {
+		t.Error("修改白名单失败", err)
+		return
+	}
+	aList, err = RawRtdbGetAuthorizationsWarp(handle)
+	if err != nil {
+		t.Error("获取白名单失败", err)
+		return
+	}
+	fmt.Println(aList)
+
+	// 删除&查看
+	err = RawRtdbRemoveAuthorizationWarp(handle, "192.168.12.12", "255.255.255.0")
+	if err != nil {
+		t.Error("删除白名单失败", err)
+		return
+	}
+	aList, err = RawRtdbGetAuthorizationsWarp(handle)
+	if err != nil {
+		t.Error("获取白名单失败", err)
+		return
+	}
+	fmt.Println(aList)
 }

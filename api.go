@@ -4224,6 +4224,14 @@ type BlackList struct {
 	Desc string
 }
 
+// AuthorizationsList 白名单
+type AuthorizationsList struct {
+	Addr string
+	Mask string
+	Desc string
+	Priv PrivGroup
+}
+
 /////////////////////////////// 上面是结构定义 ////////////////////////////////////
 /////////////////////////////// -- 华丽的分割线 -- ////////////////////////////////
 /////////////////////////////// 下面是函数实现 ////////////////////////////////////
@@ -4802,54 +4810,132 @@ func RawRtdbGetBlacklistWarp(handle ConnectHandle) ([]BlackList, error) {
 }
 
 // RawRtdbAddAuthorizationWarp 添加信任连接段
-// * \param handle  连接句柄
-// * \param addr    字符串，输入，信任连接段地址
-// * \param mask    字符串，输入，信任连接段子网掩码。
-// * \param priv    整数，输入，信任连接段拥有的用户权限。
-// * \param desc    字符串，输入，信任连接段的说明，超过 511 字符将被截断。
-// * \remark addr 和 mask 进行与运算形成一个子网，
-// *        来自该子网范围内的连接都被视为可信任的，
-// *        可以不用登录 (rtdb_login)，就直接调用 API，
-// *        它所拥有的权限在 priv 中指定。
-// *        有效的子网掩码的所有 1 位于 0 左侧，
-// *        例如："255.255.254.0"。当全部为 1 时，
-// *        表示该子网中只有 addr 一个地址；
-// *        但不能全部为 0。
-// rtdb_error RTDBAPI_CALLRULE rtdb_add_authorization_warp(rtdb_int32 handle, const char *addr, const char *mask, rtdb_int32 priv, const char *desc)
-func RawRtdbAddAuthorizationWarp() {}
+//
+// input:
+//   - handle 连接句柄
+//   - addr 信任连接段地址
+//   - mask 信任连接段子网掩码。
+//   - priv 信任连接段拥有的用户权限。
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdb_add_authorization_warp(rtdb_int32 handle, const char *addr, const char *mask, rtdb_int32 priv, const char *desc)
+func RawRtdbAddAuthorizationWarp(handle ConnectHandle, addr string, mask string, desc string, priv PrivGroup) error {
+	cAddr := C.CString(addr)
+	defer C.free(unsafe.Pointer(cAddr))
+	cMask := C.CString(mask)
+	defer C.free(unsafe.Pointer(cMask))
+	cDesc := C.CString(desc)
+	defer C.free(unsafe.Pointer(cDesc))
+	err := C.rtdb_add_authorization_warp(C.rtdb_int32(handle), cAddr, cMask, cDesc, C.rtdb_int32(priv))
+	return RtdbError(err).GoError()
+}
 
 // RawRtdbUpdateAuthorizationWarp 更新信任连接段
-// * \param handle    连接句柄
-// * \param addr      字符串，输入，原信任连接段地址。
-// * \param mask      字符串，输入，原信任连接段子网掩码。
-// * \param addr_new  字符串，输入，新的信任连接段地址。
-// * \param mask_new  字符串，输入，新的信任连接段子网掩码。
-// * \param priv      整数，输入，新的信任连接段拥有的用户权限。
-// * \param desc      字符串，输入，新的信任连接段的说明，超过 511 字符将被截断。
-// rtdb_error RTDBAPI_CALLRULE rtdb_update_authorization_warp(rtdb_int32 handle, const char *addr, const char *mask, const char *addr_new, const char *mask_new, rtdb_int32 priv, const char *desc)
-func RawRtdbUpdateAuthorizationWarp() {}
+//
+// input:
+//   - handle 连接句柄
+//   - oldAddr 原信任连接段地址
+//   - oldMask 原信任连接段子网掩码
+//   - newAddr 新的信任连接段地址
+//   - newMask 新的信任连接段子网掩码
+//   - newDesc 新的信任连接段的说明，超过 511 字符将被截断
+//   - priv 新的信任连接段拥有的用户权限
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdb_update_authorization_warp(rtdb_int32 handle, const char *addr, const char *mask, const char *addr_new, const char *mask_new, rtdb_int32 priv, const char *desc)
+func RawRtdbUpdateAuthorizationWarp(handle ConnectHandle, oldAddr string, oldMask string, newAddr string, newMask string, newDesc string, priv PrivGroup) error {
+	cOldAddr := C.CString(oldAddr)
+	defer C.free(unsafe.Pointer(cOldAddr))
+	cOldMask := C.CString(oldMask)
+	defer C.free(unsafe.Pointer(cOldMask))
+	cNewAddr := C.CString(newAddr)
+	defer C.free(unsafe.Pointer(cNewAddr))
+	cNewMask := C.CString(newMask)
+	defer C.free(unsafe.Pointer(cNewMask))
+	cNewDesc := C.CString(newDesc)
+	defer C.free(unsafe.Pointer(cNewDesc))
+	err := C.rtdb_update_authorization_warp(C.rtdb_int32(handle), oldAddr, oldMask, newAddr, newMask, C.rtdb_int32(priv), newDesc)
+	return RtdbError(err).GoError()
+}
 
 // RawRtdbRemoveAuthorizationWarp 删除信任连接段
-// * \param handle  连接句柄
-// * \param addr    字符串，输入，信任连接段地址。
-// * \param mask    字符串，输入，信任连接段子网掩码。
-// * \remark 只有 addr 与 mask 完全相同才视为同一个信任连接段
-// rtdb_error RTDBAPI_CALLRULE rtdb_remove_authorization_warp(rtdb_int32 handle, const char *addr, const char *mask)
-func RawRtdbRemoveAuthorizationWarp() {}
+//
+// input:
+//   - handle 连接句柄
+//   - addr 信任连接段地址
+//   - mask 信任连接段子网掩码
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdb_remove_authorization_warp(rtdb_int32 handle, const char *addr, const char *mask)
+func RawRtdbRemoveAuthorizationWarp(handle ConnectHandle, addr string, mask string) error {
+	cAddr := C.CString(addr)
+	defer C.free(unsafe.Pointer(cAddr))
+	cMask := C.CString(mask)
+	defer C.free(unsafe.Pointer(cMask))
+	err := C.rtdb_remove_authorization_warp(C.rtdb_int32(handle), cAddr, cMask)
+	return RtdbError(err).GoError()
+}
 
 // RawRtdbGetAuthorizationsWarp 获得所有信任连接段
-// * \param handle          连接句柄
-// * \param addrs           字符串指针数组，输出，信任连接段地址列表
-// * \param masks           字符串指针数组，输出，信任连接段子网掩码列表
-// * \param [in,out]  privs 整型数组，输出，信任连接段权限列表
-// * \param descs           字符串指针数组，输出，信任连接段的说明。
-// * \param [in,out]  count 整型，输入/输出，用户个数
-// * \remark 用户须保证分配给 addrs, masks, privs, descs 的空间与 count 相符，
-// * 如果输入的 count 小于输出的 count，则只返回部分信任连接段，
-// * addrs, masks 中每个字符串指针所指缓冲区尺寸不得小于 32 字节，
-// * descs 中每个字符串指针所指缓冲区尺寸不得小于 512 字节。
-// rtdb_error RTDBAPI_CALLRULE rtdb_get_authorizations_warp(rtdb_int32 handle, char* const* addrs, char* const* masks, rtdb_int32 *privs, char* const* descs, rtdb_int32 *count)
-func RawRtdbGetAuthorizationsWarp() {}
+//
+// input:
+//   - handle 连接句柄
+//
+// output:
+//   - []AuthorizationsList 白名单列表
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdb_get_authorizations_warp(rtdb_int32 handle, char* const* addrs, char* const* masks, rtdb_int32 *privs, char* const* descs, rtdb_int32 *count)
+func RawRtdbGetAuthorizationsWarp(handle ConnectHandle) ([]AuthorizationsList, error) {
+	cAddrs := make([]*C.char, RtdbMaxBlacklistLen)
+	for i := int32(0); i < int32(RtdbMaxBlacklistLen); i++ {
+		cAddrs[i] = (*C.char)(C.CBytes(make([]byte, 32)))
+	}
+	defer func() {
+		for i := int32(0); i < int32(RtdbMaxBlacklistLen); i++ {
+			C.free(unsafe.Pointer(cAddrs[i]))
+		}
+	}()
+	cgoAddrs := &cAddrs[0]
+
+	cMakes := make([]*C.char, RtdbMaxBlacklistLen)
+	for i := int32(0); i < int32(RtdbMaxBlacklistLen); i++ {
+		cMakes[i] = (*C.char)(C.CBytes(make([]byte, 32)))
+	}
+	defer func() {
+		for i := int32(0); i < int32(RtdbMaxBlacklistLen); i++ {
+			C.free(unsafe.Pointer(cMakes[i]))
+		}
+	}()
+	cgoMasks := &cMakes[0]
+
+	cDescs := make([]*C.char, RtdbMaxBlacklistLen)
+	for i := int32(0); i < int32(RtdbMaxBlacklistLen); i++ {
+		cDescs[i] = (*C.char)(C.CBytes(make([]byte, 512)))
+	}
+	defer func() {
+		for i := int32(0); i < int32(RtdbMaxBlacklistLen); i++ {
+			C.free(unsafe.Pointer(cDescs[i]))
+		}
+	}()
+	cgoDescs := &cDescs[0]
+	cgoCount := C.rtdb_int32(RtdbMaxBlacklistLen)
+
+	privs := make([]PrivGroup, int32(RtdbMaxBlacklistLen))
+	cgoPrivs := (*C.rtdb_int32)(unsafe.Pointer(&privs[0]))
+	err := C.rtdb_get_authorizations_warp(C.rtdb_int32(handle), cgoAddrs, cgoMasks, cgoPrivs, cgoDescs, &cgoCount)
+
+	rtn := make([]AuthorizationsList, 0)
+	for i := int32(0); i < int32(cgoCount); i++ {
+		rtn = append(rtn, AuthorizationsList{
+			Addr: CCharArrayToString(cAddrs[i], 32),
+			Mask: CCharArrayToString(cMakes[i], 32),
+			Desc: CCharArrayToString(cDescs[i], 512),
+			Priv: privs[i],
+		})
+	}
+	return rtn, RtdbError(err).GoError()
+}
 
 // RawRtdbHostTimeWarp 获取 RTDB 服务器当前UTC时间
 // * \param handle       连接句柄
