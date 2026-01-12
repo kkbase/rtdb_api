@@ -224,4 +224,10 @@ func TestRawRtdbGetConnectionInfoWarp(t *testing.T) {
 		t.Error("获取连接信息失败：", err)
 	}
 	fmt.Println(info)
+
+	infoV6, err := RawRtdbGetConnectionInfoIpv6Warp(handle, 0, socket)
+	if err != nil {
+		t.Error("获取v6连接信息失败: ", err)
+	}
+	fmt.Println(infoV6)
 }
