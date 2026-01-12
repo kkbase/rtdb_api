@@ -4524,12 +4524,22 @@ func RawRtdbChangePasswordWarp(handle ConnectHandle, user string, password strin
 }
 
 // RawRtdbChangeMyPasswordWarp 用户修改自己帐户口令
-// * \param handle  连接句柄
-// * \param old_pwd 帐户原口令
-// * \param new_pwd 帐户新口令
-// * \return rtdb_error
-// rtdb_error RTDBAPI_CALLRULE rtdb_change_my_password_warp(rtdb_int32 handle, const char *old_pwd, const char *new_pwd)
-func RawRtdbChangeMyPasswordWarp() {}
+//
+// input:
+//   - handle  连接句柄
+//   - oldPwd 帐户原口令
+//   - newPwd 帐户新口令
+//
+// raw_fn
+//   - rtdb_error RTDBAPI_CALLRULE rtdb_change_my_password_warp(rtdb_int32 handle, const char *old_pwd, const char *new_pwd)
+func RawRtdbChangeMyPasswordWarp(handle ConnectHandle, oldPwd string, newPwd string) error {
+	cOldPwd := C.CString(oldPwd)
+	defer C.free(unsafe.Pointer(cOldPwd))
+	cNewPwd := C.CString(newPwd)
+	defer C.free(unsafe.Pointer(cNewPwd))
+	err := C.rtdb_change_my_password_warp(C.rtdb_int32(handle), cOldPwd, cNewPwd)
+	return RtdbError(err).GoError()
+}
 
 // RawRtdbGetPrivWarp 获取连接权限
 // * \param handle          连接句柄
