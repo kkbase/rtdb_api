@@ -5517,7 +5517,7 @@ func RawRtdbbAppendTableWarp(handle ConnectHandle, tableName, tableDesc string) 
 		}
 		table.desc[i] = C.char(c)
 	}
-	err := C.rtdbb_append_table(cgoHandle, &table)
+	err := C.rtdbb_append_table_warp(cgoHandle, &table)
 	return cToRtdbTable(&table), RtdbError(err).GoError()
 }
 
