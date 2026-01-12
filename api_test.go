@@ -872,5 +872,12 @@ func TestPoint(t *testing.T) {
 		t.Error("获取Table中Point数量失败：", err)
 		return
 	}
-	fmt.Println("point count: ", pCount)
+	fmt.Println("point count by id: ", pCount)
+
+	pCount2, err := RawRtdbbGetTableSizeByNameWarp(handle, table.Name)
+	if err != nil {
+		t.Error("获取Table中Point数量失败：", err)
+		return
+	}
+	fmt.Println("point count by name: ", pCount2)
 }
