@@ -4995,6 +4995,7 @@ const (
 type RtdbSearch int32
 
 const (
+	RtdbSearchAny            = RtdbSearch(C.RTDB_SEARCH_NULL)           //!< 不使用任何标签点属性作为搜索条件
 	RtdbSearchNull           = RtdbSearch(C.RTDB_SEARCH_NULL)           //!< 不使用任何标签点属性作为搜索条件
 	RtdbSearchCompdev        = RtdbSearch(C.RTDB_SEARCH_COMPDEV)        //!< 使用压缩偏差作为搜索条件
 	RtdbSearchCompmax        = RtdbSearch(C.RTDB_SEARCH_COMPMAX)        //!< 最大压缩间隔
