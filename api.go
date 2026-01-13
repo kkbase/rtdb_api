@@ -4641,7 +4641,11 @@ type RtdbPoint struct {
 	Precision RtdbPrecision
 }
 
-func goToCRtdbPoint(p *RtdbPoint) C.RTDB_POINT {
+func goToCRtdbPoint(p *RtdbPoint) *C.RTDB_POINT {
+	if p == nil {
+		return nil
+	}
+
 	rtn := C.RTDB_POINT{}
 	GoStringToCCharArray(p.Tag, &rtn.tag[0], int(C.RTDB_TAG_SIZE))
 	rtn.id = C.int(p.ID)
@@ -4680,10 +4684,14 @@ func goToCRtdbPoint(p *RtdbPoint) C.RTDB_POINT {
 	rtn.named_type_id = C.rtdb_uint16(p.NamedTypeID)
 	rtn.precision = C.rtdb_precision_type(p.Precision)
 
-	return rtn
+	return &rtn
 }
 
-func cToRtdbPoint(p *C.RTDB_POINT) RtdbPoint {
+func cToRtdbPoint(p *C.RTDB_POINT) *RtdbPoint {
+	if p == nil {
+		return nil
+	}
+
 	rtn := RtdbPoint{
 		Tag:            CCharArrayToString(&p.tag[0], int(C.RTDB_TAG_SIZE)),
 		ID:             PointID(p.id),
@@ -4723,7 +4731,7 @@ func cToRtdbPoint(p *C.RTDB_POINT) RtdbPoint {
 		Precision:      RtdbPrecision(p.precision),
 	}
 
-	return rtn
+	return &rtn
 }
 
 // RtdbScan 采集标签点扩展属性集
@@ -4757,7 +4765,11 @@ type RtdbScan struct {
 	UserReals [RtdbUserrealSize]float32
 }
 
-func cToRtdbScan(p *C.RTDB_SCAN_POINT) RtdbScan {
+func cToRtdbScan(p *C.RTDB_SCAN_POINT) *RtdbScan {
+	if p == nil {
+		return nil
+	}
+
 	rtn := RtdbScan{
 		ID:         PointID(p.id),
 		Source:     CCharArrayToString(&p.source[0], int(C.RTDB_SOURCE_SIZE)),
@@ -4773,10 +4785,15 @@ func cToRtdbScan(p *C.RTDB_SCAN_POINT) RtdbScan {
 	for i := 0; i < int(RtdbUserrealSize); i++ {
 		rtn.UserReals[i] = float32(p.userreals[i])
 	}
-	return rtn
+
+	return &rtn
 }
 
-func goToCRtdbScan(p *RtdbScan) C.RTDB_SCAN_POINT {
+func goToCRtdbScan(p *RtdbScan) *C.RTDB_SCAN_POINT {
+	if p == nil {
+		return nil
+	}
+
 	rtn := C.RTDB_SCAN_POINT{}
 	rtn.id = C.int(p.ID)
 	GoStringToCCharArray(p.Source, &rtn.source[0], int(C.RTDB_SOURCE_SIZE))
@@ -4791,7 +4808,8 @@ func goToCRtdbScan(p *RtdbScan) C.RTDB_SCAN_POINT {
 	for i := 0; i < int(RtdbUserrealSize); i++ {
 		rtn.userreals[i] = C.float(p.UserReals[i])
 	}
-	return rtn
+
+	return &rtn
 }
 
 // RtdbCalc 最大长度计算点扩展属性集
@@ -4819,7 +4837,11 @@ type RtdbCalc struct {
 	Period int32
 }
 
-func cToRtdbCalc(p *C.RTDB_MAX_CALC_POINT) RtdbCalc {
+func cToRtdbCalc(p *C.RTDB_MAX_CALC_POINT) *RtdbCalc {
+	if p == nil {
+		return nil
+	}
+
 	rtn := RtdbCalc{
 		ID:       PointID(p.id),
 		Equation: CCharArrayToString(&p.equation[0], int(C.RTDB_MAX_EQUATION_SIZE)),
@@ -4827,17 +4849,23 @@ func cToRtdbCalc(p *C.RTDB_MAX_CALC_POINT) RtdbCalc {
 		TimeCopy: RtdbTimeCopy(p.timecopy),
 		Period:   int32(p.period),
 	}
-	return rtn
+
+	return &rtn
 }
 
-func goToRtdbCalc(p *RtdbCalc) C.RTDB_MAX_CALC_POINT {
+func goToRtdbCalc(p *RtdbCalc) *C.RTDB_MAX_CALC_POINT {
+	if p == nil {
+		return nil
+	}
+
 	rtn := C.RTDB_MAX_CALC_POINT{}
 	rtn.id = C.int(p.ID)
 	GoStringToCCharArray(p.Equation, &rtn.equation[0], int(C.RTDB_MAX_EQUATION_SIZE))
 	rtn.trigger = C.rtdb_byte(p.Trigger)
 	rtn.timecopy = C.rtdb_byte(p.TimeCopy)
 	rtn.period = C.int(p.Period)
-	return rtn
+
+	return &rtn
 }
 
 /////////////////////////////// 上面是结构定义 ////////////////////////////////////
@@ -6223,12 +6251,12 @@ func RawRtdbbGetTablePropertyByNameWarp(handle ConnectHandle, tableName string) 
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_insert_max_point_warp(rtdb_int32 handle, RTDB_POINT *base, RTDB_SCAN_POINT *scan, RTDB_MAX_CALC_POINT *calc)
-func RawRtdbbInsertMaxPointWarp(handle ConnectHandle, base *RtdbPoint, scan *RtdbScan, calc *RtdbCalc) (RtdbPoint, RtdbScan, RtdbCalc, error) {
+func RawRtdbbInsertMaxPointWarp(handle ConnectHandle, base *RtdbPoint, scan *RtdbScan, calc *RtdbCalc) (*RtdbPoint, *RtdbScan, *RtdbCalc, error) {
 	cBase := goToCRtdbPoint(base)
 	cScan := goToCRtdbScan(scan)
 	cCalc := goToRtdbCalc(calc)
-	err := C.rtdbb_insert_max_point_warp(C.rtdb_int32(handle), &cBase, &cScan, &cCalc)
-	return cToRtdbPoint(&cBase), cToRtdbScan(&cScan), cToRtdbCalc(&cCalc), RtdbError(err).GoError()
+	err := C.rtdbb_insert_max_point_warp(C.rtdb_int32(handle), cBase, cScan, cCalc)
+	return cToRtdbPoint(cBase), cToRtdbScan(cScan), cToRtdbCalc(cCalc), RtdbError(err).GoError()
 }
 
 // RawRtdbbInsertMaxPointsWarp 使用最大长度的完整属性集来批量创建标签点
@@ -6241,7 +6269,8 @@ func RawRtdbbInsertMaxPointWarp(handle ConnectHandle, base *RtdbPoint, scan *Rtd
 // * [errors] rtdb_error数组，输出，对应每个标签点的结果
 // * 备注：如果新建的标签点没有对应的扩展属性集，可置为空指针。
 // rtdb_error RTDBAPI_CALLRULE rtdbb_insert_max_points_warp(rtdb_int32 handle, rtdb_int32* count, RTDB_POINT* bases, RTDB_SCAN_POINT* scans, RTDB_MAX_CALC_POINT* calcs, rtdb_error* errors)
-func RawRtdbbInsertMaxPointsWarp() {}
+func RawRtdbbInsertMaxPointsWarp(handle ConnectHandle, points []RtdbPoint, scans []RtdbScan, calcs []RtdbCalc) /*([]RtdbPoint, []RtdbScan, []RtdbCalc, []error, error)*/ {
+}
 
 // RawRtdbbInsertBasePointWarp 使用最小的属性集来创建单个标签点
 // 备注：不实现，统一使用最大长度
