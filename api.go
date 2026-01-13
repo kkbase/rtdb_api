@@ -4442,88 +4442,6 @@ const (
 	RtdbEarliestTime = RtdbTimeCopy(C.RTDB_EARLIEST_TIME)
 )
 
-func NewDefaultPoint(tag string, rtdbType RtdbType, tableID TableID, class RtdbClass, precision RtdbPrecision) *RtdbPoint {
-	rtn := RtdbPoint{
-		Tag:            tag,
-		Type:           rtdbType,
-		Table:          tableID,
-		Desc:           "",
-		Unit:           "",
-		Archive:        ON,
-		Digits:         -5,
-		Shutdown:       OFF,
-		LowLimit:       0,
-		HighLimit:      100,
-		Step:           OFF,
-		Typical:        50,
-		Compress:       ON,
-		CompDev:        1,
-		CompDevPercent: 0,
-		CompTimeMax:    28800,
-		CompTimeMin:    0,
-		ExcDev:         0.5,
-		ExcDevPercent:  0,
-		ExcTimeMax:     600,
-		ExcTimeMin:     0,
-		Class:          class,
-		Mirror:         RtdbMirrorPointOff,
-		Summary:        OFF,
-		NamedTypeID:    0,
-		Precision:      precision,
-	}
-	switch rtn.Precision {
-	case RtdbPrecisionSecond:
-		rtn.MilliSecond = 0
-	case RtdbPrecisionMilli, RtdbPrecisionMicro, RtdbPrecisionNano:
-		rtn.MilliSecond = 1
-	}
-	return &rtn
-}
-
-// NewRtdbPoint 创建Base标签点
-func NewRtdbPoint(
-	tag string, rtdbType RtdbType, tableID TableID, desc, unit string, archive Switch, digits int16,
-	shutdown Switch, lowLimit float32, highLimit float32, step Switch, typical float32, compress Switch,
-	compDev float32, compDevPercent float32, compTimeMax int32, compTimeMin int32,
-	excDev float32, excDevPercent float32, excTimeMax int32, excTimeMin int32, class RtdbClass,
-	mirror RtdbMirror, summary Switch, precision RtdbPrecision,
-) *RtdbPoint {
-	rtn := RtdbPoint{
-		Tag:            tag,
-		Type:           rtdbType,
-		Table:          tableID,
-		Desc:           desc,
-		Unit:           unit,
-		Archive:        archive,
-		Digits:         digits,
-		Shutdown:       shutdown,
-		LowLimit:       lowLimit,
-		HighLimit:      highLimit,
-		Step:           step,
-		Typical:        typical,
-		Compress:       compress,
-		CompDev:        compDev,
-		CompDevPercent: compDevPercent,
-		CompTimeMax:    compTimeMax,
-		CompTimeMin:    compTimeMin,
-		ExcDev:         excDev,
-		ExcDevPercent:  excDevPercent,
-		ExcTimeMax:     excTimeMax,
-		ExcTimeMin:     excTimeMin,
-		Class:          class,
-		Mirror:         mirror,
-		Summary:        summary,
-		Precision:      precision,
-	}
-	switch rtn.Precision {
-	case RtdbPrecisionSecond:
-		rtn.MilliSecond = 0
-	case RtdbPrecisionMilli, RtdbPrecisionMicro, RtdbPrecisionNano:
-		rtn.MilliSecond = 1
-	}
-	return &rtn
-}
-
 // RtdbPoint 基本标签点属性集
 type RtdbPoint struct {
 	// 标签点名称。
@@ -4723,6 +4641,89 @@ type RtdbPoint struct {
 	Precision RtdbPrecision
 }
 
+// NewDefaultPoint 新建基本点结构，使用默认参数
+func NewDefaultPoint(tag string, rtdbType RtdbType, tableID TableID, class RtdbClass, precision RtdbPrecision) *RtdbPoint {
+	rtn := RtdbPoint{
+		Tag:            tag,
+		Type:           rtdbType,
+		Table:          tableID,
+		Desc:           "",
+		Unit:           "",
+		Archive:        ON,
+		Digits:         -5,
+		Shutdown:       OFF,
+		LowLimit:       0,
+		HighLimit:      100,
+		Step:           OFF,
+		Typical:        50,
+		Compress:       ON,
+		CompDev:        1,
+		CompDevPercent: 0,
+		CompTimeMax:    28800,
+		CompTimeMin:    0,
+		ExcDev:         0.5,
+		ExcDevPercent:  0,
+		ExcTimeMax:     600,
+		ExcTimeMin:     0,
+		Class:          class,
+		Mirror:         RtdbMirrorPointOff,
+		Summary:        OFF,
+		NamedTypeID:    0,
+		Precision:      precision,
+	}
+	switch rtn.Precision {
+	case RtdbPrecisionSecond:
+		rtn.MilliSecond = 0
+	case RtdbPrecisionMilli, RtdbPrecisionMicro, RtdbPrecisionNano:
+		rtn.MilliSecond = 1
+	}
+	return &rtn
+}
+
+// NewRtdbPoint 创建基本点结构
+func NewRtdbPoint(
+	tag string, rtdbType RtdbType, tableID TableID, desc, unit string, archive Switch, digits int16,
+	shutdown Switch, lowLimit float32, highLimit float32, step Switch, typical float32, compress Switch,
+	compDev float32, compDevPercent float32, compTimeMax int32, compTimeMin int32,
+	excDev float32, excDevPercent float32, excTimeMax int32, excTimeMin int32, class RtdbClass,
+	mirror RtdbMirror, summary Switch, precision RtdbPrecision,
+) *RtdbPoint {
+	rtn := RtdbPoint{
+		Tag:            tag,
+		Type:           rtdbType,
+		Table:          tableID,
+		Desc:           desc,
+		Unit:           unit,
+		Archive:        archive,
+		Digits:         digits,
+		Shutdown:       shutdown,
+		LowLimit:       lowLimit,
+		HighLimit:      highLimit,
+		Step:           step,
+		Typical:        typical,
+		Compress:       compress,
+		CompDev:        compDev,
+		CompDevPercent: compDevPercent,
+		CompTimeMax:    compTimeMax,
+		CompTimeMin:    compTimeMin,
+		ExcDev:         excDev,
+		ExcDevPercent:  excDevPercent,
+		ExcTimeMax:     excTimeMax,
+		ExcTimeMin:     excTimeMin,
+		Class:          class,
+		Mirror:         mirror,
+		Summary:        summary,
+		Precision:      precision,
+	}
+	switch rtn.Precision {
+	case RtdbPrecisionSecond:
+		rtn.MilliSecond = 0
+	case RtdbPrecisionMilli, RtdbPrecisionMicro, RtdbPrecisionNano:
+		rtn.MilliSecond = 1
+	}
+	return &rtn
+}
+
 func goToCRtdbPoint(p *RtdbPoint) *C.RTDB_POINT {
 	if p == nil {
 		return nil
@@ -4847,6 +4848,16 @@ type RtdbScan struct {
 	UserReals [RtdbUserrealSize]float32
 }
 
+// NewRtdbScan 新建采集点结构
+func NewRtdbScan(source string, scan Switch, instrument string) *RtdbScan {
+	rtn := RtdbScan{
+		Source:     source,
+		Scan:       scan,
+		Instrument: instrument,
+	}
+	return &rtn
+}
+
 func cToRtdbScan(p *C.RTDB_SCAN_POINT) *RtdbScan {
 	if p == nil {
 		return nil
@@ -4917,6 +4928,16 @@ type RtdbCalc struct {
 
 	// 对于“周期触发”的计算点，设定其计算周期，单位：秒
 	Period int32
+}
+
+func NewRtdbCalc(equation string, trigger RtdbTrigger, timeCopy RtdbTimeCopy, period int32) *RtdbCalc {
+	rtn := RtdbCalc{
+		Equation: equation,
+		Trigger:  trigger,
+		TimeCopy: timeCopy,
+		Period:   period,
+	}
+	return &rtn
 }
 
 func cToRtdbCalc(p *C.RTDB_MAX_CALC_POINT) *RtdbCalc {
