@@ -995,19 +995,19 @@ func TestAddPoint(t *testing.T) {
 		}
 	}()
 
-	//ctable2, err := RawRtdbbAppendTableWarp(handle, "bbb", "bbb test")
-	//cif err != nil {
-	//c	t.Error("添加表失败: ", err)
-	//c	return
-	//c}
+	table2, err := RawRtdbbAppendTableWarp(handle, "bbb", "bbb test")
+	if err != nil {
+		t.Error("添加表失败: ", err)
+		return
+	}
 
-	// defer func() {
-	// 	err := RawRtdbbRemoveTableByIdWarp(handle, table2.ID)
-	// 	if err != nil {
-	// 		t.Error("删除表失败：", err)
-	// 		return
-	// 	}
-	// }()
+	defer func() {
+		err := RawRtdbbRemoveTableByIdWarp(handle, table2.ID)
+		if err != nil {
+			t.Error("删除表失败：", err)
+			return
+		}
+	}()
 
 	err = RawRtdbbMovePointByIdWarp(handle, base.ID, table.Name)
 	if err != nil {
