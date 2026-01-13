@@ -4956,7 +4956,7 @@ func cToRtdbCalc(p *C.RTDB_MAX_CALC_POINT) *RtdbCalc {
 	return &rtn
 }
 
-func goToRtdbCalc(p *RtdbCalc) *C.RTDB_MAX_CALC_POINT {
+func goToCRtdbCalc(p *RtdbCalc) *C.RTDB_MAX_CALC_POINT {
 	if p == nil {
 		return nil
 	}
@@ -6346,18 +6346,23 @@ func RawRtdbbGetTablePropertyByNameWarp(handle ConnectHandle, tableName string) 
 //
 // input:
 //   - handle 连接句柄
-//   - base RTDB_POINT 结构，输入/输出，
+//   - base 基本点信息
 //     输入除 id, createdate, creator, changedate, changer 字段外的其它字段，输出 id 字段。
-//   - scan RTDB_SCAN_POINT 结构，输入，采集标签点扩展属性集。
-//   - calc RTDB_MAX_CALC_POINT 结构，输入，计算标签点扩展属性集。
+//   - scan 采集点信息，RtdbClass 非采集点的时候，可填nil
+//   - calc 计算点信息, RtdbClass 非计算点的时候，可填nil
 //   - 备注：如果新建的标签点没有对应的扩展属性集，可置为空指针。
+//
+// output:
+//   - RtdbPoint 基本点信息
+//   - RtdbScan 采集点信息
+//   - RtdbCalc 计算点信息
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_insert_max_point_warp(rtdb_int32 handle, RTDB_POINT *base, RTDB_SCAN_POINT *scan, RTDB_MAX_CALC_POINT *calc)
 func RawRtdbbInsertMaxPointWarp(handle ConnectHandle, base *RtdbPoint, scan *RtdbScan, calc *RtdbCalc) (*RtdbPoint, *RtdbScan, *RtdbCalc, error) {
 	cBase := goToCRtdbPoint(base)
 	cScan := goToCRtdbScan(scan)
-	cCalc := goToRtdbCalc(calc)
+	cCalc := goToCRtdbCalc(calc)
 	err := C.rtdbb_insert_max_point_warp(C.rtdb_int32(handle), cBase, cScan, cCalc)
 	return cToRtdbPoint(cBase), cToRtdbScan(cScan), cToRtdbCalc(cCalc), RtdbError(err).GoError()
 }
@@ -6372,6 +6377,21 @@ func RawRtdbbInsertMaxPointWarp(handle ConnectHandle, base *RtdbPoint, scan *Rtd
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_remove_point_by_id_warp(rtdb_int32 handle, rtdb_int32 id)
 func RawRtdbbRemovePointByIdWarp(handle ConnectHandle, id PointID) error {
 	err := C.rtdbb_remove_point_by_id_warp(C.rtdb_int32(handle), C.rtdb_int32(id))
+	return RtdbError(err).GoError()
+}
+
+// RawRtdbbRemovePointByNameWarp 根据标签点全名删除单个标签点
+//
+// input:
+//   - handle 连接句柄
+//   - tableDotTag  标签点全名称："表名.标签点名"
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbb_remove_point_by_name_warp(rtdb_int32 handle, const char *table_dot_tag)
+func RawRtdbbRemovePointByNameWarp(handle ConnectHandle, tableDotTag string) error {
+	cTableDotTag := C.CString(tableDotTag)
+	defer C.free(unsafe.Pointer(cTableDotTag))
+	err := C.rtdbb_remove_point_by_name_warp(C.rtdb_int32(handle), cTableDotTag)
 	return RtdbError(err).GoError()
 }
 
@@ -6405,33 +6425,47 @@ func RawRtdbbRemovePointByIdWarp(handle ConnectHandle, id PointID) error {
 // func RawRtdbbInsertBasePointWarp() {}
 
 // RawRtdbbInsertNamedTypePointWarp 使用完整的属性集来创建单个自定义数据类型标签点
-// * [handle] 连接句柄
-// * [base] RTDB_POINT 结构，输入/输出，
-// * 输入除 id, createdate, creator, changedate, changer 字段外的其它字段，输出 id 字段。
-// * [scan] RTDB_SCAN_POINT 结构，输入，采集标签点扩展属性集。
-// * [name] 字符串，输入，自定义数据类型的名字。
-// * 备注：如果新建的标签点没有对应的扩展属性集，可置为空指针。
-// rtdb_error RTDBAPI_CALLRULE rtdbb_insert_named_type_point_warp(rtdb_int32 handle, RTDB_POINT *base, RTDB_SCAN_POINT *scan, const char* name)
-func RawRtdbbInsertNamedTypePointWarp() {}
-
-// RawRtdbbRemovePointByNameWarp 根据标签点全名删除单个标签点
-// * \param handle        连接句柄
-// * \param table_dot_tag  字符串，输入，标签点全名称："表名.标签点名"
-// * \remark 通过本接口删除的标签点为可回收标签点，
-// *        可以通过 rtdbb_recover_point 接口恢复。
-// rtdb_error RTDBAPI_CALLRULE rtdbb_remove_point_by_name_warp(rtdb_int32 handle, const char *table_dot_tag)
-func RawRtdbbRemovePointByNameWarp() {}
+//
+// input:
+//   - handle 连接句柄
+//   - base 基本点信息
+//   - scan 采集点信息
+//   - name 自定义类型名称
+//
+// output:
+//   - RtdbPoint 基本点信息
+//   - RtdbScan 采集点信息
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbb_insert_named_type_point_warp(rtdb_int32 handle, RTDB_POINT *base, RTDB_SCAN_POINT *scan, const char* name)
+func RawRtdbbInsertNamedTypePointWarp(handle ConnectHandle, base *RtdbPoint, scan *RtdbScan, name string) (*RtdbPoint, *RtdbScan, error) {
+	cBase := goToCRtdbPoint(base)
+	cScan := goToCRtdbScan(scan)
+	cName := C.CString(name)
+	defer C.free(unsafe.Pointer(cName))
+	err := C.rtdbb_insert_named_type_point_warp(C.rtdb_int32(handle), cBase, cScan, cName)
+	return cToRtdbPoint(cBase), cToRtdbScan(cScan), RtdbError(err).GoError()
+}
 
 // RawRtdbbMovePointByIdWarp 根据 id 移动单个标签点到其他表
-// * [handle] 连接句柄
-// * [id]     整型，输入，标签点标识
-// * [dest_table_name] 字符串，输入，移动的目标表名称
-// * 备注：通过本接口移动标签点后不改变标签点的id，且快照
-// * 和历史数据都不受影响
-// rtdb_error RTDBAPI_CALLRULE rtdbb_move_point_by_id_warp(rtdb_int32 handle, rtdb_int32 id, const char* dest_table_name)
-func RawRtdbbMovePointByIdWarp() {}
+//
+// input:
+//   - handle 连接句柄
+//   - pointID 标签点标识
+//   - tableName 表名称
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbb_move_point_by_id_warp(rtdb_int32 handle, rtdb_int32 id, const char* dest_table_name)
+func RawRtdbbMovePointByIdWarp(handle ConnectHandle, pointID PointID, tableName string) error {
+	cTableName := C.CString(tableName)
+	defer C.free(unsafe.Pointer(cTableName))
+	err := C.rtdbb_move_point_by_id_warp(C.rtdb_int32(handle), C.rtdb_int32(pointID), cTableName)
+	return RtdbError(err).GoError()
+}
 
 // RawRtdbbGetPointsPropertyWarp 批量获取标签点属性
+// 备注：不实现, 统一使用最大长度
+//
 // * \param handle 连接句柄
 // * \param count  整数，输入，表示标签点个数。
 // * \param base   RTDB_POINT 结构数组，输入/输出，标签点基本属性列表，
@@ -6442,20 +6476,37 @@ func RawRtdbbMovePointByIdWarp() {}
 // * \remark 用户须保证分配给 base、scan、calc、errors 的空间与 count 相符，
 // *        扩展属性集 scan、calc 可为空指针，此时将不返回对应的扩展属性集。
 // rtdb_error RTDBAPI_CALLRULE rtdbb_get_points_property_warp(rtdb_int32 handle, rtdb_int32 count, RTDB_POINT *base, RTDB_SCAN_POINT *scan, RTDB_CALC_POINT *calc, rtdb_error *errors)
-func RawRtdbbGetPointsPropertyWarp() {}
+// func RawRtdbbGetPointsPropertyWarp() {}
 
 // RawRtdbbGetMaxPointsPropertyWarp 按最大长度批量获取标签点属性
-// * [handle] 连接句柄
-// * [count]  整数，输入，表示标签点个数。
-// * [base]   RTDB_POINT 结构数组，输入/输出，标签点基本属性列表，
-// * 输入时，id 字段指定需要得到属性的标签点，输出时，其它字段返回标签点属性值。
-// * [scan]   RTDB_SCAN_POINT 结构数组，输出，采集标签点扩展属性列表
-// * [calc]   RTDB_MAX_CALC_POINT 结构数组，输出，计算标签点扩展属性列表
-// * [errors] 无符号整型数组，输出，获取标签属性的返回值列表，参考rtdb_error.h
-// * 备注：用户须保证分配给 base、scan、calc、errors 的空间与 count 相符，
-// * 扩展属性集 scan、calc 可为空指针，此时将不返回对应的扩展属性集。
-// rtdb_error RTDBAPI_CALLRULE rtdbb_get_max_points_property_warp(rtdb_int32 handle, rtdb_int32 count, RTDB_POINT *base, RTDB_SCAN_POINT *scan, RTDB_MAX_CALC_POINT *calc, rtdb_error *errors)
-func RawRtdbbGetMaxPointsPropertyWarp() {}
+//
+// input:
+//   - handle 连接句柄
+//   - pointIDs 标签点ID列表
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbb_get_max_points_property_warp(rtdb_int32 handle, rtdb_int32 count, RTDB_POINT *base, RTDB_SCAN_POINT *scan, RTDB_MAX_CALC_POINT *calc, rtdb_error *errors)
+func RawRtdbbGetMaxPointsPropertyWarp(handle ConnectHandle, pointIDs []PointID) ([]RtdbPoint, []RtdbScan, []RtdbCalc, []error, error) {
+	bases := make([]C.RTDB_POINT, len(pointIDs))
+	for i, id := range pointIDs {
+		bases[i].id = C.int(id)
+	}
+	scans := make([]C.RTDB_SCAN_POINT, len(pointIDs))
+	calcs := make([]C.RTDB_MAX_CALC_POINT, len(pointIDs))
+	errors := make([]C.rtdb_error, len(pointIDs))
+	err := C.rtdbb_get_max_points_property_warp(C.rtdb_int32(handle), C.rtdb_int32(len(pointIDs)), &bases[0], &scans[0], &calcs[0], &errors[0])
+	rtnBases := make([]RtdbPoint, 0)
+	rtnScans := make([]RtdbScan, 0)
+	rtnCalcs := make([]RtdbCalc, 0)
+	rtnError := make([]error, 0)
+	for i := 0; i < len(pointIDs); i++ {
+		rtnBases = append(rtnBases, *cToRtdbPoint(&bases[i]))
+		rtnScans = append(rtnScans, *cToRtdbScan(&scans[i]))
+		rtnCalcs = append(rtnCalcs, *cToRtdbCalc(&calcs[i]))
+		rtnError = append(rtnError, RtdbError(errors[i]).GoError())
+	}
+	return rtnBases, rtnScans, rtnCalcs, rtnError, RtdbError(err).GoError()
+}
 
 // RawRtdbbSearchWarp 搜索符合条件的标签点，使用标签点名时支持通配符
 // *

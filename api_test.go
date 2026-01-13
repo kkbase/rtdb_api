@@ -945,4 +945,29 @@ func TestAddPoint(t *testing.T) {
 		t.Error("删除标签点失败: ", err)
 		return
 	}
+
+	base, scan, calc, err = RawRtdbbInsertMaxPointWarp(handle, base, nil, nil)
+	if err != nil {
+		t.Error("添加标签点失败：", err)
+		return
+	}
+	fmt.Println("base: ", base)
+	fmt.Println("scan: ", scan)
+	fmt.Println("calc: ", calc)
+
+	bases, scans, calcs, errs, err := RawRtdbbGetMaxPointsPropertyWarp(handle, []PointID{base.ID})
+	fmt.Println("bases: ", bases)
+	fmt.Println("scans: ", scans)
+	fmt.Println("calcs: ", calcs)
+	fmt.Println("errs: ", errs)
+	if err != nil {
+		t.Error("批量获取标签点失败：", err)
+		return
+	}
+
+	err = RawRtdbbRemovePointByNameWarp(handle, table.Name+"."+base.Tag)
+	if err != nil {
+		t.Error("删除标签点失败: ", err)
+		return
+	}
 }
