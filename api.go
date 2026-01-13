@@ -6523,7 +6523,7 @@ func RawRtdbbGetMaxPointsPropertyWarp(handle ConnectHandle, pointIDs []PointID) 
 }
 
 // RawRtdbbSearchWarp 搜索符合条件的标签点，使用标签点名时支持通配符
-// 备注： 废弃， 使用扩展版的标签点搜索，扩展版支持点属性过滤
+// 备注： 废弃，由于有数量限制，采用下面的分段搜索
 //
 // input:
 //   - handle 连接句柄
@@ -6618,6 +6618,8 @@ func RawRtdbbSearchInBatchesWarp(handle ConnectHandle, start int32, tagMask, tab
 }
 
 // RawRtdbbSearchExWarp 搜索符合条件的标签点，使用标签点名时支持通配符
+// 废弃， 这个是扩展的，可以搜索标签点属性，但是我认为这个标签点属性定义过于晦涩，而且只能限定一个标签点属性，作用不大
+//
 // *
 // * \param handle        连接句柄
 // * \param tagmask       字符串，输入，标签点名称掩码，支持"*"和"?"通配符，缺省设置为"*"，长度不得超过 RTDB_TAG_SIZE，支持多个搜索条件，以空格分隔。
@@ -6652,9 +6654,9 @@ func RawRtdbbSearchInBatchesWarp(handle ConnectHandle, start int32, tagMask, tab
 // *        如果 tagmask、tablemask 为空指针，则表示使用缺省设置"*",
 // *        多个搜索条件可以通过空格分隔，比如"demo_*1 demo_*2"，会将满足demo_*1或者demo_*2条件的标签点搜索出来。
 // rtdb_error RTDBAPI_CALLRULE rtdbb_search_ex_warp(rtdb_int32 handle, const char *tagmask, const char *tablemask, const char *source, const char *unit, const char *desc, const char *instrument, const char *typemask, rtdb_int32 classofmask, rtdb_int32 timeunitmask, rtdb_int32 othertypemask, const char *othertypemaskvalue, rtdb_int32 mode, rtdb_int32 *ids, rtdb_int32 *count)
-func RawRtdbbSearchExWarp() {}
+// func RawRtdbbSearchExWarp(handle ConnectHandle) {}
 
-// RawRtdbbSearchPointsCountWarp 搜索符合条件的标签点，使用标签点名时支持通配符
+// RawRtdbbSearchPointsCountWarp 搜索符合条件的标签点，返回符合条件的标签点数量，支持通配符
 // * \param handle        连接句柄
 // * \param tagmask       字符串，输入，标签点名称掩码，支持"*"和"?"通配符，缺省设置为"*"，长度不得超过 RTDB_TAG_SIZE，支持多个搜索条件，以空格分隔。
 // * \param tablemask     字符串，输入，标签点表名称掩码，支持"*"和"?"通配符，缺省设置为"*"，长度不得超过 RTDB_TAG_SIZE，支持多个搜索条件，以空格分隔。
@@ -6685,29 +6687,48 @@ func RawRtdbbSearchExWarp() {}
 // *        如果 tagmask、tablemask 为空指针，则表示使用缺省设置"*",
 // *        多个搜索条件可以通过空格分隔，比如"demo_*1 demo_*2"，会将满足demo_*1或者demo_*2条件的标签点搜索出来。
 // rtdb_error RTDBAPI_CALLRULE rtdbb_search_points_count_warp(rtdb_int32 handle, const char *tagmask, const char *tablemask, const char *source, const char *unit, const char *desc, const char *instrument, const char *typemask, rtdb_int32 classofmask, rtdb_int32 timeunitmask, rtdb_int32 othertypemask, const char *othertypemaskvalue, rtdb_int32 *count)
-func RawRtdbbSearchPointsCountWarp() {}
+// func RawRtdbbSearchPointsCountWarp(handle ConnectHandle, tagMask, tableMask, source, unit, desc, instrument string, ) {}
 
 // RawRtdbbUpdatePointPropertyWarp 更新单个标签点属性
-// * \param handle        连接句柄
-// * \param base RTDB_POINT 结构，输入，基本标签点属性集。
-// * \param scan RTDB_SCAN_POINT 结构，输入，采集标签点扩展属性集。
-// * \param calc RTDB_CALC_POINT 结构，输入，计算标签点扩展属性集。
-// * \remark 标签点由 base 参数的 id 字段指定，其中 id、table、type、millisecond 字段不能修改，
-// *      changedate、changer、createdate、creator 字段由系统维护，其余字段均可修改，
-// *      包括 classof 字段。输入参数中 scan、calc 可为空指针，对应的扩展属性将保持不变。
-// rtdb_error RTDBAPI_CALLRULE rtdbb_update_point_property_warp(rtdb_int32 handle, const RTDB_POINT *base, const RTDB_SCAN_POINT *scan, const RTDB_CALC_POINT *calc)
-func RawRtdbbUpdatePointPropertyWarp() {}
+// 备注： 废弃， 统一使用最大长度Calc
+//
+// input:
+//   - handle 连接句柄
+//   - base 基本标签点属性集。
+//   - scan 采集标签点扩展属性集。
+//   - calc 计算标签点扩展属性集。
+//   - 备注：标签点由 base 参数的 id 字段指定，其中 id、table、type、millisecond 字段不能修改，changedate、changer、createdate、creator 字段由系统维护，
+//   - 备注：其余字段均可修改，包括 classof 字段。输入参数中 scan、calc 可为空指针，对应的扩展属性将保持不变。
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbb_update_point_property_warp(rtdb_int32 handle, const RTDB_POINT *base, const RTDB_SCAN_POINT *scan, const RTDB_CALC_POINT *calc)
+// func RawRtdbbUpdatePointPropertyWarp(handle ConnectHandle, base *RtdbPoint, scan *RtdbScan, calc *RtdbCalc) error {
+// 	cBase := goToCRtdbPoint(base)
+// 	cScan := goToCRtdbScan(scan)
+// 	cCalc := goToCRtdbCalc(calc)
+// 	err := C.rtdbb_update_point_property_warp(C.rtdb_int32(handle), cBase, cScan, cCalc)
+// 	return RtdbError(err).GoError()
+// }
 
 // RawRtdbbUpdateMaxPointPropertyWarp 按最大长度更新单个标签点属性
-// *        [handle]        连接句柄
-// *        [base] RTDB_POINT 结构，输入，基本标签点属性集。
-// *        [scan] RTDB_SCAN_POINT 结构，输入，采集标签点扩展属性集。
-// *        [calc] RTDB_MAX_CALC_POINT 结构，输入，计算标签点扩展属性集。
-// * 备注：标签点由 base 参数的 id 字段指定，其中 id、table、type、millisecond 字段不能修改，
-// *      changedate、changer、createdate、creator 字段由系统维护，其余字段均可修改，
-// *      包括 classof 字段。输入参数中 scan、calc 可为空指针，对应的扩展属性将保持不变。
-// rtdb_error RTDBAPI_CALLRULE rtdbb_update_max_point_property_warp(rtdb_int32 handle, const RTDB_POINT *base, const RTDB_SCAN_POINT *scan, const RTDB_MAX_CALC_POINT *calc)
-func RawRtdbbUpdateMaxPointPropertyWarp() {}
+//
+// input:
+//   - handle 连接句柄
+//   - base 基本标签点属性集。
+//   - scan 采集标签点扩展属性集。
+//   - calc 计算标签点扩展属性集。
+//   - 备注：标签点由 base 参数的 id 字段指定，其中 id、table、type、millisecond 字段不能修改，changedate、changer、createdate、creator 字段由系统维护，
+//   - 备注：其余字段均可修改，包括 classof 字段。输入参数中 scan、calc 可为空指针，对应的扩展属性将保持不变。
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbb_update_max_point_property_warp(rtdb_int32 handle, const RTDB_POINT *base, const RTDB_SCAN_POINT *scan, const RTDB_MAX_CALC_POINT *calc)
+func RawRtdbbUpdateMaxPointPropertyWarp(handle ConnectHandle, base *RtdbPoint, scan *RtdbScan, calc *RtdbCalc) error {
+	cBase := goToCRtdbPoint(base)
+	cScan := goToCRtdbScan(scan)
+	cCalc := goToCRtdbCalc(calc)
+	err := C.rtdbb_update_max_point_property_warp(C.rtdb_int32(handle), cBase, cScan, cCalc)
+	return RtdbError(err).GoError()
+}
 
 // RawRtdbbFindPointsWarp 根据 "表名.标签点名" 格式批量获取标签点标识
 // *  \param handle           连接句柄
@@ -6723,7 +6744,7 @@ func RawRtdbbUpdateMaxPointPropertyWarp() {}
 // *  \remark 用户须保证分配给 table_dot_tags、ids、types、classof、use_ms 的空间与count相符，
 // *         其中 types、classof、use_ms 可为空指针，对应的字段将不再返回。
 // rtdb_error RTDBAPI_CALLRULE rtdbb_find_points_warp(rtdb_int32 handle, rtdb_int32 *count, const char* const* table_dot_tags, rtdb_int32 *ids, rtdb_int32 *types, rtdb_int32 *classof, rtdb_int16 *use_ms)
-func RawRtdbbFindPointsWarp() {}
+func RawRtdbbFindPointsWarp(handle ConnectHandle) {}
 
 // RawRtdbbFindPointsExWarp 根据 "表名.标签点名" 格式批量获取标签点标识
 // * \param handle           连接句柄
