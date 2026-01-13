@@ -51,6 +51,17 @@ func init() {
 	C.load_library(cPath)
 }
 
+// Switch 开关
+type Switch byte
+
+const (
+	// OFF 关闭
+	OFF = Switch(0)
+
+	// ON 开启
+	ON = Switch(1)
+)
+
 // RtdbError 数据库错误
 type RtdbError uint32
 
@@ -3122,6 +3133,7 @@ type ApiVersion struct {
 	Beta  int32 // 发布版本号
 }
 
+// PrivGroup 用户权限
 type PrivGroup uint32
 
 const (
@@ -3992,6 +4004,7 @@ type ParamString string
 // ParamInt 数值类型系统参数
 type ParamInt uint32
 
+// RtdbConst 一些常量
 type RtdbConst int32
 
 const (
@@ -4170,6 +4183,7 @@ func cToRtdbHostConnectInfoIpv6(cInfo *C.RTDB_HOST_CONNECT_INFO_IPV6) RtdbHostCo
 	return goInfo
 }
 
+// RtdbOsType 操作系统类型
 type RtdbOsType int8
 
 const (
@@ -4191,37 +4205,32 @@ func (ost RtdbOsType) Desc() string {
 	}
 }
 
+// RtdbHandleInfo 连接信息
 type RtdbHandleInfo struct {
 	OsType RtdbOsType // 当前连接数据库的系统，参考 RTDB_OS_TYPE
-	NewDB  int8       // 当前连接数据库的版本，0表示旧版本，1表示新版本
+	NewDB  Switch     // 当前连接数据库的版本，0(OFF)表示旧版本，1(ON)表示新版本
 }
 
 func cToRtdbHandleInfo(cOsType *C.RTDB_HANDLE_INFO) RtdbHandleInfo {
 	goHandleInfo := RtdbHandleInfo{
 		OsType: RtdbOsType(cOsType.os_type),
-		NewDB:  int8(cOsType.new_db),
+		NewDB:  Switch(cOsType.new_db),
 	}
 	return goHandleInfo
 }
 
 // RtdbUserInfo 用户信息
 type RtdbUserInfo struct {
-	User      string
-	Length    int32
-	Privilege int32
-	IsLocked  bool
+	User      string    // 用户名
+	Privilege PrivGroup // 权限
+	IsLocked  Switch    // 是否锁定
 }
 
 func cToRtdbUserInfo(cInfo *C.RTDB_USER_INFO) RtdbUserInfo {
-	locked := false
-	if int8(cInfo.islocked) != 0 {
-		locked = true
-	}
 	goInfo := RtdbUserInfo{
 		User:      CCharArrayToString(&cInfo.user[0], len(cInfo.user)),
-		Length:    int32(cInfo.length),
-		Privilege: int32(cInfo.privilege),
-		IsLocked:  locked,
+		Privilege: PrivGroup(cInfo.privilege),
+		IsLocked:  Switch(cInfo.islocked),
 	}
 	return goInfo
 }
@@ -4244,7 +4253,7 @@ type AuthorizationsList struct {
 // DirItem 目录项，表示目录下面的子条目，可能是子目录也可能是子文件
 type DirItem struct {
 	Path  string        // 文件、子目录全路径
-	IsDir bool          // true为目录，false为文件
+	IsDir Switch        // ON(1)为目录，OFF(0)为文件
 	ATime TimestampType // 访问时间
 	CTime TimestampType // 建立时间
 	MTime TimestampType // 修改时间
@@ -4262,6 +4271,7 @@ const (
 // Quality 质量码
 type Quality int16
 
+// TableID 表ID
 type TableID int32
 
 // RtdbTable 表
@@ -4350,6 +4360,7 @@ const (
 	RtdbFp64 = RtdbType(C.RTDB_FP64)
 )
 
+// RtdbMirror 镜像选项
 type RtdbMirror int8
 
 const (
@@ -4366,6 +4377,7 @@ const (
 	RtdbPointSend = RtdbMirror(C.RTDB_POINT_SEND)
 )
 
+// RtdbPrecision 时间戳精度
 type RtdbPrecision int8
 
 const (
@@ -4382,22 +4394,55 @@ const (
 	RtdbPrecisionNano = RtdbPrecision(3)
 )
 
+// RtdbClass 点类型
 type RtdbClass uint32
 
 const (
-	// RtdbBase 基本标签点，所有类别标签点均在基本标签点的属性集上扩展自己的属性集。
-	RtdbBase = RtdbClass(C.RTDB_BASE)
+	// RtdbClassBase 基本标签点，所有类别标签点均在基本标签点的属性集上扩展自己的属性集。
+	RtdbClassBase = RtdbClass(C.RTDB_BASE)
 
-	// RtdbScan 采集标签点。
-	RtdbScan = RtdbClass(C.RTDB_SCAN)
+	// RtdbClassScan 采集标签点。
+	RtdbClassScan = RtdbClass(C.RTDB_SCAN)
 
-	// RtdbCalc 计算标签点
-	RtdbCalc = RtdbClass(C.RTDB_CALC)
+	// RtdbClassCalc 计算标签点
+	RtdbClassCalc = RtdbClass(C.RTDB_CALC)
 
-	// RtdbAlarm 报警标签点
-	RtdbAlarm = RtdbClass(C.RTDB_ALARM)
+	// RtdbClassAlarm 报警标签点
+	RtdbClassAlarm = RtdbClass(C.RTDB_ALARM)
 )
 
+// RtdbTrigger 计算标签点触发机制
+type RtdbTrigger uint8
+
+const (
+	// RtdbNullTrigger 无触发
+	RtdbNullTrigger = RtdbTrigger(C.RTDB_NULL_TRIGGER)
+
+	// RtdbEventTrigger 事件触发
+	RtdbEventTrigger = RtdbTrigger(C.RTDB_EVENT_TRIGGER)
+
+	// RtdbTimerTrigger 周期触发
+	RtdbTimerTrigger = RtdbTrigger(C.RTDB_TIMER_TRIGGER)
+
+	// RtdbFixtimeTrigger 定时触发
+	RtdbFixtimeTrigger = RtdbTrigger(C.RTDB_FIXTIME_TRIGGER)
+)
+
+// RtdbTimeCopy 计算结果时间戳参考
+type RtdbTimeCopy uint8
+
+const (
+	// RtdbCalcTime 采用计算时间
+	RtdbCalcTime = RtdbTimeCopy(C.RTDB_CALC_TIME)
+
+	// RtdbLatestTime 采用最晚标签点时间
+	RtdbLatestTime = RtdbTimeCopy(C.RTDB_LATEST_TIME)
+
+	// RtdbEarliestTime 采用最早标签点时间
+	RtdbEarliestTime = RtdbTimeCopy(C.RTDB_EARLIEST_TIME)
+)
+
+// RtdbPoint 基本标签点属性集
 type RtdbPoint struct {
 	// 标签点名称。
 	// 用于在表中唯一标识一个标签点；
@@ -4431,7 +4476,7 @@ type RtdbPoint struct {
 	// 是否存档。
 	// 缺省值：ON，1；
 	// ON或1表示存档，OFF或0表示不存档。
-	Archive byte
+	Archive Switch
 
 	// 数值位数。
 	// 缺省值：-5；
@@ -4444,7 +4489,7 @@ type RtdbPoint struct {
 	// 缺省值：0；
 	// 定义该点在停机状态下是否补写停机状态值。
 	// 1 表示补写；0 表示不补写。
-	Shutdown byte
+	Shutdown Switch
 
 	// 量程下限。
 	// 缺省值：0；
@@ -4462,7 +4507,7 @@ type RtdbPoint struct {
 	// 缺省情况下该属性为OFF，即中间值的计算是用内插值替换；
 	// 如果被设置为ON，则中间值的数值同前一个有记录的数值相同。
 	// 在历史数据检索中，本设置可能被外部输入的阶跃开关覆盖。
-	Step byte
+	Step Switch
 
 	// 典型值。
 	// 缺省值：50；
@@ -4473,7 +4518,7 @@ type RtdbPoint struct {
 	// 缺省值：ON，1；
 	// 如果该属性被关闭（OFF，0），任何到达数据存储服务器Server的数据都会被提交到历史数据库；否则（ON，1），只有满足压缩条件的数据才会被提交到历史数据库。
 	// 需要手工录入的标签点应该将该属性设置为OFF，0。
-	Compress byte
+	Compress Switch
 
 	// 压缩偏差。
 	// 单位：标签点工程单位；
@@ -4570,7 +4615,7 @@ type RtdbPoint struct {
 	// 默认值：秒，0；
 	// 用于设定标签点的历史值在存储中精确到"秒"（0）还是"毫秒/纳秒"（1）。
 	// 标签点一经创建就不允许修改该属性。
-	MilliSecond byte
+	MilliSecond Switch
 
 	// 采集点扩展属性集存储地址索引。
 	ScanIndex uint32
@@ -4587,7 +4632,7 @@ type RtdbPoint struct {
 	// 统计加速。
 	// 默认值：关，0；
 	// 用于设定是否生成标签点统计信息，从而加速历史数据统计过程。
-	Summary byte
+	Summary Switch
 
 	// 标签点对应自定义类型id，只用标签点类别为自定义类型时，才有意义。
 	NamedTypeID uint16
@@ -4646,14 +4691,14 @@ func cToRtdbPoint(p *C.RTDB_POINT) RtdbPoint {
 		Table:          TableID(p.table),
 		Desc:           CCharArrayToString(&p.desc[0], int(C.RTDB_DESC_SIZE)),
 		Unit:           CCharArrayToString(&p.unit[0], int(C.RTDB_UNIT_SIZE)),
-		Archive:        byte(p.archive),
+		Archive:        Switch(p.archive),
 		Digits:         int16(p.digits),
-		Shutdown:       byte(p.shutdown),
+		Shutdown:       Switch(p.shutdown),
 		LowLimit:       float32(p.lowlimit),
 		HighLimit:      float32(p.highlimit),
-		Step:           byte(p.step),
+		Step:           Switch(p.step),
 		Typical:        float32(p.typical),
-		Compress:       byte(p.compress),
+		Compress:       Switch(p.compress),
 		CompDev:        float32(p.compdev),
 		CompDevPercent: float32(p.compdevpercent),
 		CompTimeMax:    int32(p.comptimemax),
@@ -4668,16 +4713,130 @@ func cToRtdbPoint(p *C.RTDB_POINT) RtdbPoint {
 		CreateDate:     DateTimeType(p.createdate),
 		Creator:        CCharArrayToString(&p.creator[0], int(C.RTDB_USER_SIZE)),
 		Mirror:         RtdbMirror(p.mirror),
-		MilliSecond:    byte(p.millisecond),
+		MilliSecond:    Switch(p.millisecond),
 		ScanIndex:      uint32(p.scanindex),
 		CalcIndex:      uint32(p.calcindex),
 		AlarmIndex:     uint32(p.alarmindex),
 		TableDotTag:    CCharArrayToString(&p.table_dot_tag[0], int(C.RTDB_TAG_SIZE+C.RTDB_TAG_SIZE)),
-		Summary:        byte(p.summary),
+		Summary:        Switch(p.summary),
 		NamedTypeID:    uint16(p.named_type_id),
 		Precision:      RtdbPrecision(p.precision),
 	}
 
+	return rtn
+}
+
+// RtdbScan 采集标签点扩展属性集
+type RtdbScan struct {
+	// 全库唯一标识。0表示无效
+	ID PointID
+
+	// 数据源。
+	// 缺省值：空（NULL）；
+	// 将标签点同某些接口或某些模块相关联；
+	// 每个数据源字符串只允许由26个字母（大小写敏感）和数字（0-9）组成，字节长度不要超出 \b RTDB_SOURCE_SIZE，多余的部分会被截断。
+	Source string
+
+	// 是否采集。
+	// 缺省值：ON，1；
+	// 该属性可能会被某些接口用到，如果该属性被关闭（OFF，0），从接口传来的数据可能不会被报告到数据库。
+	Scan Switch
+
+	// 设备标签。
+	// 缺省值：空（NULL）；
+	// 字节长度不要超出 \b RTDB_INSTRUMENT_SIZE，多余的部分会被截断。
+	Instrument string
+
+	// 共包含五个设备位址，缺省值全部为0。
+	Locations [RtdbLocationsSize]int32
+
+	// 共包含两个自定义整数，缺省值全部为0。
+	UserInts [RtdbUserintSize]int32
+
+	// 共包含两个自定义单精度浮点数，缺省值全部为0。
+	UserReals [RtdbUserrealSize]float32
+}
+
+func cToRtdbScan(p *C.RTDB_SCAN_POINT) RtdbScan {
+	rtn := RtdbScan{
+		ID:         PointID(p.id),
+		Source:     CCharArrayToString(&p.source[0], int(C.RTDB_SOURCE_SIZE)),
+		Scan:       Switch(p.scan),
+		Instrument: CCharArrayToString(&p.instrument[0], int(C.RTDB_INSTRUMENT_SIZE)),
+	}
+	for i := 0; i < int(RtdbLocationsSize); i++ {
+		rtn.Locations[i] = int32(p.locations[i])
+	}
+	for i := 0; i < int(RtdbUserintSize); i++ {
+		rtn.UserInts[i] = int32(p.userints[i])
+	}
+	for i := 0; i < int(RtdbUserrealSize); i++ {
+		rtn.UserReals[i] = float32(p.userreals[i])
+	}
+	return rtn
+}
+
+func goToRtdbScan(p *RtdbScan) C.RTDB_SCAN_POINT {
+	rtn := C.RTDB_SCAN_POINT{}
+	rtn.id = C.int(p.ID)
+	GoStringToCCharArray(p.Source, &rtn.source[0], int(C.RTDB_SOURCE_SIZE))
+	rtn.scan = C.rtdb_byte(p.Scan)
+	GoStringToCCharArray(p.Instrument, &rtn.instrument[0], int(C.RTDB_INSTRUMENT_SIZE))
+	for i := 0; i < int(RtdbLocationsSize); i++ {
+		rtn.locations[i] = C.int(p.Locations[i])
+	}
+	for i := 0; i < int(RtdbUserintSize); i++ {
+		rtn.userints[i] = C.int(p.UserInts[i])
+	}
+	for i := 0; i < int(RtdbUserrealSize); i++ {
+		rtn.userreals[i] = C.float(p.UserReals[i])
+	}
+	return rtn
+}
+
+// RtdbCalc 最大长度计算点扩展属性集
+type RtdbCalc struct {
+	// 全库唯一标识。0表示无效。
+	ID PointID
+
+	// 实时方程式。
+	// 缺省值：空（NULL）；
+	// 字节长度不要超出 \b RTDB_MAX_EQUATION_SIZE，长度超长的方程式将被拒绝设置入库，返回一个错误，避免错误的方程式进入系统，引发不安全因素。
+	Equation string
+
+	// 计算触发机制。枚举值参见 \b RTDB_TRIGGER。
+	// 仅对"计算"类别标签点起作用，用于设置实时方程式服务对单个计算点的计算触发采用"事件触发"还是"周期触发"，
+	// 对于"周期触发"以"事件触发"作为其先决判断条件，如果"事件触发"不满足，则不进行"周期触发"。
+	Trigger RtdbTrigger
+
+	// 计算结果时间戳参考, 枚举值参见 \b RTDB_TIME_COPY
+	// 0: 表示采用计算时间作为计算结果时间戳；
+	// 1: 表示采用输入标签点中的最晚时间作为计算结果时间戳；
+	// 2: 表示采用输入标签点中的最早时间作为计算结果时间戳。
+	TimeCopy RtdbTimeCopy
+
+	// 对于“周期触发”的计算点，设定其计算周期，单位：秒
+	Period int32
+}
+
+func cToRtdbMaxCalc(p *C.RTDB_MAX_CALC_POINT) RtdbCalc {
+	rtn := RtdbCalc{
+		ID:       PointID(p.id),
+		Equation: CCharArrayToString(&p.equation[0], int(C.RTDB_MAX_EQUATION_SIZE)),
+		Trigger:  RtdbTrigger(p.trigger),
+		TimeCopy: RtdbTimeCopy(p.timecopy),
+		Period:   int32(p.period),
+	}
+	return rtn
+}
+
+func goToRtdbMaxCalc(p *RtdbCalc) C.RTDB_MAX_CALC_POINT {
+	rtn := C.RTDB_MAX_CALC_POINT{}
+	rtn.id = C.int(p.ID)
+	GoStringToCCharArray(p.Equation, &rtn.equation[0], int(C.RTDB_MAX_EQUATION_SIZE))
+	rtn.trigger = C.rtdb_byte(p.Trigger)
+	rtn.timecopy = C.rtdb_byte(p.TimeCopy)
+	rtn.period = C.int(p.Period)
 	return rtn
 }
 
@@ -5695,11 +5854,8 @@ func RawRtdbReadPath64Warp(handle ConnectHandle) (DirItem, error) {
 	cgoSize := C.rtdb_int64(0)
 	err := C.rtdb_read_path64_warp(cgoHandle, cgoPath, &cgoIsDir, &cgoATime, &cgoCTime, &cgoMTime, &cgoSize)
 
+	rtnIsDir := Switch(cgoIsDir)
 	rtnPath := C.GoString(cgoPath)
-	rtnIsDir := false
-	if cgoIsDir > 0 {
-		rtnIsDir = true
-	}
 	rtnATime := TimestampType(cgoATime)
 	rtnCTime := TimestampType(cgoCTime)
 	rtnMTime := TimestampType(cgoMTime)
