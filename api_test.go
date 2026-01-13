@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"testing"
+	"time"
 )
 
 const Hostname = "127.0.0.1"
@@ -986,9 +987,32 @@ func TestAddPoint(t *testing.T) {
 	}
 	fmt.Println("数量：", count)
 
-	err = RawRtdbbRemovePointByNameWarp(handle, table.Name+"."+base.Tag)
+	defer func() {
+		err = RawRtdbbRemovePointByNameWarp(handle, table.Name+"."+base.Tag)
+		if err != nil {
+			t.Error("删除标签点失败: ", err)
+			return
+		}
+	}()
+
+	//ctable2, err := RawRtdbbAppendTableWarp(handle, "bbb", "bbb test")
+	//cif err != nil {
+	//c	t.Error("添加表失败: ", err)
+	//c	return
+	//c}
+
+	defer func() {
+		err := RawRtdbbRemoveTableByIdWarp(handle, table2.ID)
+		if err != nil {
+			t.Error("删除表失败：", err)
+			return
+		}
+	}()
+
+	err = RawRtdbbMovePointByIdWarp(handle, base.ID, table.Name)
 	if err != nil {
-		t.Error("删除标签点失败: ", err)
+		t.Error("移动标签点失败：", err)
 		return
 	}
+	time.Sleep(1 * time.Second)
 }
