@@ -972,7 +972,7 @@ func TestAddPoint(t *testing.T) {
 	}
 	fmt.Println("搜索标签点：", ids)
 
-	ids2, err := RawRtdbbSearchExWarp(handle, "", "", "", "", "", "", "", RtdbTypeAny, RtdbPrecisionAny, RtdbSearchAny, "", RtdbSortFlagDescend)
+	ids2, err := RawRtdbbSearchExWarp(handle, 1024, "", "", "", "", "", "", "", RtdbTypeAny, RtdbPrecisionAny, RtdbSearchAny, "", RtdbSortFlagDescend)
 	if err != nil {
 		t.Error("搜索标签点失败2：", err)
 		return

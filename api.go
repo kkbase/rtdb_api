@@ -6782,19 +6782,20 @@ func RawRtdbbSearchInBatchesWarp(handle ConnectHandle, start int32, tagMask, tab
 	defer C.free(unsafe.Pointer(cDesc))
 	cInstrument := C.CString(instrument)
 	defer C.free(unsafe.Pointer(cInstrument))
-	count := C.rtdb_int32(1024)
-	ids := make([]PointID, count)
+	cCount := C.rtdb_int32(1024) // 固定1024，因为是批量获取的，这里就不指定了
+	ids := make([]PointID, cCount)
 	cIds := (*C.rtdb_int32)(unsafe.Pointer(&ids[0]))
 	cModel := C.rtdb_int32(model)
 
-	err := C.rtdbb_search_in_batches_warp(C.rtdb_int32(handle), C.rtdb_int32(start), cTagMask, cTableMask, cSource, cUnit, cDesc, cInstrument, cModel, cIds, &count)
-	return ids[:count], RtdbError(err).GoError()
+	err := C.rtdbb_search_in_batches_warp(C.rtdb_int32(handle), C.rtdb_int32(start), cTagMask, cTableMask, cSource, cUnit, cDesc, cInstrument, cModel, cIds, &cCount)
+	return ids[:cCount], RtdbError(err).GoError()
 }
 
 // RawRtdbbSearchExWarp 搜索符合条件的标签点，使用标签点名时支持通配符
 //
 // input:
 //   - handle 连接句柄
+//   - maxCount 最多返回maxCount个标签点
 //   - tagMask 标签点名称掩码，支持"*"和"?"通配符，缺省设置为"*"，长度不得超过 RTDB_TAG_SIZE，支持多个搜索条件，以空格分隔。
 //   - tableMask 标签点表名称掩码，支持"*"和"?"通配符，缺省设置为"*"，长度不得超过 RTDB_TAG_SIZE，支持多个搜索条件，以空格分隔。
 //   - source 数据源集合，字符串中的每个字符均表示一个数据源，空字符串表示不用数据源作搜索条件，缺省设置为空，长度不得超过 RTDB_DESC_SIZE。
@@ -6814,7 +6815,7 @@ func RawRtdbbSearchInBatchesWarp(handle ConnectHandle, start int32, tagMask, tab
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_search_ex_warp(rtdb_int32 handle, const char *tagmask, const char *tablemask, const char *source, const char *unit, const char *desc, const char *instrument, const char *typemask, rtdb_int32 classofmask, rtdb_int32 timeunitmask, rtdb_int32 othertypemask, const char *othertypemaskvalue, rtdb_int32 mode, rtdb_int32 *ids, rtdb_int32 *count)
-func RawRtdbbSearchExWarp(handle ConnectHandle, tagMask, tableMask, source, unit, desc, instrument, typeMask string, classOfMask RtdbType, timeUnitMask RtdbPrecision, otherTypeMask RtdbSearch, otherTypeMaskValue string, model RtdbSortFlag) ([]PointID, error) {
+func RawRtdbbSearchExWarp(handle ConnectHandle, maxCount int32, tagMask, tableMask, source, unit, desc, instrument, typeMask string, classOfMask RtdbType, timeUnitMask RtdbPrecision, otherTypeMask RtdbSearch, otherTypeMaskValue string, model RtdbSortFlag) ([]PointID, error) {
 	if strings.TrimSpace(tagMask) == "" {
 		tagMask = "*"
 	}
@@ -6840,7 +6841,7 @@ func RawRtdbbSearchExWarp(handle ConnectHandle, tagMask, tableMask, source, unit
 	cOtherTypeMask := C.rtdb_int32(otherTypeMask)
 	cOtherTypeMaskValue := C.CString(otherTypeMaskValue)
 	defer C.free(unsafe.Pointer(cOtherTypeMaskValue))
-	count := C.rtdb_int32(1024)
+	count := C.rtdb_int32(maxCount)
 	ids := make([]PointID, count)
 	cIds := (*C.rtdb_int32)(unsafe.Pointer(&ids[0]))
 	cModel := C.rtdb_int32(model)
