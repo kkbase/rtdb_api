@@ -381,7 +381,7 @@ func TestRawRtdbLockUserWarp(t *testing.T) {
 		return
 	}
 
-	err = RawRtdbLockUserWarp(handle, "t1", true)
+	err = RawRtdbLockUserWarp(handle, "t1", OFF)
 	if err != nil {
 		t.Error("启用User失败：", err)
 		return

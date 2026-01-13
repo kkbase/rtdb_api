@@ -546,7 +546,6 @@ typedef enum _RTDB_SEARCH_MASK
   RTDB_SEARCH_DIGITS,                             //!< 数值位数
   RTDB_SEARCH_COMPDEVPERCENT,                     //!< 压缩偏差百分比
   RTDB_SEARCH_EXCDEVPERCENT,                      //!< 例外偏差百分比
-
   RTDB_SEARCH_SCAN_BEGIN,                         //!< 辅助作用，不能作为搜索条件
   RTDB_SEARCH_SCAN,                               //!< 是否采集
   RTDB_SEARCH_LOCATION1,                          //!< 设备位址1
@@ -559,7 +558,6 @@ typedef enum _RTDB_SEARCH_MASK
   RTDB_SEARCH_USERREAL1,                          //!< 自定义单精度浮点数1
   RTDB_SEARCH_USERREAL2,                          //!< 自定义单精度浮点数2
   RTDB_SEARCH_SCAN_END,                           //!< 辅助作用，不能作为搜索条件
-
   RTDB_SEARCH_CALC_BEGIN,                         //!< 辅助作用，不能作为搜索条件
   RTDB_SEARCH_EQUATION,                           //!< 方程式
   RTDB_SEARCH_TRIGGER,                            //!< 计算触发机制

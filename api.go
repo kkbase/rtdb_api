@@ -4301,6 +4301,9 @@ type PointID int32
 type RtdbType int32
 
 const (
+	// RtdbTypeAny 任意类型, 备注，只有标签点搜索的时候可以使用, 如：RawRtdbbSearchExWarp
+	RtdbTypeAny = RtdbType(-1)
+
 	// RtdbTypeBool 布尔类型，0值或1值
 	RtdbTypeBool = RtdbType(C.RTDB_BOOL)
 
@@ -4383,6 +4386,9 @@ const (
 type RtdbPrecision int8
 
 const (
+	// RtdbPrecisionAny 所有时间戳精度，只有标签点搜索的时候可用，例如: RawRtdbbSearchExWarp
+	RtdbPrecisionAny = RtdbPrecision(-1)
+
 	// RtdbPrecisionSecond 秒
 	RtdbPrecisionSecond = RtdbPrecision(0)
 
@@ -4985,6 +4991,141 @@ const (
 	// RtdbSortFlagRecycled 用于回收站标签点排序
 	RtdbSortFlagRecycled = RtdbSortFlag(C.RTDB_SORT_FLAG_RECYCLED)
 )
+
+type RtdbSearch int32
+
+const (
+	RtdbSearchNull           = RtdbSearch(C.RTDB_SEARCH_NULL)           //!< 不使用任何标签点属性作为搜索条件
+	RtdbSearchCompdev        = RtdbSearch(C.RTDB_SEARCH_COMPDEV)        //!< 使用压缩偏差作为搜索条件
+	RtdbSearchCompmax        = RtdbSearch(C.RTDB_SEARCH_COMPMAX)        //!< 最大压缩间隔
+	RtdbSearchCompmin        = RtdbSearch(C.RTDB_SEARCH_COMPMIN)        //!< 最小压缩间隔
+	RtdbSearchExcdev         = RtdbSearch(C.RTDB_SEARCH_EXCDEV)         //!< 例外偏差
+	RtdbSearchExcmax         = RtdbSearch(C.RTDB_SEARCH_EXCMAX)         //!< 最大例外间隔
+	RtdbSearchExcmin         = RtdbSearch(C.RTDB_SEARCH_EXCMIN)         //!< 最小例外间隔
+	RtdbSearchSummary        = RtdbSearch(C.RTDB_SEARCH_SUMMARY)        //!< 是否加速
+	RtdbSearchMirror         = RtdbSearch(C.RTDB_SEARCH_MIRROR)         //!< 是否镜像
+	RtdbSearchCompress       = RtdbSearch(C.RTDB_SEARCH_COMPRESS)       //!< 是否压缩
+	RtdbSearchStep           = RtdbSearch(C.RTDB_SEARCH_STEP)           //!< 是否阶跃
+	RtdbSearchShutdown       = RtdbSearch(C.RTDB_SEARCH_SHUTDOWN)       //!< 是否停机补写
+	RtdbSearchArchive        = RtdbSearch(C.RTDB_SEARCH_ARCHIVE)        //!< 是否归档
+	RtdbSearchChanger        = RtdbSearch(C.RTDB_SEARCH_CHANGER)        //!< 修改人
+	RtdbSearchCreator        = RtdbSearch(C.RTDB_SEARCH_CREATOR)        //!< 创建人
+	RtdbSearchLowlimit       = RtdbSearch(C.RTDB_SEARCH_LOWLIMIT)       //!< 量程下限
+	RtdbSearchHighlimit      = RtdbSearch(C.RTDB_SEARCH_HIGHLIMIT)      //!< 量程上限
+	RtdbSearchTypical        = RtdbSearch(C.RTDB_SEARCH_TYPICAL)        //!< 典型值
+	RtdbSearchChangedate     = RtdbSearch(C.RTDB_SEARCH_CHANGEDATE)     //!< 修改时间
+	RtdbSearchCreatedate     = RtdbSearch(C.RTDB_SEARCH_CREATEDATE)     //!< 创建时间
+	RtdbSearchDigits         = RtdbSearch(C.RTDB_SEARCH_DIGITS)         //!< 数值位数
+	RtdbSearchCompdevpercent = RtdbSearch(C.RTDB_SEARCH_COMPDEVPERCENT) //!< 压缩偏差百分比
+	RtdbSearchExcdevpercent  = RtdbSearch(C.RTDB_SEARCH_EXCDEVPERCENT)  //!< 例外偏差百分比
+	RtdbSearchScan_begin     = RtdbSearch(C.RTDB_SEARCH_SCAN_BEGIN)     //!< 辅助作用，不能作为搜索条件
+	RtdbSearchScan           = RtdbSearch(C.RTDB_SEARCH_SCAN)           //!< 是否采集
+	RtdbSearchLocation1      = RtdbSearch(C.RTDB_SEARCH_LOCATION1)      //!< 设备位址1
+	RtdbSearchLocation2      = RtdbSearch(C.RTDB_SEARCH_LOCATION2)      //!< 设备位址2
+	RtdbSearchLocation3      = RtdbSearch(C.RTDB_SEARCH_LOCATION3)      //!< 设备位址3
+	RtdbSearchLocation4      = RtdbSearch(C.RTDB_SEARCH_LOCATION4)      //!< 设备位址4
+	RtdbSearchLocation5      = RtdbSearch(C.RTDB_SEARCH_LOCATION5)      //!< 设备位址5
+	RtdbSearchUserint1       = RtdbSearch(C.RTDB_SEARCH_USERINT1)       //!< 自定义整数1
+	RtdbSearchUserint2       = RtdbSearch(C.RTDB_SEARCH_USERINT2)       //!< 自定义整数2
+	RtdbSearchUserreal1      = RtdbSearch(C.RTDB_SEARCH_USERREAL1)      //!< 自定义单精度浮点数1
+	RtdbSearchUserreal2      = RtdbSearch(C.RTDB_SEARCH_USERREAL2)      //!< 自定义单精度浮点数2
+	RtdbSearchScan_end       = RtdbSearch(C.RTDB_SEARCH_SCAN_END)       //!< 辅助作用，不能作为搜索条件
+	RtdbSearchCalc_begin     = RtdbSearch(C.RTDB_SEARCH_CALC_BEGIN)     //!< 辅助作用，不能作为搜索条件
+	RtdbSearchEquation       = RtdbSearch(C.RTDB_SEARCH_EQUATION)       //!< 方程式
+	RtdbSearchTrigger        = RtdbSearch(C.RTDB_SEARCH_TRIGGER)        //!< 计算触发机制
+	RtdbSearchTimecopy       = RtdbSearch(C.RTDB_SEARCH_TIMECOPY)       //!< 计算结果时间戳参考
+	RtdbSearchPeriod         = RtdbSearch(C.RTDB_SEARCH_PERIOD)         //!< 计算周期
+	RtdbSearchCalc_end       = RtdbSearch(C.RTDB_SEARCH_CALC_END)       //!< 辅助作用，不能作为搜索条件
+)
+
+func (rs RtdbSearch) Desc() string {
+	switch rs {
+	case RtdbSearchNull:
+		return "不使用任何标签点属性作为搜索条件"
+	case RtdbSearchCompdev:
+		return "使用压缩偏差作为搜索条件"
+	case RtdbSearchCompmax:
+		return "最大压缩间隔"
+	case RtdbSearchCompmin:
+		return "最小压缩间隔"
+	case RtdbSearchExcdev:
+		return "例外偏差"
+	case RtdbSearchExcmax:
+		return "最大例外间隔"
+	case RtdbSearchExcmin:
+		return "最小例外间隔"
+	case RtdbSearchSummary:
+		return "是否统计加速"
+	case RtdbSearchMirror:
+		return "是否镜像"
+	case RtdbSearchCompress:
+		return "是否压缩"
+	case RtdbSearchStep:
+		return "是否阶跃"
+	case RtdbSearchShutdown:
+		return "是否停机补写"
+	case RtdbSearchArchive:
+		return "是否归档"
+	case RtdbSearchChanger:
+		return "修改人"
+	case RtdbSearchCreator:
+		return "创建人"
+	case RtdbSearchLowlimit:
+		return "量程下限"
+	case RtdbSearchHighlimit:
+		return "量程上限"
+	case RtdbSearchTypical:
+		return "典型值"
+	case RtdbSearchChangedate:
+		return "修改时间"
+	case RtdbSearchCreatedate:
+		return "创建时间"
+	case RtdbSearchDigits:
+		return "数值位数"
+	case RtdbSearchCompdevpercent:
+		return "压缩偏差百分比"
+	case RtdbSearchExcdevpercent:
+		return "例外偏差百分比"
+	case RtdbSearchScan_begin:
+		return "辅助作用，不能作为搜索条件"
+	case RtdbSearchScan:
+		return "是否采集"
+	case RtdbSearchLocation1:
+		return "设备位址1"
+	case RtdbSearchLocation2:
+		return "设备位址2"
+	case RtdbSearchLocation3:
+		return "设备位址3"
+	case RtdbSearchLocation4:
+		return "设备位址4"
+	case RtdbSearchLocation5:
+		return "设备位址5"
+	case RtdbSearchUserint1:
+		return "自定义整数1"
+	case RtdbSearchUserint2:
+		return "自定义整数2"
+	case RtdbSearchUserreal1:
+		return "自定义单精度浮点数1"
+	case RtdbSearchUserreal2:
+		return "自定义单精度浮点数2"
+	case RtdbSearchScan_end:
+		return "辅助作用，不能作为搜索条件"
+	case RtdbSearchCalc_begin:
+		return "辅助作用，不能作为搜索条件"
+	case RtdbSearchEquation:
+		return "方程式"
+	case RtdbSearchTrigger:
+		return "计算触发机制"
+	case RtdbSearchTimecopy:
+		return "计算结果时间戳参考"
+	case RtdbSearchPeriod:
+		return "计算周期"
+	case RtdbSearchCalc_end:
+		return "辅助作用，不能作为搜索条件"
+	default:
+		return "未知搜索条件"
+	}
+}
 
 /////////////////////////////// 上面是结构定义 ////////////////////////////////////
 /////////////////////////////// -- 华丽的分割线 -- ////////////////////////////////
@@ -6555,7 +6696,7 @@ func RawRtdbbGetMaxPointsPropertyWarp(handle ConnectHandle, pointIDs []PointID) 
 }
 
 // RawRtdbbSearchWarp 搜索符合条件的标签点，使用标签点名时支持通配符
-// 备注： 废弃，由于有数量限制，采用下面的分段搜索
+// 备注： 废弃，由于有数量限制，采用下面的分段搜索 (RawRtdbbSearchInBatchesWarp)
 //
 // input:
 //   - handle 连接句柄
@@ -6640,53 +6781,71 @@ func RawRtdbbSearchInBatchesWarp(handle ConnectHandle, start int32, tagMask, tab
 	defer C.free(unsafe.Pointer(cDesc))
 	cInstrument := C.CString(instrument)
 	defer C.free(unsafe.Pointer(cInstrument))
-	cModel := C.rtdb_int32(model)
 	count := C.rtdb_int32(1024)
 	ids := make([]PointID, count)
 	cIds := (*C.rtdb_int32)(unsafe.Pointer(&ids[0]))
+	cModel := C.rtdb_int32(model)
 
 	err := C.rtdbb_search_in_batches_warp(C.rtdb_int32(handle), C.rtdb_int32(start), cTagMask, cTableMask, cSource, cUnit, cDesc, cInstrument, cModel, cIds, &count)
 	return ids[:count], RtdbError(err).GoError()
 }
 
 // RawRtdbbSearchExWarp 搜索符合条件的标签点，使用标签点名时支持通配符
-// 废弃， 这个是扩展的，可以搜索标签点属性，但是我认为这个标签点属性定义过于晦涩，而且只能限定一个标签点属性，作用不大
 //
-// *
-// * \param handle        连接句柄
-// * \param tagmask       字符串，输入，标签点名称掩码，支持"*"和"?"通配符，缺省设置为"*"，长度不得超过 RTDB_TAG_SIZE，支持多个搜索条件，以空格分隔。
-// * \param tablemask     字符串，输入，标签点表名称掩码，支持"*"和"?"通配符，缺省设置为"*"，长度不得超过 RTDB_TAG_SIZE，支持多个搜索条件，以空格分隔。
-// * \param source        字符串，输入，数据源集合，字符串中的每个字符均表示一个数据源，
-// *                        空字符串表示不用数据源作搜索条件，缺省设置为空，长度不得超过 RTDB_DESC_SIZE。
-// * \param unit          字符串，输入，标签点工程单位的子集，工程单位中包含该参数的标签点均满足条件，
-// *                        空字符串表示不用工程单位作搜索条件，缺省设置为空，长度不得超过 RTDB_UNIT_SIZE。
-// * \param desc          字符串，输入，标签点描述的子集，描述中包含该参数的标签点均满足条件，
-// *                        空字符串表示不用描述作搜索条件，缺省设置为空，长度不得超过 RTDB_SOURCE_SIZE。
-// * \param instrument    字符串，输入参数，标签点设备名称。缺省设置为空，长度不得超过 RTDB_INSTRUMENT_SIZE。
-// * \param typemask      字符串，输入参数，标签点类型名称。缺省设置为空，长度不得超过 RTDB_TYPE_NAME_SIZE,
-// *                        内置的普通数据类型可以使用 bool、uint8、datetime等字符串表示，不区分大小写，支持模糊搜索。
-// * \param classofmask   整型，输入参数，标签点的类别，缺省设置为-1，表示可以是任意类型的标签点，
-// *                        当使用标签点类型作为搜索条件时，必须是RTDB_CLASS枚举中的一项或者多项的组合。
-// * \param timeunitmask  整型，输入参数，标签点的时间戳精度，缺省设置为-1，表示可以是任意时间戳精度，
-// *                        当使用此时间戳精度作为搜索条件时，timeunitmask的值可以为0或1，0表示时间戳精度为秒，1表示纳秒
-// * \param othertypemask 整型，输入参数，使用其他标签点属性作为搜索条件，缺省设置为0，表示不作为搜索条件，
-// *                        当使用此参数作为搜索条件时，othertypemaskvalue作为对应的搜索值，
-// *                        此参数的取值可以参考rtdb.h文件中的RTDB_SEARCH_MASK。
-// * \param othertypemaskvalue
-// *                        字符串，输入参数，当使用其他标签点属性作为搜索条件时，此参数作为对应的搜索值，缺省设置为0，表示不作为搜索条件，
-// *                        如果othertypemask的值为0，或者RTDB_SEARCH_NULL，则此参数被忽略,
-// *                        当othertypemask对应的标签点属性为数值类型时，此搜索值只支持相等判断，
-// *                        当othertypemask对应的标签点属性为字符串类型时，此搜索值支持模糊搜索。
-// * \param mode          整型，RTDB_SORT_BY_TABLE、RTDB_SORT_BY_TAG、RTDB_SORT_BY_ID 之一，
-// *                        搜索结果的排序模式，输入，缺省值为RTDB_SORT_BY_TABLE
-// * \param ids           整型数组，输出，返回搜索到的标签点标识列表
-// * \param count         整型，输入/输出，输入时表示 ids 的长度，输出时表示搜索到的标签点个数
-// * \remark 用户须保证分配给 ids 的空间与 count 相符，各参数中包含的搜索条件之间的关系为"与"的关系，
-// *        用包含通配符的标签点名称作搜索条件时，如果第一个字符不是通配符(如"ai67*")，会得到最快的搜索速度。
-// *        如果 tagmask、tablemask 为空指针，则表示使用缺省设置"*",
-// *        多个搜索条件可以通过空格分隔，比如"demo_*1 demo_*2"，会将满足demo_*1或者demo_*2条件的标签点搜索出来。
-// rtdb_error RTDBAPI_CALLRULE rtdbb_search_ex_warp(rtdb_int32 handle, const char *tagmask, const char *tablemask, const char *source, const char *unit, const char *desc, const char *instrument, const char *typemask, rtdb_int32 classofmask, rtdb_int32 timeunitmask, rtdb_int32 othertypemask, const char *othertypemaskvalue, rtdb_int32 mode, rtdb_int32 *ids, rtdb_int32 *count)
-// func RawRtdbbSearchExWarp(handle ConnectHandle) {}
+// input:
+//   - handle 连接句柄
+//   - tagMask 标签点名称掩码，支持"*"和"?"通配符，缺省设置为"*"，长度不得超过 RTDB_TAG_SIZE，支持多个搜索条件，以空格分隔。
+//   - tableMask 标签点表名称掩码，支持"*"和"?"通配符，缺省设置为"*"，长度不得超过 RTDB_TAG_SIZE，支持多个搜索条件，以空格分隔。
+//   - source 数据源集合，字符串中的每个字符均表示一个数据源，空字符串表示不用数据源作搜索条件，缺省设置为空，长度不得超过 RTDB_DESC_SIZE。
+//   - unit 标签点工程单位的子集，工程单位中包含该参数的标签点均满足条件，空字符串表示不用工程单位作搜索条件，缺省设置为空，长度不得超过 RTDB_UNIT_SIZE。
+//   - desc 标签点描述的子集，描述中包含该参数的标签点均满足条件，空字符串表示不用描述作搜索条件，缺省设置为空，长度不得超过 RTDB_SOURCE_SIZE。
+//   - instrument 标签点设备名称。缺省设置为空，长度不得超过 RTDB_INSTRUMENT_SIZE。
+//   - typeMask 标签点类型名称。缺省设置为空，长度不得超过 RTDB_TYPE_NAME_SIZE,内置的普通数据类型可以使用 bool、uint8、datetime等字符串表示，不区分大小写，支持模糊搜索。
+//   - classOfMask 标签点的类别，缺省设置为-1，表示可以是任意类型的标签点，当使用标签点类型作为搜索条件时，必须是RTDB_CLASS枚举中的一项或者多项的组合。
+//   - timeUnitMask 标签点的时间戳精度，缺省设置为-1，表示可以是任意时间戳精度，当使用此时间戳精度作为搜索条件时，timeunitmask的值可以为0或1，0表示时间戳精度为秒，1表示纳秒
+//   - otherTypeMask 使用其他标签点属性作为搜索条件，缺省设置为0，表示不作为搜索条件，当使用此参数作为搜索条件时，othertypemaskvalue作为对应的搜索值，此参数的取值可以参考rtdb.h文件中的RTDB_SEARCH_MASK。
+//   - otherTypeMaskValue 字符串，输入参数，当使用其他标签点属性作为搜索条件时，此参数作为对应的搜索值，缺省设置为0，表示不作为搜索条件，如果othertypemask的值为0，或者RTDB_SEARCH_NULL，则此参数被忽略, 当othertypemask对应的标签点属性为数值类型时，此搜索值只支持相等判断，当othertypemask对应的标签点属性为字符串类型时，此搜索值支持模糊搜索。
+//   - mode 搜索结果排序模式
+//   - 备注：多个搜索条件可以通过空格分隔，比如"demo_*1 demo_*2"，会将满足demo_*1或者demo_*2条件的标签点搜索出来。
+//
+// output:
+//   - []PointID 标签点列表
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbb_search_ex_warp(rtdb_int32 handle, const char *tagmask, const char *tablemask, const char *source, const char *unit, const char *desc, const char *instrument, const char *typemask, rtdb_int32 classofmask, rtdb_int32 timeunitmask, rtdb_int32 othertypemask, const char *othertypemaskvalue, rtdb_int32 mode, rtdb_int32 *ids, rtdb_int32 *count)
+func RawRtdbbSearchExWarp(handle ConnectHandle, tagMask, tableMask, source, unit, desc, instrument, typeMask string, classOfMask RtdbType, timeUnitMask RtdbPrecision, otherTypeMask RtdbSearch, otherTypeMaskValue string, model RtdbSortFlag) ([]PointID, error) {
+	if strings.TrimSpace(tagMask) == "" {
+		tagMask = "*"
+	}
+	if strings.TrimSpace(tableMask) == "" {
+		tableMask = "*"
+	}
+	cTagMask := C.CString(tagMask)
+	defer C.free(unsafe.Pointer(cTagMask))
+	cTableMask := C.CString(tableMask)
+	defer C.free(unsafe.Pointer(cTableMask))
+	cSource := C.CString(source)
+	defer C.free(unsafe.Pointer(cSource))
+	cUnit := C.CString(unit)
+	defer C.free(unsafe.Pointer(cUnit))
+	cDesc := C.CString(desc)
+	defer C.free(unsafe.Pointer(cDesc))
+	cInstrument := C.CString(instrument)
+	defer C.free(unsafe.Pointer(cInstrument))
+	cTypeMask := C.CString(typeMask)
+	defer C.free(unsafe.Pointer(cTypeMask))
+	cClassOfMask := C.rtdb_int32(classOfMask)
+	cTimeUnitMask := C.rtdb_int32(timeUnitMask)
+	cOtherTypeMask := C.rtdb_int32(otherTypeMask)
+	cOtherTypeMaskValue := C.CString(otherTypeMaskValue)
+	defer C.free(unsafe.Pointer(cOtherTypeMaskValue))
+	count := C.rtdb_int32(1024)
+	ids := make([]PointID, count)
+	cIds := (*C.rtdb_int32)(unsafe.Pointer(&ids[0]))
+	cModel := C.rtdb_int32(model)
+	err := C.rtdbb_search_ex_warp(C.rtdb_int32(handle), cTagMask, cTableMask, cSource, cUnit, cDesc, cInstrument, cTypeMask, cClassOfMask, cTimeUnitMask, cOtherTypeMask, cOtherTypeMaskValue, cModel, cIds, &count)
+	return ids[:count], RtdbError(err).GoError()
+}
 
 // RawRtdbbSearchPointsCountWarp 搜索符合条件的标签点，返回符合条件的标签点数量，支持通配符
 // * \param handle        连接句柄
