@@ -5053,11 +5053,15 @@ func RawRtdbRemoveDatagramHandleWarp(handle DatagramHandle) error {
 }
 
 // RawRtdbRecvDatagramWarp 接收数据流
+//
 // input:
 //   - handle  数据流句柄
 //   - cacheLen 缓存大小，会创建对应大小的缓存，用于接收数据流返回的数据
 //   - remoteAddr 对端IP地址
 //   - timeout 超时时间(单位秒)
+//
+// output:
+//   - []byte 返回数据流
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_recv_datagram_warp(char* message, rtdb_int32* message_len, rtdb_datagram_handle handle, char* remote_addr, rtdb_int32 timeout)
@@ -5075,6 +5079,9 @@ func RawRtdbRecvDatagramWarp(handle DatagramHandle, cacheLen int32, remoteAddr s
 // input:
 //   - hostname 数据库IP地址
 //   - port 数据库端口号
+//
+// output:
+//   - ConnectHandle 返回连接句柄
 //
 // raw_fn:
 // - rtdb_error RTDBAPI_CALLRULE rtdb_connect_warp(const char *hostname, rtdb_int32 port, rtdb_int32 *handle)
@@ -5126,6 +5133,9 @@ func RawRtdbDisconnectWarp(handle ConnectHandle) error {
 // input:
 //   - handle 连接句柄
 //   - nodeNumber 单机模式下写0, 双活模式下，指定节点编号，1为rtdb_connect中第1个IP，2为rtdb_connect中第2个IP
+//
+// output:
+//   - int32 返回连接个数
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_connection_count_warp(rtdb_int32 handle, rtdb_int32 node_number, rtdb_int32 *count)
@@ -5317,7 +5327,7 @@ func RawRtdbChangePasswordWarp(handle ConnectHandle, user string, password strin
 // RawRtdbChangeMyPasswordWarp 用户修改自己帐户口令
 //
 // input:
-//   - handle  连接句柄
+//   - handle 连接句柄
 //   - oldPwd 帐户原口令
 //   - newPwd 帐户新口令
 //
@@ -5403,18 +5413,14 @@ func RawRtdbRemoveUserWarp(handle ConnectHandle, user string) error {
 // input:
 //   - handle 连接句柄
 //   - user 帐户名
-//   - lock 是否禁用
+//   - lock 是否禁用, ON(1)启动， OFF(0)禁用
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_lock_user_warp(rtdb_int32 handle, const char *user, rtdb_int8 lock)
-func RawRtdbLockUserWarp(handle ConnectHandle, user string, lock bool) error {
+func RawRtdbLockUserWarp(handle ConnectHandle, user string, lock Switch) error {
 	cUser := C.CString(user)
 	defer C.free(unsafe.Pointer(cUser))
-	cLock := int8(0)
-	if lock {
-		cLock = 1
-	}
-	err := C.rtdb_lock_user_warp(C.rtdb_int32(handle), cUser, C.rtdb_int8(cLock))
+	err := C.rtdb_lock_user_warp(C.rtdb_int32(handle), cUser, C.rtdb_int8(lock))
 	return RtdbError(err).GoError()
 }
 
@@ -5710,6 +5716,9 @@ func RawRtdbGetAuthorizationsWarp(handle ConnectHandle) ([]AuthorizationsList, e
 // input:
 //   - handle       连接句柄
 //
+// output:
+//   - TimestampType 服务器当前UDC时间, 单位秒
+//
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_host_time64_warp(rtdb_int32 handle, rtdb_timestamp_type* hosttime)
 func RawRtdbHostTime64Warp(handle ConnectHandle) (TimestampType, error) {
@@ -5729,6 +5738,9 @@ func RawRtdbHostTime64Warp(handle ConnectHandle) (TimestampType, error) {
 //     ?h    ?小时
 //     ?n    ?分钟
 //     ?s    ?秒
+//
+// output:
+//   - string 时间格式字符串
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_format_timespan_warp(char *str, rtdb_int32 timespan)
@@ -5755,6 +5767,9 @@ func RawRtdbFormatTimespanWarp(timespan int32) (string, error) {
 //     ?n            ?分钟
 //     ?s            ?秒
 //     例如："1d" 表示时间跨度为24小时。
+//
+// output:
+//   - DateTimeType 时间跨度值
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_parse_timespan_warp(const char *str, rtdb_int32 *timespan)
@@ -5796,6 +5811,10 @@ func RawRtdbParseTimespanWarp(tStr string) (DateTimeType, error) {
 //     [+|-] ?s            偏移?秒
 //     [+|-] ?ms           偏移?毫秒
 //     例如："*-1d" 表示当前时刻减去24小时。
+//
+// output:
+//   - TimestampType 时间戳，秒级
+//   - SubtimeType 时间戳，亚秒级(亚秒指的是 毫秒、微妙、纳秒 之一， 需要根据当前标签点的时间戳精度来确定单位)
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_parse_time_warp(const char *str, rtdb_int64 *datetime, rtdb_int16 *ms)
@@ -5869,11 +5888,11 @@ func RawRtdbSetTimeoutWarp(handle ConnectHandle, socket SocketHandle, timeout Da
 // RawRtdbGetTimeoutWarp 获得连接超时时间
 //
 // input:
-//   - handle   连接句柄
+//   - handle 连接句柄
 //   - sockt 要获取超时时间的连接
 //
 // output:
-//   - DateTimeType 连接超时时间
+//   - DateTimeType 连接超时时间，单位秒
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_get_timeout_warp(rtdb_int32 handle, rtdb_int32 socket, rtdb_int32 *timeout)
@@ -5884,6 +5903,7 @@ func RawRtdbGetTimeoutWarp(handle ConnectHandle, socket SocketHandle) (DateTimeT
 }
 
 // RawRtdbKillConnectionWarp 断开已知连接
+//
 // input:
 //   - handle 连接句柄
 //   - socket 要断开的连接
@@ -6182,10 +6202,14 @@ func RawRtdbFormatIpaddrWarp(ip uint32) string {
 }
 
 // RawRtdbbAppendTableWarp 添加新表
+//
 // input:
 //   - handle   连接句柄
 //   - tableName 表名
 //   - tableDesc 表描述
+//
+// output:
+//   - RtdbTable 返回表
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_append_table_warp(rtdb_int32 handle, RTDB_TABLE *field)
@@ -6199,6 +6223,7 @@ func RawRtdbbAppendTableWarp(handle ConnectHandle, tableName, tableDesc string) 
 }
 
 // RawRtdbbRemoveTableByIdWarp 根据表 id 删除表及表中标签点
+//
 // input:
 //   - handle        连接句柄
 //   - id            整型，输入，表 id
@@ -6334,10 +6359,16 @@ func RawRtdbbGetTablePropertyByIdWarp(handle ConnectHandle, tableID TableID) (Rt
 }
 
 // RawRtdbbGetTablePropertyByNameWarp 根据表名获取标签点表属性
-// *  \param handle 连接句柄
-// *  \param field  RTDB_TABLE 结构，输入/输出，标签点表属性
-// *                输入时指定 name 字段，输出时返回 id、type、desc 字段。
-// rtdb_error RTDBAPI_CALLRULE rtdbb_get_table_property_by_name_warp(rtdb_int32 handle, RTDB_TABLE *field)
+//
+// input:
+//   - handle 连接句柄
+//   - tableName 表名
+//
+// output:
+//   - RtdbTable 表结构
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbb_get_table_property_by_name_warp(rtdb_int32 handle, RTDB_TABLE *field)
 func RawRtdbbGetTablePropertyByNameWarp(handle ConnectHandle, tableName string) (RtdbTable, error) {
 	table := C.RTDB_TABLE{}
 	GoStringToCCharArray(tableName, &table.name[0], int(C.RTDB_TAG_SIZE))
