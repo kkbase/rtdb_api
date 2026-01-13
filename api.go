@@ -19,7 +19,6 @@ import (
 var LinuxAmd64RtdbSo []byte
 
 func init() {
-	// 跨平台加载SO路径
 	data := make([]byte, 0)
 	name := ""
 	if runtime.GOOS == "linux" {
@@ -66,10 +65,12 @@ const (
 // RtdbError 数据库错误
 type RtdbError uint32
 
+// IsOk 判断当前错误是否为RteOk
 func (re RtdbError) IsOk() bool {
 	return errors.Is(re, RteOk)
 }
 
+// Error 实现 error 接口
 func (re RtdbError) Error() string {
 	desc := ""
 	switch re {
@@ -1273,6 +1274,7 @@ func (re RtdbError) Error() string {
 	return desc
 }
 
+// GoError 将RtdbError转换成 error
 func (re RtdbError) GoError() error {
 	if re.IsOk() {
 		return nil
@@ -3075,7 +3077,6 @@ const (
 )
 
 // RtdbApiOption 用于设置API的工作模式的参数选项
-// \see RtdbSetOptionWarp
 type RtdbApiOption uint32
 
 const (
@@ -4009,110 +4010,110 @@ type ParamInt uint32
 type RtdbConst int32
 
 const (
-	// RtdbTagSize 标签点名称占用字节数
-	RtdbTagSize = RtdbConst(C.RTDB_TAG_SIZE)
+	// RtdbConstTagSize 标签点名称占用字节数
+	RtdbConstTagSize = RtdbConst(C.RTDB_TAG_SIZE)
 
-	// RtdbDescSize 标签点描述占用字节数
-	RtdbDescSize = RtdbConst(C.RTDB_DESC_SIZE)
+	// RtdbConstDescSize 标签点描述占用字节数
+	RtdbConstDescSize = RtdbConst(C.RTDB_DESC_SIZE)
 
-	// RtdbUnitSize 标签点单位占用字节数
-	RtdbUnitSize = RtdbConst(C.RTDB_UNIT_SIZE)
+	// RtdbConstUnitSize 标签点单位占用字节数
+	RtdbConstUnitSize = RtdbConst(C.RTDB_UNIT_SIZE)
 
-	// RtdbUserSize 用户名占用字节数
-	RtdbUserSize = RtdbConst(C.RTDB_USER_SIZE)
+	// RtdbConstUserSize 用户名占用字节数
+	RtdbConstUserSize = RtdbConst(C.RTDB_USER_SIZE)
 
-	// RtdbSourceSize 标签点数据源占用字节数
-	RtdbSourceSize = RtdbConst(C.RTDB_SOURCE_SIZE)
+	// RtdbConstSourceSize 标签点数据源占用字节数
+	RtdbConstSourceSize = RtdbConst(C.RTDB_SOURCE_SIZE)
 
-	// RtdbInstrumentSize 标签点所属设备占用字节数
-	RtdbInstrumentSize = RtdbConst(C.RTDB_INSTRUMENT_SIZE)
+	// RtdbConstInstrumentSize 标签点所属设备占用字节数
+	RtdbConstInstrumentSize = RtdbConst(C.RTDB_INSTRUMENT_SIZE)
 
-	// RtdbLocationsSize  采集标签点位址个数
-	RtdbLocationsSize = RtdbConst(C.RTDB_LOCATIONS_SIZE)
+	// RtdbConstLocationsSize  采集标签点位址个数
+	RtdbConstLocationsSize = RtdbConst(C.RTDB_LOCATIONS_SIZE)
 
-	// RtdbUserintSize  采集标签点用户自定义整数个数
-	RtdbUserintSize = RtdbConst(C.RTDB_USERINT_SIZE)
+	// RtdbConstUserintSize  采集标签点用户自定义整数个数
+	RtdbConstUserintSize = RtdbConst(C.RTDB_USERINT_SIZE)
 
-	// RtdbUserrealSize  采集标签点用户自定义浮点数个数
-	RtdbUserrealSize = RtdbConst(C.RTDB_USERREAL_SIZE)
+	// RtdbConstUserrealSize  采集标签点用户自定义浮点数个数
+	RtdbConstUserrealSize = RtdbConst(C.RTDB_USERREAL_SIZE)
 
-	// RtdbEquationSize 计算标签点方程式占用字节数
-	RtdbEquationSize = RtdbConst(C.RTDB_EQUATION_SIZE)
+	// RtdbConstEquationSize 计算标签点方程式占用字节数
+	RtdbConstEquationSize = RtdbConst(C.RTDB_EQUATION_SIZE)
 
-	// RtdbTypeNameSize 自定义类型名称占用字节数
-	RtdbTypeNameSize = RtdbConst(C.RTDB_TYPE_NAME_SIZE)
+	// RtdbConstTypeNameSize 自定义类型名称占用字节数
+	RtdbConstTypeNameSize = RtdbConst(C.RTDB_TYPE_NAME_SIZE)
 
-	// RtdbPackOfSnapshot   事件快照备用字节空间
-	RtdbPackOfSnapshot = RtdbConst(C.RTDB_PACK_OF_SNAPSHOT)
+	// RtdbConstPackOfSnapshot   事件快照备用字节空间
+	RtdbConstPackOfSnapshot = RtdbConst(C.RTDB_PACK_OF_SNAPSHOT)
 
-	// RtdbPackOfPoint 标签点备用字节空间
-	RtdbPackOfPoint = RtdbConst(C.RTDB_PACK_OF_POINT)
+	// RtdbConstPackOfPoint 标签点备用字节空间
+	RtdbConstPackOfPoint = RtdbConst(C.RTDB_PACK_OF_POINT)
 
-	// RtdbPackOfBasePoint 基本标签点备用字节空间
-	RtdbPackOfBasePoint = RtdbConst(C.RTDB_PACK_OF_BASE_POINT)
+	// RtdbConstPackOfBasePoint 基本标签点备用字节空间
+	RtdbConstPackOfBasePoint = RtdbConst(C.RTDB_PACK_OF_BASE_POINT)
 
-	// RtdbPackOfScan 采集标签点备用字节空间
-	RtdbPackOfScan = RtdbConst(C.RTDB_PACK_OF_SCAN)
+	// RtdbConstPackOfScan 采集标签点备用字节空间
+	RtdbConstPackOfScan = RtdbConst(C.RTDB_PACK_OF_SCAN)
 
-	// RtdbPackOfCalc 计算标签点备用字节空间
-	RtdbPackOfCalc = RtdbConst(C.RTDB_PACK_OF_CALC)
+	// RtdbConstPackOfCalc 计算标签点备用字节空间
+	RtdbConstPackOfCalc = RtdbConst(C.RTDB_PACK_OF_CALC)
 
-	// RtdbFileNameSize 文件名字符串字节长度
-	RtdbFileNameSize = RtdbConst(C.RTDB_FILE_NAME_SIZE)
+	// RtdbConstFileNameSize 文件名字符串字节长度
+	RtdbConstFileNameSize = RtdbConst(C.RTDB_FILE_NAME_SIZE)
 
-	// RtdbPathSize  路径字符串字节长度
-	RtdbPathSize = RtdbConst(C.RTDB_PATH_SIZE)
+	// RtdbConstPathSize  路径字符串字节长度
+	RtdbConstPathSize = RtdbConst(C.RTDB_PATH_SIZE)
 
-	// RtdbMaxUserCount 最大用户个数
-	RtdbMaxUserCount = RtdbConst(C.RTDB_MAX_USER_COUNT)
+	// RtdbConstMaxUserCount 最大用户个数
+	RtdbConstMaxUserCount = RtdbConst(C.RTDB_MAX_USER_COUNT)
 
-	// RtdbMaxAuthCount 最大信任连接段个数
-	RtdbMaxAuthCount = RtdbConst(C.RTDB_MAX_AUTH_COUNT)
+	// RtdbConstMaxAuthCount 最大信任连接段个数
+	RtdbConstMaxAuthCount = RtdbConst(C.RTDB_MAX_AUTH_COUNT)
 
-	// RtdbMaxBlacklistLen 连接黑名单最大长度
-	RtdbMaxBlacklistLen = RtdbConst(C.RTDB_MAX_BLACKLIST_LEN)
+	// RtdbConstMaxBlacklistLen 连接黑名单最大长度
+	RtdbConstMaxBlacklistLen = RtdbConst(C.RTDB_MAX_BLACKLIST_LEN)
 
-	// RtdbMaxSubscribeSnapshots  单个连接最大订阅快照数量
-	RtdbMaxSubscribeSnapshots = RtdbConst(C.RTDB_MAX_SUBSCRIBE_SNAPSHOTS)
+	// RtdbConstMaxSubscribeSnapshots  单个连接最大订阅快照数量
+	RtdbConstMaxSubscribeSnapshots = RtdbConst(C.RTDB_MAX_SUBSCRIBE_SNAPSHOTS)
 
-	// RtdbApiServerDescriptionLen  API_SERVER中，decription描述字段的长度
-	RtdbApiServerDescriptionLen = RtdbConst(C.RTDB_API_SERVER_DESCRIPTION_LEN)
+	// RtdbConstApiServerDescriptionLen  API_SERVER中，decription描述字段的长度
+	RtdbConstApiServerDescriptionLen = RtdbConst(C.RTDB_API_SERVER_DESCRIPTION_LEN)
 
-	// RtdbMinEquationSize 缩减长度后的方程式占用字节数
-	RtdbMinEquationSize = RtdbConst(C.RTDB_MIN_EQUATION_SIZE)
+	// RtdbConstMinEquationSize 缩减长度后的方程式占用字节数
+	RtdbConstMinEquationSize = RtdbConst(C.RTDB_MIN_EQUATION_SIZE)
 
-	// RtdbPackOfMinCalc 缩减长度后的计算标签点备用字节空间
-	RtdbPackOfMinCalc = RtdbConst(C.RTDB_PACK_OF_MIN_CALC)
+	// RtdbConstPackOfMinCalc 缩减长度后的计算标签点备用字节空间
+	RtdbConstPackOfMinCalc = RtdbConst(C.RTDB_PACK_OF_MIN_CALC)
 
-	// RtdbMaxEquationSize 最大长度的方程式占用字节数
-	RtdbMaxEquationSize = RtdbConst(C.RTDB_MAX_EQUATION_SIZE)
+	// RtdbConstMaxEquationSize 最大长度的方程式占用字节数
+	RtdbConstMaxEquationSize = RtdbConst(C.RTDB_MAX_EQUATION_SIZE)
 
-	// RtdbPackOfMaxCalc 最大长度的计算标签点备用字节空间
-	RtdbPackOfMaxCalc = RtdbConst(C.RTDB_PACK_OF_MAX_CALC)
+	// RtdbConstPackOfMaxCalc 最大长度的计算标签点备用字节空间
+	RtdbConstPackOfMaxCalc = RtdbConst(C.RTDB_PACK_OF_MAX_CALC)
 
-	// RtdbMaxJsonSize  允许的json字符串的最大长度
-	RtdbMaxJsonSize = RtdbConst(C.RTDB_MAX_JSON_SIZE)
+	// RtdbConstMaxJsonSize  允许的json字符串的最大长度
+	RtdbConstMaxJsonSize = RtdbConst(C.RTDB_MAX_JSON_SIZE)
 
-	// RtdbIpv6AddrSize ipv6地址空间大小
-	RtdbIpv6AddrSize = RtdbConst(C.RTDB_IPV6_ADDR_SIZE)
+	// RtdbConstIpv6AddrSize ipv6地址空间大小
+	RtdbConstIpv6AddrSize = RtdbConst(C.RTDB_IPV6_ADDR_SIZE)
 
-	// RtdbOutputPluginLibVersionLength 输入输出适配器插件库版本号长度64Bytes
-	RtdbOutputPluginLibVersionLength = RtdbConst(C.RTDB_OUTPUT_PLUGIN_LIB_VERSION_LENGTH)
+	// RtdbConstOutputPluginLibVersionLength 输入输出适配器插件库版本号长度64Bytes
+	RtdbConstOutputPluginLibVersionLength = RtdbConst(C.RTDB_OUTPUT_PLUGIN_LIB_VERSION_LENGTH)
 
-	// RtdbOutputPluginLibNameLength  输入输出适配器插件库名长度128Bytes
-	RtdbOutputPluginLibNameLength = RtdbConst(C.RTDB_OUTPUT_PLUGIN_LIB_NAME_LENGTH)
+	// RtdbConstOutputPluginLibNameLength  输入输出适配器插件库名长度128Bytes
+	RtdbConstOutputPluginLibNameLength = RtdbConst(C.RTDB_OUTPUT_PLUGIN_LIB_NAME_LENGTH)
 
-	// RtdbOutputPluginActorNameLength  输入输出适配器执行实例长度128Bytes
-	RtdbOutputPluginActorNameLength = RtdbConst(C.RTDB_OUTPUT_PLUGIN_ACTOR_NAME_LENGTH)
+	// RtdbConstOutputPluginActorNameLength  输入输出适配器执行实例长度128Bytes
+	RtdbConstOutputPluginActorNameLength = RtdbConst(C.RTDB_OUTPUT_PLUGIN_ACTOR_NAME_LENGTH)
 
-	// RtdbOutputPluginNameLength 输入输出适配器插件名长度255Bytes
-	RtdbOutputPluginNameLength = RtdbConst(C.RTDB_OUTPUT_PLUGIN_NAME_LENGTH)
+	// RtdbConstOutputPluginNameLength 输入输出适配器插件名长度255Bytes
+	RtdbConstOutputPluginNameLength = RtdbConst(C.RTDB_OUTPUT_PLUGIN_NAME_LENGTH)
 
-	// RtdbOutputPluginDirLength 输入输出适配器路径长度255Bytes
-	RtdbOutputPluginDirLength = RtdbConst(C.RTDB_OUTPUT_PLUGIN_DIR_LENGTH)
+	// RtdbConstOutputPluginDirLength 输入输出适配器路径长度255Bytes
+	RtdbConstOutputPluginDirLength = RtdbConst(C.RTDB_OUTPUT_PLUGIN_DIR_LENGTH)
 
-	// RtdbPerOfUsefulMemSize 历史数据缓存/补历史数据缓存/blob补历史数据缓存/内存大小上限占可用内存百分比值占用的字节数
-	RtdbPerOfUsefulMemSize = RtdbConst(C.RTDB_PER_OF_USEFUL_MEM_SIZE)
+	// RtdbConstPerOfUsefulMemSize 历史数据缓存/补历史数据缓存/blob补历史数据缓存/内存大小上限占可用内存百分比值占用的字节数
+	RtdbConstPerOfUsefulMemSize = RtdbConst(C.RTDB_PER_OF_USEFUL_MEM_SIZE)
 )
 
 // DateTimeType 32位时间戳类型，秒级时间戳
@@ -4840,13 +4841,13 @@ type RtdbScan struct {
 	Instrument string
 
 	// 共包含五个设备位址，缺省值全部为0。
-	Locations [RtdbLocationsSize]int32
+	Locations [RtdbConstLocationsSize]int32
 
 	// 共包含两个自定义整数，缺省值全部为0。
-	UserInts [RtdbUserintSize]int32
+	UserInts [RtdbConstUserintSize]int32
 
 	// 共包含两个自定义单精度浮点数，缺省值全部为0。
-	UserReals [RtdbUserrealSize]float32
+	UserReals [RtdbConstUserrealSize]float32
 }
 
 // NewRtdbScan 新建采集点结构
@@ -4870,13 +4871,13 @@ func cToRtdbScan(p *C.RTDB_SCAN_POINT) *RtdbScan {
 		Scan:       Switch(p.scan),
 		Instrument: CCharArrayToString(&p.instrument[0], int(C.RTDB_INSTRUMENT_SIZE)),
 	}
-	for i := 0; i < int(RtdbLocationsSize); i++ {
+	for i := 0; i < int(RtdbConstLocationsSize); i++ {
 		rtn.Locations[i] = int32(p.locations[i])
 	}
-	for i := 0; i < int(RtdbUserintSize); i++ {
+	for i := 0; i < int(RtdbConstUserintSize); i++ {
 		rtn.UserInts[i] = int32(p.userints[i])
 	}
-	for i := 0; i < int(RtdbUserrealSize); i++ {
+	for i := 0; i < int(RtdbConstUserrealSize); i++ {
 		rtn.UserReals[i] = float32(p.userreals[i])
 	}
 
@@ -4893,13 +4894,13 @@ func goToCRtdbScan(p *RtdbScan) *C.RTDB_SCAN_POINT {
 	GoStringToCCharArray(p.Source, &rtn.source[0], int(C.RTDB_SOURCE_SIZE))
 	rtn.scan = C.rtdb_byte(p.Scan)
 	GoStringToCCharArray(p.Instrument, &rtn.instrument[0], int(C.RTDB_INSTRUMENT_SIZE))
-	for i := 0; i < int(RtdbLocationsSize); i++ {
+	for i := 0; i < int(RtdbConstLocationsSize); i++ {
 		rtn.locations[i] = C.int(p.Locations[i])
 	}
-	for i := 0; i < int(RtdbUserintSize); i++ {
+	for i := 0; i < int(RtdbConstUserintSize); i++ {
 		rtn.userints[i] = C.int(p.UserInts[i])
 	}
-	for i := 0; i < int(RtdbUserrealSize); i++ {
+	for i := 0; i < int(RtdbConstUserrealSize); i++ {
 		rtn.userreals[i] = C.float(p.UserReals[i])
 	}
 
@@ -5146,9 +5147,9 @@ func RawRtdbConnectionCountWarp(handle ConnectHandle, nodeNumber int32) (int32, 
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_get_db_info1_warp(rtdb_int32 handle, rtdb_int32 index, char *str, rtdb_int32 size)
 func RawRtdbGetDbInfo1Warp(handle ConnectHandle, param RtdbParam) (ParamString, error) {
-	goStr := make([]byte, RtdbApiServerDescriptionLen)
+	goStr := make([]byte, RtdbConstApiServerDescriptionLen)
 	cStr := (*C.char)(unsafe.Pointer(&goStr[0]))
-	err := C.rtdb_get_db_info1_warp(C.rtdb_int32(handle), C.rtdb_int32(param), cStr, C.rtdb_int32(RtdbApiServerDescriptionLen))
+	err := C.rtdb_get_db_info1_warp(C.rtdb_int32(handle), C.rtdb_int32(param), cStr, C.rtdb_int32(RtdbConstApiServerDescriptionLen))
 	rtn := C.GoString((*C.char)(unsafe.Pointer(&goStr[0])))
 	return ParamString(rtn), RtdbError(err).GoError()
 }
@@ -5428,8 +5429,8 @@ func RawRtdbLockUserWarp(handle ConnectHandle, user string, lock bool) error {
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_get_users_warp(rtdb_int32 handle, rtdb_int32 *count, RTDB_USER_INFO *infos)
 func RawRtdbGetUsersWarp(handle ConnectHandle) ([]RtdbUserInfo, error) {
-	cCount := C.rtdb_int32(RtdbMaxUserCount)
-	cInfos := make([]C.RTDB_USER_INFO, RtdbMaxUserCount)
+	cCount := C.rtdb_int32(RtdbConstMaxUserCount)
+	cInfos := make([]C.RTDB_USER_INFO, RtdbConstMaxUserCount)
 	err := C.rtdb_get_users_warp(C.rtdb_int32(handle), &cCount, &cInfos[0])
 	goInfos := make([]RtdbUserInfo, 0)
 	for i := 0; i < int(cCount); i++ {
@@ -5515,40 +5516,40 @@ func RawRtdbRemoveBlacklistWarp(handle ConnectHandle, addr string, mask string) 
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_get_blacklist_warp(rtdb_int32 handle, char* const* addrs, char* const* masks, char* const* descs, rtdb_int32 *count)
 func RawRtdbGetBlacklistWarp(handle ConnectHandle) ([]BlackList, error) {
-	cAddrs := make([]*C.char, RtdbMaxBlacklistLen)
-	for i := int32(0); i < int32(RtdbMaxBlacklistLen); i++ {
+	cAddrs := make([]*C.char, RtdbConstMaxBlacklistLen)
+	for i := int32(0); i < int32(RtdbConstMaxBlacklistLen); i++ {
 		cAddrs[i] = (*C.char)(C.CBytes(make([]byte, 32)))
 	}
 	defer func() {
-		for i := int32(0); i < int32(RtdbMaxBlacklistLen); i++ {
+		for i := int32(0); i < int32(RtdbConstMaxBlacklistLen); i++ {
 			C.free(unsafe.Pointer(cAddrs[i]))
 		}
 	}()
 	cgoAddrs := &cAddrs[0]
 
-	cMakes := make([]*C.char, RtdbMaxBlacklistLen)
-	for i := int32(0); i < int32(RtdbMaxBlacklistLen); i++ {
+	cMakes := make([]*C.char, RtdbConstMaxBlacklistLen)
+	for i := int32(0); i < int32(RtdbConstMaxBlacklistLen); i++ {
 		cMakes[i] = (*C.char)(C.CBytes(make([]byte, 32)))
 	}
 	defer func() {
-		for i := int32(0); i < int32(RtdbMaxBlacklistLen); i++ {
+		for i := int32(0); i < int32(RtdbConstMaxBlacklistLen); i++ {
 			C.free(unsafe.Pointer(cMakes[i]))
 		}
 	}()
 	cgoMasks := &cMakes[0]
 
-	cDescs := make([]*C.char, RtdbMaxBlacklistLen)
-	for i := int32(0); i < int32(RtdbMaxBlacklistLen); i++ {
+	cDescs := make([]*C.char, RtdbConstMaxBlacklistLen)
+	for i := int32(0); i < int32(RtdbConstMaxBlacklistLen); i++ {
 		cDescs[i] = (*C.char)(C.CBytes(make([]byte, 512)))
 	}
 	defer func() {
-		for i := int32(0); i < int32(RtdbMaxBlacklistLen); i++ {
+		for i := int32(0); i < int32(RtdbConstMaxBlacklistLen); i++ {
 			C.free(unsafe.Pointer(cDescs[i]))
 		}
 	}()
 	cgoDescs := &cDescs[0]
 
-	cgoCount := C.rtdb_int32(RtdbMaxBlacklistLen)
+	cgoCount := C.rtdb_int32(RtdbConstMaxBlacklistLen)
 	err := C.rtdb_get_blacklist_warp(C.rtdb_int32(handle), cgoAddrs, cgoMasks, cgoDescs, &cgoCount)
 
 	rtn := make([]BlackList, 0)
@@ -5640,41 +5641,41 @@ func RawRtdbRemoveAuthorizationWarp(handle ConnectHandle, addr string, mask stri
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_get_authorizations_warp(rtdb_int32 handle, char* const* addrs, char* const* masks, rtdb_int32 *privs, char* const* descs, rtdb_int32 *count)
 func RawRtdbGetAuthorizationsWarp(handle ConnectHandle) ([]AuthorizationsList, error) {
-	cAddrs := make([]*C.char, RtdbMaxBlacklistLen)
-	for i := int32(0); i < int32(RtdbMaxBlacklistLen); i++ {
+	cAddrs := make([]*C.char, RtdbConstMaxAuthCount)
+	for i := int32(0); i < int32(RtdbConstMaxAuthCount); i++ {
 		cAddrs[i] = (*C.char)(C.CBytes(make([]byte, 32)))
 	}
 	defer func() {
-		for i := int32(0); i < int32(RtdbMaxBlacklistLen); i++ {
+		for i := int32(0); i < int32(RtdbConstMaxAuthCount); i++ {
 			C.free(unsafe.Pointer(cAddrs[i]))
 		}
 	}()
 	cgoAddrs := &cAddrs[0]
 
-	cMakes := make([]*C.char, RtdbMaxBlacklistLen)
-	for i := int32(0); i < int32(RtdbMaxBlacklistLen); i++ {
+	cMakes := make([]*C.char, RtdbConstMaxAuthCount)
+	for i := int32(0); i < int32(RtdbConstMaxAuthCount); i++ {
 		cMakes[i] = (*C.char)(C.CBytes(make([]byte, 32)))
 	}
 	defer func() {
-		for i := int32(0); i < int32(RtdbMaxBlacklistLen); i++ {
+		for i := int32(0); i < int32(RtdbConstMaxAuthCount); i++ {
 			C.free(unsafe.Pointer(cMakes[i]))
 		}
 	}()
 	cgoMasks := &cMakes[0]
 
-	cDescs := make([]*C.char, RtdbMaxBlacklistLen)
-	for i := int32(0); i < int32(RtdbMaxBlacklistLen); i++ {
+	cDescs := make([]*C.char, RtdbConstMaxAuthCount)
+	for i := int32(0); i < int32(RtdbConstMaxAuthCount); i++ {
 		cDescs[i] = (*C.char)(C.CBytes(make([]byte, 512)))
 	}
 	defer func() {
-		for i := int32(0); i < int32(RtdbMaxBlacklistLen); i++ {
+		for i := int32(0); i < int32(RtdbConstMaxAuthCount); i++ {
 			C.free(unsafe.Pointer(cDescs[i]))
 		}
 	}()
 	cgoDescs := &cDescs[0]
-	cgoCount := C.rtdb_int32(RtdbMaxBlacklistLen)
+	cgoCount := C.rtdb_int32(RtdbConstMaxAuthCount)
 
-	privs := make([]PrivGroup, int32(RtdbMaxBlacklistLen))
+	privs := make([]PrivGroup, int32(RtdbConstMaxAuthCount))
 	cgoPrivs := (*C.rtdb_int32)(unsafe.Pointer(&privs[0]))
 	err := C.rtdb_get_authorizations_warp(C.rtdb_int32(handle), cgoAddrs, cgoMasks, cgoPrivs, cgoDescs, &cgoCount)
 
