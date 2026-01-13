@@ -1001,13 +1001,13 @@ func TestAddPoint(t *testing.T) {
 	//c	return
 	//c}
 
-	defer func() {
-		err := RawRtdbbRemoveTableByIdWarp(handle, table2.ID)
-		if err != nil {
-			t.Error("删除表失败：", err)
-			return
-		}
-	}()
+	// defer func() {
+	// 	err := RawRtdbbRemoveTableByIdWarp(handle, table2.ID)
+	// 	if err != nil {
+	// 		t.Error("删除表失败：", err)
+	// 		return
+	// 	}
+	// }()
 
 	err = RawRtdbbMovePointByIdWarp(handle, base.ID, table.Name)
 	if err != nil {
