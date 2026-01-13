@@ -4299,65 +4299,65 @@ type PointID int32
 type RtdbType int32
 
 const (
-	// RtdbBool 布尔类型，0值或1值
-	RtdbBool = RtdbType(C.RTDB_BOOL)
+	// RtdbTypeBool 布尔类型，0值或1值
+	RtdbTypeBool = RtdbType(C.RTDB_BOOL)
 
-	// RtdbUint8 无符号8位整数，占用1字节
-	RtdbUint8 = RtdbType(C.RTDB_UINT8)
+	// RtdbTypeUint8 无符号8位整数，占用1字节
+	RtdbTypeUint8 = RtdbType(C.RTDB_UINT8)
 
-	// RtdbInt8 有符号8位整数，占用1字节
-	RtdbInt8 = RtdbType(C.RTDB_INT8)
+	// RtdbTypeInt8 有符号8位整数，占用1字节
+	RtdbTypeInt8 = RtdbType(C.RTDB_INT8)
 
-	// RtdbChar 单字节字符，占用1字节
-	RtdbChar = RtdbType(C.RTDB_CHAR)
+	// RtdbTypeChar 单字节字符，占用1字节
+	RtdbTypeChar = RtdbType(C.RTDB_CHAR)
 
-	// RtdbUint16 无符号16位整数，占用2字节
-	RtdbUint16 = RtdbType(C.RTDB_UINT16)
+	// RtdbTypeUint16 无符号16位整数，占用2字节
+	RtdbTypeUint16 = RtdbType(C.RTDB_UINT16)
 
-	// RtdbInt16 有符号16位整数，占用2字节
-	RtdbInt16 = RtdbType(C.RTDB_INT16)
+	// RtdbTypeInt16 有符号16位整数，占用2字节
+	RtdbTypeInt16 = RtdbType(C.RTDB_INT16)
 
-	// RtdbUint32 无符号32位整数，占用4字节
-	RtdbUint32 = RtdbType(C.RTDB_UINT32)
+	// RtdbTypeUint32 无符号32位整数，占用4字节
+	RtdbTypeUint32 = RtdbType(C.RTDB_UINT32)
 
-	// RtdbInt32 有符号32位整数，占用4字节
-	RtdbInt32 = RtdbType(C.RTDB_INT32)
+	// RtdbTypeInt32 有符号32位整数，占用4字节
+	RtdbTypeInt32 = RtdbType(C.RTDB_INT32)
 
-	// RtdbInt64 有符号64位整数，占用8字节
-	RtdbInt64 = RtdbType(C.RTDB_INT64)
+	// RtdbTypeInt64 有符号64位整数，占用8字节
+	RtdbTypeInt64 = RtdbType(C.RTDB_INT64)
 
-	// RtdbReal16 16位浮点数，占用2字节
-	RtdbReal16 = RtdbType(C.RTDB_REAL16)
+	// RtdbTypeReal16 16位浮点数，占用2字节
+	RtdbTypeReal16 = RtdbType(C.RTDB_REAL16)
 
-	// RtdbReal32 32位单精度浮点数，占用4字节
-	RtdbReal32 = RtdbType(C.RTDB_REAL32)
+	// RtdbTypeReal32 32位单精度浮点数，占用4字节
+	RtdbTypeReal32 = RtdbType(C.RTDB_REAL32)
 
-	// RtdbReal64 64位双精度浮点数，占用8字节
-	RtdbReal64 = RtdbType(C.RTDB_REAL64)
+	// RtdbTypeReal64 64位双精度浮点数，占用8字节
+	RtdbTypeReal64 = RtdbType(C.RTDB_REAL64)
 
-	// RtdbCoor 二维坐标，具有x、y两个维度的浮点数，占用8字节
-	RtdbCoor = RtdbType(C.RTDB_COOR)
+	// RtdbTypeCoor 二维坐标，具有x、y两个维度的浮点数，占用8字节
+	RtdbTypeCoor = RtdbType(C.RTDB_COOR)
 
-	// RtdbString 字符串，长度不超过存储页面大小
-	RtdbString = RtdbType(C.RTDB_STRING)
+	// RtdbTypeString 字符串，长度不超过存储页面大小
+	RtdbTypeString = RtdbType(C.RTDB_STRING)
 
-	// RtdbBlob 二进制数据块，占用字节不超过存储页面大小
-	RtdbBlob = RtdbType(C.RTDB_BLOB)
+	// RtdbTypeBlob 二进制数据块，占用字节不超过存储页面大小
+	RtdbTypeBlob = RtdbType(C.RTDB_BLOB)
 
-	// RtdbNamedT 自定义类型，由用户创建时确定字节长度
-	RtdbNamedT = RtdbType(C.RTDB_NAMED_T)
+	// RtdbTypeNamedT 自定义类型，由用户创建时确定字节长度
+	RtdbTypeNamedT = RtdbType(C.RTDB_NAMED_T)
 
-	// RtdbDatetime 时间格式类型
-	RtdbDatetime = RtdbType(C.RTDB_DATETIME)
+	// RtdbTypeDatetime 时间格式类型
+	RtdbTypeDatetime = RtdbType(C.RTDB_DATETIME)
 
-	// RtdbFp16 定点数，占用2字节
-	RtdbFp16 = RtdbType(C.RTDB_FP16)
+	// RtdbTypeFp16 定点数，占用2字节
+	RtdbTypeFp16 = RtdbType(C.RTDB_FP16)
 
-	// RtdbFp32 定点数，占用4字节
-	RtdbFp32 = RtdbType(C.RTDB_FP32)
+	// RtdbTypeFp32 定点数，占用4字节
+	RtdbTypeFp32 = RtdbType(C.RTDB_FP32)
 
-	// RtdbFp64 定点数，占用8字节
-	RtdbFp64 = RtdbType(C.RTDB_FP64)
+	// RtdbTypeFp64 定点数，占用8字节
+	RtdbTypeFp64 = RtdbType(C.RTDB_FP64)
 )
 
 // RtdbMirror 镜像选项
@@ -6362,6 +6362,19 @@ func RawRtdbbInsertMaxPointWarp(handle ConnectHandle, base *RtdbPoint, scan *Rtd
 	return cToRtdbPoint(cBase), cToRtdbScan(cScan), cToRtdbCalc(cCalc), RtdbError(err).GoError()
 }
 
+// RawRtdbbRemovePointByIdWarp 根据 id 删除单个标签点
+//
+// input:
+//   - handle 连接句柄
+//   - id 标签点标识
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbb_remove_point_by_id_warp(rtdb_int32 handle, rtdb_int32 id)
+func RawRtdbbRemovePointByIdWarp(handle ConnectHandle, id PointID) error {
+	err := C.rtdbb_remove_point_by_id_warp(C.rtdb_int32(handle), C.rtdb_int32(id))
+	return RtdbError(err).GoError()
+}
+
 // RawRtdbbInsertMaxPointsWarp 使用最大长度的完整属性集来批量创建标签点
 // 备注：暂不实现
 //
@@ -6400,14 +6413,6 @@ func RawRtdbbInsertMaxPointWarp(handle ConnectHandle, base *RtdbPoint, scan *Rtd
 // * 备注：如果新建的标签点没有对应的扩展属性集，可置为空指针。
 // rtdb_error RTDBAPI_CALLRULE rtdbb_insert_named_type_point_warp(rtdb_int32 handle, RTDB_POINT *base, RTDB_SCAN_POINT *scan, const char* name)
 func RawRtdbbInsertNamedTypePointWarp() {}
-
-// RawRtdbbRemovePointByIdWarp 根据 id 删除单个标签点
-// *  \param handle 连接句柄
-// *  \param id     整型，输入，标签点标识
-// *  \remark 通过本接口删除的标签点为可回收标签点，
-// *         可以通过 rtdbb_recover_point 接口恢复。
-// rtdb_error RTDBAPI_CALLRULE rtdbb_remove_point_by_id_warp(rtdb_int32 handle, rtdb_int32 id)
-func RawRtdbbRemovePointByIdWarp() {}
 
 // RawRtdbbRemovePointByNameWarp 根据标签点全名删除单个标签点
 // * \param handle        连接句柄
