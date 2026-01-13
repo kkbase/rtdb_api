@@ -965,6 +965,13 @@ func TestAddPoint(t *testing.T) {
 		return
 	}
 
+	ids, err := RawRtdbbSearchInBatchesWarp(handle, 0, "", "", "", "", "", "", RtdbSortFlagDescend)
+	if err != nil {
+		t.Error("搜索标签点失败：", err)
+		return
+	}
+	fmt.Println("搜索标签点：", ids)
+
 	err = RawRtdbbRemovePointByNameWarp(handle, table.Name+"."+base.Tag)
 	if err != nil {
 		t.Error("删除标签点失败: ", err)

@@ -11,6 +11,7 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"strings"
 	"unsafe"
 )
 
@@ -4971,6 +4972,19 @@ func goToCRtdbCalc(p *RtdbCalc) *C.RTDB_MAX_CALC_POINT {
 	return &rtn
 }
 
+type RtdbSortFlag uint32
+
+const (
+	// RtdbSortFlagDescend 降序
+	RtdbSortFlagDescend = RtdbSortFlag(C.RTDB_SORT_FLAG_DESCEND)
+
+	// RtdbSortFlagCaseSensitive 大小写敏感
+	RtdbSortFlagCaseSensitive = RtdbSortFlag(C.RTDB_SORT_FLAG_CASE_SENSITIVE)
+
+	// RtdbSortFlagRecycled 用于回收站标签点排序
+	RtdbSortFlagRecycled = RtdbSortFlag(C.RTDB_SORT_FLAG_RECYCLED)
+)
+
 /////////////////////////////// 上面是结构定义 ////////////////////////////////////
 /////////////////////////////// -- 华丽的分割线 -- ////////////////////////////////
 /////////////////////////////// 下面是函数实现 ////////////////////////////////////
@@ -6509,52 +6523,99 @@ func RawRtdbbGetMaxPointsPropertyWarp(handle ConnectHandle, pointIDs []PointID) 
 }
 
 // RawRtdbbSearchWarp 搜索符合条件的标签点，使用标签点名时支持通配符
-// *
-// * \param handle        连接句柄
-// * \param tagmask       字符串，输入，标签点名称掩码，支持"*"和"?"通配符，缺省设置为"*"，长度不得超过 RTDB_TAG_SIZE，支持多个搜索条件，以空格分隔。
-// * \param tablemask     字符串，输入，标签点表名称掩码，支持"*"和"?"通配符，缺省设置为"*"，长度不得超过 RTDB_TAG_SIZE，支持多个搜索条件，以空格分隔。
-// * \param source        字符串，输入，数据源集合，字符串中的每个字符均表示一个数据源，
-// *                        空字符串表示不用数据源作搜索条件，缺省设置为空，长度不得超过 RTDB_DESC_SIZE。
-// * \param unit          字符串，输入，标签点工程单位的子集，工程单位中包含该参数的标签点均满足条件，
-// *                        空字符串表示不用工程单位作搜索条件，缺省设置为空，长度不得超过 RTDB_UNIT_SIZE。
-// * \param desc          字符串，输入，标签点描述的子集，描述中包含该参数的标签点均满足条件，
-// *                        空字符串表示不用描述作搜索条件，缺省设置为空，长度不得超过 RTDB_SOURCE_SIZE。
-// * \param instrument    字符串，输入参数，标签点设备名称。缺省设置为空，长度不得超过 RTDB_INSTRUMENT_SIZE。
-// * \param mode          整型，RTDB_SORT_BY_TABLE、RTDB_SORT_BY_TAG、RTDB_SORT_BY_ID 之一，
-// *                        搜索结果的排序模式，输入，缺省值为RTDB_SORT_BY_TABLE
-// * \param ids           整型数组，输出，返回搜索到的标签点标识列表
-// * \param count         整型，输入/输出，输入时表示 ids 的长度，输出时表示搜索到的标签点个数
-// * \remark 用户须保证分配给 ids 的空间与 count 相符，各参数中包含的搜索条件之间的关系为"与"的关系，
-// *        用包含通配符的标签点名称作搜索条件时，如果第一个字符不是通配符(如"ai67*")，会得到最快的搜索速度。
-// *        如果 tagmask、tablemask 为空指针，则表示使用缺省设置"*",
-// *        多个搜索条件可以通过空格分隔，比如"demo_*1 demo_*2"，会将满足demo_*1或者demo_*2条件的标签点搜索出来。
-// rtdb_error RTDBAPI_CALLRULE rtdbb_search_warp(rtdb_int32 handle, const char *tagmask, const char *tablemask, const char *source, const char *unit, const char *desc, const char *instrument, rtdb_int32 mode, rtdb_int32 *ids, rtdb_int32 *count)
-func RawRtdbbSearchWarp() {}
+// 备注： 废弃， 使用扩展版的标签点搜索，扩展版支持点属性过滤
+//
+// input:
+//   - handle 连接句柄
+//   - tagMask 标签点名称掩码，支持"*"和"?"通配符，缺省设置为"*"，长度不得超过 RTDB_TAG_SIZE，支持多个搜索条件，以空格分隔。
+//   - tableMask 标签点表名称掩码，支持"*"和"?"通配符，缺省设置为"*"，长度不得超过 RTDB_TAG_SIZE，支持多个搜索条件，以空格分隔。
+//   - source 数据源集合，字符串中的每个字符均表示一个数据源，空字符串表示不用数据源作搜索条件，缺省设置为空，长度不得超过 RTDB_DESC_SIZE。
+//   - unit 标签点工程单位的子集，工程单位中包含该参数的标签点均满足条件，空字符串表示不用工程单位作搜索条件，缺省设置为空，长度不得超过 RTDB_UNIT_SIZE。
+//   - desc 标签点描述的子集，描述中包含该参数的标签点均满足条件，空字符串表示不用描述作搜索条件，缺省设置为空，长度不得超过 RTDB_SOURCE_SIZE。
+//   - instrument 标签点设备名称。缺省设置为空，长度不得超过 RTDB_INSTRUMENT_SIZE。
+//   - mode 搜索排序规则
+//   - 注意：多个搜索条件可以通过空格分隔，比如"demo_*1 demo_*2"，会将满足demo_*1或者demo_*2条件的标签点搜索出来。
+//
+// output:
+//   - []PointID 返回标签点ID列表
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbb_search_warp(rtdb_int32 handle, const char *tagmask, const char *tablemask, const char *source, const char *unit, const char *desc, const char *instrument, rtdb_int32 mode, rtdb_int32 *ids, rtdb_int32 *count)
+// func RawRtdbbSearchWarp(handle ConnectHandle, tagMask, tableMask, source, unit, desc, instrument string, model RtdbSortFlag) ([]PointID, error) {
+// 	if strings.TrimSpace(tagMask) == "" {
+// 		tagMask = "*"
+// 	}
+// 	if strings.TrimSpace(tableMask) == "" {
+// 		tableMask = "*"
+// 	}
+// 	cTagMask := C.CString(tagMask)
+// 	defer C.free(unsafe.Pointer(cTagMask))
+// 	cTableMask := C.CString(tableMask)
+// 	defer C.free(unsafe.Pointer(cTableMask))
+// 	cSource := C.CString(source)
+// 	defer C.free(unsafe.Pointer(cSource))
+// 	cUnit := C.CString(unit)
+// 	defer C.free(unsafe.Pointer(cUnit))
+// 	cDesc := C.CString(desc)
+// 	defer C.free(unsafe.Pointer(cDesc))
+// 	cInstrument := C.CString(instrument)
+// 	defer C.free(unsafe.Pointer(cInstrument))
+// 	cModel := C.rtdb_int32(model)
+// 	count := C.rtdb_int32(1024)
+// 	ids := make([]PointID, count)
+// 	cIds := (*C.rtdb_int32)(unsafe.Pointer(&ids[0]))
+//
+// 	err := C.rtdbb_search_warp(C.rtdb_int32(handle), cTagMask, cTableMask, cSource, cUnit, cDesc, cInstrument, cModel, cIds, &count)
+// 	return ids[:count], RtdbError(err).GoError()
+// }
 
 // RawRtdbbSearchInBatchesWarp 分批继续搜索符合条件的标签点，使用标签点名时支持通配符
-// *
-// * \param handle        连接句柄
-// * \param start         整型，输入，搜索起始位置。
-// * \param tagmask       字符串，输入，标签点名称掩码，支持"*"和"?"通配符，缺省设置为"*"，长度不得超过 RTDB_TAG_SIZE，支持多个搜索条件，以空格分隔。
-// * \param tablemask     字符串，输入，标签点表名称掩码，支持"*"和"?"通配符，缺省设置为"*"，长度不得超过 RTDB_TAG_SIZE，支持多个搜索条件，以空格分隔。
-// * \param source        字符串，输入，数据源集合，字符串中的每个字符均表示一个数据源，
-// *                        空字符串表示不用数据源作搜索条件，缺省设置为空，长度不得超过 RTDB_DESC_SIZE。
-// * \param unit          字符串，输入，标签点工程单位的子集，工程单位中包含该参数的标签点均满足条件，
-// *                        空字符串表示不用工程单位作搜索条件，缺省设置为空，长度不得超过 RTDB_UNIT_SIZE。
-// * \param desc          字符串，输入，标签点描述的子集，描述中包含该参数的标签点均满足条件，
-// *                        空字符串表示不用描述作搜索条件，缺省设置为空，长度不得超过 RTDB_SOURCE_SIZE。
-// * \param instrument    字符串，输入参数，标签点设备名称。缺省设置为空，长度不得超过 RTDB_INSTRUMENT_SIZE。
-// * \param mode          整型，RTDB_SORT_BY_TABLE、RTDB_SORT_BY_TAG、RTDB_SORT_BY_ID 之一，
-// *                        搜索结果的排序模式，输入，缺省值为RTDB_SORT_BY_TABLE
-// * \param ids           整型数组，输出，返回搜索到的标签点标识列表
-// * \param count         整型，输入/输出，输入时表示 ids 的长度，输出时表示搜索到的标签点个数
-// * \remark 用户须保证分配给 ids 的空间与 count 相符，各参数中包含的搜索条件之间的关系为"与"的关系，
-// *        用包含通配符的标签点名称作搜索条件时，如果第一个字符不是通配符(如"ai67*")，会得到最快的搜索速度。
-// *        如果 tagmask、tablemask 为空指针，则表示使用缺省设置"*"。
-// *        当搜索到的标签点数比提供的要小时，表示这是最后一批符合条件的标签点 (即全部搜索完毕),
-// *        多个搜索条件可以通过空格分隔，比如"demo_*1 demo_*2"，会将满足demo_*1或者demo_*2条件的标签点搜索出来。
-// rtdb_error RTDBAPI_CALLRULE rtdbb_search_in_batches_warp(rtdb_int32 handle, rtdb_int32 start, const char *tagmask, const char *tablemask, const char *source, const char *unit, const char *desc, const char *instrument, rtdb_int32 mode, rtdb_int32 *ids, rtdb_int32 *count)
-func RawRtdbbSearchInBatchesWarp() {}
+//
+// input:
+//   - handle 连接句柄
+//   - start 搜索起始位置。
+//   - tagMask 标签点名称掩码，支持"*"和"?"通配符，缺省设置为"*"，长度不得超过 RTDB_TAG_SIZE，支持多个搜索条件，以空格分隔。
+//   - tableMask 标签点表名称掩码，支持"*"和"?"通配符，缺省设置为"*"，长度不得超过 RTDB_TAG_SIZE，支持多个搜索条件，以空格分隔。
+//   - source 数据源集合，字符串中的每个字符均表示一个数据源，空字符串表示不用数据源作搜索条件，缺省设置为空，长度不得超过 RTDB_DESC_SIZE。
+//   - unit 标签点工程单位的子集，工程单位中包含该参数的标签点均满足条件，空字符串表示不用工程单位作搜索条件，缺省设置为空，长度不得超过 RTDB_UNIT_SIZE。
+//   - desc 标签点描述的子集，描述中包含该参数的标签点均满足条件，空字符串表示不用描述作搜索条件，缺省设置为空，长度不得超过 RTDB_SOURCE_SIZE。
+//   - instrument 标签点设备名称。缺省设置为空，长度不得超过 RTDB_INSTRUMENT_SIZE。
+//   - mode 搜索后的排序模式
+//   - 备注1：当搜索到的标签点数比提供的要小时，表示这是最后一批符合条件的标签点 (即全部搜索完毕)
+//   - 备注2: 多个搜索条件可以通过空格分隔，比如"demo_*1 demo_*2"，会将满足demo_*1或者demo_*2条件的标签点搜索出来。
+//
+// output:
+//   - []PointID 返回ID列表
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbb_search_in_batches_warp(rtdb_int32 handle, rtdb_int32 start, const char *tagmask, const char *tablemask, const char *source, const char *unit, const char *desc, const char *instrument, rtdb_int32 mode, rtdb_int32 *ids, rtdb_int32 *count)
+func RawRtdbbSearchInBatchesWarp(handle ConnectHandle, start int32, tagMask, tableMask, source, unit, desc, instrument string, model RtdbSortFlag) ([]PointID, error) {
+	if strings.TrimSpace(tagMask) == "" {
+		tagMask = "*"
+	}
+	if strings.TrimSpace(tableMask) == "" {
+		tableMask = "*"
+	}
+	cTagMask := C.CString(tagMask)
+	defer C.free(unsafe.Pointer(cTagMask))
+	cTableMask := C.CString(tableMask)
+	defer C.free(unsafe.Pointer(cTableMask))
+	cSource := C.CString(source)
+	defer C.free(unsafe.Pointer(cSource))
+	cUnit := C.CString(unit)
+	defer C.free(unsafe.Pointer(cUnit))
+	cDesc := C.CString(desc)
+	defer C.free(unsafe.Pointer(cDesc))
+	cInstrument := C.CString(instrument)
+	defer C.free(unsafe.Pointer(cInstrument))
+	cModel := C.rtdb_int32(model)
+	count := C.rtdb_int32(1024)
+	ids := make([]PointID, count)
+	cIds := (*C.rtdb_int32)(unsafe.Pointer(&ids[0]))
+
+	err := C.rtdbb_search_in_batches_warp(C.rtdb_int32(handle), C.rtdb_int32(start), cTagMask, cTableMask, cSource, cUnit, cDesc, cInstrument, cModel, cIds, &count)
+	return ids[:count], RtdbError(err).GoError()
+}
 
 // RawRtdbbSearchExWarp 搜索符合条件的标签点，使用标签点名时支持通配符
 // *
