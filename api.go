@@ -4442,13 +4442,51 @@ const (
 	RtdbEarliestTime = RtdbTimeCopy(C.RTDB_EARLIEST_TIME)
 )
 
+func NewDefaultPoint(tag string, rtdbType RtdbType, tableID TableID, class RtdbClass, precision RtdbPrecision) *RtdbPoint {
+	rtn := RtdbPoint{
+		Tag:            tag,
+		Type:           rtdbType,
+		Table:          tableID,
+		Desc:           "",
+		Unit:           "",
+		Archive:        ON,
+		Digits:         -5,
+		Shutdown:       OFF,
+		LowLimit:       0,
+		HighLimit:      100,
+		Step:           OFF,
+		Typical:        50,
+		Compress:       ON,
+		CompDev:        1,
+		CompDevPercent: 0,
+		CompTimeMax:    28800,
+		CompTimeMin:    0,
+		ExcDev:         0.5,
+		ExcDevPercent:  0,
+		ExcTimeMax:     600,
+		ExcTimeMin:     0,
+		Class:          class,
+		Mirror:         RtdbMirrorPointOff,
+		Summary:        OFF,
+		NamedTypeID:    0,
+		Precision:      precision,
+	}
+	switch rtn.Precision {
+	case RtdbPrecisionSecond:
+		rtn.MilliSecond = 0
+	case RtdbPrecisionMilli, RtdbPrecisionMicro, RtdbPrecisionNano:
+		rtn.MilliSecond = 1
+	}
+	return &rtn
+}
+
 // NewRtdbPoint 创建Base标签点
 func NewRtdbPoint(
-	tag string, rtdbType RtdbType, tableID TableID, desc, unit string, archive Switch,
-	digits int16, shutdown Switch, lowLimit float32, highLimit float32, step Switch, typical float32,
-	compress Switch, compDev float32, compDevPercent float32, compTimeMax int32, compTimeMin int32,
+	tag string, rtdbType RtdbType, tableID TableID, desc, unit string, archive Switch, digits int16,
+	shutdown Switch, lowLimit float32, highLimit float32, step Switch, typical float32, compress Switch,
+	compDev float32, compDevPercent float32, compTimeMax int32, compTimeMin int32,
 	excDev float32, excDevPercent float32, excTimeMax int32, excTimeMin int32, class RtdbClass,
-	mirror RtdbMirror, milliSecond Switch, summary Switch, precision RtdbPrecision,
+	mirror RtdbMirror, summary Switch, precision RtdbPrecision,
 ) *RtdbPoint {
 	rtn := RtdbPoint{
 		Tag:            tag,
@@ -4474,9 +4512,14 @@ func NewRtdbPoint(
 		ExcTimeMin:     excTimeMin,
 		Class:          class,
 		Mirror:         mirror,
-		MilliSecond:    milliSecond,
 		Summary:        summary,
 		Precision:      precision,
+	}
+	switch rtn.Precision {
+	case RtdbPrecisionSecond:
+		rtn.MilliSecond = 0
+	case RtdbPrecisionMilli, RtdbPrecisionMicro, RtdbPrecisionNano:
+		rtn.MilliSecond = 1
 	}
 	return &rtn
 }
@@ -4654,7 +4697,7 @@ type RtdbPoint struct {
 	// 默认值：秒，0；
 	// 用于设定标签点的历史值在存储中精确到"秒"（0）还是"毫秒/纳秒"（1）。
 	// 标签点一经创建就不允许修改该属性。
-	MilliSecond Switch
+	MilliSecond int8
 
 	// 采集点扩展属性集存储地址索引。
 	ScanIndex uint32
@@ -4760,7 +4803,7 @@ func cToRtdbPoint(p *C.RTDB_POINT) *RtdbPoint {
 		CreateDate:     DateTimeType(p.createdate),
 		Creator:        CCharArrayToString(&p.creator[0], int(C.RTDB_USER_SIZE)),
 		Mirror:         RtdbMirror(p.mirror),
-		MilliSecond:    Switch(p.millisecond),
+		MilliSecond:    int8(p.millisecond),
 		ScanIndex:      uint32(p.scanindex),
 		CalcIndex:      uint32(p.calcindex),
 		AlarmIndex:     uint32(p.alarmindex),
