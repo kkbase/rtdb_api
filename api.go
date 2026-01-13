@@ -4442,6 +4442,45 @@ const (
 	RtdbEarliestTime = RtdbTimeCopy(C.RTDB_EARLIEST_TIME)
 )
 
+// NewRtdbPoint 创建Base标签点
+func NewRtdbPoint(
+	tag string, rtdbType RtdbType, tableID TableID, desc, unit string, archive Switch,
+	digits int16, shutdown Switch, lowLimit float32, highLimit float32, step Switch, typical float32,
+	compress Switch, compDev float32, compDevPercent float32, compTimeMax int32, compTimeMin int32,
+	excDev float32, excDevPercent float32, excTimeMax int32, excTimeMin int32, class RtdbClass,
+	mirror RtdbMirror, milliSecond Switch, summary Switch, precision RtdbPrecision,
+) *RtdbPoint {
+	rtn := RtdbPoint{
+		Tag:            tag,
+		Type:           rtdbType,
+		Table:          tableID,
+		Desc:           desc,
+		Unit:           unit,
+		Archive:        archive,
+		Digits:         digits,
+		Shutdown:       shutdown,
+		LowLimit:       lowLimit,
+		HighLimit:      highLimit,
+		Step:           step,
+		Typical:        typical,
+		Compress:       compress,
+		CompDev:        compDev,
+		CompDevPercent: compDevPercent,
+		CompTimeMax:    compTimeMax,
+		CompTimeMin:    compTimeMin,
+		ExcDev:         excDev,
+		ExcDevPercent:  excDevPercent,
+		ExcTimeMax:     excTimeMax,
+		ExcTimeMin:     excTimeMin,
+		Class:          class,
+		Mirror:         mirror,
+		MilliSecond:    milliSecond,
+		Summary:        summary,
+		Precision:      precision,
+	}
+	return &rtn
+}
+
 // RtdbPoint 基本标签点属性集
 type RtdbPoint struct {
 	// 标签点名称。
@@ -6260,6 +6299,8 @@ func RawRtdbbInsertMaxPointWarp(handle ConnectHandle, base *RtdbPoint, scan *Rtd
 }
 
 // RawRtdbbInsertMaxPointsWarp 使用最大长度的完整属性集来批量创建标签点
+// 备注：暂不实现
+//
 // * [handle] 连接句柄
 // * [count] count, 输入，base/scan/calc数组的长度；输出，成功的个数
 // * [bases] RTDB_POINT 数组，输入/输出，
@@ -6269,8 +6310,7 @@ func RawRtdbbInsertMaxPointWarp(handle ConnectHandle, base *RtdbPoint, scan *Rtd
 // * [errors] rtdb_error数组，输出，对应每个标签点的结果
 // * 备注：如果新建的标签点没有对应的扩展属性集，可置为空指针。
 // rtdb_error RTDBAPI_CALLRULE rtdbb_insert_max_points_warp(rtdb_int32 handle, rtdb_int32* count, RTDB_POINT* bases, RTDB_SCAN_POINT* scans, RTDB_MAX_CALC_POINT* calcs, rtdb_error* errors)
-func RawRtdbbInsertMaxPointsWarp(handle ConnectHandle, points []RtdbPoint, scans []RtdbScan, calcs []RtdbCalc) /*([]RtdbPoint, []RtdbScan, []RtdbCalc, []error, error)*/ {
-}
+// func RawRtdbbInsertMaxPointsWarp(handle ConnectHandle, points []RtdbPoint, scans []RtdbScan, calcs []RtdbCalc) /*([]RtdbPoint, []RtdbScan, []RtdbCalc, []error, error)*/ {}
 
 // RawRtdbbInsertBasePointWarp 使用最小的属性集来创建单个标签点
 // 备注：不实现，统一使用最大长度
