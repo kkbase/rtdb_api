@@ -7463,8 +7463,9 @@ func RawRtdbbClearRecyclerWarp(handle ConnectHandle) error {
 	return RtdbError(err).GoError()
 }
 
-// 回调函数， rtdbb_subscribe_tags_ex_warp 的回调函数实现
-// export goSubscribeTagsEx
+// goSubscribeTagsEx 回调函数 rtdbb_subscribe_tags_ex_warp 的回调函数实现
+//
+//export goSubscribeTagsEx
 func goSubscribeTagsEx(
 	eventType C.rtdb_uint32,
 	handle C.rtdb_int32,
@@ -7477,32 +7478,29 @@ func goSubscribeTagsEx(
 }
 
 // RawRtdbbSubscribeTagsExWarp 标签点属性更改通知订阅
-// * [handle]    连接句柄
-// * [options]   整型，输入，订阅选项，参见枚举RTDB_OPTION
-// * RTDB_O_AUTOCONN 订阅客户端与数据库服务器网络中断后自动重连并订阅
-// * [param]     输入，用户参数，
-// * 作为rtdbb_tags_change_ex的param参数
-// * [callback]  rtdbb_tags_change_ex 类型回调接口，输入，当回掉函数返回非RtE_OK时退出订阅
-// * 当未设置options为RTDB_O_AUTOCONN时，订阅断开后使用RTDB_E_DISCONNECT
-// * 作为event_type取值调用回掉函数后退出订阅。
-// * 当设置options为RTDB_O_AUTOCONN时，订阅断开后使用RTDB_E_DISCONNECT
-// * 作为event_type取值调用回掉函数直到连接恢复或回掉函数返回非RtE_OK，
-// * 网络中断期间回掉函数调用频率为最少3秒
-// * event_type参数值含义如下：
-// * RTDB_E_DATA        标签点属性发生更改
-// * RTDB_E_DISCONNECT  订阅客户端与数据库网络断开
-// * RTDB_E_RECOVERY    订阅客户端与数据库网络及订阅恢复
-// * handle 产生订阅回掉的连接句柄，调用rtdbb_subscribe_tags_ex时的handle参数
-// * param  用户自定义参数，调用rtdbb_subscribe_tags_ex时的param参数
-// * count  event_type为RTDB_E_DATA时表示ids的数量
-// * event_type为其它值时，count值为0
-// * ids    event_type为RTDB_E_DATA时表示属性更改的标签点ID，数量由count指定
-// * event_type为其它值时，ids值为NULL
-// * what   event_type为RTDB_E_DATA时表示属性变更原因，参考RTDB_TAG_CHANGE_REASON
-// * event_type为其它值时，what时值为0
-// * 备注：用于订阅测点的连接句柄必需是独立的，不能再用来调用其它 api，
-// * 否则返回 RtE_OTHER_SDK_DOING 错误。
-// rtdb_error RTDBAPI_CALLRULE rtdbb_subscribe_tags_ex_warp(rtdb_int32 handle, rtdb_uint32 options, void* param, rtdbb_tags_change_event_ex callback)
+//
+// input:
+//   - handle 连接句柄
+//   - options 订阅选项，参见枚举RTDB_OPTION
+//   - param 用户参数，作为rtdbb_tags_change_ex的param参数
+//   - callback rtdbb_tags_change_ex 类型回调接口，输入，当回掉函数返回非RtE_OK时退出订阅
+//   - 备注：当未设置options为RTDB_O_AUTOCONN时，订阅断开后使用RTDB_E_DISCONNECT
+//   - 备注：作为event_type取值调用回掉函数后退出订阅。
+//   - 备注：当设置options为RTDB_O_AUTOCONN时，订阅断开后使用RTDB_E_DISCONNECT
+//   - 备注：作为event_type取值调用回掉函数直到连接恢复或回掉函数返回非RtE_OK，
+//   - 备注：网络中断期间回掉函数调用频率为最少3秒
+//   - 注意!!：用于订阅测点的连接句柄必需是独立的，不能再用来调用其它 api，
+//
+// callback:
+//   - event_type 参数值含义如下：RTDB_E_DATA(标签点属性发生更改) RTDB_E_DISCONNECT(订阅客户端与数据库网络断开) RTDB_E_RECOVERY(订阅客户端与数据库网络及订阅恢复)
+//   - handle 产生订阅回掉的连接句柄，调用rtdbb_subscribe_tags_ex时的handle参数
+//   - param 用户自定义参数，调用rtdbb_subscribe_tags_ex时的param参数，由用户传入
+//   - count event_type为RTDB_E_DATA时表示ids的数量, event_type为其它值时，count值为0
+//   - ids event_type为RTDB_E_DATA时表示属性更改的标签点ID，数量由count指定, event_type为其它值时，ids值为NULL
+//   - what event_type为RTDB_E_DATA时表示属性变更原因，参考RTDB_TAG_CHANGE_REASON, event_type为其它值时，what时值为0
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbb_subscribe_tags_ex_warp(rtdb_int32 handle, rtdb_uint32 options, void* param, rtdbb_tags_change_event_ex callback)
 func RawRtdbbSubscribeTagsExWarp(handle ConnectHandle, options RtdbSubscribeOption) {}
 
 // RawRtdbbCancelSubscribeTagsWarp 取消标签点属性更改通知订阅
