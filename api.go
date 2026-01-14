@@ -13,7 +13,6 @@ import (
 	"path/filepath"
 	"runtime"
 	"strings"
-	"syscall"
 	"unsafe"
 )
 
@@ -68,7 +67,7 @@ func init() {
 		defer C.free(unsafe.Pointer(cPath))
 		C.load_library_linux(cPath)
 	} else {
-		cPath, err := syscall.UTF16PtrFromString(path)
+		cPath, err := UTF16PtrFromString(path)
 		if err != nil {
 			panic("字符转换失败：" + err.Error())
 		}
