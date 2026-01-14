@@ -7679,38 +7679,93 @@ func RawRtdbbGetNamedTypeNamesPropertyWarp(handle ConnectHandle, ids []PointID) 
 	}
 	errs := make([]error, 0)
 	for _, err := range errors[:cgoCount] {
-		errs = append(errs, RtdbError(err).GoError())
+		errs = append(errs, err.GoError())
 	}
 	return names[:cgoCount], counts[:cgoCount], errs[:cgoCount], RtdbError(err)
 }
 
 // RawRtdbbGetRecycledNamedTypeNamesPropertyWarp 根据回收站标签点id查询标签点所对应的自定义类型的名字和字段总数
-// * [handle]           连接句柄
-// * [count]            输入/输出，标签点个数，
-// * 输入时表示 ids、named_type_names、field_counts、errors 的长度，
-// * 输出时表示成功获取自定义类型名字的标签点个数
-// * [ids]              整型数组，输入，回收站标签点标识列表
-// * [named_type_names] 字符串数组，输出，标签点自定义类型的名字
-// * [field_counts]     整型数组，输出，标签点自定义类型的字段个数
-// * [errors]           无符号整型数组，输出，获取自定义类型名字的返回值列表，参考rtdb_error.h
-// * 备注：用户须保证 ids、named_type_names、field_counts、errors 的长度与 count 一致。
-// * 本接口只对数据类型为 RTDB_NAMED_T 的标签点有效。
-// rtdb_error RTDBAPI_CALLRULE rtdbb_get_recycled_named_type_names_property_warp(rtdb_int32 handle, rtdb_int32 *count, rtdb_int32 *ids, char* const *named_type_names, rtdb_int32 *field_counts, rtdb_error *errors)
-func RawRtdbbGetRecycledNamedTypeNamesPropertyWarp() {}
+//
+// input:
+//   - handle 连接句柄
+//   - ids 标签点ID数组
+//
+// output:
+//   - []string 自定义类型名称数组
+//   - []int32 自定义类型中字段数量数组
+//   - []RtdbError 错误数组
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbb_get_recycled_named_type_names_property_warp(rtdb_int32 handle, rtdb_int32 *count, rtdb_int32 *ids, char* const *named_type_names, rtdb_int32 *field_counts, rtdb_error *errors)
+func RawRtdbbGetRecycledNamedTypeNamesPropertyWarp(handle ConnectHandle, ids []PointID) ([]string, []int32, []error, error) {
+	cgoHandle := C.rtdb_int32(handle)
+	count := len(ids)
+	cgoCount := C.rtdb_int32(count)
+	cgoIds := (*C.rtdb_int32)(unsafe.Pointer(&ids[0]))
+	namedTypeNames := make([]*C.char, count)
+	for i := 0; i < int(count); i++ {
+		namedTypeNames[i] = (*C.char)(C.CBytes(make([]byte, 4096)))
+	}
+	defer func() {
+		for i := 0; i < int(count); i++ {
+			C.free(unsafe.Pointer(namedTypeNames[i]))
+		}
+	}()
+	cgoNamedTypeNames := (**C.char)(unsafe.Pointer(&namedTypeNames[0]))
+	fieldCounts := make([]int32, count)
+	cgoCounts := (*C.rtdb_int32)(unsafe.Pointer(&fieldCounts[0]))
+	errors := make([]RtdbError, count)
+	cgoErrors := (*C.rtdb_error)(unsafe.Pointer(&errors[0]))
+	err := C.rtdbb_get_recycled_named_type_names_property_warp(cgoHandle, &cgoCount, cgoIds, cgoNamedTypeNames, cgoCounts, cgoErrors)
+	names := make([]string, 0)
+	for i := 0; i < int(cgoCount); i++ {
+		names = append(names, C.GoString(namedTypeNames[i]))
+	}
+	errs := make([]error, 0)
+	for _, err := range errors[:cgoCount] {
+		errs = append(errs, err.GoError())
+	}
+	return names[:cgoCount], fieldCounts[:cgoCount], errs[:cgoCount], RtdbError(err)
+}
 
 // RawRtdbbGetNamedTypePointsCountWarp 获取该自定义类型的所有标签点个数
-// *        [handle]           连接句柄，输入参数
-// *        [name]             自定义类型的名称，输入参数
-// *        [points_count]     返回name指定的自定义类型的标签点个数，输入参数
-// rtdb_error RTDBAPI_CALLRULE rtdbb_get_named_type_points_count_warp(rtdb_int32 handle, const char* name, rtdb_int32 *points_count)
-func RawRtdbbGetNamedTypePointsCountWarp() {}
+//
+// input:
+//   - handle 连接句柄
+//   - name 自定义类型的名称
+//
+// output:
+//   - int32 自定义类型标签点个数
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbb_get_named_type_points_count_warp(rtdb_int32 handle, const char* name, rtdb_int32 *points_count)
+func RawRtdbbGetNamedTypePointsCountWarp(handle ConnectHandle, name string) (int32, error) {
+	cgoHandle := C.rtdb_int32(handle)
+	cgoName := C.CString(name)
+	defer C.free(unsafe.Pointer(cgoName))
+	cgoCount := C.rtdb_int32(0)
+	err := C.rtdbb_get_named_type_points_count_warp(cgoHandle, cgoName, &cgoCount)
+	return int32(cgoCount), RtdbError(err).GoError()
+}
 
 // RawRtdbbGetBaseTypePointsCountWarp 获取该内置的基本类型的所有标签点个数
-// * \param handle           整型，输入参数，连接句equation[RTDB_MAX_EQUATION_SIZE]柄
-// * \param type             整型，输入参数，内置的基本类型，参数的值可以是除RTDB_NAME_T以外的所有RTDB_TYPE枚举值
-// * \param points_count     整型，输入参数，返回type指定的内置基本类型的标签点个数
-// rtdb_error RTDBAPI_CALLRULE rtdbb_get_base_type_points_count_warp(rtdb_int32 handle, rtdb_int32 type, rtdb_int32 *points_count)
-func RawRtdbbGetBaseTypePointsCountWarp() {}
+//
+// input:
+//   - handle 连接句柄
+//   - rtdbType 数值类型
+//
+// output:
+//   - int32 自定义类型标签点个数
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbb_get_base_type_points_count_warp(rtdb_int32 handle, rtdb_int32 type, rtdb_int32 *points_count)
+func RawRtdbbGetBaseTypePointsCountWarp(handle ConnectHandle, rtdbType RtdbType) (int32, error) {
+	cgoHandle := C.rtdb_int32(handle)
+	cgoType := C.rtdb_int32(rtdbType)
+	cgoCount := C.rtdb_int32(0)
+	err := C.rtdbb_get_base_type_points_count_warp(cgoHandle, cgoType, &cgoCount)
+	return int32(cgoCount), RtdbError(err).GoError()
+}
 
 // RawRtdbbModifyNamedTypeWarp 修改自定义类型名称,描述,字段名称,字段描述
 // *        [handle]             连接句柄，输入参数
