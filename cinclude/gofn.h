@@ -1,0 +1,10 @@
+/*
+    这里的C函数声明，均为Go进行实现，主要是C中的回调函数
+*/
+
+#include "rtdb.h"
+#include "rtdbapi.h"
+#include "rtdb_error.h"
+
+// rtdbb_subscribe_tags_ex 函数参数中声明的回调函数
+extern rtdb_error goSubscribeTagsEx(rtdb_uint32 event_type, rtdb_int32 handle, void* param, rtdb_int32 count, rtdb_int32 *ids, rtdb_int32 what);

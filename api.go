@@ -4,24 +4,7 @@ package rtdb_api
 // #cgo CXXFLAGS: -std=c++11
 // #include <stdlib.h>
 // #include "api.h"
-// /**
-//  * 标签点属性更改通知订阅回调接口(ex)
-//  * 备注：这是C函数声明，实际的函数实现是用Go语言完成的
-//  * event_type		无符号整型，输入，通知类型
-//  * handle			整型，输入，产生通知的句柄
-//  * param			void指针，输入，用户调用rtdbb_subscribe_tags_ex时param参数
-//  * count		    整型，输入，event_type为RTDB_E_DATA时表示标签点个数，否则count为0
-//  * ids			整型数组，输入，标签点被订阅且属性发生更改的标识列表
-//  * what			整型，参考枚举 RTDB_TAG_CHANGE_REASON, 表示引起变更的源类型。
-//  */
-// extern rtdb_error RTDBAPI_CALLRULE goRtdbbTagsChangeEventExCallback(
-// 		rtdb_uint32 event_type,
-// 		rtdb_int32 handle,
-// 		void* param,
-// 		rtdb_int32 count,
-// 		const rtdb_int32 *ids,
-// 		rtdb_int32 what
-// );
+// #include "gofn.h"
 import "C"
 import (
 	_ "embed"
@@ -5328,13 +5311,13 @@ const (
 // 此函数为 rtdbb_subscribe_tags_ex_warp 回调函数的具体实现，用于订阅数据
 //
 //export goRtdbbTagsChangeEventExCallback
-func goRtdbbTagsChangeEventExCallback(
-	eventType C.rtdb_uint32, handle C.rtdb_int32,
-	param unsafe.Pointer, count C.rtdb_int32,
-	ids *C.rtdb_int32, what C.rtdb_int32,
-) C.rtdb_error {
-	return C.rtdb_error(0)
-}
+// func goRtdbbTagsChangeEventExCallback(
+// 	eventType C.rtdb_uint32, handle C.rtdb_int32,
+// 	param unsafe.Pointer, count C.rtdb_int32,
+// 	ids *C.rtdb_int32, what C.rtdb_int32,
+// ) C.rtdb_error {
+// 	return C.rtdb_error(0)
+// }
 
 /////////////////////////////// -- 华丽的分割线 -- ////////////////////////////////
 /////////////////////////////// 下面是函数实现 ////////////////////////////////////
@@ -7478,6 +7461,19 @@ func RawRtdbbGetRecycledMaxPointPropertyWarp(handle ConnectHandle, id PointID) (
 func RawRtdbbClearRecyclerWarp(handle ConnectHandle) error {
 	err := C.rtdbb_clear_recycler_warp(C.rtdb_int32(handle))
 	return RtdbError(err).GoError()
+}
+
+// 回调函数， rtdbb_subscribe_tags_ex_warp 的回调函数实现
+// export goSubscribeTagsEx
+func goSubscribeTagsEx(
+	eventType C.rtdb_uint32,
+	handle C.rtdb_int32,
+	param unsafe.Pointer,
+	count C.rtdb_int32,
+	ids *C.rtdb_int32,
+	what C.rtdb_int32,
+) C.rtdb_error {
+	return C.rtdb_error(0)
 }
 
 // RawRtdbbSubscribeTagsExWarp 标签点属性更改通知订阅
