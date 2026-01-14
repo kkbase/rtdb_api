@@ -4,7 +4,6 @@ package rtdb_api
 // #cgo CXXFLAGS: -std=c++11
 // #include <stdlib.h>
 // #include "api.h"
-// #include "gofn.h"
 import "C"
 import (
 	_ "embed"
@@ -15,6 +14,8 @@ import (
 	"strings"
 	"unsafe"
 )
+
+// extern rtdb_error goSubscribeTagsEx(rtdb_uint32 event_type, rtdb_int32 handle, void* param, rtdb_int32 count, rtdb_int32 *ids, rtdb_int32 what);
 
 //go:embed clibrary/linux_amd64/librtdbapi.so
 var LinuxAmd64RtdbSo []byte
@@ -7464,9 +7465,9 @@ func RawRtdbbClearRecyclerWarp(handle ConnectHandle) error {
 }
 
 //export goSubscribeTagsEx
-func goSubscribeTagsEx(eventType C.rtdb_uint32, handle C.rtdb_int32, param unsafe.Pointer, count C.rtdb_int32, ids *C.rtdb_int32, what C.rtdb_int32) C.rtdb_error {
-	return C.rtdb_error(0)
-}
+//func goSubscribeTagsEx(eventType C.rtdb_uint32, handle C.rtdb_int32, param unsafe.Pointer, count C.rtdb_int32, ids *C.rtdb_int32, what C.rtdb_int32) C.rtdb_error {
+//	return C.rtdb_error(0)
+//}
 
 /*
 //export goSubscribeTagsEx

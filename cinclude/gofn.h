@@ -13,8 +13,7 @@ extern "C" {
 #include "rtdbapi.h"
 #include "rtdb_error.h"
 
-// rtdbb_subscribe_tags_ex 函数参数中声明的回调函数
-extern rtdb_error goSubscribeTagsEx(rtdb_uint32 event_type, rtdb_int32 handle, void* param, rtdb_int32 count, rtdb_int32 *ids, rtdb_int32 what);
+// extern rtdb_error goSubscribeTagsEx(rtdb_uint32 event_type, rtdb_int32 handle, void* param, rtdb_int32 count, rtdb_int32 *ids, rtdb_int32 what);
 
 #ifdef __cplusplus
 }
