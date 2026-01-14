@@ -7487,7 +7487,10 @@ func RawRtdbbClearRecyclerWarp(handle ConnectHandle) error {
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_subscribe_tags_ex_warp(rtdb_int32 handle, rtdb_uint32 options, void* param, rtdbb_tags_change_event_ex callback)
-func RawRtdbbSubscribeTagsExWarp(handle ConnectHandle, options RtdbSubscribeOption) {}
+func RawRtdbbSubscribeTagsExWarp(handle ConnectHandle, options RtdbSubscribeOption) error {
+	err := C.rtdbb_subscribe_tags_ex_warp(C.rtdb_int32(handle), C.rtdb_uint32(options), nil, C.goSubscribeTagsEx)
+	return RtdbError(err)
+}
 
 // RawRtdbbCancelSubscribeTagsWarp 取消标签点属性更改通知订阅
 //
