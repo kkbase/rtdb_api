@@ -7463,8 +7463,6 @@ func RawRtdbbClearRecyclerWarp(handle ConnectHandle) error {
 	return RtdbError(err).GoError()
 }
 
-// goSubscribeTagsEx 回调函数 rtdbb_subscribe_tags_ex_warp 的回调函数实现
-//
 //export goSubscribeTagsEx
 func goSubscribeTagsEx(
 	eventType C.rtdb_uint32,
