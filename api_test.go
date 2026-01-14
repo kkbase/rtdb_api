@@ -1015,3 +1015,56 @@ func TestAddPoint(t *testing.T) {
 	// }
 	// time.Sleep(1 * time.Second)
 }
+
+func TestPoint2(t *testing.T) {
+	handle, err := RawRtdbConnectWarp(Hostname, Port)
+	if err != nil {
+		t.Error("创建连接失败", err)
+		return
+	}
+	_, err = RawRtdbLoginWarp(handle, Username, Password)
+	if err != nil {
+		t.Error("登录失败:", err)
+		return
+	}
+	defer func() { _ = RawRtdbDisconnectWarp(handle) }()
+
+	table, err := RawRtdbbAppendTableWarp(handle, "aaa", "aaa test")
+	if err != nil {
+		t.Error("添加表失败: ", err)
+		return
+	}
+
+	defer func() {
+		err := RawRtdbbRemoveTableByIdWarp(handle, table.ID)
+		if err != nil {
+			t.Error("删除表失败：", err)
+			return
+		}
+	}()
+
+	base := NewDefaultPoint("ttt", RtdbTypeInt32, table.ID, RtdbClassBase, RtdbPrecisionMicro)
+	base, scan, calc, err := RawRtdbbInsertMaxPointWarp(handle, base, nil, nil)
+	if err != nil {
+		t.Error("添加标签点失败：", err)
+		return
+	}
+	fmt.Println("base: ", base)
+	fmt.Println("scan: ", scan)
+	fmt.Println("calc: ", calc)
+
+	defer func() {
+		err = RawRtdbbRemovePointByIdWarp(handle, base.ID)
+		if err != nil {
+			t.Error("删除标签点失败: ", err)
+			return
+		}
+	}()
+
+	ids, types, classes, precisions, errs, err := RawRtdbbFindPointsExWarp(handle, 10, []string{"aaa.ttt"})
+	if err != nil {
+		t.Error("查找标签点失败", err)
+		return
+	}
+	fmt.Println(ids, types, classes, precisions, errs)
+}
