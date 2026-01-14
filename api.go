@@ -9,7 +9,6 @@ import "C"
 import (
 	_ "embed"
 	"errors"
-	"github.com/google/uuid"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -7488,8 +7487,8 @@ func RawRtdbbClearRecyclerWarp(handle ConnectHandle) error {
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_subscribe_tags_ex_warp(rtdb_int32 handle, rtdb_uint32 options, void* param, rtdbb_tags_change_event_ex callback)
-func RawRtdbbSubscribeTagsExWarp(handle ConnectHandle, options RtdbSubscribeOption, param unsafe.Pointer) error {
-	err := C.rtdbb_subscribe_tags_ex_warp(C.rtdb_int32(handle), C.rtdb_uint32(options), param, C.goSubscribeTagsEx)
+func RawRtdbbSubscribeTagsExWarp(handle ConnectHandle, options RtdbSubscribeOption) error {
+	err := C.rtdbb_subscribe_tags_ex_warp(C.rtdb_int32(handle), C.rtdb_uint32(options), nil, (C.rtdbb_tags_change_event_ex)(unsafe.Pointer(C.goSubscribeTagsEx)))
 	return RtdbError(err)
 }
 
