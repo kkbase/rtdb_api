@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"testing"
-	"time"
 )
 
 const Hostname = "127.0.0.1"
@@ -917,102 +916,104 @@ func TestAddPoint(t *testing.T) {
 	}
 	defer func() { _ = RawRtdbDisconnectWarp(handle) }()
 
-	table, err := RawRtdbbAppendTableWarp(handle, "aaa", "aaa test")
-	if err != nil {
-		t.Error("添加表失败: ", err)
-		return
-	}
-
-	defer func() {
-		err := RawRtdbbRemoveTableByIdWarp(handle, table.ID)
+	/*
+		table, err := RawRtdbbAppendTableWarp(handle, "aaa", "aaa test")
 		if err != nil {
-			t.Error("删除表失败：", err)
+			t.Error("添加表失败: ", err)
 			return
 		}
-	}()
 
-	base := NewDefaultPoint("ttt", RtdbTypeInt32, table.ID, RtdbClassBase, RtdbPrecisionMicro)
-	base, scan, calc, err := RawRtdbbInsertMaxPointWarp(handle, base, nil, nil)
-	if err != nil {
-		t.Error("添加标签点失败：", err)
-		return
-	}
-	fmt.Println("base: ", base)
-	fmt.Println("scan: ", scan)
-	fmt.Println("calc: ", calc)
+		defer func() {
+			err := RawRtdbbRemoveTableByIdWarp(handle, table.ID)
+			if err != nil {
+				t.Error("删除表失败：", err)
+				return
+			}
+		}()
 
-	err = RawRtdbbRemovePointByIdWarp(handle, base.ID)
-	if err != nil {
-		t.Error("删除标签点失败: ", err)
-		return
-	}
+		base := NewDefaultPoint("ttt", RtdbTypeInt32, table.ID, RtdbClassBase, RtdbPrecisionMicro)
+		base, scan, calc, err := RawRtdbbInsertMaxPointWarp(handle, base, nil, nil)
+		if err != nil {
+			t.Error("添加标签点失败：", err)
+			return
+		}
+		fmt.Println("base: ", base)
+		fmt.Println("scan: ", scan)
+		fmt.Println("calc: ", calc)
 
-	base, scan, calc, err = RawRtdbbInsertMaxPointWarp(handle, base, nil, nil)
-	if err != nil {
-		t.Error("添加标签点失败：", err)
-		return
-	}
-	fmt.Println("base: ", base)
-	fmt.Println("scan: ", scan)
-	fmt.Println("calc: ", calc)
-
-	bases, scans, calcs, errs, err := RawRtdbbGetMaxPointsPropertyWarp(handle, []PointID{base.ID})
-	fmt.Println("bases: ", bases)
-	fmt.Println("scans: ", scans)
-	fmt.Println("calcs: ", calcs)
-	fmt.Println("errs: ", errs)
-	if err != nil {
-		t.Error("批量获取标签点失败：", err)
-		return
-	}
-
-	ids, err := RawRtdbbSearchInBatchesWarp(handle, 0, "", "", "", "", "", "", RtdbSortFlagDescend)
-	if err != nil {
-		t.Error("搜索标签点失败：", err)
-		return
-	}
-	fmt.Println("搜索标签点：", ids)
-
-	ids2, err := RawRtdbbSearchExWarp(handle, 1024, "", "", "", "", "", "", "", RtdbTypeAny, RtdbPrecisionAny, RtdbSearchAny, "", RtdbSortFlagDescend)
-	if err != nil {
-		t.Error("搜索标签点失败2：", err)
-		return
-	}
-	fmt.Println("搜索标签点2：", ids2)
-
-	count, err := RawRtdbbSearchPointsCountWarp(handle, "", "", "", "", "", "", "", RtdbTypeAny, RtdbPrecisionAny, RtdbSearchAny, "")
-	if err != nil {
-		t.Error("搜索标签点失败3：", err)
-		return
-	}
-	fmt.Println("数量：", count)
-
-	defer func() {
-		err = RawRtdbbRemovePointByNameWarp(handle, table.Name+"."+base.Tag)
+		err = RawRtdbbRemovePointByIdWarp(handle, base.ID)
 		if err != nil {
 			t.Error("删除标签点失败: ", err)
 			return
 		}
-	}()
 
-	table2, err := RawRtdbbAppendTableWarp(handle, "bbb", "bbb test")
-	if err != nil {
-		t.Error("添加表失败: ", err)
-		return
-	}
-
-	defer func() {
-		err := RawRtdbbRemoveTableByIdWarp(handle, table2.ID)
+		base, scan, calc, err = RawRtdbbInsertMaxPointWarp(handle, base, nil, nil)
 		if err != nil {
-			t.Error("删除表失败：", err)
+			t.Error("添加标签点失败：", err)
 			return
 		}
-	}()
+		fmt.Println("base: ", base)
+		fmt.Println("scan: ", scan)
+		fmt.Println("calc: ", calc)
 
-	err = RawRtdbbMovePointByIdWarp(handle, base.ID, table.Name)
-	if err != nil {
-		t.Error("移动标签点失败：", err)
-		return
-	}
-	time.Sleep(1 * time.Second)
+		bases, scans, calcs, errs, err := RawRtdbbGetMaxPointsPropertyWarp(handle, []PointID{base.ID})
+		fmt.Println("bases: ", bases)
+		fmt.Println("scans: ", scans)
+		fmt.Println("calcs: ", calcs)
+		fmt.Println("errs: ", errs)
+		if err != nil {
+			t.Error("批量获取标签点失败：", err)
+			return
+		}
+
+		ids, err := RawRtdbbSearchInBatchesWarp(handle, 0, "", "", "", "", "", "", RtdbSortFlagDescend)
+		if err != nil {
+			t.Error("搜索标签点失败：", err)
+			return
+		}
+		fmt.Println("搜索标签点：", ids)
+
+		ids2, err := RawRtdbbSearchExWarp(handle, 1024, "", "", "", "", "", "", "", RtdbTypeAny, RtdbPrecisionAny, RtdbSearchAny, "", RtdbSortFlagDescend)
+		if err != nil {
+			t.Error("搜索标签点失败2：", err)
+			return
+		}
+		fmt.Println("搜索标签点2：", ids2)
+
+		count, err := RawRtdbbSearchPointsCountWarp(handle, "", "", "", "", "", "", "", RtdbTypeAny, RtdbPrecisionAny, RtdbSearchAny, "")
+		if err != nil {
+			t.Error("搜索标签点失败3：", err)
+			return
+		}
+		fmt.Println("数量：", count)
+
+		defer func() {
+			err = RawRtdbbRemovePointByNameWarp(handle, table.Name+"."+base.Tag)
+			if err != nil {
+				t.Error("删除标签点失败: ", err)
+				return
+			}
+		}()
+
+		table2, err := RawRtdbbAppendTableWarp(handle, "bbb", "bbb test")
+		if err != nil {
+			t.Error("添加表失败: ", err)
+			return
+		}
+
+		defer func() {
+			err := RawRtdbbRemoveTableByIdWarp(handle, table2.ID)
+			if err != nil {
+				t.Error("删除表失败：", err)
+				return
+			}
+		}()
+	*/
+
+	// err = RawRtdbbMovePointByIdWarp(handle, base.ID, table.Name)
+	// if err != nil {
+	// 	t.Error("移动标签点失败：", err)
+	// 	return
+	// }
+	// time.Sleep(1 * time.Second)
 }

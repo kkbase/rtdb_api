@@ -6945,37 +6945,90 @@ func RawRtdbbUpdateMaxPointPropertyWarp(handle ConnectHandle, base *RtdbPoint, s
 }
 
 // RawRtdbbFindPointsWarp 根据 "表名.标签点名" 格式批量获取标签点标识
-// *  \param handle           连接句柄
-// *  \param count            整数，输入/输出，输入时表示标签点个数
-// *                            (即table_dot_tags、ids、types、classof、use_ms 的长度)，
-// *                            输出时表示找到的标签点个数
-// *  \param table_dot_tags   字符串指针数组，输入，"表名.标签点名" 列表
-// *  \param ids              整型数组，输出，标签点标识列表, 返回 0 表示未找到
-// *  \param types            整型数组，输出，标签点数据类型
-// *  \param classof          整型数组，输出，标签点类别
-// *  \param use_ms           短整型数组，输出，时间戳精度，
-// *                            返回 1 表示时间戳精度为纳秒， 为 0 表示为秒。
-// *  \remark 用户须保证分配给 table_dot_tags、ids、types、classof、use_ms 的空间与count相符，
-// *         其中 types、classof、use_ms 可为空指针，对应的字段将不再返回。
-// rtdb_error RTDBAPI_CALLRULE rtdbb_find_points_warp(rtdb_int32 handle, rtdb_int32 *count, const char* const* table_dot_tags, rtdb_int32 *ids, rtdb_int32 *types, rtdb_int32 *classof, rtdb_int16 *use_ms)
-func RawRtdbbFindPointsWarp(handle ConnectHandle) {}
+// 备注：废弃，此函数已有扩展版，因此不实现， 参见RawRtdbbFindPointsExWarp
+//
+// input:
+//   - handle 连接句柄
+//   - count 输入时表示标签点个数 (即table_dot_tags、ids、types、classof、use_ms 的长度)，输出时表示找到的标签点个数
+//   - table_dot_tags 输入，"表名.标签点名" 列表
+//
+// output:
+//   - []PointID 标签点ID列表
+//   - []RtdbType 标签点数值类型列表
+//   - []RtdbClass 标签点种类列表
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbb_find_points_warp(rtdb_int32 handle, rtdb_int32 *count, const char* const* table_dot_tags, rtdb_int32 *ids, rtdb_int32 *types, rtdb_int32 *classof, rtdb_int16 *use_ms)
+// func RawRtdbbFindPointsWarp(handle ConnectHandle, count int32, tableDotTags []string) ([]PointID, []RtdbType, []RtdbClass, error) {
+// 	cCount := C.rtdb_int32(count)
+// 	cTags := make([]*C.char, 0)
+// 	for _, tag := range tableDotTags {
+// 		cT := C.CString(tag)
+// 		cTags = append(cTags, cT)
+// 	}
+// 	defer func() {
+// 		for _, cT := range cTags {
+// 			C.free(unsafe.Pointer(cT))
+// 		}
+// 	}()
+// 	ccTags := &cTags[0]
+// 	ids := make([]PointID, cCount)
+// 	cIds := (*C.rtdb_int32)(unsafe.Pointer(&ids[0]))
+// 	types := make([]RtdbType, cCount)
+// 	cTypes := (*C.rtdb_int32)(unsafe.Pointer(&types[0]))
+// 	classOfs := make([]RtdbClass, cCount)
+// 	cClassOf := (*C.rtdb_int32)(unsafe.Pointer(&classofs[0]))
+// 	useMs := make([]C.rtdb_int16, cCount)
+// 	cUseMs := &useMs[0]
+// 	err := C.rtdbb_find_points_warp(C.rtdb_int32(handle), &cCount, ccTags, cIds, cTypes, cClassOf, cUseMs)
+// 	return ids[:cCount], types[:cCount], classOfs[:cCount], RtdbError(err).GoError()
+// }
 
 // RawRtdbbFindPointsExWarp 根据 "表名.标签点名" 格式批量获取标签点标识
-// * \param handle           连接句柄
-// * \param count            整数，输入/输出，输入时表示标签点个数
-// * (即table_dot_tags、ids、types、classof、use_ms 的长度)，
-// * 输出时表示找到的标签点个数
-// * \param table_dot_tags   字符串指针数组，输入，"表名.标签点名" 列表
-// * \param ids              整型数组，输出，标签点标识列表, 返回 0 表示未找到
-// * \param types            整型数组，输出，标签点数据类型
-// * \param classof          整型数组，输出，标签点类别
-// * \param precisions       数组，输出，时间戳精度，
-// * 0表示秒，1表示毫秒，2表示微秒，3纳秒。
-// * \param errors           无符号整型数组，输出，表示每个标签点的查询结果的错误码
-// * \remark 用户须保证分配给 table_dot_tags、ids、types、classof、precisions、errors 的空间与count相符，
-// * 其中 types、classof、precisions、errors 可为空指针，对应的字段将不再返回。
-// rtdb_error RTDBAPI_CALLRULE rtdbb_find_points_ex_warp(rtdb_int32 handle, rtdb_int32* count, const char* const* table_dot_tags, rtdb_int32* ids, rtdb_int32* types, rtdb_int32* classof, rtdb_precision_type* precisions, rtdb_error* errors)
-func RawRtdbbFindPointsExWarp() {}
+//
+// input:
+//   - handle 连接句柄
+//   - count 输入时表示标签点个数
+//   - table_dot_tags 输入，"表名.标签点名" 列表
+//
+// output:
+//   - []PointID 标签点标识列表, 返回 0 表示未找到
+//   - []RtdbType 标签点数据类型
+//   - []RtdbClass 标签点类别
+//   - []PrecisionType 时间戳精度，
+//   - []RtdbError 表示每个标签点的查询结果的错误码
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbb_find_points_ex_warp(rtdb_int32 handle, rtdb_int32* count, const char* const* table_dot_tags, rtdb_int32* ids, rtdb_int32* types, rtdb_int32* classof, rtdb_precision_type* precisions, rtdb_error* errors)
+func RawRtdbbFindPointsExWarp(handle ConnectHandle, count int32, tableDotTags []string) ([]PointID, []RtdbType, []RtdbClass, []PrecisionType, []RtdbError, error) {
+	if count == 0 {
+		return nil, nil, nil, nil, nil, nil
+	}
+	cCount := C.rtdb_int32(count)
+	cTags := make([]*C.char, 0)
+	for _, tag := range tableDotTags {
+		cT := C.CString(tag)
+		cTags = append(cTags, cT)
+	}
+	defer func() {
+		for _, cT := range cTags {
+			C.free(unsafe.Pointer(cT))
+		}
+	}()
+	ccTags := &cTags[0]
+	ids := make([]PointID, cCount)
+	cIds := (*C.rtdb_int32)(unsafe.Pointer(&ids[0]))
+	types := make([]RtdbType, cCount)
+	cTypes := (*C.rtdb_int32)(unsafe.Pointer(&types[0]))
+	classOfs := make([]RtdbClass, cCount)
+	cClassOf := (*C.rtdb_int32)(unsafe.Pointer(&classOfs[0]))
+	precisions := make([]PrecisionType, cCount)
+	cPrecisions := (*C.rtdb_precision_type)(unsafe.Pointer(&precisions[0]))
+	errs := make([]RtdbError, cCount)
+	cErrs := (*C.rtdb_error)(unsafe.Pointer(&errs[0]))
+	err := C.rtdbb_find_points_ex_warp(C.rtdb_int32(handle), &cCount, ccTags, cIds, cTypes, cClassOf, cPrecisions, cErrs)
+	return ids[:cCount], types[:cCount], classOfs[:cCount], precisions[:cCount], errs[:cCount], RtdbError(err).GoError()
+}
 
 // RawRtdbbSortPointsWarp 根据标签属性字段对标签点标识进行排序
 // *  \param handle           连接句柄
