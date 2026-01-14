@@ -5338,6 +5338,84 @@ func cToRtdbDataTypeField(field *C.RTDB_DATA_TYPE_FIELD) *RtdbDataTypeField {
 	return &rtn
 }
 
+// RtdbSyncRole 元数据同步角色
+type RtdbSyncRole int8
+
+const (
+	// RtdbSyncRoleOffline 离线
+	RtdbSyncRoleOffline = RtdbSyncRole(C.RTDB_SYNC_ROLE_OFFLINE)
+
+	// RtdbSyncRoleUnsynced 未同步
+	RtdbSyncRoleUnsynced = RtdbSyncRole(C.RTDB_SYNC_ROLE_UNSYNCED)
+
+	// RtdbSyncRoleSyncing 同步中
+	RtdbSyncRoleSyncing = RtdbSyncRole(C.RTDB_SYNC_ROLE_SYNCING)
+
+	// RtdbSyncRoleSlave 备库
+	RtdbSyncRoleSlave = RtdbSyncRole(C.RTDB_SYNC_ROLE_SLAVE)
+
+	// RtdbSyncRoleMaster 主库
+	RtdbSyncRoleMaster = RtdbSyncRole(C.RTDB_SYNC_ROLE_MASTER)
+)
+
+func (rs RtdbSyncRole) Desc() string {
+	switch rs {
+	case RtdbSyncRoleOffline:
+		return "离线"
+	case RtdbSyncRoleUnsynced:
+		return "未同步"
+	case RtdbSyncRoleSyncing:
+		return "同步中"
+	case RtdbSyncRoleSlave:
+		return "备库"
+	case RtdbSyncRoleMaster:
+		return "主库"
+	default:
+		return "未知角色"
+	}
+}
+
+// RtdbSyncStatus 元数据同步状态
+type RtdbSyncStatus int8
+
+const (
+	// RtdbSyncStatusInit 正常
+	RtdbSyncStatusInit = RtdbSyncStatus(C.RTDB_SYNC_STATUS_INIT)
+
+	// RtdbSyncStatusStart 启动同步
+	RtdbSyncStatusStart = RtdbSyncStatus(C.RTDB_SYNC_STATUS_START)
+
+	// RtdbSyncStatusFile 同步文件
+	RtdbSyncStatusFile = RtdbSyncStatus(C.RTDB_SYNC_STATUS_FILE)
+
+	// RtdbSyncStatusCache 同步缓存
+	RtdbSyncStatusCache = RtdbSyncStatus(C.RTDB_SYNC_STATUS_CACHE)
+)
+
+func (ss) Desc() string {
+	switch ss {
+	case RtdbSyncStatusInit:
+		return "正常"
+	case RtdbSyncStatusStart:
+		return "启动同步"
+	case RtdbSyncStatusFile:
+		return "同步文件"
+	case RtdbSyncStatusCache:
+		return "同步缓存"
+	default:
+		return "未知同步状态"
+	}
+}
+
+// RtdbSyncInfo 节点的元数据同步信息
+type RtdbSyncInfo struct {
+	Role     RtdbSyncRole
+	Status   RtdbSyncStatus
+	IP       uint32
+	Version  uint64
+	DataSize uint64
+}
+
 /////////////////////////////// 上面是结构定义 ////////////////////////////////////
 /////////////////////////////// -- 躺平的分割线 -- ////////////////////////////////
 /////////////////////////////// -- 躺平的分割线 -- ////////////////////////////////
@@ -7813,14 +7891,17 @@ func RawRtdbbModifyNamedTypeWarp(handle ConnectHandle, name string, modifyName s
 }
 
 // RawRtdbbGetMetaSyncInfoWarp 获取元数据同步信息
-// * \param handle           整型，输入参数，连接句柄
-// * \param node_number      整型，输入参数，双活节点id，1表示第一个节点，2表示第二个节点。0表示所有节点
-// * \param count            整型，输入参数，sync_infos参数的数量
-// *                              输出参数，输出实际获取到的sync_infos的个数
+//
+// input:
+//   - handle 连接句柄
+//   - node_number 双活节点id，1表示第一个节点，2表示第二个节点。0表示所有节点
+//
 // * \param sync_infos       RTDB_SYNC_INFO数组，输出参数，输出实际获取到的同步信息
 // * \param errors           rtdb_error数组，输出参数，输出对应节点的错误信息
 // rtdb_error RTDBAPI_CALLRULE rtdbb_get_meta_sync_info_warp(rtdb_int32 handle, rtdb_int32 node_number, rtdb_int32* count, RTDB_SYNC_INFO* sync_infos, rtdb_error* errors)
-func RawRtdbbGetMetaSyncInfoWarp() {}
+func RawRtdbbGetMetaSyncInfoWarp(handle ConnectHandle, nodeNumber int32) ([]SyncInfo, error) {
+
+}
 
 // RawRtdbsGetSnapshots64Warp 批量读取开关量、模拟量快照数值
 // * \param handle    连接句柄
