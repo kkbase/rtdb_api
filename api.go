@@ -5439,6 +5439,27 @@ type RtdbSyncInfo struct {
 	DataSize uint64
 }
 
+func cToGoRtdbSyncInfo(info *C.RTDB_SYNC_INFO) *RtdbSyncInfo {
+	rtn := RtdbSyncInfo{
+		Role:     RtdbSyncRole(info.role),
+		Status:   RtdbSyncStatus(info.status),
+		IP:       uint32(info.ip),
+		Version:  uint64(info.version),
+		DataSize: uint64(info.data_size),
+	}
+	return &rtn
+}
+
+func goToCRtdbSyncInfo(info *RtdbSyncInfo) *C.RTDB_SYNC_INFO {
+	rtn := C.RTDB_SYNC_INFO{}
+	rtn.role = C.rtdb_int8(info.Role)
+	rtn.status = C.rtdb_int8(info.Status)
+	rtn.ip = C.rtdb_uint32(info.IP)
+	rtn.version = C.rtdb_uint64(info.Version)
+	rtn.data_size = C.rtdb_uint64(info.DataSize)
+	return &rtn
+}
+
 /////////////////////////////// 上面是结构定义 ////////////////////////////////////
 /////////////////////////////// -- 躺平的分割线 -- ////////////////////////////////
 /////////////////////////////// -- 躺平的分割线 -- ////////////////////////////////
@@ -7919,11 +7940,26 @@ func RawRtdbbModifyNamedTypeWarp(handle ConnectHandle, name string, modifyName s
 //   - handle 连接句柄
 //   - node_number 双活节点id，1表示第一个节点，2表示第二个节点。0表示所有节点
 //
-// * \param sync_infos       RTDB_SYNC_INFO数组，输出参数，输出实际获取到的同步信息
-// * \param errors           rtdb_error数组，输出参数，输出对应节点的错误信息
-// rtdb_error RTDBAPI_CALLRULE rtdbb_get_meta_sync_info_warp(rtdb_int32 handle, rtdb_int32 node_number, rtdb_int32* count, RTDB_SYNC_INFO* sync_infos, rtdb_error* errors)
-func RawRtdbbGetMetaSyncInfoWarp(handle ConnectHandle, nodeNumber int32) {
-
+// output:
+//   - []RtdbSyncInfo 元数据信息
+//   - []error 错误数组
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbb_get_meta_sync_info_warp(rtdb_int32 handle, rtdb_int32 node_number, rtdb_int32* count, RTDB_SYNC_INFO* sync_infos, rtdb_error* errors)
+func RawRtdbbGetMetaSyncInfoWarp(handle ConnectHandle, nodeNumber int32) ([]RtdbSyncInfo, []error, error) {
+	infos := make([]C.RTDB_SYNC_INFO, 2)
+	count := C.rtdb_int32(0)
+	errs := make([]RtdbError, 2)
+	err := C.rtdbb_get_meta_sync_info_warp(C.rtdb_int32(handle), C.rtdb_int32(nodeNumber), &count, &infos[0], (*C.rtdb_error)(unsafe.Pointer(&errs[0])))
+	rtnInfo := make([]RtdbSyncInfo, 0)
+	for i := 0; i < int(count); i++ {
+		rtnInfo = append(rtnInfo, *cToGoRtdbSyncInfo(&infos[i]))
+	}
+	rtnErr := make([]error, 0)
+	for i := 0; i < int(count); i++ {
+		rtnErr = append(rtnErr, errs[i].GoError())
+	}
+	return rtnInfo, rtnErr, RtdbError(err).GoError()
 }
 
 // RawRtdbsGetSnapshots64Warp 批量读取开关量、模拟量快照数值
