@@ -7464,6 +7464,12 @@ func RawRtdbbClearRecyclerWarp(handle ConnectHandle) error {
 }
 
 //export goSubscribeTagsEx
+func goSubscribeTagsEx(eventType C.rtdb_uint32, handle C.rtdb_int32, param unsafe.Pointer, count C.rtdb_int32, ids *C.rtdb_int32, what C.rtdb_int32) C.rtdb_error {
+	return C.rtdb_error(0)
+}
+
+/*
+//export goSubscribeTagsEx
 func goSubscribeTagsEx(
 	eventType C.rtdb_uint32,
 	handle C.rtdb_int32,
@@ -7474,6 +7480,7 @@ func goSubscribeTagsEx(
 ) C.rtdb_error {
 	return C.rtdb_error(0)
 }
+*/
 
 // RawRtdbbSubscribeTagsExWarp 标签点属性更改通知订阅
 //
