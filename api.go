@@ -7768,15 +7768,49 @@ func RawRtdbbGetBaseTypePointsCountWarp(handle ConnectHandle, rtdbType RtdbType)
 }
 
 // RawRtdbbModifyNamedTypeWarp 修改自定义类型名称,描述,字段名称,字段描述
-// *        [handle]             连接句柄，输入参数
-// *        [name]               自定义类型的名称，输入参数
-// *        [modify_name]        要修改的自定义类型名称，输入参数
-// *        [modify_desc]        要修改的自定义类型的描述，输入参数
-// *        [modify_field_name]  要修改的自定义类型字段的名称，输入参数
-// *        [modify_field_desc]  要修改的自定义类型字段的描述，输入参数
-// *        [field_count]        自定义类型字段的个数，输入参数
-// rtdb_error RTDBAPI_CALLRULE rtdbb_modify_named_type_warp(rtdb_int32 handle, const char* name, const char* modify_name, const char* modify_desc, const char* modify_field_name[RTDB_TYPE_NAME_SIZE], const char* modify_field_desc[RTDB_DESC_SIZE], rtdb_int32 field_count)
-func RawRtdbbModifyNamedTypeWarp() {}
+//
+// input:
+//   - handle 连接句柄
+//   - name 自定义类型的名称
+//   - modifyName 要修改的自定义类型名称
+//   - modifyDesc 要修改的自定义类型的描述
+//   - modifyFieldName 要修改的自定义类型字段的名称
+//   - modifyFieldDesc 要修改的自定义类型字段的描述
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbb_modify_named_type_warp(rtdb_int32 handle, const char* name, const char* modify_name, const char* modify_desc, const char* modify_field_name[RTDB_TYPE_NAME_SIZE], const char* modify_field_desc[RTDB_DESC_SIZE], rtdb_int32 field_count)
+func RawRtdbbModifyNamedTypeWarp(handle ConnectHandle, name string, modifyName string, modifyDesc string, fieldNames []string, fieldDescs []string) error {
+	cgoHandle := C.rtdb_int32(handle)
+	cgoName := C.CString(name)
+	defer C.free(unsafe.Pointer(cgoName))
+	cgoModifyName := C.CString(modifyName)
+	defer C.free(unsafe.Pointer(cgoModifyName))
+	cgoModifyDesc := C.CString(modifyDesc)
+	defer C.free(unsafe.Pointer(cgoModifyDesc))
+	cgoFieldLen := C.rtdb_int32(len(fieldNames))
+	names := make([]*C.char, len(fieldNames))
+	for i, n := range fieldNames {
+		names[i] = C.CString(n)
+	}
+	defer func() {
+		for _, n := range names {
+			C.free(unsafe.Pointer(n))
+		}
+	}()
+	cgoNames := (**C.char)(unsafe.Pointer(&names[0]))
+	descs := make([]*C.char, len(fieldDescs))
+	for i, d := range fieldDescs {
+		descs[i] = C.CString(d)
+	}
+	defer func() {
+		for _, d := range descs {
+			C.free(unsafe.Pointer(d))
+		}
+	}()
+	cgoDescs := (**C.char)(unsafe.Pointer(&descs[0]))
+	err := C.rtdbb_modify_named_type_warp(cgoHandle, cgoName, cgoModifyName, cgoModifyDesc, cgoNames, cgoDescs, cgoFieldLen)
+	return RtdbError(err).GoError()
+}
 
 // RawRtdbbGetMetaSyncInfoWarp 获取元数据同步信息
 // * \param handle           整型，输入参数，连接句柄
