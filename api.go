@@ -5328,6 +5328,16 @@ func goToCRtdbDataTypeField(field *RtdbDataTypeField) *C.RTDB_DATA_TYPE_FIELD {
 	return &rtn
 }
 
+func cToRtdbDataTypeField(field *C.RTDB_DATA_TYPE_FIELD) *RtdbDataTypeField {
+	rtn := RtdbDataTypeField{
+		Name:   CCharArrayToString(&field.name[0], int(C.RTDB_TYPE_NAME_SIZE)),
+		Type:   RtdbType(field._type),
+		Length: int32(field.length),
+		Desc:   CCharArrayToString(&field.desc[0], int(C.RTDB_DESC_SIZE)),
+	}
+	return &rtn
+}
+
 /////////////////////////////// 上面是结构定义 ////////////////////////////////////
 /////////////////////////////// -- 躺平的分割线 -- ////////////////////////////////
 /////////////////////////////// -- 躺平的分割线 -- ////////////////////////////////
@@ -7586,37 +7596,93 @@ func RawRtdbbGetAllNamedTypesWarp(handle ConnectHandle, count int32) ([]string, 
 }
 
 // RawRtdbbGetNamedTypeWarp 获取自定义类型的所有字段
-// *        [handle]         连接句柄，输入参数
-// *        [name]           自定义类型的名称，输入参数
-// *        [field_count]    返回name指定的自定义类型的字段个数，输入/输出参数
-// *                         输入：指定fields数组长度.输出：实际的name自定义类型的字段的个数
-// *        [fields]         返回由name所指定的自定义类型所包含字段RTDB_DATA_TYPE_FIELD结构的数组，输入/输出参数
-// *                         输入：fields数组长度要等于count。输出:RTDB_DATA_TYPE_FIELD结构的数组
-// *        [type_size]      所有自定义类型fields结构中长度字段的累加和，输出参数
-// *        [desc]           自定义类型的描述，输出参数
-// rtdb_error RTDBAPI_CALLRULE rtdbb_get_named_type_warp(rtdb_int32 handle, const char* name, rtdb_int32* field_count, RTDB_DATA_TYPE_FIELD* fields, rtdb_int32* type_size, char desc[RTDB_DESC_SIZE])
-func RawRtdbbGetNamedTypeWarp() {}
+//
+// input:
+//   - handle 连接句柄
+//   - name 自定义类型的名称
+//   - field_count 返回name指定的自定义类型的字段个数，输入/输出参数
+//
+// output:
+//   - []RtdbDataTypeField 自定义类型内部字段数组
+//   - int32 自定义类型长度
+//   - string 自定义类型描述
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbb_get_named_type_warp(rtdb_int32 handle, const char* name, rtdb_int32* field_count, RTDB_DATA_TYPE_FIELD* fields, rtdb_int32* type_size, char desc[RTDB_DESC_SIZE])
+func RawRtdbbGetNamedTypeWarp(handle ConnectHandle, name string, fieldCount int32) ([]RtdbDataTypeField, int32, string, error) {
+	cName := C.CString(name)
+	defer C.free(unsafe.Pointer(cName))
+	cFieldCount := C.rtdb_int32(fieldCount)
+	fields := make([]C.RTDB_DATA_TYPE_FIELD, cFieldCount)
+	typeSize := C.rtdb_int32(0)
+	desc := make([]C.char, int(C.RTDB_DESC_SIZE))
+	err := C.rtdbb_get_named_type_warp(C.rtdb_int32(handle), cName, &cFieldCount, &fields[0], &typeSize, &desc[0])
+	rtn := make([]RtdbDataTypeField, 0)
+	for _, field := range fields[:cFieldCount] {
+		rtn = append(rtn, *cToRtdbDataTypeField(&field))
+	}
+	return rtn, int32(typeSize), C.GoString(&desc[0]), RtdbError(err).GoError()
+}
 
 // RawRtdbbRemoveNamedTypeWarp 删除自定义类型
-// *        [handle]      连接句柄，输入参数
-// *        [name]        自定义类型的名称，输入参数
-// *        [reserved]      保留字段,暂时不用
-// rtdb_error RTDBAPI_CALLRULE rtdbb_remove_named_type_warp(rtdb_int32 handle, const char* name, rtdb_int32 reserved GAPI_DEFAULT_VALUE(0))
-func RawRtdbbRemoveNamedTypeWarp() {}
+//
+// input:
+//   - handle 连接句柄
+//   - name 自定义类型的名称
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbb_remove_named_type_warp(rtdb_int32 handle, const char* name, rtdb_int32 reserved GAPI_DEFAULT_VALUE(0))
+func RawRtdbbRemoveNamedTypeWarp(handle int32, name string) error {
+	cgoHandle := C.rtdb_int32(handle)
+	cgoName := C.CString(name)
+	defer C.free(unsafe.Pointer(cgoName))
+	err := C.rtdbb_remove_named_type_warp(cgoHandle, cgoName, 0)
+	return RtdbError(err).GoError()
+}
 
 // RawRtdbbGetNamedTypeNamesPropertyWarp 根据标签点id查询标签点所对应的自定义类型的名字和字段总数
-// * [handle]           连接句柄
-// * [count]            输入/输出，标签点个数，
-// * 输入时表示 ids、named_type_names、field_counts、errors 的长度，
-// * 输出时表示成功获取自定义类型名字的标签点个数
-// * [ids]              整型数组，输入，标签点标识列表
-// * [named_type_names] 字符串数组，输出，标签点自定义类型的名字
-// * [field_counts]     整型数组，输出，标签点自定义类型的字段个数
-// * [errors]           无符号整型数组，输出，获取自定义类型名字的返回值列表，参考rtdb_error.h
-// * 备注：用户须保证 ids、named_type_names、field_counts、errors 的长度与 count 一致。
-// * 本接口只对数据类型为 RTDB_NAMED_T 的标签点有效。
-// rtdb_error RTDBAPI_CALLRULE rtdbb_get_named_type_names_property_warp(rtdb_int32 handle, rtdb_int32 *count, rtdb_int32 *ids, char* const *named_type_names, rtdb_int32 *field_counts, rtdb_error *errors)
-func RawRtdbbGetNamedTypeNamesPropertyWarp() {}
+//
+// input:
+//   - handle 连接句柄
+//   - ids 标签点ID数组
+//
+// output:
+//   - []string 自定义类型名称数组
+//   - []int32 自定义类型中字段数量数组
+//   - []RtdbError 错误数组
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbb_get_named_type_names_property_warp(rtdb_int32 handle, rtdb_int32 *count, rtdb_int32 *ids, char* const *named_type_names, rtdb_int32 *field_counts, rtdb_error *errors)
+func RawRtdbbGetNamedTypeNamesPropertyWarp(handle ConnectHandle, ids []PointID) ([]string, []int32, []error, error) {
+	cgoHandle := C.rtdb_int32(handle)
+	count := len(ids)
+	cgoCount := C.rtdb_int32(count)
+	cgoIds := (*C.rtdb_int32)(unsafe.Pointer(&ids[0]))
+	namedTypeNames := make([]*C.char, count)
+	for i := 0; i < int(count); i++ {
+		namedTypeNames[i] = (*C.char)(C.CBytes(make([]byte, 4096)))
+	}
+	defer func() {
+		for i := 0; i < int(count); i++ {
+			C.free(unsafe.Pointer(namedTypeNames[i]))
+		}
+	}()
+	cgoNamedTypeNames := (**C.char)(unsafe.Pointer(&namedTypeNames[0]))
+	counts := make([]int32, count)
+	cgoCounts := (*C.rtdb_int32)(unsafe.Pointer(&counts[0]))
+	errors := make([]RtdbError, count)
+	cgoErrors := (*C.rtdb_error)(unsafe.Pointer(&errors[0]))
+	err := C.rtdbb_get_named_type_names_property_warp(cgoHandle, &cgoCount, cgoIds, cgoNamedTypeNames, cgoCounts, cgoErrors)
+	names := make([]string, 0)
+	for i := 0; i < int(cgoCount); i++ {
+		names = append(names, C.GoString(namedTypeNames[i]))
+	}
+	errs := make([]error, 0)
+	for _, err := range errors[:cgoCount] {
+		errs = append(errs, RtdbError(err).GoError())
+	}
+	return names[:cgoCount], counts[:cgoCount], errs[:cgoCount], RtdbError(err)
+}
 
 // RawRtdbbGetRecycledNamedTypeNamesPropertyWarp 根据回收站标签点id查询标签点所对应的自定义类型的名字和字段总数
 // * [handle]           连接句柄
