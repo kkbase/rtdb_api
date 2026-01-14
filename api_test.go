@@ -12,6 +12,8 @@ const Port = 6327
 const Username = "sa"
 const Password = "golden"
 
+func TestNULL(t *testing.T) {}
+
 // 获取 API库 版本
 func TestRawRtdbGetApiVersion(t *testing.T) {
 	apiVersion, err := RawRtdbGetApiVersionWarp()

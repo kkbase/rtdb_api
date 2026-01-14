@@ -7,7 +7,7 @@ extern "C" {
 
 #ifdef _WIN32
 #include <windows.h>
-#define LOAD_LIBRARY(name) LoadLibraryA(name)
+#define LOAD_LIBRARY(name) LoadLibraryW(name)
 #define GET_FUNCTION GetProcAddress
 #define FREE_LIBRARY FreeLibrary
 typedef HMODULE LIBRARY_HANDLE;
@@ -19,15 +19,25 @@ typedef HMODULE LIBRARY_HANDLE;
 typedef void* LIBRARY_HANDLE;
 #endif
 
+#include <stdio.h>
 #include "rtdb.h"
 #include "rtdbapi.h"
 #include "rtdb_error.h"
 
 LIBRARY_HANDLE LIB;
 
-// 加载动态库
-void load_library(char *path) {
+// 加载动态库宽字符版本
+void load_library_windows(wchar_t *path) {
+#ifdef _WIN32
     LIB = LOAD_LIBRARY(path);
+#endif
+}
+
+// 加载动态库Ascii版本
+void load_library_linux(char *path) {
+#ifndef _WIN32
+    LIB = LOAD_LIBRARY(path);
+#endif
 }
 
 

@@ -13,11 +13,21 @@ import (
 	"path/filepath"
 	"runtime"
 	"strings"
+	"syscall"
 	"unsafe"
 )
 
 //go:embed clibrary/linux_amd64/librtdbapi.so
 var LinuxAmd64RtdbSo []byte
+
+//go:embed clibrary/linux_arm64/librtdbapi.so
+var LinuxArm64RtdbSo []byte
+
+//go:embed clibrary/windows_amd32/rtdbapi.dll
+var WindowsAmd32RtdbSo []byte
+
+//go:embed clibrary/windows_amd64/rtdbapi.dll
+var WindowsAmd64RtdbSo []byte
 
 func init() {
 	data := make([]byte, 0)
@@ -27,12 +37,18 @@ func init() {
 			data = LinuxAmd64RtdbSo
 			name = "librtdb.so"
 		} else if runtime.GOARCH == "arm64" {
-
+			data = LinuxArm64RtdbSo
+			name = "librtdb.so"
 		} else {
 			panic("不支持的平台，分支不可达")
 		}
 	} else if runtime.GOOS == "windows" {
 		if runtime.GOARCH == "amd64" {
+			data = WindowsAmd64RtdbSo
+			name = "rtdbapi.dll"
+		} else if runtime.GOARCH == "amd32" {
+			data = WindowsAmd32RtdbSo
+			name = "rtdbapi.dll"
 		} else {
 			panic("不支持的平台，分支不可达")
 		}
@@ -47,9 +63,17 @@ func init() {
 	}
 
 	// 加载动态库
-	cPath := C.CString(path)
-	defer C.free(unsafe.Pointer(cPath))
-	C.load_library(cPath)
+	if runtime.GOOS == "linux" {
+		cPath := C.CString(path)
+		defer C.free(unsafe.Pointer(cPath))
+		C.load_library_linux(cPath)
+	} else {
+		cPath, err := syscall.UTF16PtrFromString(path)
+		if err != nil {
+			panic("字符转换失败：" + err.Error())
+		}
+		C.load_library_windows((*C.wchar_t)(unsafe.Pointer(cPath)))
+	}
 }
 
 // Switch 开关
@@ -5392,7 +5416,7 @@ const (
 	RtdbSyncStatusCache = RtdbSyncStatus(C.RTDB_SYNC_STATUS_CACHE)
 )
 
-func (ss) Desc() string {
+func (ss RtdbSyncStatus) Desc() string {
 	switch ss {
 	case RtdbSyncStatusInit:
 		return "正常"
@@ -7899,7 +7923,7 @@ func RawRtdbbModifyNamedTypeWarp(handle ConnectHandle, name string, modifyName s
 // * \param sync_infos       RTDB_SYNC_INFO数组，输出参数，输出实际获取到的同步信息
 // * \param errors           rtdb_error数组，输出参数，输出对应节点的错误信息
 // rtdb_error RTDBAPI_CALLRULE rtdbb_get_meta_sync_info_warp(rtdb_int32 handle, rtdb_int32 node_number, rtdb_int32* count, RTDB_SYNC_INFO* sync_infos, rtdb_error* errors)
-func RawRtdbbGetMetaSyncInfoWarp(handle ConnectHandle, nodeNumber int32) ([]SyncInfo, error) {
+func RawRtdbbGetMetaSyncInfoWarp(handle ConnectHandle, nodeNumber int32) {
 
 }
 
