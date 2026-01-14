@@ -4,6 +4,24 @@ package rtdb_api
 // #cgo CXXFLAGS: -std=c++11
 // #include <stdlib.h>
 // #include "api.h"
+// /**
+//  * 标签点属性更改通知订阅回调接口(ex)
+//  * 备注：这是C函数声明，实际的函数实现是用Go语言完成的
+//  * event_type		无符号整型，输入，通知类型
+//  * handle			整型，输入，产生通知的句柄
+//  * param			void指针，输入，用户调用rtdbb_subscribe_tags_ex时param参数
+//  * count		    整型，输入，event_type为RTDB_E_DATA时表示标签点个数，否则count为0
+//  * ids			整型数组，输入，标签点被订阅且属性发生更改的标识列表
+//  * what			整型，参考枚举 RTDB_TAG_CHANGE_REASON, 表示引起变更的源类型。
+//  */
+// extern rtdb_error RTDBAPI_CALLRULE goRtdbbTagsChangeEventExCallback(
+// 		rtdb_uint32 event_type,
+// 		rtdb_int32 handle,
+// 		void* param,
+// 		rtdb_int32 count,
+// 		const rtdb_int32 *ids,
+// 		rtdb_int32 what
+// );
 import "C"
 import (
 	_ "embed"
@@ -4125,9 +4143,6 @@ type TimestampType int64
 // SubtimeType 时间戳，小于秒的部分，根据设置的全局时间戳精度，表示毫秒、微秒、纳秒的部分
 type SubtimeType int32
 
-// PrecisionType 时间戳精度类型，0秒，1毫秒，2微秒，3纳秒
-type PrecisionType int8
-
 // RtdbHostConnectInfo 连接到RTDB数据库服务器的连接信息
 // 备注， IPv6版本兼容此 RtdbHostConnectInfo ， 因此暂时注释掉
 // type RtdbHostConnectInfo struct {
@@ -5128,7 +5143,199 @@ func (rs RtdbSearch) Desc() string {
 	}
 }
 
+type RtdbTagIndex uint32
+
+const (
+	// RtdbTagIndexTag tag
+	RtdbTagIndexTag = RtdbTagIndex(C.RTDB_TAG_INDEX_TAG)
+
+	// RtdbTagIndexId id
+	RtdbTagIndexId = RtdbTagIndex(C.RTDB_TAG_INDEX_ID)
+
+	// RtdbTagIndexType type
+	RtdbTagIndexType = RtdbTagIndex(C.RTDB_TAG_INDEX_TYPE)
+
+	// RtdbTagIndexTable table
+	RtdbTagIndexTable = RtdbTagIndex(C.RTDB_TAG_INDEX_TABLE)
+
+	// RtdbTagIndexDesc desc
+	RtdbTagIndexDesc = RtdbTagIndex(C.RTDB_TAG_INDEX_DESC)
+
+	// RtdbTagIndexUnit unit
+	RtdbTagIndexUnit = RtdbTagIndex(C.RTDB_TAG_INDEX_UNIT)
+
+	// RtdbTagIndexArchive archive
+	RtdbTagIndexArchive = RtdbTagIndex(C.RTDB_TAG_INDEX_ARCHIVE)
+
+	// RtdbTagIndexDigits digits
+	RtdbTagIndexDigits = RtdbTagIndex(C.RTDB_TAG_INDEX_DIGITS)
+
+	// RtdbTagIndexShutdown shutdown
+	RtdbTagIndexShutdown = RtdbTagIndex(C.RTDB_TAG_INDEX_SHUTDOWN)
+
+	// RtdbTagIndexLowlimit lowlimit
+	RtdbTagIndexLowlimit = RtdbTagIndex(C.RTDB_TAG_INDEX_LOWLIMIT)
+
+	// RtdbTagIndexHighlimit highlimit
+	RtdbTagIndexHighlimit = RtdbTagIndex(C.RTDB_TAG_INDEX_HIGHLIMIT)
+
+	// RtdbTagIndexStep step
+	RtdbTagIndexStep = RtdbTagIndex(C.RTDB_TAG_INDEX_STEP)
+
+	// RtdbTagIndexTypical typical
+	RtdbTagIndexTypical = RtdbTagIndex(C.RTDB_TAG_INDEX_TYPICAL)
+
+	// RtdbTagIndexCompress compress
+	RtdbTagIndexCompress = RtdbTagIndex(C.RTDB_TAG_INDEX_COMPRESS)
+
+	// RtdbTagIndexCompdev compdev
+	RtdbTagIndexCompdev = RtdbTagIndex(C.RTDB_TAG_INDEX_COMPDEV)
+
+	// RtdbTagIndexCompdevpercent compdevpercent
+	RtdbTagIndexCompdevpercent = RtdbTagIndex(C.RTDB_TAG_INDEX_COMPDEVPERCENT)
+
+	// RtdbTagIndexComptimemax comptimemax
+	RtdbTagIndexComptimemax = RtdbTagIndex(C.RTDB_TAG_INDEX_COMPTIMEMAX)
+
+	// RtdbTagIndexComptimemin comptimemin
+	RtdbTagIndexComptimemin = RtdbTagIndex(C.RTDB_TAG_INDEX_COMPTIMEMIN)
+
+	// RtdbTagIndexExcdev excdev
+	RtdbTagIndexExcdev = RtdbTagIndex(C.RTDB_TAG_INDEX_EXCDEV)
+
+	// RtdbTagIndexExcdevpercent excdevpercent
+	RtdbTagIndexExcdevpercent = RtdbTagIndex(C.RTDB_TAG_INDEX_EXCDEVPERCENT)
+
+	// RtdbTagIndexExctimemax exctimemax
+	RtdbTagIndexExctimemax = RtdbTagIndex(C.RTDB_TAG_INDEX_EXCTIMEMAX)
+
+	// RtdbTagIndexExctimemin exctimemin
+	RtdbTagIndexExctimemin = RtdbTagIndex(C.RTDB_TAG_INDEX_EXCTIMEMIN)
+
+	// RtdbTagIndexClassof classof
+	RtdbTagIndexClassof = RtdbTagIndex(C.RTDB_TAG_INDEX_CLASSOF)
+
+	// RtdbTagIndexChangedate changedate
+	RtdbTagIndexChangedate = RtdbTagIndex(C.RTDB_TAG_INDEX_CHANGEDATE)
+
+	// RtdbTagIndexChanger changer
+	RtdbTagIndexChanger = RtdbTagIndex(C.RTDB_TAG_INDEX_CHANGER)
+
+	// RtdbTagIndexCreatedate createdate
+	RtdbTagIndexCreatedate = RtdbTagIndex(C.RTDB_TAG_INDEX_CREATEDATE)
+
+	// RtdbTagIndexCreator creator
+	RtdbTagIndexCreator = RtdbTagIndex(C.RTDB_TAG_INDEX_CREATOR)
+
+	// RtdbTagIndexMirror mirror
+	RtdbTagIndexMirror = RtdbTagIndex(C.RTDB_TAG_INDEX_MIRROR)
+
+	// RtdbTagIndexMs ms
+	RtdbTagIndexMs = RtdbTagIndex(C.RTDB_TAG_INDEX_MS)
+
+	// RtdbTagIndexFullname fullname
+	RtdbTagIndexFullname = RtdbTagIndex(C.RTDB_TAG_INDEX_FULLNAME)
+
+	// RtdbTagIndexSummary summary
+	RtdbTagIndexSummary = RtdbTagIndex(C.RTDB_TAG_INDEX_SUMMARY)
+
+	// RtdbTagIndexDatetimeformat datetimeformat
+	RtdbTagIndexDatetimeformat = RtdbTagIndex(C.RTDB_TAG_INDEX_DATETIMEFORMAT)
+
+	// RtdbTagIndexSource source
+	RtdbTagIndexSource = RtdbTagIndex(C.RTDB_TAG_INDEX_SOURCE)
+
+	// RtdbTagIndexScan scan
+	RtdbTagIndexScan = RtdbTagIndex(C.RTDB_TAG_INDEX_SCAN)
+
+	// RtdbTagIndexInstrument instrument
+	RtdbTagIndexInstrument = RtdbTagIndex(C.RTDB_TAG_INDEX_INSTRUMENT)
+
+	// RtdbTagIndexLocation1 location1
+	RtdbTagIndexLocation1 = RtdbTagIndex(C.RTDB_TAG_INDEX_LOCATION1)
+
+	// RtdbTagIndexLocation2 location2
+	RtdbTagIndexLocation2 = RtdbTagIndex(C.RTDB_TAG_INDEX_LOCATION2)
+
+	// RtdbTagIndexLocation3 location3
+	RtdbTagIndexLocation3 = RtdbTagIndex(C.RTDB_TAG_INDEX_LOCATION3)
+
+	// RtdbTagIndexLocation4 location4
+	RtdbTagIndexLocation4 = RtdbTagIndex(C.RTDB_TAG_INDEX_LOCATION4)
+
+	// RtdbTagIndexLocation5 location5
+	RtdbTagIndexLocation5 = RtdbTagIndex(C.RTDB_TAG_INDEX_LOCATION5)
+
+	// RtdbTagIndexUserint1 userint1
+	RtdbTagIndexUserint1 = RtdbTagIndex(C.RTDB_TAG_INDEX_USERINT1)
+
+	// RtdbTagIndexUserint2 userint2
+	RtdbTagIndexUserint2 = RtdbTagIndex(C.RTDB_TAG_INDEX_USERINT2)
+
+	// RtdbTagIndexUserreal1 userreal1
+	RtdbTagIndexUserreal1 = RtdbTagIndex(C.RTDB_TAG_INDEX_USERREAL1)
+
+	// RtdbTagIndexUserreal2 userreal2
+	RtdbTagIndexUserreal2 = RtdbTagIndex(C.RTDB_TAG_INDEX_USERREAL2)
+
+	// RtdbTagIndexEquation equation
+	RtdbTagIndexEquation = RtdbTagIndex(C.RTDB_TAG_INDEX_EQUATION)
+
+	// RtdbTagIndexTrigger trigger
+	RtdbTagIndexTrigger = RtdbTagIndex(C.RTDB_TAG_INDEX_TRIGGER)
+
+	// RtdbTagIndexTimecopy timecopy
+	RtdbTagIndexTimecopy = RtdbTagIndex(C.RTDB_TAG_INDEX_TIMECOPY)
+
+	// RtdbTagIndexPeriod period
+	RtdbTagIndexPeriod = RtdbTagIndex(C.RTDB_TAG_INDEX_PERIOD)
+
+	// RtdbTagIndexTimestamp timestamp
+	RtdbTagIndexTimestamp = RtdbTagIndex(C.RTDB_TAG_INDEX_TIMESTAMP)
+
+	// RtdbTagIndexValue value
+	RtdbTagIndexValue = RtdbTagIndex(C.RTDB_TAG_INDEX_VALUE)
+
+	// RtdbTagIndexQuality quality
+	RtdbTagIndexQuality = RtdbTagIndex(C.RTDB_TAG_INDEX_QUALITY)
+)
+
+// RtdbSubscribeOption 订阅选项
+type RtdbSubscribeOption int32
+
+const (
+	// RtdbSubscribeOptionAutoConn 自动重连
+	RtdbSubscribeOptionAutoConn = RtdbSubscribeOption(C.RTDB_O_AUTOCONN)
+)
+
+// RtdbTagChangeReason 标签点变更原因，用于标签点订阅
+type RtdbTagChangeReason int32
+
+const (
+	RtdbTagCreated  = RtdbTagChangeReason(C.RTDB_TAG_CREATED)
+	RtdbTagUpdated  = RtdbTagChangeReason(C.RTDB_TAG_UPDATED)
+	RtdbTagRemoved  = RtdbTagChangeReason(C.RTDB_TAG_REMOVED)
+	RtdbTagRecoverd = RtdbTagChangeReason(C.RTDB_TAG_RECOVERD)
+	RtdbTagPurged   = RtdbTagChangeReason(C.RTDB_TAG_PURGED)
+	RtdbTabUpdated  = RtdbTagChangeReason(C.RTDB_TAB_UPDATED)
+	RtdbTabRemoved  = RtdbTagChangeReason(C.RTDB_TAB_REMOVED)
+)
+
 /////////////////////////////// 上面是结构定义 ////////////////////////////////////
+/////////////////////////////// -- 华丽的分割线 -- ////////////////////////////////
+
+// goRtdbbTagsChangeEventExCallback 回调函数
+// 此函数为 rtdbb_subscribe_tags_ex_warp 回调函数的具体实现，用于订阅数据
+//
+//export goRtdbbTagsChangeEventExCallback
+func goRtdbbTagsChangeEventExCallback(
+	eventType C.rtdb_uint32, handle C.rtdb_int32,
+	param unsafe.Pointer, count C.rtdb_int32,
+	ids *C.rtdb_int32, what C.rtdb_int32,
+) C.rtdb_error {
+	return C.rtdb_error(0)
+}
+
 /////////////////////////////// -- 华丽的分割线 -- ////////////////////////////////
 /////////////////////////////// 下面是函数实现 ////////////////////////////////////
 
@@ -7000,115 +7207,175 @@ func RawRtdbbUpdateMaxPointPropertyWarp(handle ConnectHandle, base *RtdbPoint, s
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_find_points_ex_warp(rtdb_int32 handle, rtdb_int32* count, const char* const* table_dot_tags, rtdb_int32* ids, rtdb_int32* types, rtdb_int32* classof, rtdb_precision_type* precisions, rtdb_error* errors)
-func RawRtdbbFindPointsExWarp(handle ConnectHandle, count int32, tableDotTags []string) ([]PointID, []RtdbType, []RtdbClass, []PrecisionType, []RtdbError, error) {
-	if count == 0 {
+func RawRtdbbFindPointsExWarp(handle ConnectHandle, tableDotTags []string) ([]PointID, []RtdbType, []RtdbClass, []RtdbPrecision, []RtdbError, error) {
+	if len(tableDotTags) == 0 {
 		return nil, nil, nil, nil, nil, nil
 	}
+
+	count := len(tableDotTags)
 	cCount := C.rtdb_int32(count)
-	cTags := make([]*C.char, 0)
-	for _, tag := range tableDotTags {
-		cT := C.CString(tag)
-		cTags = append(cTags, cT)
+	cHandle := C.rtdb_int32(handle)
+	tableDotTagsList := make([]*C.char, count)
+	for i := 0; i < count; i++ {
+		tableDotTagsList[i] = C.CString(tableDotTags[i])
 	}
 	defer func() {
-		for _, cT := range cTags {
-			C.free(unsafe.Pointer(cT))
+		for i := 0; i < count; i++ {
+			C.free(unsafe.Pointer(tableDotTagsList[i]))
 		}
 	}()
-	ccTags := &cTags[0]
-	ids := make([]PointID, cCount)
+	cTableDotTags := &tableDotTagsList[0]
+	ids := make([]PointID, count)
 	cIds := (*C.rtdb_int32)(unsafe.Pointer(&ids[0]))
-	types := make([]RtdbType, cCount)
+	types := make([]RtdbType, count)
 	cTypes := (*C.rtdb_int32)(unsafe.Pointer(&types[0]))
-	classOfs := make([]RtdbClass, cCount)
-	cClassOf := (*C.rtdb_int32)(unsafe.Pointer(&classOfs[0]))
-	precisions := make([]PrecisionType, cCount)
+	classof := make([]RtdbClass, count)
+	cClassof := (*C.rtdb_int32)(unsafe.Pointer(&classof[0]))
+	precisions := make([]RtdbPrecision, count)
 	cPrecisions := (*C.rtdb_precision_type)(unsafe.Pointer(&precisions[0]))
-	errs := make([]RtdbError, cCount)
+	errs := make([]RtdbError, count)
 	cErrs := (*C.rtdb_error)(unsafe.Pointer(&errs[0]))
-	err := C.rtdbb_find_points_ex_warp(C.rtdb_int32(handle), &cCount, ccTags, cIds, cTypes, cClassOf, cPrecisions, cErrs)
-	return ids[:cCount], types[:cCount], classOfs[:cCount], precisions[:cCount], errs[:cCount], RtdbError(err).GoError()
+
+	err := C.rtdbb_find_points_ex_warp(cHandle, &cCount, cTableDotTags, cIds, cTypes, cClassof, cPrecisions, cErrs)
+	return ids[:cCount], types[:cCount], classof[:cCount], precisions[:cCount], errs[:cCount], RtdbError(err).GoError()
 }
 
 // RawRtdbbSortPointsWarp 根据标签属性字段对标签点标识进行排序
-// *  \param handle           连接句柄
-// *  \param count            整数，输入，表示标签点个数, 即 ids 的长度
-// *  \param ids              整型数组，输入，标签点标识列表
-// *  \param index            整型，输入，属性字段枚举，参见 RTDB_TAG_FIELD_INDEX，
-// *  将根据该字段对 ID 进行排序。
-// *  \param flag             整型，输入，标志位组合，参见 RTDB_TAG_SORT_FLAG 枚举，其中
-// *  RTDB_SORT_FLAG_DESCEND             表示降序排序，不设置表示升序排列；
-// *  RTDB_SORT_FLAG_CASE_SENSITIVE      表示进行字符串类型字段比较时大小写敏感，不设置表示不区分大小写；
-// *  RTDB_SORT_FLAG_RECYCLED            表示对可回收标签进行排序，不设置表示对正常标签排序，
-// *  不同的标志位可通过"或"运算连接在一起，
-// *  当对可回收标签排序时，以下字段索引不可使用：
-// *  RTDB_TAG_INDEX_TIMESTAMP
-// *  RTDB_TAG_INDEX_VALUE
-// *  RTDB_TAG_INDEX_QUALITY
-// *  \remark 用户须保证分配给 ids 的空间与 count 相符, 如果 ID 指定的标签并不存在，
-// *  或标签不具备要求排序的字段 (如对非计算点进行方程式排序)，它们将被放置在数组的尾部。
-// rtdb_error RTDBAPI_CALLRULE rtdbb_sort_points_warp(rtdb_int32 handle, rtdb_int32 count, rtdb_int32 *ids, rtdb_int32 index, rtdb_int32 flag)
-func RawRtdbbSortPointsWarp() {}
+//
+// input:
+//   - handle 连接句柄
+//   - ids 标签点标识列表
+//   - index 属性字段枚举，参见 RTDB_TAG_FIELD_INDEX，将根据该字段对 ID 进行排序。
+//   - flag 标志位组合，参见 RTDB_TAG_SORT_FLAG 枚举
+//   - 备注：当对可回收标签排序时，以下字段索引不可使用：RTDB_TAG_INDEX_TIMESTAMP、RTDB_TAG_INDEX_VALUE、RTDB_TAG_INDEX_QUALITY
+//
+// output:
+//   - []PointID 标签点ID列表
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbb_sort_points_warp(rtdb_int32 handle, rtdb_int32 count, rtdb_int32 *ids, rtdb_int32 index, rtdb_int32 flag)
+func RawRtdbbSortPointsWarp(handle ConnectHandle, ids []PointID, index RtdbTagIndex, flag RtdbSortFlag) ([]PointID, error) {
+	err := C.rtdbb_sort_points_warp(C.rtdb_int32(handle), C.rtdb_int32(len(ids)), (*C.rtdb_int32)(unsafe.Pointer(&ids[0])), C.rtdb_int32(index), C.rtdb_int32(flag))
+	return ids, RtdbError(err).GoError()
+}
 
 // RawRtdbbUpdateTableNameWarp 根据表 ID 更新表名称。
-// *
-// * \param handle    连接句柄
-// * \param tab_id    整型，输入，要修改表的标识
-// * \param name      字符串，输入，新的标签点表名称。
-// rtdb_error RTDBAPI_CALLRULE rtdbb_update_table_name_warp(rtdb_int32 handle, rtdb_int32 tab_id, const char *name)
-func RawRtdbbUpdateTableNameWarp() {}
+//
+// input:
+//   - handle 连接句柄
+//   - id 表ID
+//   - name 新的标签点表名称。
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbb_update_table_name_warp(rtdb_int32 handle, rtdb_int32 tab_id, const char *name)
+func RawRtdbbUpdateTableNameWarp(handle ConnectHandle, id TableID, name string) error {
+	cName := C.CString(name)
+	defer C.free(unsafe.Pointer(cName))
+	err := C.rtdbb_update_table_name_warp(C.rtdb_int32(handle), C.rtdb_int32(id), cName)
+	return RtdbError(err).GoError()
+}
 
 // RawRtdbbUpdateTableDescByIdWarp 根据表 ID 更新表描述。
-//   - \param handle    连接句柄
-//   - \param tab_id    整型，输入，要修改表的标识
-//   - \param desc      字符串，输入，新的表描述。
 //
-// rtdb_error RTDBAPI_CALLRULE rtdbb_update_table_desc_by_id_warp(rtdb_int32 handle, rtdb_int32 tab_id, const char *desc)
-func RawRtdbbUpdateTableDescByIdWarp() {}
+// input:
+//   - handle 连接句柄
+//   - id 表ID
+//   - desc 新的标签点表描述。
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbb_update_table_desc_by_id_warp(rtdb_int32 handle, rtdb_int32 tab_id, const char *desc)
+func RawRtdbbUpdateTableDescByIdWarp(handle ConnectHandle, id TableID, desc string) error {
+	cDesc := C.CString(desc)
+	defer C.free(unsafe.Pointer(cDesc))
+	err := C.rtdbb_update_table_desc_by_id_warp(C.rtdb_int32(handle), C.rtdb_int32(id), cDesc)
+	return RtdbError(err).GoError()
+}
 
 // RawRtdbbUpdateTableDescByNameWarp 根据表名称更新表描述。
-// * \param handle    连接句柄
-// * \param name      字符串，输入，要修改表的名称。
-// * \param desc      字符串，输入，新的表描述。
-// rtdb_error RTDBAPI_CALLRULE rtdbb_update_table_desc_by_name_warp(rtdb_int32 handle, const char *name, const char *desc)
-func RawRtdbbUpdateTableDescByNameWarp() {}
+//
+// input:
+//   - handle 连接句柄
+//   - name 要修改表的名称。
+//   - desc 新的表描述。
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbb_update_table_desc_by_name_warp(rtdb_int32 handle, const char *name, const char *desc)
+func RawRtdbbUpdateTableDescByNameWarp(handle ConnectHandle, name string, desc string) error {
+	cName := C.CString(name)
+	defer C.free(unsafe.Pointer(cName))
+	cDesc := C.CString(desc)
+	defer C.free(unsafe.Pointer(cDesc))
+	err := C.rtdbb_update_table_desc_by_name_warp(C.rtdb_int32(handle), cName, cDesc)
+	return RtdbError(err).GoError()
+}
 
 // RawRtdbbRecoverPointWarp 恢复已删除标签点
-// *
-// * \param handle    连接句柄
-// * \param table_id  整型，输入，要将标签点恢复到的表标识
-// * \param point_id  整型，输入，待恢复的标签点标识
-// * 备注: 本接口只对可回收标签点(通过接口rtdbb_remove_point_by_id/rtdbb_remove_point_by_tag)有效，
-// *        对正常的标签点没有作用。
-// rtdb_error RTDBAPI_CALLRULE rtdbb_recover_point_warp(rtdb_int32 handle, rtdb_int32 table_id, rtdb_int32 point_id)
-func RawRtdbbRecoverPointWarp() {}
+//
+// input:
+//   - handle 连接句柄
+//   - tableID 要将标签点恢复到的表标识
+//   - point_id 待恢复的标签点标识
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbb_recover_point_warp(rtdb_int32 handle, rtdb_int32 table_id, rtdb_int32 point_id)
+func RawRtdbbRecoverPointWarp(handle ConnectHandle, tableID TableID, pointID PointID) error {
+	err := C.rtdbb_recover_point_warp(C.rtdb_int32(handle), C.rtdb_int32(tableID), C.rtdb_int32(pointID))
+	return RtdbError(err).GoError()
+}
 
 // RawRtdbbPurgePointWarp 清除标签点
-// * \param handle    连接句柄
-// * \param id        整数，输入，要清除的标签点标识
-// * 备注: 本接口仅对可回收标签点(通过接口rtdbb_remove_point_by_id/rtdbb_remove_point_by_name)有效，
-// *      对正常的标签点没有作用。
-// rtdb_error RTDBAPI_CALLRULE rtdbb_purge_point_warp(rtdb_int32 handle, rtdb_int32 id)
-func RawRtdbbPurgePointWarp() {}
+//
+// input:
+//   - handle 连接句柄
+//   - id 要清除的标签点标识
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbb_purge_point_warp(rtdb_int32 handle, rtdb_int32 id)
+func RawRtdbbPurgePointWarp(handle ConnectHandle, id PointID) error {
+	err := C.rtdbb_purge_point_warp(C.rtdb_int32(handle), C.rtdb_int32(id))
+	return RtdbError(err).GoError()
+}
 
 // RawRtdbbGetRecycledPointsCountWarp 获取可回收标签点数量
-// * \param handle    连接句柄
-// * \param count     整型，输出，可回收标签点的数量
-// rtdb_error RTDBAPI_CALLRULE rtdbb_get_recycled_points_count_warp(rtdb_int32 handle, rtdb_int32 *count)
-func RawRtdbbGetRecycledPointsCountWarp() {}
+//
+// input:
+//   - handle 连接句柄
+//   - count 可回收标签点的数量
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbb_get_recycled_points_count_warp(rtdb_int32 handle, rtdb_int32 *count)
+func RawRtdbbGetRecycledPointsCountWarp(handle ConnectHandle) (int32, error) {
+	count := C.rtdb_int32(0)
+	err := C.rtdbb_get_recycled_points_count_warp(C.rtdb_int32(handle), &count)
+	return int32(count), RtdbError(err).GoError()
+}
 
 // RawRtdbbGetRecycledPointsWarp 获取可回收标签点 id 列表
-// *
-// *  \param handle    连接句柄
-// *  \param ids       整型数组，输出，可回收标签点 id
-// *  \param count     整型，输入/输出，标签点个数，
-// *                     输入时表示 ids 的长度，
-// *                     输出时表示成功获取标签点的个数。
-// *  \remark 用户须保证 ids 的长度与 count 一致
-// rtdb_error RTDBAPI_CALLRULE rtdbb_get_recycled_points_warp(rtdb_int32 handle, rtdb_int32 *ids, rtdb_int32 *count)
-func RawRtdbbGetRecycledPointsWarp() {}
+//
+// input:
+//   - handle 连接句柄
+//   - count 最大返回标签点个数
+//
+// output:
+//   - []RtdbPoint 标签点列表
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbb_get_recycled_points_warp(rtdb_int32 handle, rtdb_int32 *ids, rtdb_int32 *count)
+func RawRtdbbGetRecycledPointsWarp(handle ConnectHandle, count int32) ([]RtdbPoint, error) {
+	if count == 0 {
+		return nil, nil
+	}
+
+	cCount := C.rtdb_int32(count)
+	points := make([]RtdbPoint, cCount)
+	err := C.rtdbb_get_recycled_points_warp(C.rtdb_int32(handle), (*C.rtdb_int32)(unsafe.Pointer(&points[0])), &cCount)
+
+	return points[:cCount], RtdbError(err).GoError()
+}
 
 // RawRtdbbSearchRecycledPointsWarp 搜索符合条件的可回收标签点，使用标签点名时支持通配符
+// 备注：不实现，统一使用分批搜索
+//
 // *        [handle]        连接句柄
 // *        [tagmask]       字符串，输入，标签点名称掩码，支持"*"和"?"通配符，缺省设置为"*"，长度不得超过 RTDB_TAG_SIZE。
 // *        [tablemask]     字符串，输入，标签点表名称掩码，支持"*"和"?"通配符，缺省设置为"*"，长度不得超过 RTDB_TAG_SIZE。
@@ -7127,32 +7394,49 @@ func RawRtdbbGetRecycledPointsWarp() {}
 // *        用包含通配符的标签点名称作搜索条件时，如果第一个字符不是通配符(如"ai67*")，会得到最快的搜索速度。
 // *        如果 tagmask、fullmask 为空指针，则表示使用缺省设置"*"
 // rtdb_error RTDBAPI_CALLRULE rtdbb_search_recycled_points_warp(rtdb_int32 handle, const char *tagmask, const char *fullmask, const char *source, const char *unit, const char *desc, const char *instrument, rtdb_int32 mode, rtdb_int32 *ids, rtdb_int32 *count)
-func RawRtdbbSearchRecycledPointsWarp() {}
+// func RawRtdbbSearchRecycledPointsWarp() {}
 
 // RawRtdbbSearchRecycledPointsInBatchesWarp 分批搜索符合条件的可回收标签点，使用标签点名时支持通配符
-// * \param handle        连接句柄
-// * \param start         整型，输入，搜索的起始位置。
-// * \param tagmask       字符串，输入，标签点名称掩码，支持"*"和"?"通配符，缺省设置为"*"，长度不得超过 RTDB_TAG_SIZE。
-// * \param tablemask     字符串，输入，标签点表名称掩码，支持"*"和"?"通配符，缺省设置为"*"，长度不得超过 RTDB_TAG_SIZE。
-// * \param source        字符串，输入，数据源集合，字符串中的每个字符均表示一个数据源，
-// *                        空字符串表示不用数据源作搜索条件，缺省设置为空，长度不得超过 RTDB_DESC_SIZE。
-// * \param unit          字符串，输入，标签点工程单位的子集，工程单位中包含该参数的标签点均满足条件，
-// *                        空字符串表示不用工程单位作搜索条件，缺省设置为空，长度不得超过 RTDB_UNIT_SIZE。
-// * \param desc          字符串，输入，标签点描述的子集，描述中包含该参数的标签点均满足条件，
-// *                        空字符串表示不用描述作搜索条件，缺省设置为空，长度不得超过 RTDB_SOURCE_SIZE。
-// * \param instrument    字符串，输入参数，标签点设备名称。缺省设置为空，长度不得超过 RTDB_INSTRUMENT_SIZE。
-// * \param mode          整型，RTDB_SORT_BY_TABLE、RTDB_SORT_BY_TAG、RTDB_SORT_BY_ID 之一，
-// *                        搜索结果的排序模式，输入，缺省值为RTDB_SORT_BY_TABLE
-// * \param ids           整型数组，输出，返回搜索到的标签点标识列表
-// * \param count         整型，输入/输出，输入时表示 ids 的长度，输出时表示搜索到的标签点个数
-// * \remark 用户须保证分配给 ids 的空间与 count 相符，各参数中包含的搜索条件之间的关系为"与"的关系，
-// *        用包含通配符的标签点名称作搜索条件时，如果第一个字符不是通配符(如"ai67*")，会得到最快的搜索速度。
-// *        如果 tagmask、fullmask 为空指针，则表示使用缺省设置"*"
-// *        当搜索到的标签点数比提供的要小时，表示这是最后一批符合条件的标签点 (即全部搜索完毕)。
-// rtdb_error RTDBAPI_CALLRULE rtdbb_search_recycled_points_in_batches_warp(rtdb_int32 handle, rtdb_int32 start, const char *tagmask, const char *fullmask, const char *source, const char *unit, const char *desc, const char *instrument, rtdb_int32 mode, rtdb_int32 *ids, rtdb_int32 *count)
-func RawRtdbbSearchRecycledPointsInBatchesWarp() {}
+//
+// input:
+//   - handle 连接句柄
+//   - start 搜索的起始位置。
+//   - tagMask 标签点名称掩码，支持"*"和"?"通配符，缺省设置为"*"，长度不得超过 RTDB_TAG_SIZE。
+//   - tableMask 标签点表名称掩码，支持"*"和"?"通配符，缺省设置为"*"，长度不得超过 RTDB_TAG_SIZE。
+//   - source 数据源集合，字符串中的每个字符均表示一个数据源，空字符串表示不用数据源作搜索条件，缺省设置为空，长度不得超过 RTDB_DESC_SIZE。
+//   - unit 标签点工程单位的子集，工程单位中包含该参数的标签点均满足条件，空字符串表示不用工程单位作搜索条件，缺省设置为空，长度不得超过 RTDB_UNIT_SIZE。
+//   - desc 标签点描述的子集，描述中包含该参数的标签点均满足条件，空字符串表示不用描述作搜索条件，缺省设置为空，长度不得超过 RTDB_SOURCE_SIZE。
+//   - instrument 标签点设备名称。缺省设置为空，长度不得超过 RTDB_INSTRUMENT_SIZE。
+//   - mode 搜索结果排序模式
+//
+// output:
+//   - []PointID 标签点ID列表
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbb_search_recycled_points_in_batches_warp(rtdb_int32 handle, rtdb_int32 start, const char *tagmask, const char *fullmask, const char *source, const char *unit, const char *desc, const char *instrument, rtdb_int32 mode, rtdb_int32 *ids, rtdb_int32 *count)
+func RawRtdbbSearchRecycledPointsInBatchesWarp(handle ConnectHandle, start int32, tagMask, fullMask, source, unit, desc, instrument string, mode RtdbSortFlag) ([]PointID, error) {
+	cTagMask := C.CString(tagMask)
+	defer C.free(unsafe.Pointer(cTagMask))
+	cFullMask := C.CString(fullMask)
+	defer C.free(unsafe.Pointer(cFullMask))
+	cSource := C.CString(source)
+	defer C.free(unsafe.Pointer(cSource))
+	cUnit := C.CString(unit)
+	defer C.free(unsafe.Pointer(cUnit))
+	cDesc := C.CString(desc)
+	defer C.free(unsafe.Pointer(cDesc))
+	cInstrument := C.CString(instrument)
+	defer C.free(unsafe.Pointer(cInstrument))
+	ids := make([]PointID, 1024)
+	cIds := (*C.rtdb_int32)(unsafe.Pointer(&ids[0]))
+	cCount := C.rtdb_int32(len(ids))
+	err := C.rtdbb_search_recycled_points_in_batches_warp(C.rtdb_int32(handle), C.rtdb_int32(start), cTagMask, cFullMask, cSource, cUnit, cDesc, cInstrument, C.rtdb_int32(mode), cIds, &cCount)
+	return ids[:cCount], RtdbError(err).GoError()
+}
 
 // RawRtdbbGetRecycledPointPropertyWarp 获取可回收标签点的属性
+// 备注： 不实现， 统一使用最大长度， RawRtdbbGetRecycledMaxPointPropertyWarp
+//
 // * \param handle   连接句柄
 // * \param base     RTDB_POINT 结构，输入/输出，标签点基本属性。
 // 输入时，由 id 字段指定要取得的可回收标签点。
@@ -7160,22 +7444,41 @@ func RawRtdbbSearchRecycledPointsInBatchesWarp() {}
 // * \param calc     RTDB_CALC_POINT 结构，输出，标签点计算扩展属性
 // * \remark scan、calc 可为空指针，对应的扩展信息将不返回。
 // rtdb_error RTDBAPI_CALLRULE rtdbb_get_recycled_point_property_warp(rtdb_int32 handle, RTDB_POINT *base, RTDB_SCAN_POINT *scan, RTDB_CALC_POINT *calc)
-func RawRtdbbGetRecycledPointPropertyWarp() {}
+// func RawRtdbbGetRecycledPointPropertyWarp() {}
 
 // RawRtdbbGetRecycledMaxPointPropertyWarp 按最大长度获取可回收标签点的属性
-// * [handle]   连接句柄
-// * [base]     RTDB_POINT 结构，输入/输出，标签点基本属性。
-// * 输入时，由 id 字段指定要取得的可回收标签点。
-// * [scan]     RTDB_SCAN_POINT 结构，输出，标签点采集扩展属性
-// * [calc]     RTDB_MAX_CALC_POINT 结构，输出，标签点计算扩展属性
-// * 备注：scan、calc 可为空指针，对应的扩展信息将不返回。
-// rtdb_error RTDBAPI_CALLRULE rtdbb_get_recycled_max_point_property_warp(rtdb_int32 handle, RTDB_POINT* base, RTDB_SCAN_POINT* scan, RTDB_MAX_CALC_POINT* calc)
-func RawRtdbbGetRecycledMaxPointPropertyWarp() {}
+//
+// input:
+//   - handle 连接句柄
+//   - id 标签点ID
+//
+// output:
+//   - RtdbPoint 标签点基本属性
+//   - RtdbScan 标签点采集属性
+//   - RtdbCalc 标签点计算属性
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbb_get_recycled_max_point_property_warp(rtdb_int32 handle, RTDB_POINT* base, RTDB_SCAN_POINT* scan, RTDB_MAX_CALC_POINT* calc)
+func RawRtdbbGetRecycledMaxPointPropertyWarp(handle ConnectHandle, id PointID) (*RtdbPoint, *RtdbScan, *RtdbCalc, error) {
+	base := C.RTDB_POINT{}
+	base.id = C.rtdb_int32(id)
+	scan := C.RTDB_SCAN_POINT{}
+	calc := C.RTDB_MAX_CALC_POINT{}
+	err := C.rtdbb_get_recycled_max_point_property_warp(C.rtdb_int32(handle), &base, &scan, &calc)
+	return cToRtdbPoint(&base), cToRtdbScan(&scan), cToRtdbCalc(&calc), RtdbError(err).GoError()
+}
 
 // RawRtdbbClearRecyclerWarp 清空标签点回收站
-// * \param handle   连接句柄
-// rtdb_error RTDBAPI_CALLRULE rtdbb_clear_recycler_warp(rtdb_int32 handle)
-func RawRtdbbClearRecyclerWarp() {}
+//
+// input:
+//   - handle 连接句柄
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbb_clear_recycler_warp(rtdb_int32 handle)
+func RawRtdbbClearRecyclerWarp(handle ConnectHandle) error {
+	err := C.rtdbb_clear_recycler_warp(C.rtdb_int32(handle))
+	return RtdbError(err).GoError()
+}
 
 // RawRtdbbSubscribeTagsExWarp 标签点属性更改通知订阅
 // * [handle]    连接句柄
@@ -7204,12 +7507,19 @@ func RawRtdbbClearRecyclerWarp() {}
 // * 备注：用于订阅测点的连接句柄必需是独立的，不能再用来调用其它 api，
 // * 否则返回 RtE_OTHER_SDK_DOING 错误。
 // rtdb_error RTDBAPI_CALLRULE rtdbb_subscribe_tags_ex_warp(rtdb_int32 handle, rtdb_uint32 options, void* param, rtdbb_tags_change_event_ex callback)
-func RawRtdbbSubscribeTagsExWarp() {}
+func RawRtdbbSubscribeTagsExWarp(handle ConnectHandle, options RtdbSubscribeOption) {}
 
 // RawRtdbbCancelSubscribeTagsWarp 取消标签点属性更改通知订阅
-// * \param handle    连接句柄
-// rtdb_error RTDBAPI_CALLRULE rtdbb_cancel_subscribe_tags_warp(rtdb_int32 handle)
-func RawRtdbbCancelSubscribeTagsWarp() {}
+//
+// input:
+//   - handle 连接句柄
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbb_cancel_subscribe_tags_warp(rtdb_int32 handle)
+func RawRtdbbCancelSubscribeTagsWarp(handle ConnectHandle) error {
+	err := C.rtdbb_cancel_subscribe_tags_warp(C.rtdb_int32(handle))
+	return RtdbError(err).GoError()
+}
 
 // RawRtdbbCreateNamedTypeWarp 创建自定义类型
 // *        [handle]      连接句柄，输入参数

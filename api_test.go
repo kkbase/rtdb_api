@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"testing"
+	"time"
 )
 
 const Hostname = "127.0.0.1"
@@ -1029,6 +1030,10 @@ func TestPoint2(t *testing.T) {
 	}
 	defer func() { _ = RawRtdbDisconnectWarp(handle) }()
 
+	// 清理表
+	_ = RawRtdbbRemoveTableByNameWarp(handle, "aaa")
+	time.Sleep(time.Second)
+
 	table, err := RawRtdbbAppendTableWarp(handle, "aaa", "aaa test")
 	if err != nil {
 		t.Error("添加表失败: ", err)
@@ -1061,7 +1066,7 @@ func TestPoint2(t *testing.T) {
 		}
 	}()
 
-	ids, types, classes, precisions, errs, err := RawRtdbbFindPointsExWarp(handle, 10, []string{"aaa.ttt"})
+	ids, types, classes, precisions, errs, err := RawRtdbbFindPointsExWarp(handle, []string{"aaa.ttt"})
 	if err != nil {
 		t.Error("查找标签点失败", err)
 		return
