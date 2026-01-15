@@ -5475,7 +5475,7 @@ const (
 )
 
 // RtdbArchiveState 历史存档文件状态
-type RtdbArchiveState int32
+type RtdbArchiveState uint32
 
 const (
 	// RtdbArchiveStateInvalid 无效
@@ -5490,6 +5490,126 @@ const (
 	// RtdbArchiveStateReadonly 只读
 	RtdbArchiveStateReadonly = RtdbArchiveState(C.RTDB_READONLY_ARCHIVE)
 )
+
+// RtdbHeaderPage 历史数据存档文件头部信息
+type RtdbHeaderPage struct {
+	DbVer         int32        // 所属数据库版本
+	DataVer       int32        //数据格式变更版本
+	Begin         DateTimeType // 数据起始时间
+	End           DateTimeType // 数据结束时间
+	RealSize      int64        // 实际写入的字节数 用来统计实际使用率
+	CreateTime    DateTimeType // 创建时间
+	ModifyTime    DateTimeType // 修改时间
+	MergeTime     DateTimeType // 上次合并时间
+	ArrangeTime   DateTimeType // 上次整理时间
+	ReindexTime   DateTimeType // 上次重建索引时间
+	BackupTime    DateTimeType // 上次备份时间
+	RatedCapacity int64        // 创建时容量（额定容量）
+	Capacity      int64        // 当前容量，文件内包含的总数据页数，不包括头页。
+	Size          int64        // 实际使用量，已被占用的数据页数，不包括头页。
+	ExCapacity    int64        // 附属文件容量
+	IsMain        byte         // 是主文件还是附属文件
+	PageSize      byte         // 单个页的字节尺寸，单位为KB
+	IdOrCount     byte         // 主文件在这里存放附属文件数量，附属文件在这里存放自身的ID。
+	AutoMerge     byte         // 启用自动合并
+	AutoArrange   byte         // 启用自动整理
+	Merged        byte         // 1：已合并，0：尚未合并或合并后又产生了新的附属文件。
+	Arranged      byte         // 1：已整理，0：尚未整理过或整理后内容发生变更。
+	IndexType     byte         // 索引类型，0 为红黑树，1为跳跃链表。默认为红黑树
+	FileName      string       // 在这里存放自己的文件名。
+	Crc32         uint32       // 以上内容的CRC32校验码，暂不启用。
+	IndexInMem    byte         // 索引是否加载到内存中
+	ManageType    byte         // 被管理类型，RTDB_ARCHIVE_MANAGE_TYPE， 0:兼容模式  1:未管理 2:管理中
+	CompressType  byte         // 压缩类型，RTDB_ARCHIVE_COMPRESS_TYPE， 0:未压缩 1:无损压缩 2:两阶段压缩
+	Status        RtdbError    // 存档文件的当前状态，表示存档文件操作中遇到的异常错误码，正常为RtE_OK，可能遇到的异常有：RtE_INDEX_NOT_READY, RtE_CAN_NOT_CREATE_INDEX, RtE_NOT_ENOUGH_SPACE
+	UsedSize      int64        // 实际使用字节数，不包括存档文件头
+	BlockCount    int64        // 数据块数量
+	DelBlockSize  int64        // 逻辑上删除的数据块字节数
+	TotalCount    int64        // 数据总条数
+	BigPageSize   int16        // 数据页大小，单位为KB
+	VerCode       string       // 授权信息
+}
+
+func cToGoRtdbHeaderPage(page *C.RTDB_HEADER_PAGE) *RtdbHeaderPage {
+	rtn := RtdbHeaderPage{
+		DbVer:         int32(page.db_ver),
+		DataVer:       int32(page.data_ver),
+		Begin:         DateTimeType(page.begin),
+		End:           DateTimeType(page.end),
+		RealSize:      int64(page.real_size),
+		CreateTime:    DateTimeType(page.create_time),
+		ModifyTime:    DateTimeType(page.modify_time),
+		MergeTime:     DateTimeType(page.merge_time),
+		ArrangeTime:   DateTimeType(page.arrange_time),
+		ReindexTime:   DateTimeType(page.reindex_time),
+		BackupTime:    DateTimeType(page.backup_time),
+		RatedCapacity: int64(page.rated_capacity),
+		Capacity:      int64(page.capacity),
+		Size:          int64(page.size),
+		ExCapacity:    int64(page.ex_capacity),
+		IsMain:        byte(page.is_main),
+		PageSize:      byte(page.page_size),
+		IdOrCount:     byte(page.id_or_count),
+		AutoMerge:     byte(page.auto_merge),
+		AutoArrange:   byte(page.auto_arrange),
+		Merged:        byte(page.merged),
+		Arranged:      byte(page.arranged),
+		IndexType:     byte(page.index_type),
+		FileName:      CCharArrayToString(&page.file_name[0], int(C.RTDB_FILE_NAME_SIZE)),
+		Crc32:         uint32(page.crc32),
+		IndexInMem:    byte(page.index_in_mem),
+		ManageType:    byte(page.manage_type),
+		CompressType:  byte(page.compress_type),
+		Status:        RtdbError(page.status),
+		UsedSize:      int64(page.used_size),
+		BlockCount:    int64(page.block_count),
+		DelBlockSize:  int64(page.del_block_size),
+		TotalCount:    int64(page.total_count),
+		BigPageSize:   int16(page.big_page_size),
+		VerCode:       CCharArrayToString(&page.vercode[0], int(C.RTDB_VER_CODE_SIZE)),
+	}
+	return &rtn
+}
+
+func goToCRtdbHeaderPage(page *RtdbHeaderPage) *C.RTDB_HEADER_PAGE {
+	rtn := C.RTDB_HEADER_PAGE{}
+	rtn.db_ver = C.int(page.DbVer)
+	rtn.data_ver = C.int(page.DataVer)
+	rtn.begin = C.rtdb_datetime_type(page.Begin)
+	rtn.end = C.rtdb_datetime_type(page.End)
+	rtn.real_size = C.rtdb_int64(page.RealSize)
+	rtn.create_time = C.rtdb_datetime_type(page.CreateTime)
+	rtn.modify_time = C.rtdb_datetime_type(page.ModifyTime)
+	rtn.merge_time = C.rtdb_datetime_type(page.MergeTime)
+	rtn.arrange_time = C.rtdb_datetime_type(page.ArrangeTime)
+	rtn.reindex_time = C.rtdb_datetime_type(page.ReindexTime)
+	rtn.backup_time = C.rtdb_datetime_type(page.BackupTime)
+	rtn.rated_capacity = C.rtdb_int64(page.RatedCapacity)
+	rtn.capacity = C.rtdb_int64(page.Capacity)
+	rtn.size = C.rtdb_int64(page.Size)
+	rtn.ex_capacity = C.rtdb_int64(page.ExCapacity)
+	rtn.is_main = C.rtdb_byte(page.IsMain)
+	rtn.page_size = C.rtdb_byte(page.PageSize)
+	rtn.id_or_count = C.rtdb_byte(page.IdOrCount)
+	rtn.auto_merge = C.rtdb_byte(page.AutoMerge)
+	rtn.auto_arrange = C.rtdb_byte(page.AutoArrange)
+	rtn.merged = C.rtdb_byte(page.Merged)
+	rtn.arranged = C.rtdb_byte(page.Arranged)
+	rtn.index_type = C.rtdb_byte(page.IndexType)
+	GoStringToCCharArray(page.FileName, &rtn.file_name[0], int(C.RTDB_FILE_NAME_SIZE))
+	rtn.crc32 = C.rtdb_uint32(page.Crc32)
+	rtn.index_in_mem = C.rtdb_byte(page.IndexInMem)
+	rtn.manage_type = C.rtdb_byte(page.ManageType)
+	rtn.compress_type = C.rtdb_byte(page.CompressType)
+	rtn.status = C.rtdb_error(page.Status)
+	rtn.used_size = C.rtdb_int64(page.UsedSize)
+	rtn.block_count = C.rtdb_int64(page.BlockCount)
+	rtn.del_block_size = C.rtdb_int64(page.DelBlockSize)
+	rtn.total_count = C.rtdb_int64(page.TotalCount)
+	rtn.big_page_size = C.rtdb_uint16(page.BigPageSize)
+	GoStringToCCharArray(page.VerCode, &rtn.vercode[0], int(C.RTDB_VER_CODE_SIZE))
+	return &rtn
+}
 
 /////////////////////////////// 上面是结构定义 ////////////////////////////////////
 /////////////////////////////// -- 躺平的分隔线 -- ////////////////////////////////
@@ -8862,25 +8982,83 @@ func RawRtdbaShiftActivedWarp(handle ConnectHandle) error {
 }
 
 // RawRtdbaGetArchivesWarp 获取存档文件的路径、名称、状态和最早允许写入时间。
-//   - [handle]          连接句柄
-//   - [paths]            字符串数组，输出，存档文件的目录路径，长度至少为 RTDB_PATH_SIZE。
-//   - [files]            字符串数组，输出，存档文件的名称，长度至少为 RTDB_FILE_NAME_SIZE。
-//   - [states]           整型数组，输出，取值 RTDB_INVALID_ARCHIVE、RTDB_ACTIVED_ARCHIVE、
-//   - RTDB_NORMAL_ARCHIVE、RTDB_READONLY_ARCHIVE 之一，表示文件状态
 //
-// rtdb_error RTDBAPI_CALLRULE rtdba_get_archives_warp(rtdb_int32 handle, rtdb_int32* count, rtdb_path_string* paths, rtdb_filename_string* files, rtdb_int32 *states)
-func RawRtdbaGetArchivesWarp() {}
+// input:
+//   - handle 连接句柄
+//
+// output:
+//   - []string 存档文件的目录路径，长度至少为 RTDB_PATH_SIZE。
+//   - []string 存档文件的名称，长度至少为 RTDB_FILE_NAME_SIZE。
+//   - []RtdbArchiveState 取值 RTDB_INVALID_ARCHIVE、RTDB_ACTIVED_ARCHIVE、RTDB_NORMAL_ARCHIVE、RTDB_READONLY_ARCHIVE 之一，表示文件状态
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdba_get_archives_warp(rtdb_int32 handle, rtdb_int32* count, rtdb_path_string* paths, rtdb_filename_string* files, rtdb_int32 *states)
+func RawRtdbaGetArchivesWarp(handle ConnectHandle) ([]string, []string, []RtdbArchiveState, error) {
+	count, err := RawRtdbaGetArchivesCountWarp(handle)
+	if err != nil {
+		return nil, nil, nil, err
+	}
+	cCount := C.rtdb_int32(count)
+	paths := make([]C.rtdb_path_string, count)
+	files := make([]C.rtdb_filename_string, count)
+	states := make([]RtdbArchiveState, count)
+	e := C.rtdba_get_archives_warp(C.rtdb_int32(handle), &cCount, &paths[0], &files[0], (*C.rtdb_int32)(unsafe.Pointer(&states[0])))
+	goPaths := make([]string, 0)
+	for i := int32(0); i < count; i++ {
+		str := C.GoString((*C.char)(unsafe.Pointer(&paths[i][0])))
+		goPaths = append(goPaths, str)
+	}
+	goFiles := make([]string, 0)
+	for i := int32(0); i < count; i++ {
+		str := C.GoString((*C.char)(unsafe.Pointer(&files[i][0])))
+		goFiles = append(goFiles, str)
+	}
+	return goPaths[:cCount], goFiles[:cCount], states[:cCount], RtdbError(e).GoError()
+}
 
 // RawRtdbaGetArchivesInfoWarp 获取存档信息
-//   - [handle]: in, 句柄
-//   - [count]: out, 数量
-//   - [paths]: out, 路径
-//   - [files]: out, 文件
-//   - [infos]: out, 存档信息
-//   - [errors]: out, 错误
 //
-// rtdb_error RTDBAPI_CALLRULE rtdba_get_archives_info_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_path_string* const paths, const rtdb_filename_string* const files, RTDB_HEADER_PAGE *infos, rtdb_error* errors)
-func RawRtdbaGetArchivesInfoWarp() {}
+// input:
+//   - handle 连接句柄
+//   - count 存档数量
+//
+// output:
+//   - []string 路径列表
+//   - []string 文件名称列表
+//   - []RtdbHeaderPage 存档信息列表
+//   - []error 错误列表
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdba_get_archives_info_warp( rtdb_int32 handle, rtdb_int32* count, const rtdb_path_string* const paths, const rtdb_filename_string* const files, RTDB_HEADER_PAGE *infos, rtdb_error* errors)
+func RawRtdbaGetArchivesInfoWarp(handle ConnectHandle, count int32) ([]string, []string, []RtdbHeaderPage, []error, error) {
+	cHandle := C.rtdb_int32(handle)
+	cCount := C.rtdb_int32(count)
+	paths := make([]C.rtdb_path_string, count)
+	cPaths := (*[C.RTDB_PATH_SIZE]C.char)(unsafe.Pointer(&paths[0]))
+	files := make([]C.rtdb_filename_string, count)
+	cFiles := (*[C.RTDB_FILE_NAME_SIZE]C.char)(unsafe.Pointer(&files[0]))
+	infos := make([]C.RTDB_HEADER_PAGE, count)
+	cInfos := (*C.RTDB_HEADER_PAGE)(&infos[0])
+	errs := make([]RtdbError, count)
+	cErrs := (*C.rtdb_error)(unsafe.Pointer(&errs[0]))
+	err := C.rtdba_get_archives_info_warp(cHandle, &cCount, cPaths, cFiles, cInfos, cErrs)
+	goPaths := make([]string, 0)
+	for i := int32(0); i < int32(cCount); i++ {
+		str := C.GoString((*C.char)(unsafe.Pointer(&paths[i][0])))
+		goPaths = append(goPaths, str)
+	}
+	goFiles := make([]string, 0)
+	for i := int32(0); i < int32(cCount); i++ {
+		str := C.GoString((*C.char)(unsafe.Pointer(&files[i][0])))
+		goFiles = append(goFiles, str)
+	}
+	goPages := make([]RtdbHeaderPage, 0)
+	for i := int32(0); i < int32(cCount); i++ {
+		goPages = append(goPages, *cToGoRtdbHeaderPage(&infos[i]))
+	}
+	goErr := RtdbErrorListToErrorList(errs[:cCount])
+	return goPaths, goFiles, goPages, goErr, RtdbError(err).GoError()
+}
 
 // RawRtdbaGetArchivesPerfDataWarp 获取存档的实时信息
 //   - [handle]: in, 句柄
@@ -8892,14 +9070,23 @@ func RawRtdbaGetArchivesInfoWarp() {}
 //   - [errors]: 错误
 //
 // rtdb_error RTDBAPI_CALLRULE rtdba_get_archives_perf_data_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_path_string* const paths, const rtdb_filename_string* const files, RTDB_ARCHIVE_PERF_DATA* real_time_datas, RTDB_ARCHIVE_PERF_DATA* total_datas, rtdb_error* errors)
-func RawRtdbaGetArchivesPerfDataWarp() {}
+func RawRtdbaGetArchivesPerfDataWarp(handle ConnectHandle, count int32) {}
 
 // RawRtdbaGetArchivesStatusWarp 获取存档状态
-//   - [handle]: in, 句柄
-//   - [status]: out, 存档状态
 //
-// rtdb_error RTDBAPI_CALLRULE rtdba_get_archives_status_warp(rtdb_int32 handle, rtdb_error* status)
-func RawRtdbaGetArchivesStatusWarp() {}
+// input:
+//   - handle 句柄
+//
+// output:
+//   - status 存档状态
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdba_get_archives_status_warp(rtdb_int32 handle, rtdb_error* status)
+func RawRtdbaGetArchivesStatusWarp(handle ConnectHandle) (RtdbArchiveState, error) {
+	state := RtdbArchiveState(0)
+	err := C.rtdba_get_archives_status_warp(C.rtdb_int32(handle), (*C.rtdb_error)(&state))
+	return state, RtdbError(err).GoError()
+}
 
 // RawRtdbaGetArchiveInfoWarp 获取存档文件及其附属文件的详细信息。
 // * \param handle     连接句柄
@@ -8920,7 +9107,7 @@ func RawRtdbaGetArchiveInfoWarp() {}
 // * \param auto_arrange   短整型，输入，是否自动整理存档文件。
 // * 备注: rated_capacity 与 ex_capacity 参数可为 0，表示不修改对应的配置项。
 // rtdb_error RTDBAPI_CALLRULE rtdba_update_archive_warp(rtdb_int32 handle, const char *path, const char *file, rtdb_int32 rated_capacity, rtdb_int32 ex_capacity, rtdb_int16 auto_merge, rtdb_int16 auto_arrange)
-func RawRtdbaUpdateArchiveWarp() {}
+func RawRtdbaUpdateArchiveWarp(handle ConnectHandle, path string, file string) {}
 
 // RawRtdbaArrangeArchiveWarp 整理存档文件，将同一标签点的数据块存放在一起以提高查询效率。
 // * \param handle     连接句柄
