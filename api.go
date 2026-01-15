@@ -5611,6 +5611,69 @@ func goToCRtdbHeaderPage(page *RtdbHeaderPage) *C.RTDB_HEADER_PAGE {
 	return &rtn
 }
 
+type RtdbArchivePerfData struct {
+	WriteCount      uint32  // 历史服务查询的写磁盘次数
+	ReadCount       uint32  // 历史服务查询的读磁盘次数
+	WriteTime       float32 // 历史服务查询的写磁盘时间
+	ReadTime        float32 // 历史服务查询的读磁盘时间
+	IndexWriteCount uint32  // 历史服务查询的写索引次数
+	IndexReadCount  uint32  // 历史服务查询的读索引次数
+	IndexWriteTime  float32 // 历史服务查询的写索引时间
+	IndexReadTime   float32 // 历史服务查询的读索引时间
+	ArcListLockTime float32 // 历史服务查询的文件列表锁时间
+	ArcLockTime     float32 // 历史服务查询的存档文件锁时间
+	IndexLockTime   float32 // 历史服务查询的索引锁时间
+	TotalLockTime   float32 // 历史服务查询的锁的总时间
+	WriteSize       float32 // 历史服务查询的写入数据量，单位KB
+	ReadSize        float32 // 历史服务查询的读取数据量，单位KB
+	WriteRealSize   float32 // 历史服务查询的写入有效数据量，单位KB
+	ReadRealSize    float32 // 历史服务查询的读取有效数据量，单位KB
+
+}
+
+func cToGoRtdbArchivePerfData(p *C.RTDB_ARCHIVE_PERF_DATA) *RtdbArchivePerfData {
+	rtn := RtdbArchivePerfData{
+		WriteCount:      uint32(p.write_count),
+		ReadCount:       uint32(p.read_count),
+		WriteTime:       float32(p.write_time),
+		ReadTime:        float32(p.read_time),
+		IndexWriteCount: uint32(p.index_write_count),
+		IndexReadCount:  uint32(p.index_read_count),
+		IndexWriteTime:  float32(p.index_write_time),
+		IndexReadTime:   float32(p.index_read_time),
+		ArcListLockTime: float32(p.arc_list_lock_time),
+		ArcLockTime:     float32(p.arc_lock_time),
+		IndexLockTime:   float32(p.index_lock_time),
+		TotalLockTime:   float32(p.total_lock_time),
+		WriteSize:       float32(p.write_size),
+		ReadSize:        float32(p.read_size),
+		WriteRealSize:   float32(p.write_real_size),
+		ReadRealSize:    float32(p.read_real_size),
+	}
+	return &rtn
+}
+
+func goToCRtdbArchivePerfData(p *RtdbArchivePerfData) *C.RTDB_ARCHIVE_PERF_DATA {
+	rtn := C.RTDB_ARCHIVE_PERF_DATA{}
+	rtn.write_count = C.rtdb_uint32(p.WriteCount)
+	rtn.read_count = C.rtdb_uint32(p.ReadCount)
+	rtn.write_time = C.rtdb_float32(p.WriteTime)
+	rtn.read_time = C.rtdb_float32(p.ReadTime)
+	rtn.index_write_count = C.rtdb_uint32(p.IndexWriteCount)
+	rtn.index_read_count = C.rtdb_uint32(p.IndexReadCount)
+	rtn.index_write_time = C.rtdb_float32(p.IndexWriteTime)
+	rtn.index_read_time = C.rtdb_float32(p.IndexReadTime)
+	rtn.arc_list_lock_time = C.rtdb_float32(p.ArcListLockTime)
+	rtn.arc_lock_time = C.rtdb_float32(p.ArcLockTime)
+	rtn.index_lock_time = C.rtdb_float32(p.IndexLockTime)
+	rtn.total_lock_time = C.rtdb_float32(p.TotalLockTime)
+	rtn.write_size = C.rtdb_float32(p.WriteSize)
+	rtn.read_size = C.rtdb_float32(p.ReadSize)
+	rtn.write_real_size = C.rtdb_float32(p.WriteRealSize)
+	rtn.read_real_size = C.rtdb_float32(p.ReadRealSize)
+	return &rtn
+}
+
 /////////////////////////////// 上面是结构定义 ////////////////////////////////////
 /////////////////////////////// -- 躺平的分隔线 -- ////////////////////////////////
 // 别问为啥不分文件，问就是懒 // 基本上是1:1还原的C端API // 这套API性能高但比较复杂 ///////
@@ -9061,16 +9124,55 @@ func RawRtdbaGetArchivesInfoWarp(handle ConnectHandle, count int32) ([]string, [
 }
 
 // RawRtdbaGetArchivesPerfDataWarp 获取存档的实时信息
-//   - [handle]: in, 句柄
-//   - [count]: out, 数量
-//   - [paths]: out, 路径
-//   - [files]: out, 文件
-//   - [real_time_datas]: out, 实时数据
-//   - [total_datas]: 总数
-//   - [errors]: 错误
 //
-// rtdb_error RTDBAPI_CALLRULE rtdba_get_archives_perf_data_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_path_string* const paths, const rtdb_filename_string* const files, RTDB_ARCHIVE_PERF_DATA* real_time_datas, RTDB_ARCHIVE_PERF_DATA* total_datas, rtdb_error* errors)
-func RawRtdbaGetArchivesPerfDataWarp(handle ConnectHandle, count int32) {}
+// input:
+//   - handle 连接句柄
+//   - count 最大存档信息数量
+//
+// output:
+//   - []string 存档路径数组
+//   - []string 存档文件名数组
+//   - []RtdbArchivePerfData 存档实时数据
+//   - []RtdbArchivePerfData 存档实时数据总数
+//   - []error 错误列表
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdba_get_archives_perf_data_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_path_string* const paths, const rtdb_filename_string* const files, RTDB_ARCHIVE_PERF_DATA* real_time_datas, RTDB_ARCHIVE_PERF_DATA* total_datas, rtdb_error* errors)
+func RawRtdbaGetArchivesPerfDataWarp(handle ConnectHandle, count int32) ([]string, []string, []RtdbArchivePerfData, []RtdbArchivePerfData, []error, error) {
+	cHandle := C.rtdb_int32(handle)
+	cCount := C.rtdb_int32(count)
+	paths := make([]C.rtdb_path_string, count)
+	cPaths := (*[C.RTDB_PATH_SIZE]C.char)(unsafe.Pointer(&paths[0]))
+	files := make([]C.rtdb_filename_string, count)
+	cFiles := (*[C.RTDB_FILE_NAME_SIZE]C.char)(unsafe.Pointer(&files[0]))
+	readTimeDatas := make([]C.RTDB_ARCHIVE_PERF_DATA, count)
+	cReadTimeDatas := &readTimeDatas[0]
+	totalDatas := make([]C.RTDB_ARCHIVE_PERF_DATA, count)
+	cTotalDatas := &totalDatas[0]
+	errs := make([]RtdbError, count)
+	cErrs := (*C.rtdb_error)(unsafe.Pointer(&errs[0]))
+	err := C.rtdba_get_archives_perf_data_warp(cHandle, &cCount, cPaths, cFiles, cReadTimeDatas, cTotalDatas, cErrs)
+	goPaths := make([]string, 0)
+	for i := int32(0); i < int32(cCount); i++ {
+		str := C.GoString((*C.char)(unsafe.Pointer(&paths[i][0])))
+		goPaths = append(goPaths, str)
+	}
+	goFiles := make([]string, 0)
+	for i := int32(0); i < int32(cCount); i++ {
+		str := C.GoString((*C.char)(unsafe.Pointer(&files[i][0])))
+		goFiles = append(goFiles, str)
+	}
+	goReadTimeDatas := make([]RtdbArchivePerfData, 0)
+	for i := int32(0); i < int32(cCount); i++ {
+		goReadTimeDatas = append(goReadTimeDatas, *cToGoRtdbArchivePerfData(&readTimeDatas[i]))
+	}
+	goTotalDatas := make([]RtdbArchivePerfData, 0)
+	for i := int32(0); i < int32(cCount); i++ {
+		goTotalDatas = append(goTotalDatas, *cToGoRtdbArchivePerfData(&readTimeDatas[i]))
+	}
+	goErr := RtdbErrorListToErrorList(errs[:cCount])
+	return goPaths, goFiles, goReadTimeDatas, goTotalDatas, goErr, RtdbError(err).GoError()
+}
 
 // RawRtdbaGetArchivesStatusWarp 获取存档状态
 //
