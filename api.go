@@ -8309,7 +8309,34 @@ func RawRtdbsPutBlobSnapshot64Warp(handle ConnectHandle, id PointID, datetime Ti
 // * \param errors    无符号整型数组，输出，读取实时数据的返回值列表，参考rtdb_error.h
 // * \remark 本接口只对数据类型为 RTDB_BLOB、RTDB_STRING 的标签点有效。
 // rtdb_error RTDBAPI_CALLRULE rtdbs_put_blob_snapshots64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, const rtdb_byte* const* blobs, const rtdb_length_type* lens, const rtdb_int16* qualities, rtdb_error* errors)
-func RawRtdbsPutBlobSnapshots64Warp(handle ConnectHandle, ids []PointID, datetimes []TimestampType, subtimes []SubtimeType) {
+func RawRtdbsPutBlobSnapshots64Warp(handle ConnectHandle, ids []PointID, datetimes []TimestampType, subtimes []SubtimeType, blobs []string, qualities []Quality) ([]error, error) {
+	cgoHandle := C.rtdb_int32(handle)
+	cgoCount := C.rtdb_int32(len(ids))
+	cgoIds := (*C.rtdb_int32)(&ids[0])
+	cgoDatetimes := (*C.rtdb_timestamp_type)(unsafe.Pointer(&datetimes[0]))
+	cgoSubtimes := (*C.rtdb_subtime_type)(&subtimes[0])
+	bs := make([]*C.char, len(ids))
+	for i := 0; i < int(cgoCount); i++ {
+		bs[i] = C.CString(blobs[i])
+	}
+	defer func() {
+		for i := 0; i < int(cgoCount); i++ {
+			C.free(unsafe.Pointer(bs[i]))
+		}
+	}()
+	cgoBs := (**C.uchar)(unsafe.Pointer(&bs[0]))
+	lens := make([]C.rtdb_length_type, 0)
+	for _, b := range blobs {
+		lens = append(lens, C.rtdb_length_type(len(b)))
+	}
+	cgoLens := (*C.rtdb_length_type)(unsafe.Pointer(&lens[0]))
+	cgoQualities := (*C.rtdb_int16)(unsafe.Pointer(&qualities[0]))
+	errors := make([]RtdbError, int(cgoCount))
+	cgoErrors := (*C.rtdb_error)(unsafe.Pointer(&errors[0]))
+
+	err := C.rtdbs_put_blob_snapshots64_warp(cgoHandle, &cgoCount, cgoIds, cgoDatetimes, cgoSubtimes, cgoBs, cgoLens, cgoQualities, cgoErrors)
+	rtnErr := RtdbErrorListToErrorList(errors[:cgoCount])
+	return rtnErr[:cgoCount], RtdbError(err).GoError()
 }
 
 // RawRtdbsGetDatetimeSnapshots64Warp 批量读取datetime类型标签点实时数据
