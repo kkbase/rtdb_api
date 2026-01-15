@@ -8477,10 +8477,16 @@ func RawRtdbsSubscribeDeltaSnapshots64Warp() {}
 func RawRtdbsChangeSubscribeSnapshotsWarp() {}
 
 // RawRtdbsCancelSubscribeSnapshotsWarp 取消标签点快照更改通知订阅
-//   - \param handle    连接句柄
 //
-// rtdb_error RTDBAPI_CALLRULE rtdbs_cancel_subscribe_snapshots_warp(rtdb_int32 handle)
-func RawRtdbsCancelSubscribeSnapshotsWarp() {}
+// input:
+//   - handle 连接句柄
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbs_cancel_subscribe_snapshots_warp(rtdb_int32 handle)
+func RawRtdbsCancelSubscribeSnapshotsWarp(handle ConnectHandle) error {
+	err := C.rtdbs_cancel_subscribe_snapshots_warp(C.rtdb_int32(handle))
+	return RtdbError(err).GoError()
+}
 
 // RawRtdbsGetNamedTypeSnapshot64Warp 获取自定义类型测点的单个快照
 //   - [handle]    连接句柄
@@ -8550,11 +8556,20 @@ func RawRtdbsPutNamedTypeSnapshot64Warp() {}
 func RawRtdbsPutNamedTypeSnapshots64Warp() {}
 
 // RawRtdbaGetArchivesCountWarp 获取存档文件数量
-//   - \param handle    连接句柄
-//   - \param count     整型，输出，存档文件数量
 //
-// rtdb_error RTDBAPI_CALLRULE rtdba_get_archives_count_warp(rtdb_int32 handle, rtdb_int32 *count)
-func RawRtdbaGetArchivesCountWarp() {}
+// input:
+//   - handle 连接句柄
+//
+// output:
+//   - int32 存档文件数量
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdba_get_archives_count_warp(rtdb_int32 handle, rtdb_int32 *count)
+func RawRtdbaGetArchivesCountWarp(handle ConnectHandle) (int32, error) {
+	count := C.rtdb_int32(0)
+	err := C.rtdba_get_archives_count_warp(C.rtdb_int32(handle), &count)
+	return int32(count), RtdbError(err).GoError()
+}
 
 // RawRtdbaCreateRangedArchive64Warp 新建指定时间范围的历史存档文件并插入到历史数据库
 // * \param handle     连接句柄
