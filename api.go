@@ -9123,7 +9123,7 @@ func RawRtdbaGetArchivesInfoWarp(handle ConnectHandle, count int32) ([]string, [
 	return goPaths, goFiles, goPages, goErr, RtdbError(err).GoError()
 }
 
-// RawRtdbaGetArchivesPerfDataWarp 获取存档的实时信息
+// RawRtdbaGetArchivesPerfDataWarp 获取存档的实时信息(可用于分析存档处理的性能, 存档性能监控数据)
 //
 // input:
 //   - handle 连接句柄
