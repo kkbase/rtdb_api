@@ -8206,47 +8206,91 @@ func RawRtdbsPutCoorSnapshots(handle ConnectHandle, ids []PointID, datetimes []T
 func RawRtdbsGetBlobSnapshot64Warp(handle ConnectHandle, id PointID) (TimestampType, SubtimeType, []byte, Quality, error) {
 	datetime := C.rtdb_timestamp_type(0)
 	subtime := C.rtdb_subtime_type(0)
-	blob := make([]byte, 1024)
+	maxlen, err := RawRtdbGetMaxBlobLenWarp(handle)
+	if err != nil {
+		return 0, 0, nil, 0, err
+	}
+	blob := make([]byte, maxlen)
 	cBlob := (*C.rtdb_byte)(unsafe.Pointer(&blob[0]))
 	quality := C.rtdb_int16(0)
 	length := C.rtdb_length_type(len(blob))
-	err := C.rtdbs_get_blob_snapshot64_warp(C.rtdb_int32(handle), C.rtdb_int32(id), &datetime, &subtime, cBlob, &length, &quality)
-	return TimestampType(datetime), SubtimeType(subtime), blob[:length], Quality(quality), RtdbError(err).GoError()
+	e := C.rtdbs_get_blob_snapshot64_warp(C.rtdb_int32(handle), C.rtdb_int32(id), &datetime, &subtime, cBlob, &length, &quality)
+	return TimestampType(datetime), SubtimeType(subtime), blob[:length], Quality(quality), RtdbError(e).GoError()
 }
 
 // RawRtdbsGetBlobSnapshots64Warp 批量读取二进制/字符串实时数据
-// * \param handle    连接句柄
-// * \param count     整型，输入/输出，标签点个数，
-// *                    输入时表示 ids、datetimes、ms、blobs、lens、qualities、errors 的长度，
-// *                    输出时表示成功获取实时值的标签点个数
-// * \param ids       整型数组，输入，标签点标识
-// * \param datetimes 整型数组，输出，实时数值时间列表,
-// *                    表示距离1970年1月1日08:00:00的秒数
-// * \param ms        短整型数组，输出，实时数值时间列表，
-// *                    对于时间精度为纳秒的标签点，返回相应的纳秒值；否则为 0
-// * \param blobs     字节型指针数组，输出，实时二进制/字符串数值
-// * \param lens      短整型数组，输入/输出，二进制/字符串数值长度，
-// *                    输入时表示对应的 blobs 指针指向的缓冲区长度，
-// *                    输出时表示实际得到的 blob 长度，如果 blob 的长度大于缓冲区长度，会被截断。
-// * \param qualities 短整型数组，输出，实时数值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
-// * \param errors    无符号整型数组，输出，读取实时数据的返回值列表，参考rtdb_error.h
-// * \remark 本接口只对数据类型为 RTDB_BLOB、RTDB_STRING 的标签点有效。
-// rtdb_error RTDBAPI_CALLRULE rtdbs_get_blob_snapshots64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_byte* const* blobs, rtdb_length_type* lens, rtdb_int16* qualities, rtdb_error* errors)
-func RawRtdbsGetBlobSnapshots64Warp() {}
+//
+// input:
+//   - handle 连接句柄
+//   - ids 标签点标识
+//
+// output:
+//   - []TimestampType 实时数值时间列表,表示距离1970年1月1日08:00:00的秒数
+//   - []SubtimeType 实时数值时间列表，对于时间精度为纳秒的标签点，返回相应的纳秒值；否则为 0
+//   - [][]byte 实时二进制/字符串数值
+//   - []Quality 实时数值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
+//   - []error 读取实时数据的返回值列表，参考rtdb_error.h
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbs_get_blob_snapshots64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_byte* const* blobs, rtdb_length_type* lens, rtdb_int16* qualities, rtdb_error* errors)
+func RawRtdbsGetBlobSnapshots64Warp(handle ConnectHandle, ids []PointID) ([]TimestampType, []SubtimeType, [][]byte, []Quality, []error, error) {
+	maxlen, err := RawRtdbGetMaxBlobLenWarp(handle)
+	if err != nil {
+		return nil, nil, nil, nil, nil, err
+	}
+
+	cgoHandle := C.rtdb_int32(handle)
+	cgoCount := C.rtdb_int32(len(ids))
+	cgoIds := (*C.rtdb_int32)(unsafe.Pointer(&ids[0]))
+	datetimes := make([]TimestampType, cgoCount)
+	cgoDatetimes := (*C.rtdb_timestamp_type)(unsafe.Pointer(&datetimes[0]))
+	ms := make([]SubtimeType, cgoCount)
+	cgoMs := (*C.rtdb_subtime_type)(unsafe.Pointer(&ms[0]))
+	blobs := make([]*C.char, cgoCount)
+	for i := 0; i < int(cgoCount); i++ {
+		blobs[i] = (*C.char)(C.CBytes(make([]byte, maxlen)))
+	}
+	defer func() {
+		for i := 0; i < int(cgoCount); i++ {
+			C.free(unsafe.Pointer(blobs[i]))
+		}
+	}()
+	cgoBlobs := (**C.uchar)(unsafe.Pointer(&blobs[0]))
+	lens := make([]C.rtdb_length_type, cgoCount)
+	for i := 0; i < int(cgoCount); i++ {
+		lens[i] = C.rtdb_length_type(maxlen)
+	}
+	cgoLens := (*C.rtdb_length_type)(unsafe.Pointer(&lens[0]))
+	qualities := make([]Quality, cgoCount)
+	cgoQualities := (*C.rtdb_int16)(unsafe.Pointer(&qualities[0]))
+	errors := make([]RtdbError, cgoCount)
+	cgoErrors := (*C.rtdb_error)(unsafe.Pointer(&errors[0]))
+	e := C.rtdbs_get_blob_snapshots64_warp(cgoHandle, &cgoCount, cgoIds, cgoDatetimes, cgoMs, cgoBlobs, cgoLens, cgoQualities, cgoErrors)
+	goBlobs := make([][]byte, 0)
+	for i := 0; i < int(cgoCount); i++ {
+		goBlobs = append(goBlobs, C.GoBytes(unsafe.Pointer(blobs[i]), C.int(lens[i])))
+	}
+	rtnErrs := RtdbErrorListToErrorList(errors[:cgoCount])
+	return datetimes[:cgoCount], ms[:cgoCount], goBlobs[:cgoCount], qualities[:cgoCount], rtnErrs[:cgoCount], RtdbError(e).GoError()
+}
 
 // RawRtdbsPutBlobSnapshot64Warp 写入二进制/字符串实时数据
-// * \param handle    连接句柄
-// * \param id        整型，输入，标签点标识
-// * \param datetime  整型，输入，实时数值时间列表,
-// * 表示距离1970年1月1日08:00:00的秒数
-// * \param ms        短整型，输入，实时数值时间列表，
-// * 对于时间精度为纳秒的标签点，存放相应的纳秒值；否则忽略
-// * \param blob      字节型数组，输入，实时二进制/字符串数值
-// * \param len       短整型，输入，二进制/字符串数值长度，超过一个页大小数据将被截断。
-// * \param quality   短整型，输入，实时数值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
-// * \remark 本接口只对数据类型为 RTDB_BLOB、RTDB_STRING 的标签点有效。
-// rtdb_error RTDBAPI_CALLRULE rtdbs_put_blob_snapshot64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime, rtdb_subtime_type subtime, const rtdb_byte* blob, rtdb_length_type len, rtdb_int16 quality)
-func RawRtdbsPutBlobSnapshot64Warp() {}
+//
+// input:
+//   - handle 连接句柄
+//   - id 标签点标识
+//   - datetime 实时数值时间列表,表示距离1970年1月1日08:00:00的秒数
+//   - subtime 实时数值时间列表，对于时间精度为纳秒的标签点，存放相应的纳秒值；否则忽略
+//   - blob 实时二进制/字符串数值
+//   - quality 实时数值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbs_put_blob_snapshot64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime, rtdb_subtime_type subtime, const rtdb_byte* blob, rtdb_length_type len, rtdb_int16 quality)
+func RawRtdbsPutBlobSnapshot64Warp(handle ConnectHandle, id PointID, datetime TimestampType, subtime SubtimeType, blob []byte, quality Quality) error {
+	cBlob := (*C.rtdb_byte)(unsafe.Pointer(&blob[0]))
+	err := C.rtdbs_put_blob_snapshot64_warp(C.rtdb_int32(handle), C.rtdb_int32(id), C.rtdb_timestamp_type(datetime), C.rtdb_subtime_type(subtime), cBlob, C.rtdb_length_type(len(blob)), C.rtdb_int16(quality))
+	return RtdbError(err).GoError()
+}
 
 // RawRtdbsPutBlobSnapshots64Warp 批量写入二进制/字符串实时数据
 // * \param handle    连接句柄
