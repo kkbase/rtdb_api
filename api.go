@@ -8440,54 +8440,63 @@ func RawRtdbsPutDatetimeSnapshots64Warp(handle ConnectHandle, ids []PointID, dat
 }
 
 // RawRtdbsSubscribeSnapshotsEx64Warp 批量标签点快照改变的通知订阅
-// *
-// * \param handle         连接句柄
-// * \param count          整型，输入/输出，标签点个数，输入时表示 ids、errors 的长度，
-// *                           输出时表示成功订阅的标签点个数，不得超过 RTDB_MAX_SUBSCRIBE_SNAPSHOTS。
-// * \param ids            整型数组，输入，标签点标识列表。
-// * \param options        订阅选项
-// *                           RTDB_O_AUTOCONN 自动重连
-// * \param param          用户自定义参数
-// * \param callback       rtdbs_snaps_event_ex 类型回调接口，输入，当回掉函数返回非RtE_OK时退出订阅
-// *                       当未设置options为RTDB_O_AUTOCONN时，订阅断开后使用RTDB_E_DISCONNECT
-// *                       作为event_type取值调用回掉函数后退出订阅。
-// *                       当设置options为RTDB_O_AUTOCONN时，订阅断开后使用RTDB_E_DISCONNECT
-// *                       作为event_type取值调用回掉函数直到连接恢复或回掉函数返回非RtE_OK，
-// *                       网络中断期间回掉函数调用频率为最少3秒
-// *                       event_type参数值含义如下：
-// *                         RTDB_E_DATA        标签点快照改变
-// *                         RTDB_E_DISCONNECT  订阅客户端与数据库网络断开
-// *                         RTDB_E_RECOVERY    订阅客户端与数据库网络及订阅恢复
-// *                         RTDB_E_CHANGED     客户端修改订阅标签点信息，即通过rtdbs_change_subscribe_snapshots修改订阅信息的结果
-// *                       handle 产生订阅回掉的连接句柄，调用rtdbs_subscribe_snapshots_ex时的handle参数
-// *                       param  用户自定义参数，调用rtdbs_subscribe_snapshots_ex时的param参数
-// *                       count  event_type为RTDB_E_DATA和RTDB_E_CHANGED时表示ids，datetimes,values等的数量
-// *                              event_type为其它值时，count值为0
-// *                       ids    event_type为RTDB_E_DATA和RTDB_E_CHANGED时表示快照改变的标签点ID，数量由count指定
-// *                              event_type为其它值时，ids值为NULL
-// *                       datetimes event_type为RTDB_E_DATA时表示快照时间，数量由count指定
-// *                                 event_type为RTDB_E_CHANGED时表示changed_types，即通过rtdbs_change_subscribe_snapshots传入的changed_types
-// *                                 event_type为其它值时，datetimes值为NULL
-// *                       ms     event_type为RTDB_E_DATA时表示快照的毫秒，数量由count指定
-// *                              event_type为其它值时，ms值为NULL
-// *                       values event_type为RTDB_E_DATA时表示浮点数据类型快照值，数量由count指定
-// *                              event_type为RTDB_E_CHANGED时，表示delta_values，即通过rtdbs_change_subscribe_snapshots传入的delta_values
-// *                              event_type为其它值时，values值为NULL
-// *                       states event_type为RTDB_E_DATA时表示整形数据类型快照值，数量由count指定
-// *                              event_type为RTDB_E_CHANGED时，表示delta_states，通过rtdbs_change_subscribe_snapshots传入的delta_states
-// *                              event_type为其它值时，states值为NULL
-// *                       qualities event_type为RTDB_E_DATA时表示快照质量码，数量由count指定
-// *                              event_type为其它值时，qualities值为NULL
-// *                       errors event_type为RTDB_E_DATA时表示快照错误码，数量由count指定
-// *                              event_type为RTDB_E_CHANGED时，表示修改结果对应的错误码，数量由count指定
-// *                              event_type为其它值时，errors值为NULL
-// * \param errors         无符号整型数组，输出，
-// *                           写入实时数据的返回值列表，参考rtdb_error.h
-// * \remark   用户须保证 ids、errors 的长度与 count 一致。
-// *        用于订阅快照的连接句柄必需是独立的，不能再用来调用其它 api，
-// *        否则返回 RtE_OTHER_SDK_DOING 错误。
-// rtdb_error RTDBAPI_CALLRULE rtdbs_subscribe_snapshots_ex64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, rtdb_uint32 options, void* param, rtdbs_snaps_event_ex64 callback, rtdb_error* errors)
-func RawRtdbsSubscribeSnapshotsEx64Warp() {}
+//
+// input:
+//   - handle 连接句柄
+//   - ids 标签点标识列表。
+//   - options 订阅选项, RTDB_O_AUTOCONN 自动重连
+//   - param 用户自定义参数
+//
+// callback:
+//
+//	| rtdbs_snaps_event_ex
+//	|    类型回调接口，输入，当回掉函数返回非RtE_OK时退出订阅
+//	|    当未设置options为RTDB_O_AUTOCONN时，订阅断开后使用RTDB_E_DISCONNECT
+//	|    作为event_type取值调用回掉函数后退出订阅。
+//	|    当设置options为RTDB_O_AUTOCONN时，订阅断开后使用RTDB_E_DISCONNECT
+//	|    作为event_type取值调用回掉函数直到连接恢复或回掉函数返回非RtE_OK，
+//	|    网络中断期间回掉函数调用频率为最少3秒
+//	|    event_type参数值含义如下：
+//	|      RTDB_E_DATA        标签点快照改变
+//	|      RTDB_E_DISCONNECT  订阅客户端与数据库网络断开
+//	|      RTDB_E_RECOVERY    订阅客户端与数据库网络及订阅恢复
+//	|      RTDB_E_CHANGED     客户端修改订阅标签点信息，即通过rtdbs_change_subscribe_snapshots修改订阅信息的结果
+//	|    handle 产生订阅回掉的连接句柄，调用rtdbs_subscribe_snapshots_ex时的handle参数
+//	|    param  用户自定义参数，调用rtdbs_subscribe_snapshots_ex时的param参数
+//	|    count  event_type为RTDB_E_DATA和RTDB_E_CHANGED时表示ids，datetimes,values等的数量
+//	|           event_type为其它值时，count值为0
+//	|    ids    event_type为RTDB_E_DATA和RTDB_E_CHANGED时表示快照改变的标签点ID，数量由count指定
+//	|           event_type为其它值时，ids值为NULL
+//	|    datetimes event_type为RTDB_E_DATA时表示快照时间，数量由count指定
+//	|              event_type为RTDB_E_CHANGED时表示changed_types，即通过rtdbs_change_subscribe_snapshots传入的changed_types
+//	|              event_type为其它值时，datetimes值为NULL
+//	|    ms     event_type为RTDB_E_DATA时表示快照的毫秒，数量由count指定
+//	|           event_type为其它值时，ms值为NULL
+//	|    values event_type为RTDB_E_DATA时表示浮点数据类型快照值，数量由count指定
+//	|           event_type为RTDB_E_CHANGED时，表示delta_values，即通过rtdbs_change_subscribe_snapshots传入的delta_values
+//	|           event_type为其它值时，values值为NULL
+//	|    states event_type为RTDB_E_DATA时表示整形数据类型快照值，数量由count指定
+//	|           event_type为RTDB_E_CHANGED时，表示delta_states，通过rtdbs_change_subscribe_snapshots传入的delta_states
+//	|           event_type为其它值时，states值为NULL
+//	|    qualities event_type为RTDB_E_DATA时表示快照质量码，数量由count指定
+//	|           event_type为其它值时，qualities值为NULL
+//	|    errors event_type为RTDB_E_DATA时表示快照错误码，数量由count指定
+//	|           event_type为RTDB_E_CHANGED时，表示修改结果对应的错误码，数量由count指定
+//	|           event_type为其它值时，errors值为NULL
+//
+// output:
+//   - []error 无符号整型数组，写入实时数据的返回值列表，参考rtdb_error.h
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbs_subscribe_snapshots_ex64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, rtdb_uint32 options, void* param, rtdbs_snaps_event_ex64 callback, rtdb_error* errors)
+func RawRtdbsSubscribeSnapshotsEx64Warp(handle ConnectHandle, ids []PointID, options RtdbSubscribeOption, param unsafe.Pointer) ([]error, error) {
+	cCount := C.rtdb_int32(len(ids))
+	cIds := (*C.rtdb_int32)(unsafe.Pointer(&ids[0]))
+	errs := make([]RtdbError, len(ids))
+	err := C.rtdbs_subscribe_snapshots_ex64_warp(C.rtdb_int32(handle), &cCount, cIds, C.rtdb_uint32(options), param, (C.rtdbs_snaps_event_ex64)(unsafe.Pointer(C.goSnapsEventEx)), (*C.rtdb_error)(unsafe.Pointer(&errs[0])))
+	rtnErrs := RtdbErrorListToErrorList(errs[:cCount])
+	return rtnErrs, RtdbError(err).GoError()
+}
 
 // RawRtdbsSubscribeDeltaSnapshots64Warp 批量标签点快照改变的通知订阅
 //   - \param handle         连接句柄

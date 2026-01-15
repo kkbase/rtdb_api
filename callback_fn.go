@@ -18,3 +18,20 @@ func goSubscribeTagsEx(
 ) C.rtdb_error {
 	return C.rtdb_error(0)
 }
+
+//export goSnapsEventEx
+func goSnapsEventEx(
+	eventType C.rtdb_uint32,
+	handle C.rtdb_int32,
+	param unsafe.Pointer,
+	count C.rtdb_int32,
+	ids *C.rtdb_int32,
+	datetimes *C.rtdb_timestamp_type,
+	subtimes *C.rtdb_subtime_type,
+	values *C.rtdb_float64,
+	status *C.rtdb_int64,
+	qualities *C.rtdb_int16,
+	errors *C.rtdb_error,
+) C.rtdb_error {
+	return C.rtdb_error(0)
+}

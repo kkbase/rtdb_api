@@ -13,8 +13,28 @@ extern "C" {
 #include "rtdbapi.h"
 #include "rtdb_error.h"
 
-// rtdbb_subscribe_tags_ex_warp 中的回调函数
-extern rtdb_error goSubscribeTagsEx(rtdb_uint32 event_type, rtdb_int32 handle, void* param, rtdb_int32 count, rtdb_int32 *ids, rtdb_int32 what);
+// rtdbb_subscribe_tags_ex_warp 中的回调函数，用于订阅 标签点属性变更
+extern rtdb_error goSubscribeTagsEx(
+    rtdb_uint32 event_type,
+    rtdb_int32 handle,
+    void* param,
+    rtdb_int32 count,
+    rtdb_int32 *ids,
+    rtdb_int32 what);
+
+// rtdbs_subscribe_snapshots_ex64_warp 中的回调函数，用于订阅 快照值变更
+extern rtdb_error goSnapsEventEx(
+    rtdb_uint32 event_type,
+    rtdb_int32 handle,
+    void* param,
+    rtdb_int32 count,
+    rtdb_int32* ids,
+    rtdb_timestamp_type* datetimes,
+    rtdb_subtime_type* subtimes,
+    rtdb_float64* values,
+    rtdb_int64* states,
+    rtdb_int16* qualities,
+    rtdb_error* errors);
 
 #ifdef __cplusplus
 }
