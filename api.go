@@ -8701,22 +8701,20 @@ func RawRtdbsPutNamedTypeSnapshot64Warp(handle ConnectHandle, id PointID, dateti
 }
 
 // RawRtdbsPutNamedTypeSnapshots64Warp 批量写入自定义类型标签点的快照
-//   - [handle]    连接句柄
-//   - [count]     整型，输入/输出，标签点个数，
-//   - 输入时表示 ids、datetimes、ms、objects、lengths、qualities、errors 的长度，
-//   - 输出时表示成功写入实时值的标签点个数
-//   - [ids]       整型数组，输入，标签点标识
-//   - [datetimes] 整型数组，输入，实时数值时间列表,
-//   - 表示距离1970年1月1日08:00:00的秒数
-//   - [ms]        短整型数组，输入，实时数值时间列表，
-//   - 对于时间精度为纳秒的标签点，表示相应的纳秒值；否则忽略
-//   - [objects]   void类型指针数组，输入，自定义类型标签点数值
-//   - [lengths]   短整型数组，输入，自定义类型标签点数值长度，
-//   - 表示对应的 objects 指针指向的缓冲区长度，超过一个页大小数据将被截断。
-//   - [qualities] 短整型数组，输入，实时数值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
-//   - [errors]    无符号整型数组，输出，读取实时数据的返回值列表，参考rtdb_error.h
 //
-// rtdb_error RTDBAPI_CALLRULE rtdbs_put_named_type_snapshots64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, const void* const* objects, const rtdb_length_type* lengths, const rtdb_int16* qualities, rtdb_error* errors)
+// input:
+//   - handle 连接句柄
+//   - ids 标签点标识
+//   - datetimes 实时数值时间列表,表示距离1970年1月1日08:00:00的秒数
+//   - subtimes 实时数值时间列表，对于时间精度为纳秒的标签点，表示相应的纳秒值；否则忽略
+//   - objects 自定义类型标签点数值
+//   - qualities 实时数值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
+//
+// output:
+//   - errors 读取实时数据的返回值列表，参考rtdb_error.h
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbs_put_named_type_snapshots64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, const void* const* objects, const rtdb_length_type* lengths, const rtdb_int16* qualities, rtdb_error* errors)
 func RawRtdbsPutNamedTypeSnapshots64Warp(handle ConnectHandle, ids []PointID, datetimes []TimestampType, subtimes []SubtimeType, objects [][]byte, qualities []Quality) ([]error, error) {
 	cHandle := C.rtdb_int32(handle)
 	cCount := C.rtdb_int32(len(objects))
@@ -8727,7 +8725,6 @@ func RawRtdbsPutNamedTypeSnapshots64Warp(handle ConnectHandle, ids []PointID, da
 	for i, b := range objects {
 		ptrs[i] = C.CBytes(b)
 	}
-	cVoidPP := unsafe.Pointer(&ptrs[0])
 	defer func() {
 		for _, p := range ptrs {
 			if p != nil {
@@ -8737,13 +8734,13 @@ func RawRtdbsPutNamedTypeSnapshots64Warp(handle ConnectHandle, ids []PointID, da
 	}()
 	lens := make([]int32, 0)
 	for _, obj := range objects {
-		lens = append(lens, len(objects))
+		lens = append(lens, int32(len(obj)))
 	}
 	cLens := (*C.rtdb_length_type)(unsafe.Pointer(&lens[0]))
 	cQualities := (*C.rtdb_int16)(unsafe.Pointer(&qualities[0]))
 	errs := make([]RtdbError, len(objects))
 	cErrs := (*C.rtdb_error)(unsafe.Pointer(&errs[0]))
-	err := C.rtdbs_put_named_type_snapshots64_warp(cHandle, &cCount, cIds, cDatetimes, cSubtimes, cVoidPP, cLens, cQualities, cErrs)
+	err := C.rtdbs_put_named_type_snapshots64_warp(cHandle, &cCount, cIds, cDatetimes, cSubtimes, &ptrs[0], cLens, cQualities, cErrs)
 	rtnErr := RtdbErrorListToErrorList(errs)
 	return rtnErr, RtdbError(err).GoError()
 }
