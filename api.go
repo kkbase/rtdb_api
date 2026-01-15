@@ -8309,7 +8309,8 @@ func RawRtdbsPutBlobSnapshot64Warp(handle ConnectHandle, id PointID, datetime Ti
 // * \param errors    无符号整型数组，输出，读取实时数据的返回值列表，参考rtdb_error.h
 // * \remark 本接口只对数据类型为 RTDB_BLOB、RTDB_STRING 的标签点有效。
 // rtdb_error RTDBAPI_CALLRULE rtdbs_put_blob_snapshots64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, const rtdb_byte* const* blobs, const rtdb_length_type* lens, const rtdb_int16* qualities, rtdb_error* errors)
-func RawRtdbsPutBlobSnapshots64Warp() {}
+func RawRtdbsPutBlobSnapshots64Warp(handle ConnectHandle, ids []PointID, datetimes []TimestampType, subtimes []SubtimeType) {
+}
 
 // RawRtdbsGetDatetimeSnapshots64Warp 批量读取datetime类型标签点实时数据
 // * \param handle    连接句柄
