@@ -8092,81 +8092,127 @@ func RawRtdbsBackSnapshots64Warp(handle ConnectHandle, ids []PointID, datetimes 
 }
 
 // RawRtdbsGetCoorSnapshots64Warp 批量读取坐标实时数据
-// *
-// * \param handle    连接句柄
-// * \param count     整型，输入/输出，标签点个数，
-// *                    输入时表示 ids、datetimes、ms、x、y、qualities、errors 的长度，
-// *                    输出时表示成功获取实时值的标签点个数
-// * \param ids       整型数组，输入，标签点标识列表
-// * \param datetimes 整型数组，输出，实时数值时间列表,
-// *                    表示距离1970年1月1日08:00:00的秒数
-// * \param ms        短整型数组，输出，实时数值时间列表，
-// *                    对于时间精度为纳秒的标签点，返回相应的纳秒值；否则为 0
-// * \param x         单精度浮点型数组，输出，实时浮点型横坐标数值列表
-// * \param y         单精度浮点型数组，输出，实时浮点型纵坐标数值列表
-// * \param qualities 短整型数组，输出，实时数值品质列表，数据库预定义的品质参见枚举 RTDB_QUALITY
-// * \param errors    无符号整型数组，输出，读取实时数据的返回值列表，参考rtdb_error.h
-// * \remark 用户须保证 ids、datetimes、ms、x、y、qualities、errors 的长度与 count 一致。
-// *        本接口只对数据类型为 RTDB_COOR 的标签点有效。
-// rtdb_error RTDBAPI_CALLRULE rtdbs_get_coor_snapshots64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float32* x, rtdb_float32* y, rtdb_int16* qualities, rtdb_error* errors)
-func RawRtdbsGetCoorSnapshots64Warp() {}
+//
+// input:
+//   - handle 连接句柄
+//   - ids 标签点标识列表
+//
+// output:
+//   - []TimestampType 实时数值时间列表,表示距离1970年1月1日08:00:00的秒数
+//   - []SubtimeType 实时数值时间列表，对于时间精度为纳秒的标签点，返回相应的纳秒值；否则为 0
+//   - []float32 实时浮点型横坐标数值列表
+//   - []float32 实时浮点型纵坐标数值列表
+//   - []Quality 实时数值品质列表，数据库预定义的品质参见枚举 RTDB_QUALITY
+//   - []error 读取实时数据的返回值列表，参考rtdb_error.h
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbs_get_coor_snapshots64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float32* x, rtdb_float32* y, rtdb_int16* qualities, rtdb_error* errors)
+func RawRtdbsGetCoorSnapshots64Warp(handle ConnectHandle, ids []PointID) ([]TimestampType, []SubtimeType, []float32, []float32, []Quality, []error, error) {
+	count := C.rtdb_int32(len(ids))
+	cIds := (*C.rtdb_int32)(unsafe.Pointer(&ids[0]))
+	ts := make([]TimestampType, count)
+	cTs := (*C.rtdb_timestamp_type)(unsafe.Pointer(&ts[0]))
+	ms := make([]SubtimeType, count)
+	cMs := (*C.rtdb_subtime_type)(unsafe.Pointer(&ms[0]))
+	xs := make([]float32, count)
+	cXs := (*C.rtdb_float32)(unsafe.Pointer(&xs[0]))
+	ys := make([]float32, count)
+	cYs := (*C.rtdb_float32)(unsafe.Pointer(&ys[0]))
+	qs := make([]Quality, count)
+	cQs := (*C.rtdb_int16)(unsafe.Pointer(&qs[0]))
+	es := make([]RtdbError, count)
+	cEs := (*C.rtdb_error)(unsafe.Pointer(&es[0]))
+	err := C.rtdbs_get_coor_snapshots64_warp(C.rtdb_int32(handle), &count, cIds, cTs, cMs, cXs, cYs, cQs, cEs)
+	rtnEs := RtdbErrorListToErrorList(es[:count])
+	return ts[:count], ms[:count], xs[:count], ys[:count], qs[:count], rtnEs[:count], RtdbError(err).GoError()
+}
 
 // RawRtdbsPutCoorSnapshots64Warp 批量写入坐标实时数据
-// *
-// * \param handle    连接句柄
-// * \param count     整型，输入/输出，标签点个数，
-// *                    输入时表示 ids、datetimes、ms、x、y、qualities、errors 的长度，
-// *                    输出时表示成功获取实时值的标签点个数
-// * \param ids       整型数组，输入，标签点标识列表
-// * \param datetimes 整型数组，输入，实时数值时间列表,
-// *                    表示距离1970年1月1日08:00:00的秒数
-// * \param ms        短整型数组，输入，实时数值时间列表，
-// *                    对于时间精度为纳秒的标签点，存放相应的纳秒值；否则忽略
-// * \param x         单精度浮点型数组，输入，实时浮点型横坐标数值列表
-// * \param y         单精度浮点型数组，输入，实时浮点型纵坐标数值列表
-// * \param qualities 短整型数组，输入，实时数值品质列表，数据库预定义的品质参见枚举 RTDB_QUALITY
-// * \param errors    无符号整型数组，输出，写入实时坐标数据的返回值列表，参考rtdb_error.h
-// * \remark 用户须保证 ids、datetimes、ms、x、y、qualities、errors 的长度与 count 一致。
-// *        本接口只对数据类型为 RTDB_COOR 的标签点有效。
-// rtdb_error RTDBAPI_CALLRULE rtdbs_put_coor_snapshots64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, const rtdb_float32* x, const rtdb_float32* y, const rtdb_int16* qualities, rtdb_error* errors)
-func RawRtdbsPutCoorSnapshots64Warp() {}
+//
+// input:
+//   - handle 连接句柄
+//   - ids 标签点标识列表
+//   - datetimes 实时数值时间列表,表示距离1970年1月1日08:00:00的秒数
+//   - ms 实时数值时间列表，对于时间精度为纳秒的标签点，存放相应的纳秒值；否则忽略
+//   - xs 实时浮点型横坐标数值列表
+//   - ys 实时浮点型纵坐标数值列表
+//   - qualities 实时数值品质列表，数据库预定义的品质参见枚举 RTDB_QUALITY
+//
+// output:
+//   - []error 输出错误列表
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbs_put_coor_snapshots64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, const rtdb_float32* x, const rtdb_float32* y, const rtdb_int16* qualities, rtdb_error* errors)
+func RawRtdbsPutCoorSnapshots64Warp(handle ConnectHandle, ids []PointID, datetimes []TimestampType, ms []SubtimeType, xs []float32, ys []float32, qualities []Quality) ([]error, error) {
+	count := C.rtdb_int32(len(ids))
+	cIds := (*C.rtdb_int32)(unsafe.Pointer(&ids[0]))
+	cDatetimes := (*C.rtdb_timestamp_type)(unsafe.Pointer(&datetimes[0]))
+	cMs := (*C.rtdb_subtime_type)(unsafe.Pointer(&ms[0]))
+	cXs := (*C.rtdb_float32)(unsafe.Pointer(&xs[0]))
+	cYs := (*C.rtdb_float32)(unsafe.Pointer(&ys[0]))
+	cQualities := (*C.rtdb_int16)(unsafe.Pointer(&qualities[0]))
+	errs := make([]RtdbError, count)
+	cErrs := (*C.rtdb_error)(unsafe.Pointer(&errs[0]))
+	err := C.rtdbs_put_coor_snapshots64_warp(C.rtdb_int32(handle), &count, cIds, cDatetimes, cMs, cXs, cYs, cQualities, cErrs)
+	rtnEs := RtdbErrorListToErrorList(errs[:count])
+	return rtnEs[:count], RtdbError(err).GoError()
+}
 
-// RawRtdbsPutCoorSnapshots 批量写入坐标实时数据
-// *
-// * \param handle    连接句柄
-// * \param count     整型，输入/输出，标签点个数，
-// *                    输入时表示 ids、datetimes、ms、x、y、qualities、errors 的长度，
-// *                    输出时表示成功获取实时值的标签点个数
-// * \param ids       整型数组，输入，标签点标识列表
-// * \param datetimes 整型数组，输入，实时数值时间列表,
-// *                    表示距离1970年1月1日08:00:00的秒数
-// * \param ms        短整型数组，输入，实时数值时间列表，
-// *                    对于时间精度为纳秒的标签点，存放相应的纳秒值；否则忽略
-// * \param x         单精度浮点型数组，输入，实时浮点型横坐标数值列表
-// * \param y         单精度浮点型数组，输入，实时浮点型纵坐标数值列表
-// * \param qualities 短整型数组，输入，实时数值品质列表，数据库预定义的品质参见枚举 RTDB_QUALITY
-// * \param errors    无符号整型数组，输出，写入实时坐标数据的返回值列表，参考rtdb_error.h
-// * \remark 用户须保证 ids、datetimes、ms、x、y、qualities、errors 的长度与 count 一致。
-// *        本接口只对数据类型为 RTDB_COOR 的标签点有效。
-// *        仅当输入时间戳与当前快照时间戳完全相等时，会替换当前快照的值和质量；
-// *        其余情况下会调用 rtdbs_put_coor_snapshots()
-// rtdb_error RTDBAPI_CALLRULE rtdbs_fix_coor_snapshots64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, const rtdb_float32* x, const rtdb_float32* y, const rtdb_int16* qualities, rtdb_error* errors)
-func RawRtdbsPutCoorSnapshots() {}
+// RawRtdbsPutCoorSnapshots 批量写入坐标实时数据(修复写入)
+//
+// input:
+//   - handle 连接句柄
+//   - ids 标签点标识列表
+//   - datetimes 实时数值时间列表,表示距离1970年1月1日08:00:00的秒数
+//   - ms 实时数值时间列表，对于时间精度为纳秒的标签点，存放相应的纳秒值；否则忽略
+//   - xs 实时浮点型横坐标数值列表
+//   - ys 实时浮点型纵坐标数值列表
+//   - qualities 实时数值品质列表，数据库预定义的品质参见枚举 RTDB_QUALITY
+//
+// output:
+//   - []error 输出错误列表
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbs_fix_coor_snapshots64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, const rtdb_float32* x, const rtdb_float32* y, const rtdb_int16* qualities, rtdb_error* errors)
+func RawRtdbsPutCoorSnapshots(handle ConnectHandle, ids []PointID, datetimes []TimestampType, ms []SubtimeType, xs []float32, ys []float32, qualities []Quality) ([]error, error) {
+	count := C.rtdb_int32(len(ids))
+	cIds := (*C.rtdb_int32)(unsafe.Pointer(&ids[0]))
+	cDatetimes := (*C.rtdb_timestamp_type)(unsafe.Pointer(&datetimes[0]))
+	cMs := (*C.rtdb_subtime_type)(unsafe.Pointer(&ms[0]))
+	cXs := (*C.rtdb_float32)(unsafe.Pointer(&xs[0]))
+	cYs := (*C.rtdb_float32)(unsafe.Pointer(&ys[0]))
+	cQualities := (*C.rtdb_int16)(unsafe.Pointer(&qualities[0]))
+	errs := make([]RtdbError, count)
+	cErrs := (*C.rtdb_error)(unsafe.Pointer(&errs[0]))
+	err := C.rtdbs_fix_coor_snapshots64_warp(C.rtdb_int32(handle), &count, cIds, cDatetimes, cMs, cXs, cYs, cQualities, cErrs)
+	rtnEs := RtdbErrorListToErrorList(errs[:count])
+	return rtnEs[:count], RtdbError(err).GoError()
+}
 
 // RawRtdbsGetBlobSnapshot64Warp 读取二进制/字符串实时数据
-// *
-// * \param handle    连接句柄
-// * \param id        整型，输入，标签点标识
-// * \param datetime  整型，输出，实时数值时间列表,
-// *                    表示距离1970年1月1日08:00:00的秒数
-// * \param ms        短整型，输出，实时数值时间列表，
-// *                    对于时间精度为纳秒的标签点，返回相应的纳秒值；否则为 0
-// * \param blob      字节型数组，输出，实时二进制/字符串数值
-// * \param len       短整型，输出，二进制/字符串数值长度
-// * \param quality   短整型，输出，实时数值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
-// * \remark 本接口只对数据类型为 RTDB_BLOB、RTDB_STRING 的标签点有效。
-// rtdb_error RTDBAPI_CALLRULE rtdbs_get_blob_snapshot64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type* datetime, rtdb_subtime_type* subtime, rtdb_byte* blob, rtdb_length_type* len, rtdb_int16* quality)
-func RawRtdbsGetBlobSnapshot64Warp() {}
+//
+// input:
+//   - handle 连接句柄
+//   - id 标签点标识
+//
+// output:
+//   - TimestampType 实时数值时间列表,表示距离1970年1月1日08:00:00的秒数
+//   - SubtimeType 实时数值时间列表，对于时间精度为纳秒的标签点，返回相应的纳秒值；否则为 0
+//   - []byte 实时二进制/字符串数值
+//   - Quality 实时数值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbs_get_blob_snapshot64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type* datetime, rtdb_subtime_type* subtime, rtdb_byte* blob, rtdb_length_type* len, rtdb_int16* quality)
+func RawRtdbsGetBlobSnapshot64Warp(handle ConnectHandle, id PointID) (TimestampType, SubtimeType, []byte, Quality, error) {
+	datetime := C.rtdb_timestamp_type(0)
+	subtime := C.rtdb_subtime_type(0)
+	blob := make([]byte, 1024)
+	cBlob := (*C.rtdb_byte)(unsafe.Pointer(&blob[0]))
+	quality := C.rtdb_int16(0)
+	length := C.rtdb_length_type(len(blob))
+	err := C.rtdbs_get_blob_snapshot64_warp(C.rtdb_int32(handle), C.rtdb_int32(id), &datetime, &subtime, cBlob, &length, &quality)
+	return TimestampType(datetime), SubtimeType(subtime), blob[:length], Quality(quality), RtdbError(err).GoError()
+}
 
 // RawRtdbsGetBlobSnapshots64Warp 批量读取二进制/字符串实时数据
 // * \param handle    连接句柄
