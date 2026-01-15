@@ -8618,18 +8618,29 @@ func RawRtdbsCancelSubscribeSnapshotsWarp(handle ConnectHandle) error {
 }
 
 // RawRtdbsGetNamedTypeSnapshot64Warp 获取自定义类型测点的单个快照
-//   - [handle]    连接句柄
-//   - [id]        整型，输入，标签点标识
-//   - [datetime]  整型，输出，实时数值时间列表,
-//   - 表示距离1970年1月1日08:00:00的秒数
-//   - [ms]        短整型，输出，实时数值时间列表，
-//   - 对于时间精度为纳秒的标签点，返回相应的纳秒值；否则为 0
-//   - [object]    字节型数组，输出，实时自定义类型标签点的数值
-//   - [length]    短整型，输入/输出，自定义类型标签点的数值长度
-//   - [quality]   短整型，输出，实时数值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
 //
-// rtdb_error RTDBAPI_CALLRULE rtdbs_get_named_type_snapshot64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type* datetime, rtdb_subtime_type* subtime, void* object, rtdb_length_type* length, rtdb_int16* quality)
-func RawRtdbsGetNamedTypeSnapshot64Warp() {}
+// input:
+//   - handle 连接句柄
+//   - id 标签点标识
+//
+// output:
+//   - TimestampType 实时数值时间列表, 表示距离1970年1月1日08:00:00的秒数
+//   - SubtimeType 实时数值时间列表，对于时间精度为纳秒的标签点，返回相应的纳秒值；否则为 0
+//   - []byte 实时自定义类型标签点的数值
+//   - Quality 实时数值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbs_get_named_type_snapshot64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type* datetime, rtdb_subtime_type* subtime, void* object, rtdb_length_type* length, rtdb_int16* quality)
+func RawRtdbsGetNamedTypeSnapshot64Warp(handle ConnectHandle, id PointID, cacheLen int32) (TimestampType, SubtimeType, []byte, Quality, error) {
+	datetime := TimestampType(0)
+	subtime := SubtimeType(0)
+	buf := make([]byte, cacheLen)
+	cObj := unsafe.Pointer(&buf[0])
+	cLen := C.rtdb_length_type(cacheLen)
+	quality := Quality(0)
+	err := C.rtdbs_get_named_type_snapshot64_warp(C.rtdb_int32(handle), C.rtdb_int32(id), (*C.rtdb_timestamp_type)(&datetime), (*C.rtdb_subtime_type)(&subtime), cObj, &cLen, (*C.rtdb_int16)(&quality))
+	return datetime, subtime, buf[:cLen], quality, RtdbError(err).GoError()
+}
 
 // RawRtdbsGetNamedTypeSnapshots64Warp 批量获取自定义类型测点的快照
 //   - [handle]    连接句柄
