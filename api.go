@@ -8717,7 +8717,36 @@ func RawRtdbsPutNamedTypeSnapshot64Warp(handle ConnectHandle, id PointID, dateti
 //   - [errors]    无符号整型数组，输出，读取实时数据的返回值列表，参考rtdb_error.h
 //
 // rtdb_error RTDBAPI_CALLRULE rtdbs_put_named_type_snapshots64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, const void* const* objects, const rtdb_length_type* lengths, const rtdb_int16* qualities, rtdb_error* errors)
-func RawRtdbsPutNamedTypeSnapshots64Warp() {}
+func RawRtdbsPutNamedTypeSnapshots64Warp(handle ConnectHandle, ids []PointID, datetimes []TimestampType, subtimes []SubtimeType, objects [][]byte, qualities []Quality) ([]error, error) {
+	cHandle := C.rtdb_int32(handle)
+	cCount := C.rtdb_int32(len(objects))
+	cIds := (*C.rtdb_int32)(unsafe.Pointer(&ids[0]))
+	cDatetimes := (*C.rtdb_timestamp_type)(unsafe.Pointer(&datetimes[0]))
+	cSubtimes := (*C.rtdb_subtime_type)(unsafe.Pointer(&subtimes[0]))
+	ptrs := make([]unsafe.Pointer, len(objects))
+	for i, b := range objects {
+		ptrs[i] = C.CBytes(b)
+	}
+	cVoidPP := unsafe.Pointer(&ptrs[0])
+	defer func() {
+		for _, p := range ptrs {
+			if p != nil {
+				C.free(p)
+			}
+		}
+	}()
+	lens := make([]int32, 0)
+	for _, obj := range objects {
+		lens = append(lens, len(objects))
+	}
+	cLens := (*C.rtdb_length_type)(unsafe.Pointer(&lens[0]))
+	cQualities := (*C.rtdb_int16)(unsafe.Pointer(&qualities[0]))
+	errs := make([]RtdbError, len(objects))
+	cErrs := (*C.rtdb_error)(unsafe.Pointer(&errs[0]))
+	err := C.rtdbs_put_named_type_snapshots64_warp(cHandle, &cCount, cIds, cDatetimes, cSubtimes, cVoidPP, cLens, cQualities, cErrs)
+	rtnErr := RtdbErrorListToErrorList(errs)
+	return rtnErr, RtdbError(err).GoError()
+}
 
 // RawRtdbaGetArchivesCountWarp 获取存档文件数量
 //
