@@ -8754,7 +8754,9 @@ func RawRtdbaQueryBigJob64Warp() {}
 //   - 备注：path 及 file 参数可传空指针，对应的信息将不再返回。
 //
 // rtdb_error RTDBAPI_CALLRULE rtdba_cancel_big_job_warp(rtdb_int32 handle, rtdb_int32 process)
-func RawRtdbaCancelBigJobWarp() {}
+func RawRtdbaCancelBigJobWarp(handle ConnectHandle) {
+
+}
 
 // RawRtdbhArchivedValuesCount64Warp 获取单个标签点在一段时间范围内的存储值数量.
 //   - \param handle        连接句柄
@@ -9551,14 +9553,19 @@ func RawRtdbhUpdateValue64Warp() {}
 func RawRtdbhUpdateCoorValue64Warp() {}
 
 // RawRtdbhRemoveValue64Warp 删除单个标签点某个时间的历史存储值
-//   - \param handle        连接句柄
-//   - \param id            整型，输入，标签点标识
-//   - \param datetime      整型，输入，时间秒数
-//   - \param ms            短整型，输入，如果 id 指定的标签点时间精度为纳秒，
-//   - 表示时间纳秒数；否则忽略。
 //
-// rtdb_error RTDBAPI_CALLRULE rtdbh_remove_value64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime, rtdb_subtime_type subtime)
-func RawRtdbhRemoveValue64Warp() {}
+// input:
+//   - handle 连接句柄
+//   - id 整型，输入，标签点标识
+//   - datetime 整型，输入，时间秒数
+//   - subtime 短整型，输入，如果 id 指定的标签点时间精度为纳秒，
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbh_remove_value64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime, rtdb_subtime_type subtime)
+func RawRtdbhRemoveValue64Warp(handle ConnectHandle, id PointID, datetime TimestampType, subtime SubtimeType) error {
+	err := C.rtdbh_remove_value64_warp(C.rtdb_int32(handle), C.rtdb_int32(id), C.rtdb_timestamp_type(datetime), C.rtdb_subtime_type(subtime))
+	return RtdbError(err).GoError()
+}
 
 // RawRtdbhRemoveValues64Warp 删除单个标签点一段时间内的历史存储值
 //   - \param handle        连接句柄
@@ -9707,16 +9714,21 @@ func RawRtdbhPutSingleDatetimeValue64Warp() {}
 func RawRtdbhPutArchivedBlobValues64Warp() {}
 
 // RawRtdbhFlushArchivedValuesWarp 将标签点未写满的补历史缓存页写入存档文件中。
-//   - \param handle        连接句柄
-//   - \param id            整型，输入，标签点标识。
-//   - \param count         整型，输出，缓存页中数据个数。
-//   - \remark 补历史缓存页写满后会自动写入存档文件中，不满的历史缓存页也会写入文件，
-//   - 但会有一个时间延迟，在此期间此段数据可能查询不到，为了及时看到补历史的结果，
-//   - 应在结束补历史后调用本接口。
-//   - count 参数可为空指针，对应的信息将不再返回。
 //
-// rtdb_error RTDBAPI_CALLRULE rtdbh_flush_archived_values_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32 *count)
-func RawRtdbhFlushArchivedValuesWarp() {}
+// input:
+//   - handle 连接句柄
+//   - id 整型，输入，标签点标识。
+//
+// output:
+//   - int32 缓存页中数据个数。
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbh_flush_archived_values_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32 *count)
+func RawRtdbhFlushArchivedValuesWarp(handle ConnectHandle, id PointID) (int32, error) {
+	count := C.rtdb_int32(0)
+	err := C.rtdbh_flush_archived_values_warp(C.rtdb_int32(handle), C.rtdb_int32(id), &count)
+	return int32(count), RtdbError(err).GoError()
+}
 
 // RawRtdbhGetSingleNamedTypeValue64Warp 读取单个自定义类型标签点某个时间的历史数据
 //   - 参数：
@@ -9862,12 +9874,21 @@ func RawRtdbeGetEquationGraphCountWarp() {}
 func RawRtdbeGetEquationGraphDatasWarp() {}
 
 // RawRtdbpGetPerfTagsCountWarp 获取Perf服务中支持的性能计数点的数量
-//   - 参数：
-//   - [handle]   连接句柄
-//   - [count]    整型，输出，表示实际获取到的Perf服务中支持的性能计数点的数量
 //
-// rtdb_error RTDBAPI_CALLRULE rtdbp_get_perf_tags_count_warp(rtdb_int32 handle, int* count)
-func RawRtdbpGetPerfTagsCountWarp() {}
+// input:
+//   - handle 连接句柄
+//   - count 表示实际获取到的Perf服务中支持的性能计数点的数量
+//
+// output:
+//   - int32 性能计数点的数量
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbp_get_perf_tags_count_warp(rtdb_int32 handle, int* count)
+func RawRtdbpGetPerfTagsCountWarp(handle ConnectHandle) (int32, error) {
+	count := C.int(0)
+	err := C.rtdbp_get_perf_tags_count_warp(C.rtdb_int32(handle), &count)
+	return int32(count), RtdbError(err).GoError()
+}
 
 // RawRtdbpGetPerfTagsInfoWarp 根据性能计数点ID获取相关的性能计数点信息
 //   - 参数：
