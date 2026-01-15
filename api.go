@@ -8217,14 +8217,10 @@ func RawRtdbsPutCoorSnapshots(handle ConnectHandle, ids []PointID, datetimes []T
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbs_get_blob_snapshot64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type* datetime, rtdb_subtime_type* subtime, rtdb_byte* blob, rtdb_length_type* len, rtdb_int16* quality)
-func RawRtdbsGetBlobSnapshot64Warp(handle ConnectHandle, id PointID) (TimestampType, SubtimeType, []byte, Quality, error) {
+func RawRtdbsGetBlobSnapshot64Warp(handle ConnectHandle, id PointID, maxLen int32) (TimestampType, SubtimeType, []byte, Quality, error) {
 	datetime := C.rtdb_timestamp_type(0)
 	subtime := C.rtdb_subtime_type(0)
-	maxlen, err := RawRtdbGetMaxBlobLenWarp(handle)
-	if err != nil {
-		return 0, 0, nil, 0, err
-	}
-	blob := make([]byte, maxlen)
+	blob := make([]byte, maxLen)
 	cBlob := (*C.rtdb_byte)(unsafe.Pointer(&blob[0]))
 	quality := C.rtdb_int16(0)
 	length := C.rtdb_length_type(len(blob))
@@ -8247,12 +8243,7 @@ func RawRtdbsGetBlobSnapshot64Warp(handle ConnectHandle, id PointID) (TimestampT
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbs_get_blob_snapshots64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_byte* const* blobs, rtdb_length_type* lens, rtdb_int16* qualities, rtdb_error* errors)
-func RawRtdbsGetBlobSnapshots64Warp(handle ConnectHandle, ids []PointID) ([]TimestampType, []SubtimeType, [][]byte, []Quality, []error, error) {
-	maxlen, err := RawRtdbGetMaxBlobLenWarp(handle)
-	if err != nil {
-		return nil, nil, nil, nil, nil, err
-	}
-
+func RawRtdbsGetBlobSnapshots64Warp(handle ConnectHandle, ids []PointID, maxLen int32) ([]TimestampType, []SubtimeType, [][]byte, []Quality, []error, error) {
 	cgoHandle := C.rtdb_int32(handle)
 	cgoCount := C.rtdb_int32(len(ids))
 	cgoIds := (*C.rtdb_int32)(unsafe.Pointer(&ids[0]))
@@ -8262,7 +8253,7 @@ func RawRtdbsGetBlobSnapshots64Warp(handle ConnectHandle, ids []PointID) ([]Time
 	cgoMs := (*C.rtdb_subtime_type)(unsafe.Pointer(&ms[0]))
 	blobs := make([]*C.char, cgoCount)
 	for i := 0; i < int(cgoCount); i++ {
-		blobs[i] = (*C.char)(C.CBytes(make([]byte, maxlen)))
+		blobs[i] = (*C.char)(C.CBytes(make([]byte, maxLen)))
 	}
 	defer func() {
 		for i := 0; i < len(ids); i++ {
@@ -8272,7 +8263,7 @@ func RawRtdbsGetBlobSnapshots64Warp(handle ConnectHandle, ids []PointID) ([]Time
 	cgoBlobs := (**C.uchar)(unsafe.Pointer(&blobs[0]))
 	lens := make([]C.rtdb_length_type, cgoCount)
 	for i := 0; i < len(ids); i++ {
-		lens[i] = C.rtdb_length_type(maxlen)
+		lens[i] = C.rtdb_length_type(maxLen)
 	}
 	cgoLens := (*C.rtdb_length_type)(unsafe.Pointer(&lens[0]))
 	qualities := make([]Quality, cgoCount)
