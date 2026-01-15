@@ -41,3 +41,11 @@ func GoStringToCCharArray(s string, p *C.char, n int) {
 		*(*byte)(unsafe.Pointer(base + uintptr(i))) = 0
 	}
 }
+
+func RtdbErrorListToErrorList(errs []RtdbError) []error {
+	rtn := make([]error, 0)
+	for _, err := range errs {
+		rtn = append(rtn, err.GoError())
+	}
+	return rtn
+}
