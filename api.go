@@ -5461,8 +5461,9 @@ func goToCRtdbSyncInfo(info *RtdbSyncInfo) *C.RTDB_SYNC_INFO {
 }
 
 /////////////////////////////// 上面是结构定义 ////////////////////////////////////
-/////////////////////////////// -- 躺平的分割线 -- ////////////////////////////////
-/////////////////////////////// -- 躺平的分割线 -- ////////////////////////////////
+/////////////////////////////// -- 躺平的分隔线 -- ////////////////////////////////
+// 别问为啥不分文件，问就是懒 // 基本上是1:1还原的C端API // 这套API性能高但比较复杂 ///////
+/////////////////////////////// -- 躺平的分隔线 -- ////////////////////////////////
 /////////////////////////////// 下面是函数实现 ////////////////////////////////////
 
 // RawRtdbGetApiVersionWarp 返回 ApiVersion 版本号
@@ -6621,11 +6622,11 @@ func RawRtdbFormatQualityWarp(handle ConnectHandle, qualities []Quality) ([]stri
 	cgoQualities := (*C.rtdb_int16)(unsafe.Pointer(&qualities[0]))
 	definitions := make([]*C.rtdb_byte, count)
 	defer func() {
-		for i := 0; i < int(count); i++ {
+		for i := 0; i < count; i++ {
 			C.free(unsafe.Pointer(definitions[i]))
 		}
 	}()
-	for i := 0; i < int(cgoCount); i++ {
+	for i := 0; i < count; i++ {
 		definitions[i] = (*C.rtdb_byte)(C.CBytes(make([]byte, 256)))
 	}
 	cgoDefinitions := (**C.rtdb_byte)(unsafe.Pointer(&definitions[0]))
@@ -8251,13 +8252,13 @@ func RawRtdbsGetBlobSnapshots64Warp(handle ConnectHandle, ids []PointID) ([]Time
 		blobs[i] = (*C.char)(C.CBytes(make([]byte, maxlen)))
 	}
 	defer func() {
-		for i := 0; i < int(cgoCount); i++ {
+		for i := 0; i < len(ids); i++ {
 			C.free(unsafe.Pointer(blobs[i]))
 		}
 	}()
 	cgoBlobs := (**C.uchar)(unsafe.Pointer(&blobs[0]))
 	lens := make([]C.rtdb_length_type, cgoCount)
-	for i := 0; i < int(cgoCount); i++ {
+	for i := 0; i < len(ids); i++ {
 		lens[i] = C.rtdb_length_type(maxlen)
 	}
 	cgoLens := (*C.rtdb_length_type)(unsafe.Pointer(&lens[0]))
@@ -8318,7 +8319,7 @@ func RawRtdbsPutBlobSnapshots64Warp(handle ConnectHandle, ids []PointID, datetim
 		bs[i] = C.CString(blobs[i])
 	}
 	defer func() {
-		for i := 0; i < int(cgoCount); i++ {
+		for i := 0; i < len(ids); i++ {
 			C.free(unsafe.Pointer(bs[i]))
 		}
 	}()
@@ -8394,22 +8395,49 @@ func RawRtdbsGetDatetimeSnapshots64Warp(handle ConnectHandle, ids []PointID, typ
 }
 
 // RawRtdbsPutDatetimeSnapshots64Warp 批量插入datetime类型标签点数据
-// * \param handle      连接句柄
-// * \param count       整型，输入/输出，标签点个数，
-// *                      输入时表示 ids、datetimes、ms、dtvalues、dtlens、qualities、errors的长度，
-// *                      输出时表示成功写入的标签点个数
-// * \param ids         整型数组，输入，标签点标识
-// * \param datetimes   整型数组，输入，实时值时间列表
-// *                      表示距离1970年1月1日08:00:00的秒数
-// * \param ms          短整型数组，输入，实时数值时间列表，
-// *                      对于时间精度为纳秒的标签点，表示相应的纳秒值；否则忽略
-// * \param dtvalues    字节型指针数组，输入，datetime标签点的值
-// * \param dtlens      短整型数组，输入，数值长度
-// * \param qualities   短整型数组，输入，实时数值品质，，数据库预定义的品质参见枚举 RTDB_QUALITY
-// * \param errors      无符号整型数组，输出，读取实时数据的返回值列表，参考rtdb_error.h
-// * \remark 被接口只对数据类型 RTDB_DATETIME 的标签点有效。
-// rtdb_error RTDBAPI_CALLRULE rtdbs_put_datetime_snapshots64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, const rtdb_byte* const* dtvalues, const rtdb_length_type* dtlens, const rtdb_int16* qualities, rtdb_error* errors)
-func RawRtdbsPutDatetimeSnapshots64Warp() {}
+//
+// input:
+//   - handle 连接句柄
+//   - ids 标签点标识
+//   - datetimes 实时值时间列表, 表示距离1970年1月1日08:00:00的秒数
+//   - subtimes 实时数值时间列表，对于时间精度为纳秒的标签点，表示相应的纳秒值；否则忽略
+//   - dtvalues datetime标签点的值
+//   - qualities 实时数值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
+//
+// output:
+//   - []error 读取实时数据的返回值列表，参考rtdb_error.h
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbs_put_datetime_snapshots64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, const rtdb_byte* const* dtvalues, const rtdb_length_type* dtlens, const rtdb_int16* qualities, rtdb_error* errors)
+func RawRtdbsPutDatetimeSnapshots64Warp(handle ConnectHandle, ids []PointID, datetimes []TimestampType, subtimes []SubtimeType, dtValues []string, qualities []Quality) ([]error, error) {
+	cgoHandle := C.rtdb_int32(handle)
+	cgoCount := C.rtdb_int32(len(ids))
+	cgoIds := (*C.rtdb_int32)(unsafe.Pointer(&ids[0]))
+	cgoDatetimes := (*C.rtdb_timestamp_type)(unsafe.Pointer(&datetimes[0]))
+	cgoSubtimes := (*C.rtdb_subtime_type)(unsafe.Pointer(&subtimes[0]))
+	values := make([]*C.char, len(dtValues))
+	for i, v := range dtValues {
+		values[i] = C.CString(v)
+	}
+	defer func() {
+		for i := 0; i < len(values); i++ {
+			C.free(unsafe.Pointer(values[i]))
+		}
+	}()
+	cgoValues := (**C.uchar)(unsafe.Pointer(&values[0]))
+	cgoQualities := (*C.rtdb_int16)(unsafe.Pointer(&qualities[0]))
+	lens := make([]C.rtdb_length_type, 0)
+	for _, s := range dtValues {
+		lens = append(lens, C.rtdb_length_type(len(s)))
+	}
+	cgoLens := (*C.rtdb_length_type)(unsafe.Pointer(&lens[0]))
+	errors := make([]RtdbError, len(ids))
+	cgoErrors := (*C.rtdb_error)(unsafe.Pointer(&errors[0]))
+	err := C.rtdbs_put_datetime_snapshots64_warp(cgoHandle, &cgoCount, cgoIds, cgoDatetimes, cgoSubtimes, cgoValues, cgoLens, cgoQualities, cgoErrors)
+	rtnErrs := RtdbErrorListToErrorList(errors[:cgoCount])
+	return rtnErrs[:cgoCount], RtdbError(err)
+
+}
 
 // RawRtdbsSubscribeSnapshotsEx64Warp 批量标签点快照改变的通知订阅
 // *
