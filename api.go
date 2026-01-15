@@ -8338,26 +8338,60 @@ func RawRtdbsPutBlobSnapshots64Warp(handle ConnectHandle, ids []PointID, datetim
 }
 
 // RawRtdbsGetDatetimeSnapshots64Warp 批量读取datetime类型标签点实时数据
-// * \param handle    连接句柄
-// * \param count     整型，输入/输出，标签点个数，
-// *                    输入时表示 ids、datetimes、ms、dtvalues、dtlens、qualities、errors 的长度，
-// *                    输出时表示成功获取实时值的标签点个数
-// * \param ids       整型数组，输入，标签点标识
-// * \param datetimes 整型数组，输出，实时数值时间列表,
-// *                    表示距离1970年1月1日08:00:00的秒数
-// * \param ms        短整型数组，输出，实时数值时间列表，
-// *                    对于时间精度为纳秒的标签点，返回相应的纳秒值；否则为 0
-// * \param dtvalues  字节型指针数组，输出，实时datetime数值
-// * \param dtlens    短整型数组，输入/输出，datetime数值长度，
-// *                    输入时表示对应的 dtvalues 指针指向的缓冲区长度，
-// * \param qualities 短整型数组，输出，实时数值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
-// * \param errors    无符号整型数组，输出，读取实时数据的返回值列表，参考rtdb_error.h
-// * \param type      短整型，输入，所有标签点的显示类型，如“yyyy-mm-dd hh:mm:ss.000”的type为1，默认类型1，
-// *                    “yyyy/mm/dd hh:mm:ss.000”的type为2
-// *                    如果不传type，则按照标签点属性显示，否则按照type类型显示
-// * \remark 本接口只对数据类型为 RTDB_DATETIME 的标签点有效。
-// rtdb_error RTDBAPI_CALLRULE rtdbs_get_datetime_snapshots64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_byte* const* dtvalues, rtdb_length_type* dtlens, rtdb_int16* qualities, rtdb_error* errors, rtdb_int16 type)
-func RawRtdbsGetDatetimeSnapshots64Warp() {}
+//
+// input:
+//   - handle 连接句柄
+//   - ids 标签点标识
+//   - type 所有标签点的显示类型，如“yyyy-mm-dd hh:mm:ss.000”的type为1，默认类型1，“yyyy/mm/dd hh:mm:ss.000”的type为2, 如果不传type，则按照标签点属性显示，否则按照type类型显示
+//
+// output:
+//   - []TimestampType 实时数值时间列表,表示距离1970年1月1日08:00:00的秒数
+//   - []SubtimeType 实时数值时间列表，对于时间精度为纳秒的标签点，返回相应的纳秒值；否则为 0
+//   - []string 时间数组
+//   - []Quality 实时数值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
+//   - []errors 错误数组
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbs_get_datetime_snapshots64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_byte* const* dtvalues, rtdb_length_type* dtlens, rtdb_int16* qualities, rtdb_error* errors, rtdb_int16 type)
+func RawRtdbsGetDatetimeSnapshots64Warp(handle ConnectHandle, ids []PointID, typ int16) ([]TimestampType, []SubtimeType, []string, []Quality, []error, error) {
+	cgoHandle := C.rtdb_int32(handle)
+	count := len(ids)
+	cgoCount := C.rtdb_int32(count)
+	cgoIds := (*C.rtdb_int32)(unsafe.Pointer(&ids[0]))
+	datetimes := make([]TimestampType, count)
+	cgoDatetimes := (*C.rtdb_timestamp_type)(unsafe.Pointer(&datetimes[0]))
+	ms := make([]SubtimeType, count)
+	cgoMs := (*C.rtdb_subtime_type)(unsafe.Pointer(&ms[0]))
+	dtValues := make([]*C.char, 0)
+	for i := 0; i < count; i++ {
+		dtValues = append(dtValues, (*C.char)(C.CBytes(make([]byte, 128))))
+	}
+	defer func() {
+		for i := 0; i < count; i++ {
+			C.free(unsafe.Pointer(dtValues[i]))
+		}
+	}()
+	cgoDtValues := (**C.uchar)(unsafe.Pointer(&dtValues[0]))
+	dtLens := make([]C.rtdb_length_type, count)
+	for i := 0; i < count; i++ {
+		dtLens[i] = 128
+	}
+	cgoDtLens := (*C.rtdb_length_type)(unsafe.Pointer(&dtLens[0]))
+	qualities := make([]Quality, count)
+	cgoQualities := (*C.rtdb_int16)(unsafe.Pointer(&qualities[0]))
+	errors := make([]RtdbError, count)
+	cgoErrors := (*C.rtdb_error)(unsafe.Pointer(&errors[0]))
+	cgoType := C.rtdb_int16(typ)
+
+	err := C.rtdbs_get_datetime_snapshots64_warp(cgoHandle, &cgoCount, cgoIds, cgoDatetimes, cgoMs, cgoDtValues, cgoDtLens, cgoQualities, cgoErrors, cgoType)
+	goValues := make([]string, 0)
+	for i, v := range dtValues {
+		vv := C.GoBytes(unsafe.Pointer(v), 128)
+		goValues = append(goValues, string(vv[:dtLens[i]]))
+	}
+	rtnErr := RtdbErrorListToErrorList(errors[:cgoCount])
+	return datetimes[:cgoCount], ms[:cgoCount], goValues[:cgoCount], qualities[:cgoCount], rtnErr[:cgoCount], RtdbError(err)
+}
 
 // RawRtdbsPutDatetimeSnapshots64Warp 批量插入datetime类型标签点数据
 // * \param handle      连接句柄
