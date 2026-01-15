@@ -5460,6 +5460,7 @@ func goToCRtdbSyncInfo(info *RtdbSyncInfo) *C.RTDB_SYNC_INFO {
 	return &rtn
 }
 
+// RtdbSubscribeChangeType 元数据同步状态
 type RtdbSubscribeChangeType int32
 
 const (
@@ -5471,6 +5472,23 @@ const (
 
 	// RtdbSubscribeChangeTypeRemove 移除订阅
 	RtdbSubscribeChangeTypeRemove = RtdbSubscribeChangeType(C.RTDB_SUBSCRIBE_REMOVE)
+)
+
+// RtdbArchiveState 历史存档文件状态
+type RtdbArchiveState int32
+
+const (
+	// RtdbArchiveStateInvalid 无效
+	RtdbArchiveStateInvalid = RtdbArchiveState(C.RTDB_INVALID_ARCHIVE)
+
+	// RtdbArchiveStateActived 活动
+	RtdbArchiveStateActived = RtdbArchiveState(C.RTDB_ACTIVED_ARCHIVE)
+
+	// RtdbArchiveStateNormal 普通
+	RtdbArchiveStateNormal = RtdbArchiveState(C.RTDB_NORMAL_ARCHIVE)
+
+	// RtdbArchiveStateReadonly 只读
+	RtdbArchiveStateReadonly = RtdbArchiveState(C.RTDB_READONLY_ARCHIVE)
 )
 
 /////////////////////////////// 上面是结构定义 ////////////////////////////////////
@@ -8784,13 +8802,24 @@ func RawRtdbaCreateRangedArchive64Warp(handle ConnectHandle, path string, file s
 }
 
 // RawRtdbaAppendArchiveWarp 追加磁盘上的历史存档文件到历史数据库。
-// * \param handle     连接句柄
-// * \param path       字符串，输入，文件所在目录路径，必须以"\"或"/"结尾。
-// * \param file       字符串，输入，文件名，后缀名应为.rdf。
-// * \param state      整型，输入，取值 RTDB_ACTIVED_ARCHIVE、RTDB_NORMAL_ARCHIVE、
-// *                     RTDB_READONLY_ARCHIVE 之一，表示文件状态
-// rtdb_error RTDBAPI_CALLRULE rtdba_append_archive_warp(rtdb_int32 handle, const char *path, const char *file, rtdb_int32 state)
-func RawRtdbaAppendArchiveWarp() {}
+//
+// input:
+//   - handle 连接句柄
+//   - path 文件所在目录路径，必须以"\"或"/"结尾。
+//   - file 文件名，后缀名应为.rdf。
+//   - state 取值 RTDB_ACTIVED_ARCHIVE、RTDB_NORMAL_ARCHIVE、RTDB_READONLY_ARCHIVE 之一，表示文件状态
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdba_append_archive_warp(rtdb_int32 handle, const char *path, const char *file, rtdb_int32 state)
+func RawRtdbaAppendArchiveWarp(handle ConnectHandle, path string, file string, state RtdbArchiveState) error {
+	cHandle := C.rtdb_int32(handle)
+	cPath := C.CString(path)
+	defer C.free(unsafe.Pointer(cPath))
+	cFile := C.CString(file)
+	defer C.free(unsafe.Pointer(cFile))
+	err := C.rtdba_append_archive_warp(cHandle, cPath, cFile, C.rtdb_int32(state))
+	return RtdbError(err).GoError()
+}
 
 // RawRtdbaRemoveArchiveWarp 从历史数据库中移出历史存档文件。
 // * \param handle     连接句柄
