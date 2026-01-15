@@ -8822,15 +8822,31 @@ func RawRtdbaAppendArchiveWarp(handle ConnectHandle, path string, file string, s
 }
 
 // RawRtdbaRemoveArchiveWarp 从历史数据库中移出历史存档文件。
-// * \param handle     连接句柄
-// * \param path       字符串，输入，文件所在目录路径，必须以"\"或"/"结尾。
-// * \param file       字符串，输入，文件名。
-// rtdb_error RTDBAPI_CALLRULE rtdba_remove_archive_warp(rtdb_int32 handle, const char *path, const char *file)
-func RawRtdbaRemoveArchiveWarp() {}
+//
+// input:
+//   - handle 连接句柄
+//   - path 文件所在目录路径，必须以"\"或"/"结尾。
+//   - file 文件名，后缀名应为.rdf。
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdba_remove_archive_warp(rtdb_int32 handle, const char *path, const char *file)
+func RawRtdbaRemoveArchiveWarp(handle ConnectHandle, path string, file string) error {
+	cHandle := C.rtdb_int32(handle)
+	cPath := C.CString(path)
+	defer C.free(unsafe.Pointer(cPath))
+	cFile := C.CString(file)
+	defer C.free(unsafe.Pointer(cFile))
+	err := C.rtdba_remove_archive_warp(cHandle, cPath, cFile)
+	return RtdbError(err).GoError()
+}
 
 // RawRtdbaShiftActivedWarp 切换活动文件
-//   - \param handle     连接句柄
-//   - \remark 当前活动文件被写满时该事务被启动，
+//
+// input:
+//   - handle 连接句柄
+//
+// remark:
+//   - 当前活动文件被写满时该事务被启动，
 //   - 改变当前活动文件的状态为普通状态，
 //   - 在所有历史数据存档文件中寻找未被使用过的
 //   - 插入到前活动文件的右侧并改为活动状态，
@@ -8838,8 +8854,12 @@ func RawRtdbaRemoveArchiveWarp() {}
 //   - 并将active_archive_指向该文件。该事务进行过程中，
 //   - 用锁保证所有读写操作都暂停等待该事务完成。
 //
-// rtdb_error RTDBAPI_CALLRULE rtdba_shift_actived_warp(rtdb_int32 handle)
-func RawRtdbaShiftActivedWarp() {}
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdba_shift_actived_warp(rtdb_int32 handle)
+func RawRtdbaShiftActivedWarp(handle ConnectHandle) error {
+	err := C.rtdba_shift_actived_warp(C.rtdb_int32(handle))
+	return RtdbError(err).GoError()
+}
 
 // RawRtdbaGetArchivesWarp 获取存档文件的路径、名称、状态和最早允许写入时间。
 //   - [handle]          连接句柄
