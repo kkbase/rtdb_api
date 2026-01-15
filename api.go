@@ -8762,14 +8762,26 @@ func RawRtdbaGetArchivesCountWarp(handle ConnectHandle) (int32, error) {
 }
 
 // RawRtdbaCreateRangedArchive64Warp 新建指定时间范围的历史存档文件并插入到历史数据库
-// * \param handle     连接句柄
-// * \param path       字符串，输入，文件所在目录路径，必须以"\"或"/"结尾。
-// * \param file       字符串，输入，文件名。
-// * \param begin      整数，输入，起始时间，距离1970年1月1日08:00:00的秒数
-// * \param end        整数，输入，终止时间，距离1970年1月1日08:00:00的秒数
-// * \param mb_size    整型，输入，文件兆字节大小，单位为 MB。
-// rtdb_error RTDBAPI_CALLRULE rtdba_create_ranged_archive64_warp(rtdb_int32 handle, const char* path, const char* file, rtdb_timestamp_type begin, rtdb_timestamp_type end, rtdb_int32 mb_size)
-func RawRtdbaCreateRangedArchive64Warp() {}
+//
+// input:
+//   - handle 连接句柄
+//   - path 文件所在目录路径，必须以"\"或"/"结尾。
+//   - file 文件名。
+//   - begin 起始时间，距离1970年1月1日08:00:00的秒数
+//   - end 终止时间，距离1970年1月1日08:00:00的秒数
+//   - mb_size 文件兆字节大小，单位为 MB。
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdba_create_ranged_archive64_warp(rtdb_int32 handle, const char* path, const char* file, rtdb_timestamp_type begin, rtdb_timestamp_type end, rtdb_int32 mb_size)
+func RawRtdbaCreateRangedArchive64Warp(handle ConnectHandle, path string, file string, begin TimestampType, end TimestampType, mbSize int32) error {
+	cHandle := C.rtdb_int32(handle)
+	cPath := C.CString(path)
+	defer C.free(unsafe.Pointer(cPath))
+	cFile := C.CString(file)
+	defer C.free(unsafe.Pointer(cFile))
+	err := C.rtdba_create_ranged_archive64_warp(cHandle, cPath, cFile, C.rtdb_timestamp_type(begin), C.rtdb_timestamp_type(end), C.rtdb_int32(mbSize))
+	return RtdbError(err).GoError()
+}
 
 // RawRtdbaAppendArchiveWarp 追加磁盘上的历史存档文件到历史数据库。
 // * \param handle     连接句柄
