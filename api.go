@@ -8293,22 +8293,20 @@ func RawRtdbsPutBlobSnapshot64Warp(handle ConnectHandle, id PointID, datetime Ti
 }
 
 // RawRtdbsPutBlobSnapshots64Warp 批量写入二进制/字符串实时数据
-// * \param handle    连接句柄
-// * \param count     整型，输入/输出，标签点个数，
-// *                    输入时表示 ids、datetimes、ms、blobs、lens、qualities、errors 的长度，
-// *                    输出时表示成功获取实时值的标签点个数
-// * \param ids       整型数组，输入，标签点标识
-// * \param datetimes 整型数组，输入，实时数值时间列表,
-// *                    表示距离1970年1月1日08:00:00的秒数
-// * \param ms        短整型数组，输入，实时数值时间列表，
-// *                    对于时间精度为纳秒的标签点，表示相应的纳秒值；否则忽略
-// * \param blobs     字节型指针数组，输入，实时二进制/字符串数值
-// * \param lens      短整型数组，输入，二进制/字符串数值长度，
-// *                    表示对应的 blobs 指针指向的缓冲区长度，超过一个页大小数据将被截断。
-// * \param qualities 短整型数组，输入，实时数值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
-// * \param errors    无符号整型数组，输出，读取实时数据的返回值列表，参考rtdb_error.h
-// * \remark 本接口只对数据类型为 RTDB_BLOB、RTDB_STRING 的标签点有效。
-// rtdb_error RTDBAPI_CALLRULE rtdbs_put_blob_snapshots64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, const rtdb_byte* const* blobs, const rtdb_length_type* lens, const rtdb_int16* qualities, rtdb_error* errors)
+//
+// input:
+//   - handle 连接句柄
+//   - ids 标签点标识
+//   - datetimes 实时数值时间列表,表示距离1970年1月1日08:00:00的秒数
+//   - subtimes 实时数值时间列表，对于时间精度为纳秒的标签点，表示相应的纳秒值；否则忽略
+//   - blobs 实时二进制/字符串数值
+//   - qualities 实时数值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
+//
+// output:
+//   - errors 读取实时数据的返回值列表，参考rtdb_error.h
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbs_put_blob_snapshots64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, const rtdb_byte* const* blobs, const rtdb_length_type* lens, const rtdb_int16* qualities, rtdb_error* errors)
 func RawRtdbsPutBlobSnapshots64Warp(handle ConnectHandle, ids []PointID, datetimes []TimestampType, subtimes []SubtimeType, blobs []string, qualities []Quality) ([]error, error) {
 	cgoHandle := C.rtdb_int32(handle)
 	cgoCount := C.rtdb_int32(len(ids))
