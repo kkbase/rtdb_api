@@ -8651,7 +8651,39 @@ func RawRtdbsGetNamedTypeSnapshot64Warp(handle ConnectHandle, id PointID, cacheL
 //   - [errors]    无符号整型数组，输出，读取实时数据的返回值列表，参考rtdb_error.h
 //
 // rtdb_error RTDBAPI_CALLRULE rtdbs_get_named_type_snapshots64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, void* const* objects, rtdb_length_type* lengths, rtdb_int16* qualities, rtdb_error* errors)
-func RawRtdbsGetNamedTypeSnapshots64Warp() {}
+func RawRtdbsGetNamedTypeSnapshots64Warp(handle ConnectHandle, ids []PointID, lens []int32) ([]TimestampType, []SubtimeType, [][]byte, []Quality, []error, error) {
+	cHandle := C.rtdb_int32(handle)
+	cCount := C.rtdb_int32(len(ids))
+	cIds := (*C.rtdb_int32)(unsafe.Pointer(&ids[0]))
+	datetimes := make([]TimestampType, cCount)
+	cDatetimes := (*C.rtdb_timestamp_type)(unsafe.Pointer(&datetimes[0]))
+	subtimes := make([]SubtimeType, cCount)
+	cSubtimes := (*C.rtdb_subtime_type)(unsafe.Pointer(&subtimes[0]))
+	objects := make([]unsafe.Pointer, len(ids))
+	for i := range objects {
+		objects[i] = C.malloc(C.size_t(lens[i]))
+	}
+	defer func() {
+		for _, p := range objects {
+			if p != nil {
+				C.free(p)
+			}
+		}
+	}()
+	cObjects := &objects[0]
+	cLength := (*C.rtdb_length_type)(unsafe.Pointer(&lens[0]))
+	qualitys := make([]Quality, len(ids))
+	cQualitys := (*C.rtdb_int16)(unsafe.Pointer(&qualitys[0]))
+	errs := make([]RtdbError, len(ids))
+	cErrs := (*C.rtdb_error)(unsafe.Pointer(&errs[0]))
+	err := C.rtdbs_get_named_type_snapshots64_warp(cHandle, &cCount, cIds, cDatetimes, cSubtimes, cObjects, cLength, cQualitys, cErrs)
+	rtnObj := make([][]byte, 0)
+	for i := 0; i < len(ids); i++ {
+		rtnObj = append(rtnObj, C.GoBytes(objects[i], C.int(lens[i])))
+	}
+	rtnErrs := RtdbErrorListToErrorList(errs[:cCount])
+	return datetimes[:cCount], subtimes[:cCount], rtnObj[:cCount], qualitys[:cCount], rtnErrs[:cCount], RtdbError(err).GoError()
+}
 
 // RawRtdbsPutNamedTypeSnapshot64Warp 写入单个自定义类型标签点的快照
 //   - [handle]    连接句柄
