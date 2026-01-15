@@ -5460,6 +5460,19 @@ func goToCRtdbSyncInfo(info *RtdbSyncInfo) *C.RTDB_SYNC_INFO {
 	return &rtn
 }
 
+type RtdbSubscribeChangeType int32
+
+const (
+	// RtdbSubscribeChangeTypeAdd 增加订阅
+	RtdbSubscribeChangeTypeAdd = RtdbSubscribeChangeType(C.RTDB_SUBSCRIBE_ADD)
+
+	// RtdbSubscribeChangeTypeUpdate 更新订阅信息
+	RtdbSubscribeChangeTypeUpdate = RtdbSubscribeChangeType(C.RTDB_SUBSCRIBE_UPDATE)
+
+	// RtdbSubscribeChangeTypeRemove 移除订阅
+	RtdbSubscribeChangeTypeRemove = RtdbSubscribeChangeType(C.RTDB_SUBSCRIBE_REMOVE)
+)
+
 /////////////////////////////// 上面是结构定义 ////////////////////////////////////
 /////////////////////////////// -- 躺平的分隔线 -- ////////////////////////////////
 // 别问为啥不分文件，问就是懒 // 基本上是1:1还原的C端API // 这套API性能高但比较复杂 ///////
@@ -8579,7 +8592,18 @@ func RawRtdbsSubscribeDeltaSnapshots64Warp(handle ConnectHandle, ids []PointID, 
 //   - 数据库的修改结果，会异步通知给api的回调函数，通过rtdbs_snaps_event_ex的RTDB_E_CHANGED事件通知修改结果
 //
 // rtdb_error RTDBAPI_CALLRULE rtdbs_change_subscribe_snapshots_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_float64* delta_values, const rtdb_int64* delta_states, const rtdb_int32* changed_types, rtdb_error* errors)
-func RawRtdbsChangeSubscribeSnapshotsWarp() {}
+func RawRtdbsChangeSubscribeSnapshotsWarp(handle ConnectHandle, ids []PointID, deltaValues []float64, deltaStates []int64, changedTypes []RtdbSubscribeChangeType) ([]error, error) {
+	cCount := C.rtdb_int32(len(ids))
+	cIds := (*C.rtdb_int32)(unsafe.Pointer(&ids[0]))
+	cDeltaValues := (*C.rtdb_float64)(unsafe.Pointer(&deltaValues[0]))
+	cDeltaStates := (*C.rtdb_int64)(unsafe.Pointer(&deltaStates[0]))
+	cChangedTypes := (*C.rtdb_int32)(unsafe.Pointer(&changedTypes[0]))
+	errs := make([]RtdbError, len(ids))
+	cErrs := (*C.rtdb_error)(unsafe.Pointer(&errs[0]))
+	err := C.rtdbs_change_subscribe_snapshots_warp(C.rtdb_int32(handle), &cCount, cIds, cDeltaValues, cDeltaStates, cChangedTypes, cErrs)
+	rtnErrs := RtdbErrorListToErrorList(errs[:cCount])
+	return rtnErrs, RtdbError(err).GoError()
+}
 
 // RawRtdbsCancelSubscribeSnapshotsWarp 取消标签点快照更改通知订阅
 //
