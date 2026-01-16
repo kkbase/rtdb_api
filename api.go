@@ -9191,25 +9191,58 @@ func RawRtdbaGetArchivesStatusWarp(handle ConnectHandle) (RtdbArchiveState, erro
 }
 
 // RawRtdbaGetArchiveInfoWarp 获取存档文件及其附属文件的详细信息。
-// * \param handle     连接句柄
-// * \param path       字符串，输入，文件所在目录路径，必须以"\"或"/"结尾。
-// * \param file       字符串，输入，文件名。
-// * \param file_id    整型，输入，附属文件标识，0 表示获取主文件信息。
-// * \param info       RTDB_HEADER_PAGE 结构，输出，存档文件信息
-// rtdb_error RTDBAPI_CALLRULE rtdba_get_archive_info_warp(rtdb_int32 handle, const char *path, const char *file, rtdb_int32 file_id, RTDB_HEADER_PAGE *info)
-func RawRtdbaGetArchiveInfoWarp() {}
+//
+// input:
+//   - handle 连接句柄
+//   - path 文件所在目录路径，必须以"\"或"/"结尾。
+//   - file 文件名。
+//   - file_id 附属文件标识，0 表示获取主文件信息。
+//
+// output:
+//   - RtdbHanderPage 存档文件信息
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdba_get_archive_info_warp(rtdb_int32 handle, const char *path, const char *file, rtdb_int32 file_id, RTDB_HEADER_PAGE *info)
+func RawRtdbaGetArchiveInfoWarp(handle ConnectHandle, path string, file string, fileId int32) (*RtdbHeaderPage, error) {
+	cHandle := C.rtdb_int32(handle)
+	cPath := C.CString(path)
+	defer C.free(unsafe.Pointer(cPath))
+	cFile := C.CString(file)
+	defer C.free(unsafe.Pointer(cFile))
+	cFileId := C.rtdb_int32(fileId)
+	cPage := C.RTDB_HEADER_PAGE{}
+	err := C.rtdba_get_archive_info_warp(cHandle, cPath, cFile, cFileId, &cPage)
+	goPage := cToGoRtdbHeaderPage(&cPage)
+	return goPage, RtdbError(err).GoError()
+}
 
 // RawRtdbaUpdateArchiveWarp 修改存档文件的可配置项。
-// * \param handle         连接句柄
-// * \param path           字符串，输入，文件所在目录路径，必须以"\"或"/"结尾。
-// * \param file           字符串，输入，文件名。
-// * \param rated_capacity 整型，输入，文件额定大小，单位为 MB。
-// * \param ex_capacity    整型，输入，附属文件大小，单位为 MB。
-// * \param auto_merge     短整型，输入，是否自动合并附属文件。
-// * \param auto_arrange   短整型，输入，是否自动整理存档文件。
-// * 备注: rated_capacity 与 ex_capacity 参数可为 0，表示不修改对应的配置项。
-// rtdb_error RTDBAPI_CALLRULE rtdba_update_archive_warp(rtdb_int32 handle, const char *path, const char *file, rtdb_int32 rated_capacity, rtdb_int32 ex_capacity, rtdb_int16 auto_merge, rtdb_int16 auto_arrange)
-func RawRtdbaUpdateArchiveWarp(handle ConnectHandle, path string, file string) {}
+//
+// input:
+//   - handle 连接句柄
+//   - path 文件所在目录路径，必须以"\"或"/"结尾。
+//   - file 文件名。
+//   - rated_capacity 文件额定大小，单位为 MB。
+//   - ex_capacity 附属文件大小，单位为 MB。
+//   - auto_merge 是否自动合并附属文件。
+//   - auto_arrange 是否自动整理存档文件。
+//   - 备注: rated_capacity 与 ex_capacity 参数可为 0，表示不修改对应的配置项。
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdba_update_archive_warp(rtdb_int32 handle, const char *path, const char *file, rtdb_int32 rated_capacity, rtdb_int32 ex_capacity, rtdb_int16 auto_merge, rtdb_int16 auto_arrange)
+func RawRtdbaUpdateArchiveWarp(handle ConnectHandle, path string, file string, ratedCapacity int32, exCapacity int32, autoMerge int16, autoArrange int16) error {
+	cHandle := C.rtdb_int32(handle)
+	cPath := C.CString(path)
+	defer C.free(unsafe.Pointer(cPath))
+	cFile := C.CString(file)
+	defer C.free(unsafe.Pointer(cFile))
+	cRatedCapacity := C.rtdb_int32(ratedCapacity)
+	cExCapacity := C.rtdb_int32(exCapacity)
+	cAutoMerge := C.rtdb_int16(autoMerge)
+	cAutoArrange := C.rtdb_int16(autoArrange)
+	err := C.rtdba_update_archive_warp(cHandle, cPath, cFile, cRatedCapacity, cExCapacity, cAutoMerge, cAutoArrange)
+	return RtdbError(err).GoError()
+}
 
 // RawRtdbaArrangeArchiveWarp 整理存档文件，将同一标签点的数据块存放在一起以提高查询效率。
 // * \param handle     连接句柄
