@@ -9582,7 +9582,7 @@ func RawRtdbhGetArchivedValues64Warp(handle ConnectHandle, id PointID, count int
 //   - []Quality 质量数组
 //
 // raw_fn:
-// rtdb_error RTDBAPI_CALLRULE rtdbh_get_archived_values_backward64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32* count, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float64* values, rtdb_int64* states, rtdb_int16* qualities)
+//   - rtdb_error RTDBAPI_CALLRULE rtdbh_get_archived_values_backward64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32* count, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float64* values, rtdb_int64* states, rtdb_int16* qualities)
 func RawRtdbhGetArchivedValuesBackward64Warp(handle ConnectHandle, id PointID, count int32, datetime1 TimestampType, subtime1 SubtimeType, datetime2 TimestampType, subtime2 SubtimeType) ([]TimestampType, []SubtimeType, []float64, []int64, []Quality, error) {
 	cHandle := C.rtdb_int32(handle)
 	cId := C.rtdb_int32(id)
@@ -9606,58 +9606,88 @@ func RawRtdbhGetArchivedValuesBackward64Warp(handle ConnectHandle, id PointID, c
 }
 
 // RawRtdbhGetArchivedCoorValues64Warp 读取单个标签点一段时间内的坐标型储存数据
-//   - \param handle        连接句柄
-//   - \param id            整型，输入，标签点标识
-//   - \param count         整型，输入/输出，
-//   - 输入时表示 datetimes、ms、x、y、qualities 的长度；
-//   - 输出时返回实际得到的数值个数
-//   - \param datetimes     整型数组，输入/输出，
-//   - 输入时第一个元素表示起始时间秒数，
-//   - 最后一个元素表示结束时间秒数，如果为 0，表示直到数据的最后时间；
-//   - 输出时表示对应的历史数值时间秒数。
-//   - \param ms            短整型数组，输入/输出，如果 id 指定的标签点时间精度为纳秒，
-//   - 则输入时第一个元素表示起始时间纳秒，
-//   - 最后一个元素表示结束时间纳秒；
-//   - 输出时表示对应的历史数值时间纳秒。
-//   - 否则忽略输入，输出时为 0。
-//   - \param x             单精度浮点型数组，输出，浮点型横坐标历史数值列表
-//   - \param y             单精度浮点型数组，输出，浮点型纵坐标历史数值列表
-//   - \param qualities     短整型数组，输出，历史数值品质列表，数据库预定义的品质参见枚举 RTDB_QUALITY
-//   - \remark 用户须保证 datetimes、ms、x、y、qualities 的长度与 count 一致，
-//   - 在输入时，datetimes、ms 中至少应有一个元素，第一个元素形成的时间可以
-//   - 大于最后一个元素形成的时间，此时第一个元素表示结束时间，
-//   - 最后一个元素表示开始时间。
-//   - 本接口只对数据类型为 RTDB_COOR 的标签点有效。
 //
-// rtdb_error RTDBAPI_CALLRULE rtdbh_get_archived_coor_values64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32* count, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float32* x, rtdb_float32* y, rtdb_int16* qualities)
-func RawRtdbhGetArchivedCoorValues64Warp() {}
+// input:
+//   - handle 连接句柄
+//   - id 标签点标识
+//   - count 最大返回点值个数
+//   - datetime1 第一个元素表示起始时间秒数
+//   - subtime1 第一个元素表示起始时间纳秒
+//   - datetime2 最后一个元素表示结束时间秒数
+//   - subtime2 最后一个元素表示起始时间纳秒
+//
+// output:
+//   - []TimestampType 秒数时间戳数组
+//   - []SubtimeType 纳秒数时间戳数组
+//   - []float32 x轴坐标数组
+//   - []float32 y轴坐标数组
+//   - []Quality 质量数组
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbh_get_archived_coor_values64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32* count, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float32* x, rtdb_float32* y, rtdb_int16* qualities)
+func RawRtdbhGetArchivedCoorValues64Warp(handle ConnectHandle, id PointID, count int32, datetime1 TimestampType, subtime1 SubtimeType, datetime2 TimestampType, subtime2 SubtimeType) ([]TimestampType, []SubtimeType, []float32, []float32, []Quality, error) {
+	cHandle := C.rtdb_int32(handle)
+	cId := C.rtdb_int32(id)
+	cCount := C.rtdb_int32(count)
+	datetimes := make([]TimestampType, count)
+	datetimes[0] = datetime1
+	datetimes[count-1] = datetime2
+	cDatetimes := (*C.rtdb_timestamp_type)(unsafe.Pointer(&datetimes[0]))
+	subtimes := make([]SubtimeType, count)
+	subtimes[0] = subtime1
+	subtimes[count-1] = subtime2
+	cSubtimes := (*C.rtdb_subtime_type)(unsafe.Pointer(&subtimes[0]))
+	xs := make([]float32, count)
+	cXs := (*C.rtdb_float32)(unsafe.Pointer(&xs[0]))
+	ys := make([]float32, count)
+	cYs := (*C.rtdb_float32)(unsafe.Pointer(&ys[0]))
+	qualities := make([]Quality, count)
+	cQualities := (*C.rtdb_int16)(unsafe.Pointer(&qualities[0]))
+	err := C.rtdbh_get_archived_coor_values64_warp(cHandle, cId, &cCount, cDatetimes, cSubtimes, cXs, cYs, cQualities)
+	return datetimes[:cCount], subtimes[:cCount], xs[:cCount], ys[:cCount], qualities[:cCount], RtdbError(err).GoError()
+}
 
 // RawRtdbhGetArchivedCoorValuesBackward64Warp 逆向读取单个标签点一段时间内的坐标型储存数据
-//   - \param handle        连接句柄
-//   - \param id            整型，输入，标签点标识
-//   - \param count         整型，输入/输出，
-//   - 输入时表示 datetimes、ms、x、y、qualities 的长度；
-//   - 输出时返回实际得到的数值个数
-//   - \param datetimes     整型数组，输入/输出，
-//   - 输入时第一个元素表示起始时间秒数，
-//   - 最后一个元素表示结束时间秒数，如果为 0，表示直到数据的最后时间；
-//   - 输出时表示对应的历史数值时间秒数。
-//   - \param ms            短整型数组，输入/输出，如果 id 指定的标签点时间精度为纳秒，
-//   - 则输入时第一个元素表示起始时间纳秒，
-//   - 最后一个元素表示结束时间纳秒；
-//   - 输出时表示对应的历史数值时间纳秒。
-//   - 否则忽略输入，输出时为 0。
-//   - \param x             单精度浮点型数组，输出，浮点型横坐标历史数值列表
-//   - \param y             单精度浮点型数组，输出，浮点型纵坐标历史数值列表
-//   - \param qualities     短整型数组，输出，历史数值品质列表，数据库预定义的品质参见枚举 RTDB_QUALITY
-//   - \remark 用户须保证 datetimes、ms、x、y、qualities 的长度与 count 一致，
-//   - 在输入时，datetimes、ms 中至少应有一个元素，第一个元素形成的时间可以
-//   - 大于最后一个元素形成的时间，此时第一个元素表示结束时间，
-//   - 最后一个元素表示开始时间。
-//   - 本接口只对数据类型为 RTDB_COOR 的标签点有效。
 //
-// rtdb_error RTDBAPI_CALLRULE rtdbh_get_archived_coor_values_backward64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32* count, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float32* x, rtdb_float32* y, rtdb_int16* qualities)
-func RawRtdbhGetArchivedCoorValuesBackward64Warp() {}
+// input:
+//   - handle 连接句柄
+//   - id 标签点标识
+//   - count 最大返回点值个数
+//   - datetime1 第一个元素表示起始时间秒数
+//   - subtime1 第一个元素表示起始时间纳秒
+//   - datetime2 最后一个元素表示结束时间秒数
+//   - subtime2 最后一个元素表示起始时间纳秒
+//
+// output:
+//   - []TimestampType 秒数时间戳数组
+//   - []SubtimeType 纳秒数时间戳数组
+//   - []float32 x轴坐标数组
+//   - []float32 y轴坐标数组
+//   - []Quality 质量数组
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbh_get_archived_coor_values_backward64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32* count, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float32* x, rtdb_float32* y, rtdb_int16* qualities)
+func RawRtdbhGetArchivedCoorValuesBackward64Warp(handle ConnectHandle, id PointID, count int32, datetime1 TimestampType, subtime1 SubtimeType, datetime2 TimestampType, subtime2 SubtimeType) ([]TimestampType, []SubtimeType, []float32, []float32, []Quality, error) {
+	cHandle := C.rtdb_int32(handle)
+	cId := C.rtdb_int32(id)
+	cCount := C.rtdb_int32(count)
+	datetimes := make([]TimestampType, count)
+	datetimes[0] = datetime1
+	datetimes[count-1] = datetime2
+	cDatetimes := (*C.rtdb_timestamp_type)(unsafe.Pointer(&datetimes[0]))
+	subtimes := make([]SubtimeType, count)
+	subtimes[0] = subtime1
+	subtimes[count-1] = subtime2
+	cSubtimes := (*C.rtdb_subtime_type)(unsafe.Pointer(&subtimes[0]))
+	xs := make([]float32, count)
+	cXs := (*C.rtdb_float32)(unsafe.Pointer(&xs[0]))
+	ys := make([]float32, count)
+	cYs := (*C.rtdb_float32)(unsafe.Pointer(&ys[0]))
+	qualities := make([]Quality, count)
+	cQualities := (*C.rtdb_int16)(unsafe.Pointer(&qualities[0]))
+	err := C.rtdbh_get_archived_coor_values_backward64_warp(cHandle, cId, &cCount, cDatetimes, cSubtimes, cXs, cYs, cQualities)
+	return datetimes[:cCount], subtimes[:cCount], xs[:cCount], ys[:cCount], qualities[:cCount], RtdbError(err).GoError()
+}
 
 // RawRtdbhGetArchivedValuesInBatches64Warp 开始以分段返回方式读取一段时间内的储存数据
 //   - \param handle        连接句柄
