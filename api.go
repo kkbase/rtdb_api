@@ -9266,9 +9266,9 @@ func RawRtdbaArrangeArchiveWarp(handle ConnectHandle, path string, file string) 
 // RawRtdbaReindexArchiveWarp 为存档文件重新生成索引，用于恢复数据。
 //
 // input:
-//   - handle     连接句柄
-//   - path       字符串，输入，文件所在目录路径，必须以"\"或"/"结尾。
-//   - file       字符串，输入，文件名。
+//   - handle 连接句柄
+//   - path 文件所在目录路径，必须以"\"或"/"结尾。
+//   - file 文件名。
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdba_reindex_archive_warp(rtdb_int32 handle, const char *path, const char *file)
@@ -9283,20 +9283,48 @@ func RawRtdbaReindexArchiveWarp(handle ConnectHandle, path string, file string) 
 }
 
 // RawRtdbaBackupArchiveWarp 备份主存档文件及其附属文件到指定路径
-// * \param handle     连接句柄
-// * \param path       字符串，输入，文件所在目录路径，必须以"\"或"/"结尾。
-// * \param file       字符串，输入，文件名。
-// * \param dest       字符串，输入，备份目录路径，必须以"\"或"/"结尾。
-// rtdb_error RTDBAPI_CALLRULE rtdba_backup_archive_warp(rtdb_int32 handle, const char *path, const char *file, const char *dest)
-func RawRtdbaBackupArchiveWarp() {}
+//
+// input:
+//   - handle 连接句柄
+//   - path 文件所在目录路径，必须以"\"或"/"结尾。
+//   - file 文件名。
+//   - dest 备份目录路径，必须以"\"或"/"结尾。
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdba_backup_archive_warp(rtdb_int32 handle, const char *path, const char *file, const char *dest)
+func RawRtdbaBackupArchiveWarp(handle ConnectHandle, path string, file string, dest string) error {
+	cHandle := C.rtdb_int32(handle)
+	cPath := C.CString(path)
+	defer C.free(unsafe.Pointer(cPath))
+	cFile := C.CString(file)
+	defer C.free(unsafe.Pointer(cFile))
+	cDest := C.CString(dest)
+	defer C.free(unsafe.Pointer(cDest))
+	err := C.rtdba_backup_archive_warp(cHandle, cPath, cFile, cDest)
+	return RtdbError(err).GoError()
+}
 
 // RawRtdbaMoveArchiveWarp 将存档文件移动到指定目录
-// *        [handle]     连接句柄
-// *        [path]       字符串，输入，文件所在目录路径，必须以"\"或"/"结尾。
-// *        [file]       字符串，输入，文件名。
-// *        [dest]       字符串，输入，移动目录路径，必须以"\"或"/"结尾。
-// rtdb_error RTDBAPI_CALLRULE rtdba_move_archive_warp(rtdb_int32 handle, const char *path, const char *file, const char *dest)
-func RawRtdbaMoveArchiveWarp() {}
+//
+// input:
+//   - handle 连接句柄
+//   - path 文件所在目录路径，必须以"\"或"/"结尾。
+//   - file 文件名。
+//   - dest 移动目录路径，必须以"\"或"/"结尾。
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdba_move_archive_warp(rtdb_int32 handle, const char *path, const char *file, const char *dest)
+func RawRtdbaMoveArchiveWarp(handle ConnectHandle, path string, file string, dest string) {
+	cHandle := C.rtdb_int32(handle)
+	cPath := C.CString(path)
+	defer C.free(unsafe.Pointer(cPath))
+	cFile := C.CString(file)
+	defer C.free(unsafe.Pointer(cFile))
+	cDest := C.CString(dest)
+	defer C.free(unsafe.Pointer(cDest))
+	err := C.rtdba_move_archive_warp(cHandle, cPath, cFile, cDest)
+	return RtdbError(err).GoError()
+}
 
 // RawRtdbaConvertIndexWarp 为存档文件转换索引格式。
 // *        [handle]     连接句柄
