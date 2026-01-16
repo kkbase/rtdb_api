@@ -87,7 +87,7 @@ const (
 )
 
 // RtdbError 数据库错误
-type RtdbError uint32
+type RtdbError int32
 
 // IsOk 判断当前错误是否为RteOk
 func (re RtdbError) IsOk() bool {
@@ -5675,7 +5675,7 @@ func goToCRtdbArchivePerfData(p *RtdbArchivePerfData) *C.RTDB_ARCHIVE_PERF_DATA 
 }
 
 // BigJobName 数据库对应服务的大任务，每个服务最多同时执行一个大任务
-type BigJobName int32
+type BigJobName int16
 
 const (
 	// BigJobNameMerge 合并附属文件到主文件
@@ -5713,6 +5713,19 @@ const (
 
 	// BigJobNameRemoveTable 删除表
 	BigJobNameRemoveTable = BigJobName(C.RTDB_REMOVE_TABLE)
+)
+
+type RtdbProcess int32
+
+const (
+	// RtdbProcessHistorian 历史服务
+	RtdbProcessHistorian = RtdbProcess(C.RTDB_PROCESS_HISTORIAN)
+
+	// RtdbProcessEquation 方程式服务
+	RtdbProcessEquation = RtdbProcess(C.RTDB_PROCESS_EQUATION)
+
+	// RtdbProcessBase 标签点服务
+	RtdbProcessBase = RtdbProcess(C.RTDB_PROCESS_BASE)
 )
 
 /////////////////////////////// 上面是结构定义 ////////////////////////////////////
@@ -9390,67 +9403,64 @@ func RawRtdbaConvertIndexWarp(handle ConnectHandle, path string, file string) er
 //
 // input:
 //   - handle 连接句柄
+//   - process 所查询的进程代号，进程的标识参见枚举 RTDB_PROCESS_NAME
 //
-// * \param process    所查询的进程代号，进程的标识参见枚举 RTDB_PROCESS_NAME,
-// *                     RTDB_PROCESS_HISTORIAN: 历史服务进程，具有以下任务类型：
-// *                         RTDB_MERGE: 合并附属文件到主文件;
-// *                         RTDB_ARRANGE: 整理存档文件;
-// *                         RTDB_REINDEX: 重建索引;
-// *                         RTDB_BACKUP: 备份;
-// *                         RTDB_REACTIVE: 激活为活动存档;
-// *                     RTDB_PROCESS_EQUATION: 方程式服务进程，具有以下任务类型：
-// *                         RTDB_COMPUTE: 历史计算;
-// *                     RTDB_PROCESS_BASE: 标签信息服务进程，具有以下任务类型：
-// *                         RTDB_UPDATE_TABLE: 修改表名称;
-// *                         RTDB_REMOVE_TABLE: 删除表;
-// * \param path       字符串，输出，长度至少为 RTDB_PATH_SIZE，
-// *                     对以下任务，这个字段表示存档文件所在目录路径：
-// *                         RTDB_MERGE
-// *                         RTDB_ARRANGE
-// *                         RTDB_REINDEX
-// *                         RTDB_BACKUP
-// *                         RTDB_REACTIVE
-// *                     对于以下任务，这个字段表示原来的表名：
-// *                         RTDB_UPDATE_TABLE
-// *                         RTDB_REMOVE_TABLE
-// *                     对于其它任务不可用。
-// * \param file       字符串，输出，长度至少为 RTDB_FILE_NAME_SIZE，
-// *                     对以下任务，这个字段表示存档文件名：
-// *                         RTDB_MERGE
-// *                         RTDB_ARRANGE
-// *                         RTDB_REINDEX
-// *                         RTDB_BACKUP
-// *                         RTDB_REACTIVE
-// *                     对于以下任务，这个字段表示修改后的表名：
-// *                          RTDB_UPDATE_TABLE
-// *                     对于其它任务不可用。
-// * \param job        短整型，输出，任务的标识参见枚举 RTDB_BIG_JOB_NAME。
-// * \param state      整型，输出，任务的执行状态，参考 rtdb_error.h
-// * \param end_time   整型，输出，任务的完成时间。
-// * \param progress   单精度浮点型，输出，任务的进度百分比。
-// * \remark path 及 file 参数可传空指针，对应的信息将不再返回。
-// */
-// rtdb_error RTDBAPI_CALLRULE rtdba_query_big_job64_warp(rtdb_int32 handle, rtdb_int32 process, char* path, char* file, rtdb_int16* job, rtdb_int32* state, rtdb_timestamp_type* end_time, rtdb_float32* progress)
-func RawRtdbaQueryBigJob64Warp() {}
+// output:
+//   - string(path) 长度至少为 RTDB_PATH_SIZE
+//     对以下任务，这个字段表示存档文件所在目录路径：
+//     RTDB_MERGE
+//     RTDB_ARRANGE
+//     RTDB_REINDEX
+//     RTDB_BACKUP
+//     RTDB_REACTIVE
+//     对于以下任务，这个字段表示原来的表名：
+//     RTDB_UPDATE_TABLE
+//     RTDB_REMOVE_TABLE
+//     对于其它任务不可用。
+//   - string(file) 长度至少为 RTDB_FILE_NAME_SIZRTDB_FILE_NAME_SIZEE，
+//     对以下任务，这个字段表示存档文件名：
+//     RTDB_MERGE
+//     RTDB_ARRANGE
+//     RTDB_REINDEX
+//     RTDB_BACKUP
+//     RTDB_REACTIVE
+//     对于以下任务，这个字段表示修改后的表名：
+//     RTDB_UPDATE_TABLE
+//     对于其它任务不可用。
+//   - BigJobName 任务的标识参见枚举 RTDB_BIG_JOB_NAME。
+//   - state 任务的执行状态，参考 rtdb_error.h
+//   - TimestampType 任务的完成时间
+//   - float32(process) 任务的进度百分比
+//   - 备注：remark path 及 file 参数可传空指针，对应的信息将不再返回。
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdba_query_big_job64_warp(rtdb_int32 handle, rtdb_int32 process, char* path, char* file, rtdb_int16* job, rtdb_int32* state, rtdb_timestamp_type* end_time, rtdb_float32* progress)
+func RawRtdbaQueryBigJob64Warp(handle ConnectHandle, processName RtdbProcess) (string, string, BigJobName, RtdbError, TimestampType, float32, error) {
+	cHandle := C.rtdb_int32(handle)
+	cProcessName := C.rtdb_int32(processName)
+	cPath := C.rtdb_path_string{}
+	cName := C.rtdb_filename_string{}
+	jobID := BigJobName(0)
+	state := RtdbError(0)
+	endTime := TimestampType(0)
+	process := float32(0)
+	err := C.rtdba_query_big_job64_warp(cHandle, cProcessName, &cPath[0], &cName[0], (*C.rtdb_int16)(&jobID), (*C.rtdb_int32)(&state), (*C.rtdb_timestamp_type)(&endTime), (*C.rtdb_float32)(&process))
+	goPath := C.GoString(&cPath[0])
+	goName := C.GoString(&cName[0])
+	return goPath, goName, jobID, state, endTime, process, RtdbError(err).GoError()
+}
 
 // RawRtdbaCancelBigJobWarp 取消进程正在执行的后台任务
-//   - [handle]     连接句柄
-//   - [process]    所查询的进程代号，进程的标识参见枚举 RTDB_PROCESS_NAME,
-//   - RTDB_PROCESS_HISTORIAN: 历史服务进程，具有以下任务类型：
-//   - RTDB_MERGE: 合并附属文件到主文件;
-//   - RTDB_ARRANGE: 整理存档文件;
-//   - RTDB_REINDEX: 重建索引;
-//   - RTDB_BACKUP: 备份;
-//   - RTDB_REACTIVE: 激活为活动存档;
-//   - RTDB_PROCESS_EQUATION: 方程式服务进程，具有以下任务类型：
-//   - RTDB_COMPUTE: 历史计算;
-//   - RTDB_PROCESS_BASE: 标签信息服务进程，具有以下任务类型：
-//   - RTDB_UPDATE_TABLE: 修改表名称;
-//   - RTDB_REMOVE_TABLE: 删除表;
-//   - 备注：path 及 file 参数可传空指针，对应的信息将不再返回。
 //
-// rtdb_error RTDBAPI_CALLRULE rtdba_cancel_big_job_warp(rtdb_int32 handle, rtdb_int32 process)
-func RawRtdbaCancelBigJobWarp(handle ConnectHandle) {
+// input:
+//   - handle 连接句柄
+//   - process 所查询的进程代号，进程的标识参见枚举 RTDB_PROCESS_NAME,
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdba_cancel_big_job_warp(rtdb_int32 handle, rtdb_int32 process)
+func RawRtdbaCancelBigJobWarp(handle ConnectHandle, process RtdbProcess) error {
+	err := C.rtdba_cancel_big_job_warp(C.rtdb_int32(handle), C.rtdb_int32(process))
+	return RtdbError(err).GoError()
 }
 
 // RawRtdbhArchivedValuesCount64Warp 获取单个标签点在一段时间范围内的存储值数量.
