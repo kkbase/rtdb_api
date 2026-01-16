@@ -5674,6 +5674,47 @@ func goToCRtdbArchivePerfData(p *RtdbArchivePerfData) *C.RTDB_ARCHIVE_PERF_DATA 
 	return &rtn
 }
 
+// BigJobName 数据库对应服务的大任务，每个服务最多同时执行一个大任务
+type BigJobName int32
+
+const (
+	// BigJobNameMerge 合并附属文件到主文件
+	BigJobNameMerge = BigJobName(C.RTDB_MERGE)
+
+	// BigJobNameArrange 整理存档文件，整理过程中会完成合并
+	BigJobNameArrange = BigJobName(C.RTDB_ARRANGE)
+
+	// BigJobNameReindex 重建索引
+	BigJobNameReindex = BigJobName(C.RTDB_REINDEX)
+
+	// BigJobNameBackup 备份
+	BigJobNameBackup = BigJobName(C.RTDB_BACKUP)
+
+	// BigJobNameReactive 激活为活动存档
+	BigJobNameReactive = BigJobName(C.RTDB_REACTIVE)
+
+	// BigJobNameArchive 移动存档文件
+	BigJobNameArchive = BigJobName(C.RTDB_MOVE_ARCHIVE)
+
+	// BigJobNameConvertIndex 转换存档文件索引类型
+	BigJobNameConvertIndex = BigJobName(C.RTDB_CONVERT_INDEX)
+
+	// BigJobNameCompress 压缩
+	BigJobNameCompress = BigJobName(C.RTDB_COMPRESS)
+
+	// BigJobNameMoveArchiveAuto  自动移动存档文件（用于存档文件滚动存储）
+	BigJobNameMoveArchiveAuto = BigJobName(C.RTDB_MOVE_ARCHIVE_AUTO)
+
+	// BigJobNameCompute  历史计算
+	BigJobNameCompute = BigJobName(C.RTDB_COMPUTE)
+
+	// BigJobNameUpdateTable 修改表名称
+	BigJobNameUpdateTable = BigJobName(C.RTDB_UPDATE_TABLE)
+
+	// BigJobNameRemoveTable 删除表
+	BigJobNameRemoveTable = BigJobName(C.RTDB_REMOVE_TABLE)
+)
+
 /////////////////////////////// 上面是结构定义 ////////////////////////////////////
 /////////////////////////////// -- 躺平的分隔线 -- ////////////////////////////////
 // 别问为啥不分文件，问就是懒 // 基本上是1:1还原的C端API // 这套API性能高但比较复杂 ///////
@@ -9410,7 +9451,6 @@ func RawRtdbaQueryBigJob64Warp() {}
 //
 // rtdb_error RTDBAPI_CALLRULE rtdba_cancel_big_job_warp(rtdb_int32 handle, rtdb_int32 process)
 func RawRtdbaCancelBigJobWarp(handle ConnectHandle) {
-
 }
 
 // RawRtdbhArchivedValuesCount64Warp 获取单个标签点在一段时间范围内的存储值数量.
