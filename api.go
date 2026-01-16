@@ -9764,9 +9764,9 @@ func RawRtdbhGetNextArchivedValues64Warp(handle ConnectHandle, id PointID, count
 //   - subtimes 对于时间精度为纳秒的标签点，表示需要的单调递增时间对应的纳秒值；否则忽略。
 //
 // output:
-//   - values 历史浮点型数值列表，对于数据类型为 RTDB_REAL16、RTDB_REAL32、RTDB_REAL64 的标签点，返回相应的历史插值；否则为 0
-//   - states 历史整型数值列表，对于数据类型为 RTDB_BOOL、RTDB_UINT8、RTDB_INT8、RTDB_CHAR、RTDB_UINT16、RTDB_INT16、RTDB_UINT32、RTDB_INT32、RTDB_INT64 的标签点，返回相应的历史插值；否则为 0
-//   - qualities 历史数值品质列表，数据库预定义的品质参见枚举 RTDB_QUALITY
+//   - []float64(values) 历史浮点型数值列表，对于数据类型为 RTDB_REAL16、RTDB_REAL32、RTDB_REAL64 的标签点，返回相应的历史插值；否则为 0
+//   - []int64(states) 历史整型数值列表，对于数据类型为 RTDB_BOOL、RTDB_UINT8、RTDB_INT8、RTDB_CHAR、RTDB_UINT16、RTDB_INT16、RTDB_UINT32、RTDB_INT32、RTDB_INT64 的标签点，返回相应的历史插值；否则为 0
+//   - []Quality(qualities) 历史数值品质列表，数据库预定义的品质参见枚举 RTDB_QUALITY
 //   - 备注：本接口对数据类型为 RTDB_COOR、RTDB_BLOB、RTDB_STRING 的标签点无效。
 //
 // raw_fn:
@@ -9777,32 +9777,47 @@ func RawRtdbhGetTimedValues64Warp(handle ConnectHandle, id PointID, datetimes []
 	cCount := C.rtdb_int32(len(datetimes))
 	cDatetimes := (*C.rtdb_timestamp_type)(unsafe.Pointer(&datetimes[0]))
 	cSubtimes := (*C.rtdb_subtime_type)(unsafe.Pointer(&subtimes[0]))
-	values := make([]float64, count)
+	values := make([]float64, cCount)
 	cValues := (*C.rtdb_float64)(unsafe.Pointer(&values[0]))
-	states := make([]int64, count)
+	states := make([]int64, cCount)
 	cStates := (*C.rtdb_int64)(unsafe.Pointer(&states[0]))
-	qualities := make([]Quality, count)
+	qualities := make([]Quality, cCount)
 	cQualities := (*C.rtdb_int16)(unsafe.Pointer(&qualities[0]))
 	err := C.rtdbh_get_timed_values64_warp(cHandle, cId, cCount, cDatetimes, cSubtimes, cValues, cStates, cQualities)
 	return values, states, qualities, RtdbError(err).GoError()
 }
 
 // RawRtdbhGetTimedCoorValues64Warp 获取单个坐标标签点的单调递增时间序列历史插值。
-//   - \param handle        连接句柄
-//   - \param id            整型，输入，标签点标识
-//   - \param count         整型，输入，表示 datetimes、ms、x、y、qualities 的长度。
-//   - \param datetimes     整型数组，输入，表示需要的单调递增时间列表，
-//   - 为距离1970年1月1日08:00:00的秒数
-//   - \param ms            短整型数组，输入，对于时间精度为纳秒的标签点，
-//   - 表示需要的单调递增时间对应的纳秒值；否则忽略。
-//   - \param x             单精度浮点型数组，输出，浮点型横坐标历史插值数值列表
-//   - \param y             单精度浮点型数组，输出，浮点型纵坐标历史插值数值列表
-//   - \param qualities     短整型数组，输出，历史数值品质列表，数据库预定义的品质参见枚举 RTDB_QUALITY
-//   - \remark 用户须保证 datetimes、ms、x、y、qualities 的长度与 count 相符，
+//
+// input:
+//   - handle 连接句柄
+//   - id 标签点标识
+//   - datetimes 表示需要的单调递增时间列表，为距离1970年1月1日08:00:00的秒数
+//   - subtimes 对于时间精度为纳秒的标签点，表示需要的单调递增时间对应的纳秒值；否则忽略。
+//
+// output:
+//   - []float32(xs) 浮点型横坐标历史插值数值列表
+//   - []float32(ys) 浮点型纵坐标历史插值数值列表
+//   - []Quality(qs) 历史数值品质列表，数据库预定义的品质参见枚举 RTDB_QUALITY
 //   - 本接口只对数据类型为 RTDB_COOR 的标签点有效。
 //
-// rtdb_error RTDBAPI_CALLRULE rtdbh_get_timed_coor_values64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32 count, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, rtdb_float32* x, rtdb_float32* y, rtdb_int16* qualities)
-func RawRtdbhGetTimedCoorValues64Warp() {}
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbh_get_timed_coor_values64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32 count, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, rtdb_float32* x, rtdb_float32* y, rtdb_int16* qualities)
+func RawRtdbhGetTimedCoorValues64Warp(handle ConnectHandle, id PointID, datetimes []TimestampType, subtimes []SubtimeType) ([]float32, []float32, []Quality, error) {
+	cHandle := C.rtdb_int32(handle)
+	cId := C.rtdb_int32(id)
+	cCount := C.rtdb_int32(len(datetimes))
+	cDatetimes := (*C.rtdb_timestamp_type)(unsafe.Pointer(&datetimes[0]))
+	cSubtimes := (*C.rtdb_subtime_type)(unsafe.Pointer(&subtimes[0]))
+	xs := make([]float32, cCount)
+	cXs := (*C.rtdb_float32)(unsafe.Pointer(&xs[0]))
+	ys := make([]float32, cCount)
+	cYs := (*C.rtdb_float32)(unsafe.Pointer(&ys[0]))
+	qualities := make([]Quality, cCount)
+	cQualities := (*C.rtdb_int16)(unsafe.Pointer(&qualities[0]))
+	err := C.rtdbh_get_timed_coor_values64_warp(cHandle, cId, cCount, cDatetimes, cSubtimes, cXs, cYs, cQualities)
+	return xs, ys, qualities, RtdbError(err).GoError()
+}
 
 //	RawRtdbhGetInterpoValues64Warp 获取单个标签点一段时间内等间隔历史插值
 //	* \param handle        连接句柄
