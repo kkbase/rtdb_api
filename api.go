@@ -9690,20 +9690,34 @@ func RawRtdbhGetArchivedCoorValuesBackward64Warp(handle ConnectHandle, id PointI
 }
 
 // RawRtdbhGetArchivedValuesInBatches64Warp 开始以分段返回方式读取一段时间内的储存数据
-//   - \param handle        连接句柄
-//   - \param id            整型，输入，标签点标识
-//   - \param datetime1     整型，输入，表示起始时间秒数。如果为 0，表示从存档中最早时间的数据开始读取
-//   - \param ms1           短整型，输入，如果 id 指定的标签点时间精度为纳秒，表示起始时间对应的纳秒；否则忽略
-//   - \param datetime2     整型，输入，表示结束时间秒数。如果为 0，表示读取直至存档中数据的最后时间
-//   - \param ms2           短整型，输入，如果 id 指定的标签点时间精度为纳秒，表示结束时间对应的纳秒；否则忽略
-//   - \param count         整型，输出，返回上述时间范围内的存储值数量
-//   - \param batch_count   整型，输出，每次分段返回的长度，用于继续调用 rtdbh_get_next_archived_values 接口
-//   - \remark 由 datetime1、ms1 表示的时间可以大于 datetime2、ms2 表示的时间，
-//   - 此时前者表示结束时间，后者表示起始时间。
-//   - 本接口对数据类型为 RTDB_COOR、RTDB_BLOB、RTDB_STRING 的标签点无效。
 //
-// rtdb_error RTDBAPI_CALLRULE rtdbh_get_archived_values_in_batches64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime1, rtdb_subtime_type subtime1, rtdb_timestamp_type datetime2, rtdb_subtime_type subtime2, rtdb_int32* count, rtdb_int32* batch_count)
-func RawRtdbhGetArchivedValuesInBatches64Warp() {}
+// input:
+//   - handle 连接句柄
+//   - id 标签点标识
+//   - datetime1 表示起始时间秒数。如果为 0，表示从存档中最早时间的数据开始读取
+//   - ms1 如果 id 指定的标签点时间精度为纳秒，表示起始时间对应的纳秒；否则忽略
+//   - datetime2 表示结束时间秒数。如果为 0，表示读取直至存档中数据的最后时间
+//   - ms2 如果 id 指定的标签点时间精度为纳秒，表示结束时间对应的纳秒；否则忽略
+//   - 备注：本接口对数据类型为 RTDB_COOR、RTDB_BLOB、RTDB_STRING 的标签点无效。
+//
+// output:
+//   - int32(count) 返回上述时间范围内的存储值数量
+//   - int32(batch_count) 每次分段返回的长度，用于继续调用 rtdbh_get_next_archived_values 接口
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbh_get_archived_values_in_batches64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime1, rtdb_subtime_type subtime1, rtdb_timestamp_type datetime2, rtdb_subtime_type subtime2, rtdb_int32* count, rtdb_int32* batch_count)
+func RawRtdbhGetArchivedValuesInBatches64Warp(handle ConnectHandle, id PointID, datetime1 TimestampType, subtime1 SubtimeType, datetime2 TimestampType, subtime2 SubtimeType) (int32, int32, error) {
+	cHandle := C.rtdb_int32(handle)
+	cId := C.rtdb_int32(id)
+	cDatetime1 := C.rtdb_timestamp_type(datetime1)
+	cSubtime1 := C.rtdb_subtime_type(subtime1)
+	cDatetime2 := C.rtdb_timestamp_type(datetime2)
+	cSubtime2 := C.rtdb_subtime_type(subtime2)
+	count := C.rtdb_int32(0)
+	batchCount := C.rtdb_int32(0)
+	err := C.rtdbh_get_archived_values_in_batches64_warp(cHandle, cId, cDatetime1, cSubtime1, cDatetime2, cSubtime2, &count, &batchCount)
+	return int32(count), int32(batchCount), RtdbError(err).GoError()
+}
 
 // RawRtdbhGetNextArchivedValues64Warp 分段读取一段时间内的储存数据
 //   - \param handle        连接句柄
