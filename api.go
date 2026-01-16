@@ -9245,11 +9245,23 @@ func RawRtdbaUpdateArchiveWarp(handle ConnectHandle, path string, file string, r
 }
 
 // RawRtdbaArrangeArchiveWarp 整理存档文件，将同一标签点的数据块存放在一起以提高查询效率。
-// * \param handle     连接句柄
-// * \param path       字符串，输入，文件所在目录路径，必须以"\"或"/"结尾。
-// * \param file       字符串，输入，文件名。
-// rtdb_error RTDBAPI_CALLRULE rtdba_arrange_archive_warp(rtdb_int32 handle, const char *path, const char *file)
-func RawRtdbaArrangeArchiveWarp() {}
+//
+// input:
+//   - handle 连接句柄
+//   - path 文件所在目录路径，必须以"\"或"/"结尾。
+//   - file 文件名。
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdba_arrange_archive_warp(rtdb_int32 handle, const char *path, const char *file)
+func RawRtdbaArrangeArchiveWarp(handle ConnectHandle, path string, file string) error {
+	cHandle := C.rtdb_int32(handle)
+	cPath := C.CString(path)
+	defer C.free(unsafe.Pointer(cPath))
+	cFile := C.CString(file)
+	defer C.free(unsafe.Pointer(cFile))
+	err := C.rtdba_arrange_archive_warp(cHandle, cPath, cFile)
+	return RtdbError(err).GoError()
+}
 
 // RawRtdbaReindexArchiveWarp 为存档文件重新生成索引，用于恢复数据。
 // * \param handle     连接句柄
