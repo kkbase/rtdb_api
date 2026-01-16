@@ -3,6 +3,7 @@ package rtdb_api
 import (
 	"errors"
 	"fmt"
+	"strings"
 	"testing"
 	"time"
 )
@@ -1074,4 +1075,170 @@ func TestPoint2(t *testing.T) {
 		return
 	}
 	fmt.Println(ids, types, classes, precisions, errs)
+}
+
+func TestPerf(t *testing.T) {
+	code := `
+  PFT_CPU_USAGE_OF_LOGGER,            //!< 日志服务CPU使用
+  PFT_MEM_BYTES_OF_LOGGER,            //!< 日志服务内存
+  PFT_VMEM_BYTES_OF_LOGGER,           //!< 日志服务虚拟内存
+  PFT_READ_BYTES_OF_LOGGER,           //!< 日志服务 I/O 读取字节
+  PFT_WRITE_BYTES_OF_LOGGER,          //!< 日志服务 I/O 写入字节
+  PFT_CPU_USAGE_OF_HISTORIAN,         //!< 历史数据服务CPU使用
+  PFT_MEM_BYTES_OF_HISTORIAN,         //!< 历史数据服务内存
+  PFT_VMEM_BYTES_OF_HISTORIAN,        //!< 历史数据服务虚拟内存
+  PFT_READ_BYTES_OF_HISTORIAN,        //!< 历史数据服务 I/O 读取字节
+  PFT_WRITE_BYTES_OF_HISTORIAN,       //!< 历史数据服务 I/O 写入字节
+  PFT_CPU_USAGE_OF_SNAPSHOT,          //!< 快照数据服务CPU使用
+  PFT_MEM_BYTES_OF_SNAPSHOT,          //!< 快照数据服务内存
+  PFT_VMEM_BYTES_OF_SNAPSHOT,         //!< 快照数据服务虚拟内存
+  PFT_READ_BYTES_OF_SNAPSHOT,         //!< 快照数据服务 I/O 读取字节
+  PFT_WRITE_BYTES_OF_SNAPSHOT,        //!< 快照数据服务 I/O 写入字节
+  PFT_CPU_USAGE_OF_EQUATION,          //!< 实时方程式服务CPU使用
+  PFT_MEM_BYTES_OF_EQUATION,          //!< 实时方程式服务内存
+  PFT_VMEM_BYTES_OF_EQUATION,         //!< 实时方程式服务虚拟内存
+  PFT_READ_BYTES_OF_EQUATION,         //!< 实时方程式服务 I/O 读取字节
+  PFT_WRITE_BYTES_OF_EQUATION,        //!< 实时方程式服务 I/O 写入字节
+  PFT_CPU_USAGE_OF_BASE,              //!< 标签点信息服务CPU使用
+  PFT_MEM_BYTES_OF_BASE,              //!< 标签点信息服务内存
+  PFT_VMEM_BYTES_OF_BASE,             //!< 标签点信息服务虚拟内存
+  PFT_READ_BYTES_OF_BASE,             //!< 标签点信息服务 I/O 读取字节
+  PFT_WRITE_BYTES_OF_BASE,            //!< 标签点信息服务 I/O 写入字节
+  PFT_CPU_USAGE_OF_SERVER,            //!< 网络服务CPU使用
+  PFT_MEM_BYTES_OF_SERVER,            //!< 网络服务内存
+  PFT_VMEM_BYTES_OF_SERVER,           //!< 网络服务虚拟内存
+  PFT_READ_BYTES_OF_SERVER,           //!< 网络服务 I/O 读取字节
+  PFT_WRITE_BYTES_OF_SERVER,          //!< 网络服务 I/O 写入字节
+  PFT_ARV_ASYNC_QUEUE,                //!< 历史数据队列地址
+  PFT_ARV_ASYNC_QUEUE_USAGE,          //!< 历史数据队列使用率
+  PFT_ARVEX_ASYNC_QUEUE,              //!< 补历史数据队列地址
+  PFT_ARVEX_ASYNC_QUEUE_USAGE,        //!< 补历史数据队列使用率
+  PFT_EVENTS_INPUT_RATE,              //!< 普通事件入库速度（KB/秒）
+  PFT_EVENTS_OUTPUT_RATE,             //!< 普通事件归档速度（KB/秒）
+  PFT_FILL_IN_INPUT_RATE,             //!< 补历史事件入库速度（KB/秒）
+  PFT_FILL_IN_OUTPUT_RATE,            //!< 补历史事件归档速度（KB/秒）
+  PFT_ARV_CACHE_USAGE,                //!< 历史数据缓存使用率
+  PFT_ARVEX_CACHE_USAGE,              //!< 补历史数据缓存使用率
+  PFT_MIRROR_SNAPSHOTS_QUEUE,         //!< 快照数据的镜像队列地址
+  PFT_MIRROR_SNAPSHOTS_QUEUE_USAGE,   //!< 快照数据的镜像队列使用率
+  PFT_ARVEX_BLOB_ASYNC_QUEUE,         //!< str、blob补历史数据队列地址
+  PFT_ARVEX_BLOB_ASYNC_QUEUE_USAGE,   //!< str、blob补历史数据队列使用率
+  PFT_ARVEX_BLOB_CACHE_USAGE,         //!< str、blob补历史数据缓存使用率
+  PFT_MIRROR_BUFFER_SIZE,             //!< 快照数据的镜像缓存文件
+  PFT_CLUTTER_POOL_USAGE,             //!< 消息交换池利用率
+  PFT_MAX_BLOCK_IN_CLUTTER_POOL,      //!< 消息交换池的最大可用额度
+  PFT_ARV_ARCHIVED_TIME,              //!< 历史数据归档耗时
+  PFT_ARVEX_ARCHIVED_TIME,            //!< 补历史数据归档耗时
+  PFT_ARVEX_BLOB_ARCHIVED_TIME,       //!< str、blob补历史数据归档耗时
+  PFT_ARV_ARCHIVED_PAGE_COUNT,        //!< 历史数据归档的数据页数量
+  PFT_ARVEX_ARCHIVED_PAGE_COUNT,      //!< 补历史数据归档的数据页数量
+  PFT_ARVEX_BLOB_ARCHIVED_PAGE_COUNT, //!< str、blob补历史数据归档的数据页数量
+  PFT_MIRROR_ARV_VALUES_QUEUE,        //!< 补写历史数据的镜像队列地址
+  PFT_MIRROR_ARV_VALUES_QUEUE_USAGE,  //!< 补写历史数据的镜像队列使用率
+  PFT_MIRROR_ARV_BUFFER_SIZE,         //!< 补写历史数据的镜像缓存文件
+  PFT_ARV_WRITE_COUNT,                //!< 历史数据归档写磁盘次数
+  PFT_ARV_READ_COUNT,                 //!< 历史数据归档读磁盘次数
+  PFT_ARV_WRITE_TIME,                 //!< 历史数据归档写磁盘时间
+  PFT_ARV_READ_TIME,                  //!< 历史数据归档读磁盘时间
+  PFT_ARV_INDEX_WRITE_COUNT,          //!< 历史数据归档写索引次数
+  PFT_ARV_INDEX_READ_COUNT,           //!< 历史数据归档读索引次数
+  PFT_ARV_INDEX_WRITE_TIME,           //!< 历史数据归档写索引时间
+  PFT_ARV_INDEX_READ_TIME,            //!< 历史数据归档读索引时间
+  PFT_ARV_ARC_LIST_LOCK_TIME,         //!< 历史数据归档列表锁时间
+  PFT_ARV_ARC_LOCK_TIME,              //!< 历史数据归档文件锁时间
+  PFT_ARV_INDEX_LOCK_TIME,            //!< 历史数据归档索引锁时间
+  PFT_ARV_TOTAL_LOCK_TIME,            //!< 历史数据归档锁总时间
+  PFT_ARV_WRITE_SIZE,                 //!< 历史数据归档写磁盘数据量
+  PFT_ARV_READ_SIZE,                  //!< 历史数据归档读磁盘数据量
+  PFT_ARV_WRITE_REAL_SIZE,            //!< 历史数据归档写磁盘有效数据量
+  PFT_ARV_READ_REAL_SIZE,             //!< 历史数据归档读磁盘有效数据量
+  PFT_ARVEX_WRITE_COUNT,              //!< 补历史数据归档写磁盘次数
+  PFT_ARVEX_READ_COUNT,               //!< 补历史数据归档读磁盘次数
+  PFT_ARVEX_WRITE_TIME,               //!< 补历史数据归档写磁盘时间
+  PFT_ARVEX_READ_TIME,                //!< 补历史数据归档读磁盘时间
+  PFT_ARVEX_INDEX_WRITE_COUNT,        //!< 补历史数据归档写索引次数
+  PFT_ARVEX_INDEX_READ_COUNT,         //!< 补历史数据归档读索引次数
+  PFT_ARVEX_INDEX_WRITE_TIME,         //!< 补历史数据归档写索引时间
+  PFT_ARVEX_INDEX_READ_TIME,          //!< 补历史数据归档读索引时间
+  PFT_ARVEX_ARC_LIST_LOCK_TIME,       //!< 补历史数据归档列表锁时间
+  PFT_ARVEX_ARC_LOCK_TIME,            //!< 补历史数据归档文件锁时间
+  PFT_ARVEX_INDEX_LOCK_TIME,          //!< 补历史数据归档索引锁时间
+  PFT_ARVEX_TOTAL_LOCK_TIME,          //!< 补历史数据归档锁总时间
+  PFT_ARVEX_WRITE_SIZE,               //!< 补历史数据归档写磁盘数据量
+  PFT_ARVEX_READ_SIZE,                //!< 补历史数据归档读磁盘数据量
+  PFT_ARVEX_WRITE_REAL_SIZE,          //!< 补历史数据归档写磁盘有效数据量
+  PFT_ARVEX_READ_REAL_SIZE,           //!< 补历史数据归档读磁盘有效数据量
+  PFT_PLOT_POOL_POINT_COUNT,          //!< 曲线缓存标签点数量
+  PFT_PLOT_POOL_WEIGHTED_POINT_COUNT, //!< 曲线缓存权重点数量
+  PFT_PLOT_POOL_TOTAL_MEM_SIZE,       //!< 曲线缓存总内存数
+  PFT_PLOT_POOL_CACHED_HIT_PERCENT,   //!< 曲线缓存命中率
+  PFT_OS_CPU_USAGE,              //!< 数据库所在操作系统的CPU使用率
+  PFT_OS_MEM_SIZE,                    //!< 数据库所在操作系统的物理内存大小，单位MB
+  PFT_OS_MEM_USAGE,                   //!< 数据库所在操作系统的物理内存使用率
+  PFT_QUERY_POOL_WAIT_TASKS_SIZE,     //!< 查询线程池中等待执行的任务数
+  PFT_MIRROR_ENQUEUE,                 //!< 镜像每秒入队的数量，单位字节
+  PFT_MIRROR_OUTQUEUE,                //!< 镜像每秒出对的数量，单位字节
+  PFT_MIRROR_SEND_CPRS,               //!< 镜像每秒压缩的数量，单位字节
+  PFT_MIRROR_RECV_CPRS,               //!< 镜像每秒收到的压缩数量，单位字节
+  PFT_MIRROR_RECV_UNCPRS,             //!< 镜像每秒解压缩的数量，单位字节
+  PFT_MIRROR_CPRS_SPAN,               //!< 镜像报文每秒的压缩耗时总和，单位毫秒
+  PFT_MIRROR_COMPRESS_RATE,			  //!< 1秒内镜像的压缩率
+  PFT_API_CPRS_RATE,                  //!< API报文压缩率
+  PFT_SERVER_CPRS_RATE,               //!< Server报文压缩率
+  PFT_TAG_SUBSCRIBE_CUSTOMER_COUNT,                 //!< 标签点信息订阅客户端数量
+  PFT_TAG_SUBSCRIBE_SEND_EVENT_COUNT,               //!< 标签点信息订阅发送事件数量
+  PFT_SNAP_SUBSCRIBE_CUSTOMER_COUNT,                //!< 快照信息订阅客户端数量
+  PFT_SNAP_SUBSCRIBE_SEND_EVENT_COUNT,              //!< 快照信息订阅发送事件数量
+  PFT_SNAP_SUBSCRIBE_POINT_COUNT,                   //!< 快照信息订阅标签点数量
+  PFT_CONNECT_SUBSCRIBE_CUSTOMER_COUNT,             //!< API监视订阅客户端数量
+  PFT_CONNECT_SUBSCRIBE_SEND_EVENT_COUNT,           //!< API监视订阅发送事件数量
+  PFT_NAMED_TYPE_CREATE_SUBSCRIBE_CUSTOMER_COUNT,   //!< 创建自定义类型订阅客户端数量
+  PFT_NAMED_TYPE_CREATE_SEND_EVENT_COUNT,           //!< 创建自定义类型订阅发送事件数量
+  PFT_NAMED_TYPE_REMOVE_SUBSCRIBE_CUSTOMER_COUNT,   //!< 删除自定义类型订阅客户端数量
+  PFT_NAMED_TYPE_REMOVE_SEND_EVENT_COUNT,           //!< 删除自定义类型订阅发送事件数量
+  PFT_DOUBLE_ACTIVE_SYNC_SEND_COUNT,                //!< 双活同步每秒同步发送的数据量
+  PFT_DOUBLE_ACTIVE_SYNC_RECEIVE_COUNT,             //!< 双活同步每秒同步接授的数据量
+  PFT_IS_RECEIVING_NORMAL_DATA_FROM_PEER,           //!< 双活系统正在接收普通类型数据
+  PFT_IS_RECEIVING_BLOB_DATA_FROM_PEER,             //!< 双活系统正在接收blob类型数据
+  PFT_REPLICATOR_BUFFER_BLOCK_COUNT,                //!< 双活本地的同步历史缓存还有多少数据块
+  PFT_REPLICATOR_EX_BUFFER_BLOCK_COUNT,             //!< 双活本地的同步补历史缓存还有多少数据块
+  PFT_REPLICATOR_BLOB_BUFFER_BLOCK_COUNT,           //!< 双活本地的同步历史缓存(blob string 数据)还有多少数据块
+  PFT_REPLICATOR_BLOB_EX_BUFFER_BLOCK_COUNT,        //!< 双活本地的同步补历史缓存(blob string 数据)还有多少数据块
+  PFT_SNAPSHOT_PUT_RATE,                            //!< 每秒写入快照记录数，单位 条
+  PFT_SNAPSHOT_GET_RATE,                            //!< 每秒读取快照记录数，单位 条
+  PFT_HISTORIAN_PUT_RATE,                           //!< 每秒写入历史记录数，单位 条
+  PFT_HISTORIAN_GET_RATE,                           //!< 每秒读取历史记录数，单位 条
+  PFT_HISTORIAN_WRITE_RECORD_COUNT,                 //!< 每秒写入历史数据块数
+  PFT_HISTORIAN_READ_RECORD_COUNT,                  //!< 每秒读取历史数据块数
+  PFT_SERVER_NETWORK_READ_BYTES,                    //!< 网络服务网络 IO 每秒读取字节数
+  PFT_SERVER_NETWORK_WRITE_BYTES,                   //!< 网络服务网络 IO 每秒写入字节数
+  PFT_END,                            //!< 信息数量
+`
+
+	lines := strings.Split(code, "\n")
+	for _, line := range lines {
+		if strings.TrimSpace(line) == "" {
+			continue
+		}
+		sp1 := strings.Split(line, ",")
+		cName := strings.TrimSpace(sp1[0])
+
+		sp2 := strings.Split(line, "//!<")
+		cDesc := strings.TrimSpace(sp2[1])
+		goName := SnakeToPascal(cName)
+		fmt.Printf("// %s %s\n", goName, cDesc)
+		fmt.Printf("%s = RtdbPerfTagID(C.%s)\n\n", goName, cName)
+	}
+}
+
+func SnakeToPascal(s string) string {
+	parts := strings.Split(s, "_")
+	for i, p := range parts {
+		if len(p) == 0 {
+			continue
+		}
+		p = strings.ToLower(p)
+		parts[i] = strings.ToUpper(p[:1]) + p[1:]
+	}
+	return strings.Join(parts, "")
 }

@@ -5728,6 +5728,413 @@ const (
 	RtdbProcessBase = RtdbProcess(C.RTDB_PROCESS_BASE)
 )
 
+// RtdbPerfTagID 性能计数点的ID
+type RtdbPerfTagID int32
+
+const (
+	// PftCpuUsageOfLogger 日志服务CPU使用
+	PftCpuUsageOfLogger = RtdbPerfTagID(C.PFT_CPU_USAGE_OF_LOGGER)
+
+	// PftMemBytesOfLogger 日志服务内存
+	PftMemBytesOfLogger = RtdbPerfTagID(C.PFT_MEM_BYTES_OF_LOGGER)
+
+	// PftVmemBytesOfLogger 日志服务虚拟内存
+	PftVmemBytesOfLogger = RtdbPerfTagID(C.PFT_VMEM_BYTES_OF_LOGGER)
+
+	// PftReadBytesOfLogger 日志服务 I/O 读取字节
+	PftReadBytesOfLogger = RtdbPerfTagID(C.PFT_READ_BYTES_OF_LOGGER)
+
+	// PftWriteBytesOfLogger 日志服务 I/O 写入字节
+	PftWriteBytesOfLogger = RtdbPerfTagID(C.PFT_WRITE_BYTES_OF_LOGGER)
+
+	// PftCpuUsageOfHistorian 历史数据服务CPU使用
+	PftCpuUsageOfHistorian = RtdbPerfTagID(C.PFT_CPU_USAGE_OF_HISTORIAN)
+
+	// PftMemBytesOfHistorian 历史数据服务内存
+	PftMemBytesOfHistorian = RtdbPerfTagID(C.PFT_MEM_BYTES_OF_HISTORIAN)
+
+	// PftVmemBytesOfHistorian 历史数据服务虚拟内存
+	PftVmemBytesOfHistorian = RtdbPerfTagID(C.PFT_VMEM_BYTES_OF_HISTORIAN)
+
+	// PftReadBytesOfHistorian 历史数据服务 I/O 读取字节
+	PftReadBytesOfHistorian = RtdbPerfTagID(C.PFT_READ_BYTES_OF_HISTORIAN)
+
+	// PftWriteBytesOfHistorian 历史数据服务 I/O 写入字节
+	PftWriteBytesOfHistorian = RtdbPerfTagID(C.PFT_WRITE_BYTES_OF_HISTORIAN)
+
+	// PftCpuUsageOfSnapshot 快照数据服务CPU使用
+	PftCpuUsageOfSnapshot = RtdbPerfTagID(C.PFT_CPU_USAGE_OF_SNAPSHOT)
+
+	// PftMemBytesOfSnapshot 快照数据服务内存
+	PftMemBytesOfSnapshot = RtdbPerfTagID(C.PFT_MEM_BYTES_OF_SNAPSHOT)
+
+	// PftVmemBytesOfSnapshot 快照数据服务虚拟内存
+	PftVmemBytesOfSnapshot = RtdbPerfTagID(C.PFT_VMEM_BYTES_OF_SNAPSHOT)
+
+	// PftReadBytesOfSnapshot 快照数据服务 I/O 读取字节
+	PftReadBytesOfSnapshot = RtdbPerfTagID(C.PFT_READ_BYTES_OF_SNAPSHOT)
+
+	// PftWriteBytesOfSnapshot 快照数据服务 I/O 写入字节
+	PftWriteBytesOfSnapshot = RtdbPerfTagID(C.PFT_WRITE_BYTES_OF_SNAPSHOT)
+
+	// PftCpuUsageOfEquation 实时方程式服务CPU使用
+	PftCpuUsageOfEquation = RtdbPerfTagID(C.PFT_CPU_USAGE_OF_EQUATION)
+
+	// PftMemBytesOfEquation 实时方程式服务内存
+	PftMemBytesOfEquation = RtdbPerfTagID(C.PFT_MEM_BYTES_OF_EQUATION)
+
+	// PftVmemBytesOfEquation 实时方程式服务虚拟内存
+	PftVmemBytesOfEquation = RtdbPerfTagID(C.PFT_VMEM_BYTES_OF_EQUATION)
+
+	// PftReadBytesOfEquation 实时方程式服务 I/O 读取字节
+	PftReadBytesOfEquation = RtdbPerfTagID(C.PFT_READ_BYTES_OF_EQUATION)
+
+	// PftWriteBytesOfEquation 实时方程式服务 I/O 写入字节
+	PftWriteBytesOfEquation = RtdbPerfTagID(C.PFT_WRITE_BYTES_OF_EQUATION)
+
+	// PftCpuUsageOfBase 标签点信息服务CPU使用
+	PftCpuUsageOfBase = RtdbPerfTagID(C.PFT_CPU_USAGE_OF_BASE)
+
+	// PftMemBytesOfBase 标签点信息服务内存
+	PftMemBytesOfBase = RtdbPerfTagID(C.PFT_MEM_BYTES_OF_BASE)
+
+	// PftVmemBytesOfBase 标签点信息服务虚拟内存
+	PftVmemBytesOfBase = RtdbPerfTagID(C.PFT_VMEM_BYTES_OF_BASE)
+
+	// PftReadBytesOfBase 标签点信息服务 I/O 读取字节
+	PftReadBytesOfBase = RtdbPerfTagID(C.PFT_READ_BYTES_OF_BASE)
+
+	// PftWriteBytesOfBase 标签点信息服务 I/O 写入字节
+	PftWriteBytesOfBase = RtdbPerfTagID(C.PFT_WRITE_BYTES_OF_BASE)
+
+	// PftCpuUsageOfServer 网络服务CPU使用
+	PftCpuUsageOfServer = RtdbPerfTagID(C.PFT_CPU_USAGE_OF_SERVER)
+
+	// PftMemBytesOfServer 网络服务内存
+	PftMemBytesOfServer = RtdbPerfTagID(C.PFT_MEM_BYTES_OF_SERVER)
+
+	// PftVmemBytesOfServer 网络服务虚拟内存
+	PftVmemBytesOfServer = RtdbPerfTagID(C.PFT_VMEM_BYTES_OF_SERVER)
+
+	// PftReadBytesOfServer 网络服务 I/O 读取字节
+	PftReadBytesOfServer = RtdbPerfTagID(C.PFT_READ_BYTES_OF_SERVER)
+
+	// PftWriteBytesOfServer 网络服务 I/O 写入字节
+	PftWriteBytesOfServer = RtdbPerfTagID(C.PFT_WRITE_BYTES_OF_SERVER)
+
+	// PftArvAsyncQueue 历史数据队列地址
+	PftArvAsyncQueue = RtdbPerfTagID(C.PFT_ARV_ASYNC_QUEUE)
+
+	// PftArvAsyncQueueUsage 历史数据队列使用率
+	PftArvAsyncQueueUsage = RtdbPerfTagID(C.PFT_ARV_ASYNC_QUEUE_USAGE)
+
+	// PftArvexAsyncQueue 补历史数据队列地址
+	PftArvexAsyncQueue = RtdbPerfTagID(C.PFT_ARVEX_ASYNC_QUEUE)
+
+	// PftArvexAsyncQueueUsage 补历史数据队列使用率
+	PftArvexAsyncQueueUsage = RtdbPerfTagID(C.PFT_ARVEX_ASYNC_QUEUE_USAGE)
+
+	// PftEventsInputRate 普通事件入库速度（KB/秒）
+	PftEventsInputRate = RtdbPerfTagID(C.PFT_EVENTS_INPUT_RATE)
+
+	// PftEventsOutputRate 普通事件归档速度（KB/秒）
+	PftEventsOutputRate = RtdbPerfTagID(C.PFT_EVENTS_OUTPUT_RATE)
+
+	// PftFillInInputRate 补历史事件入库速度（KB/秒）
+	PftFillInInputRate = RtdbPerfTagID(C.PFT_FILL_IN_INPUT_RATE)
+
+	// PftFillInOutputRate 补历史事件归档速度（KB/秒）
+	PftFillInOutputRate = RtdbPerfTagID(C.PFT_FILL_IN_OUTPUT_RATE)
+
+	// PftArvCacheUsage 历史数据缓存使用率
+	PftArvCacheUsage = RtdbPerfTagID(C.PFT_ARV_CACHE_USAGE)
+
+	// PftArvexCacheUsage 补历史数据缓存使用率
+	PftArvexCacheUsage = RtdbPerfTagID(C.PFT_ARVEX_CACHE_USAGE)
+
+	// PftMirrorSnapshotsQueue 快照数据的镜像队列地址
+	PftMirrorSnapshotsQueue = RtdbPerfTagID(C.PFT_MIRROR_SNAPSHOTS_QUEUE)
+
+	// PftMirrorSnapshotsQueueUsage 快照数据的镜像队列使用率
+	PftMirrorSnapshotsQueueUsage = RtdbPerfTagID(C.PFT_MIRROR_SNAPSHOTS_QUEUE_USAGE)
+
+	// PftArvexBlobAsyncQueue str、blob补历史数据队列地址
+	PftArvexBlobAsyncQueue = RtdbPerfTagID(C.PFT_ARVEX_BLOB_ASYNC_QUEUE)
+
+	// PftArvexBlobAsyncQueueUsage str、blob补历史数据队列使用率
+	PftArvexBlobAsyncQueueUsage = RtdbPerfTagID(C.PFT_ARVEX_BLOB_ASYNC_QUEUE_USAGE)
+
+	// PftArvexBlobCacheUsage str、blob补历史数据缓存使用率
+	PftArvexBlobCacheUsage = RtdbPerfTagID(C.PFT_ARVEX_BLOB_CACHE_USAGE)
+
+	// PftMirrorBufferSize 快照数据的镜像缓存文件
+	PftMirrorBufferSize = RtdbPerfTagID(C.PFT_MIRROR_BUFFER_SIZE)
+
+	// PftClutterPoolUsage 消息交换池利用率
+	PftClutterPoolUsage = RtdbPerfTagID(C.PFT_CLUTTER_POOL_USAGE)
+
+	// PftMaxBlockInClutterPool 消息交换池的最大可用额度
+	PftMaxBlockInClutterPool = RtdbPerfTagID(C.PFT_MAX_BLOCK_IN_CLUTTER_POOL)
+
+	// PftArvArchivedTime 历史数据归档耗时
+	PftArvArchivedTime = RtdbPerfTagID(C.PFT_ARV_ARCHIVED_TIME)
+
+	// PftArvexArchivedTime 补历史数据归档耗时
+	PftArvexArchivedTime = RtdbPerfTagID(C.PFT_ARVEX_ARCHIVED_TIME)
+
+	// PftArvexBlobArchivedTime str、blob补历史数据归档耗时
+	PftArvexBlobArchivedTime = RtdbPerfTagID(C.PFT_ARVEX_BLOB_ARCHIVED_TIME)
+
+	// PftArvArchivedPageCount 历史数据归档的数据页数量
+	PftArvArchivedPageCount = RtdbPerfTagID(C.PFT_ARV_ARCHIVED_PAGE_COUNT)
+
+	// PftArvexArchivedPageCount 补历史数据归档的数据页数量
+	PftArvexArchivedPageCount = RtdbPerfTagID(C.PFT_ARVEX_ARCHIVED_PAGE_COUNT)
+
+	// PftArvexBlobArchivedPageCount str、blob补历史数据归档的数据页数量
+	PftArvexBlobArchivedPageCount = RtdbPerfTagID(C.PFT_ARVEX_BLOB_ARCHIVED_PAGE_COUNT)
+
+	// PftMirrorArvValuesQueue 补写历史数据的镜像队列地址
+	PftMirrorArvValuesQueue = RtdbPerfTagID(C.PFT_MIRROR_ARV_VALUES_QUEUE)
+
+	// PftMirrorArvValuesQueueUsage 补写历史数据的镜像队列使用率
+	PftMirrorArvValuesQueueUsage = RtdbPerfTagID(C.PFT_MIRROR_ARV_VALUES_QUEUE_USAGE)
+
+	// PftMirrorArvBufferSize 补写历史数据的镜像缓存文件
+	PftMirrorArvBufferSize = RtdbPerfTagID(C.PFT_MIRROR_ARV_BUFFER_SIZE)
+
+	// PftArvWriteCount 历史数据归档写磁盘次数
+	PftArvWriteCount = RtdbPerfTagID(C.PFT_ARV_WRITE_COUNT)
+
+	// PftArvReadCount 历史数据归档读磁盘次数
+	PftArvReadCount = RtdbPerfTagID(C.PFT_ARV_READ_COUNT)
+
+	// PftArvWriteTime 历史数据归档写磁盘时间
+	PftArvWriteTime = RtdbPerfTagID(C.PFT_ARV_WRITE_TIME)
+
+	// PftArvReadTime 历史数据归档读磁盘时间
+	PftArvReadTime = RtdbPerfTagID(C.PFT_ARV_READ_TIME)
+
+	// PftArvIndexWriteCount 历史数据归档写索引次数
+	PftArvIndexWriteCount = RtdbPerfTagID(C.PFT_ARV_INDEX_WRITE_COUNT)
+
+	// PftArvIndexReadCount 历史数据归档读索引次数
+	PftArvIndexReadCount = RtdbPerfTagID(C.PFT_ARV_INDEX_READ_COUNT)
+
+	// PftArvIndexWriteTime 历史数据归档写索引时间
+	PftArvIndexWriteTime = RtdbPerfTagID(C.PFT_ARV_INDEX_WRITE_TIME)
+
+	// PftArvIndexReadTime 历史数据归档读索引时间
+	PftArvIndexReadTime = RtdbPerfTagID(C.PFT_ARV_INDEX_READ_TIME)
+
+	// PftArvArcListLockTime 历史数据归档列表锁时间
+	PftArvArcListLockTime = RtdbPerfTagID(C.PFT_ARV_ARC_LIST_LOCK_TIME)
+
+	// PftArvArcLockTime 历史数据归档文件锁时间
+	PftArvArcLockTime = RtdbPerfTagID(C.PFT_ARV_ARC_LOCK_TIME)
+
+	// PftArvIndexLockTime 历史数据归档索引锁时间
+	PftArvIndexLockTime = RtdbPerfTagID(C.PFT_ARV_INDEX_LOCK_TIME)
+
+	// PftArvTotalLockTime 历史数据归档锁总时间
+	PftArvTotalLockTime = RtdbPerfTagID(C.PFT_ARV_TOTAL_LOCK_TIME)
+
+	// PftArvWriteSize 历史数据归档写磁盘数据量
+	PftArvWriteSize = RtdbPerfTagID(C.PFT_ARV_WRITE_SIZE)
+
+	// PftArvReadSize 历史数据归档读磁盘数据量
+	PftArvReadSize = RtdbPerfTagID(C.PFT_ARV_READ_SIZE)
+
+	// PftArvWriteRealSize 历史数据归档写磁盘有效数据量
+	PftArvWriteRealSize = RtdbPerfTagID(C.PFT_ARV_WRITE_REAL_SIZE)
+
+	// PftArvReadRealSize 历史数据归档读磁盘有效数据量
+	PftArvReadRealSize = RtdbPerfTagID(C.PFT_ARV_READ_REAL_SIZE)
+
+	// PftArvexWriteCount 补历史数据归档写磁盘次数
+	PftArvexWriteCount = RtdbPerfTagID(C.PFT_ARVEX_WRITE_COUNT)
+
+	// PftArvexReadCount 补历史数据归档读磁盘次数
+	PftArvexReadCount = RtdbPerfTagID(C.PFT_ARVEX_READ_COUNT)
+
+	// PftArvexWriteTime 补历史数据归档写磁盘时间
+	PftArvexWriteTime = RtdbPerfTagID(C.PFT_ARVEX_WRITE_TIME)
+
+	// PftArvexReadTime 补历史数据归档读磁盘时间
+	PftArvexReadTime = RtdbPerfTagID(C.PFT_ARVEX_READ_TIME)
+
+	// PftArvexIndexWriteCount 补历史数据归档写索引次数
+	PftArvexIndexWriteCount = RtdbPerfTagID(C.PFT_ARVEX_INDEX_WRITE_COUNT)
+
+	// PftArvexIndexReadCount 补历史数据归档读索引次数
+	PftArvexIndexReadCount = RtdbPerfTagID(C.PFT_ARVEX_INDEX_READ_COUNT)
+
+	// PftArvexIndexWriteTime 补历史数据归档写索引时间
+	PftArvexIndexWriteTime = RtdbPerfTagID(C.PFT_ARVEX_INDEX_WRITE_TIME)
+
+	// PftArvexIndexReadTime 补历史数据归档读索引时间
+	PftArvexIndexReadTime = RtdbPerfTagID(C.PFT_ARVEX_INDEX_READ_TIME)
+
+	// PftArvexArcListLockTime 补历史数据归档列表锁时间
+	PftArvexArcListLockTime = RtdbPerfTagID(C.PFT_ARVEX_ARC_LIST_LOCK_TIME)
+
+	// PftArvexArcLockTime 补历史数据归档文件锁时间
+	PftArvexArcLockTime = RtdbPerfTagID(C.PFT_ARVEX_ARC_LOCK_TIME)
+
+	// PftArvexIndexLockTime 补历史数据归档索引锁时间
+	PftArvexIndexLockTime = RtdbPerfTagID(C.PFT_ARVEX_INDEX_LOCK_TIME)
+
+	// PftArvexTotalLockTime 补历史数据归档锁总时间
+	PftArvexTotalLockTime = RtdbPerfTagID(C.PFT_ARVEX_TOTAL_LOCK_TIME)
+
+	// PftArvexWriteSize 补历史数据归档写磁盘数据量
+	PftArvexWriteSize = RtdbPerfTagID(C.PFT_ARVEX_WRITE_SIZE)
+
+	// PftArvexReadSize 补历史数据归档读磁盘数据量
+	PftArvexReadSize = RtdbPerfTagID(C.PFT_ARVEX_READ_SIZE)
+
+	// PftArvexWriteRealSize 补历史数据归档写磁盘有效数据量
+	PftArvexWriteRealSize = RtdbPerfTagID(C.PFT_ARVEX_WRITE_REAL_SIZE)
+
+	// PftArvexReadRealSize 补历史数据归档读磁盘有效数据量
+	PftArvexReadRealSize = RtdbPerfTagID(C.PFT_ARVEX_READ_REAL_SIZE)
+
+	// PftPlotPoolPointCount 曲线缓存标签点数量
+	PftPlotPoolPointCount = RtdbPerfTagID(C.PFT_PLOT_POOL_POINT_COUNT)
+
+	// PftPlotPoolWeightedPointCount 曲线缓存权重点数量
+	PftPlotPoolWeightedPointCount = RtdbPerfTagID(C.PFT_PLOT_POOL_WEIGHTED_POINT_COUNT)
+
+	// PftPlotPoolTotalMemSize 曲线缓存总内存数
+	PftPlotPoolTotalMemSize = RtdbPerfTagID(C.PFT_PLOT_POOL_TOTAL_MEM_SIZE)
+
+	// PftPlotPoolCachedHitPercent 曲线缓存命中率
+	PftPlotPoolCachedHitPercent = RtdbPerfTagID(C.PFT_PLOT_POOL_CACHED_HIT_PERCENT)
+
+	// PftOsCpuUsage 数据库所在操作系统的CPU使用率
+	PftOsCpuUsage = RtdbPerfTagID(C.PFT_OS_CPU_USAGE)
+
+	// PftOsMemSize 数据库所在操作系统的物理内存大小，单位MB
+	PftOsMemSize = RtdbPerfTagID(C.PFT_OS_MEM_SIZE)
+
+	// PftOsMemUsage 数据库所在操作系统的物理内存使用率
+	PftOsMemUsage = RtdbPerfTagID(C.PFT_OS_MEM_USAGE)
+
+	// PftQueryPoolWaitTasksSize 查询线程池中等待执行的任务数
+	PftQueryPoolWaitTasksSize = RtdbPerfTagID(C.PFT_QUERY_POOL_WAIT_TASKS_SIZE)
+
+	// PftMirrorEnqueue 镜像每秒入队的数量，单位字节
+	PftMirrorEnqueue = RtdbPerfTagID(C.PFT_MIRROR_ENQUEUE)
+
+	// PftMirrorOutqueue 镜像每秒出对的数量，单位字节
+	PftMirrorOutqueue = RtdbPerfTagID(C.PFT_MIRROR_OUTQUEUE)
+
+	// PftMirrorSendCprs 镜像每秒压缩的数量，单位字节
+	PftMirrorSendCprs = RtdbPerfTagID(C.PFT_MIRROR_SEND_CPRS)
+
+	// PftMirrorRecvCprs 镜像每秒收到的压缩数量，单位字节
+	PftMirrorRecvCprs = RtdbPerfTagID(C.PFT_MIRROR_RECV_CPRS)
+
+	// PftMirrorRecvUncprs 镜像每秒解压缩的数量，单位字节
+	PftMirrorRecvUncprs = RtdbPerfTagID(C.PFT_MIRROR_RECV_UNCPRS)
+
+	// PftMirrorCprsSpan 镜像报文每秒的压缩耗时总和，单位毫秒
+	PftMirrorCprsSpan = RtdbPerfTagID(C.PFT_MIRROR_CPRS_SPAN)
+
+	// PftMirrorCompressRate 1秒内镜像的压缩率
+	PftMirrorCompressRate = RtdbPerfTagID(C.PFT_MIRROR_COMPRESS_RATE)
+
+	// PftApiCprsRate API报文压缩率
+	PftApiCprsRate = RtdbPerfTagID(C.PFT_API_CPRS_RATE)
+
+	// PftServerCprsRate Server报文压缩率
+	PftServerCprsRate = RtdbPerfTagID(C.PFT_SERVER_CPRS_RATE)
+
+	// PftTagSubscribeCustomerCount 标签点信息订阅客户端数量
+	PftTagSubscribeCustomerCount = RtdbPerfTagID(C.PFT_TAG_SUBSCRIBE_CUSTOMER_COUNT)
+
+	// PftTagSubscribeSendEventCount 标签点信息订阅发送事件数量
+	PftTagSubscribeSendEventCount = RtdbPerfTagID(C.PFT_TAG_SUBSCRIBE_SEND_EVENT_COUNT)
+
+	// PftSnapSubscribeCustomerCount 快照信息订阅客户端数量
+	PftSnapSubscribeCustomerCount = RtdbPerfTagID(C.PFT_SNAP_SUBSCRIBE_CUSTOMER_COUNT)
+
+	// PftSnapSubscribeSendEventCount 快照信息订阅发送事件数量
+	PftSnapSubscribeSendEventCount = RtdbPerfTagID(C.PFT_SNAP_SUBSCRIBE_SEND_EVENT_COUNT)
+
+	// PftSnapSubscribePointCount 快照信息订阅标签点数量
+	PftSnapSubscribePointCount = RtdbPerfTagID(C.PFT_SNAP_SUBSCRIBE_POINT_COUNT)
+
+	// PftConnectSubscribeCustomerCount API监视订阅客户端数量
+	PftConnectSubscribeCustomerCount = RtdbPerfTagID(C.PFT_CONNECT_SUBSCRIBE_CUSTOMER_COUNT)
+
+	// PftConnectSubscribeSendEventCount API监视订阅发送事件数量
+	PftConnectSubscribeSendEventCount = RtdbPerfTagID(C.PFT_CONNECT_SUBSCRIBE_SEND_EVENT_COUNT)
+
+	// PftNamedTypeCreateSubscribeCustomerCount 创建自定义类型订阅客户端数量
+	PftNamedTypeCreateSubscribeCustomerCount = RtdbPerfTagID(C.PFT_NAMED_TYPE_CREATE_SUBSCRIBE_CUSTOMER_COUNT)
+
+	// PftNamedTypeCreateSendEventCount 创建自定义类型订阅发送事件数量
+	PftNamedTypeCreateSendEventCount = RtdbPerfTagID(C.PFT_NAMED_TYPE_CREATE_SEND_EVENT_COUNT)
+
+	// PftNamedTypeRemoveSubscribeCustomerCount 删除自定义类型订阅客户端数量
+	PftNamedTypeRemoveSubscribeCustomerCount = RtdbPerfTagID(C.PFT_NAMED_TYPE_REMOVE_SUBSCRIBE_CUSTOMER_COUNT)
+
+	// PftNamedTypeRemoveSendEventCount 删除自定义类型订阅发送事件数量
+	PftNamedTypeRemoveSendEventCount = RtdbPerfTagID(C.PFT_NAMED_TYPE_REMOVE_SEND_EVENT_COUNT)
+
+	// PftDoubleActiveSyncSendCount 双活同步每秒同步发送的数据量
+	PftDoubleActiveSyncSendCount = RtdbPerfTagID(C.PFT_DOUBLE_ACTIVE_SYNC_SEND_COUNT)
+
+	// PftDoubleActiveSyncReceiveCount 双活同步每秒同步接授的数据量
+	PftDoubleActiveSyncReceiveCount = RtdbPerfTagID(C.PFT_DOUBLE_ACTIVE_SYNC_RECEIVE_COUNT)
+
+	// PftIsReceivingNormalDataFromPeer 双活系统正在接收普通类型数据
+	PftIsReceivingNormalDataFromPeer = RtdbPerfTagID(C.PFT_IS_RECEIVING_NORMAL_DATA_FROM_PEER)
+
+	// PftIsReceivingBlobDataFromPeer 双活系统正在接收blob类型数据
+	PftIsReceivingBlobDataFromPeer = RtdbPerfTagID(C.PFT_IS_RECEIVING_BLOB_DATA_FROM_PEER)
+
+	// PftReplicatorBufferBlockCount 双活本地的同步历史缓存还有多少数据块
+	PftReplicatorBufferBlockCount = RtdbPerfTagID(C.PFT_REPLICATOR_BUFFER_BLOCK_COUNT)
+
+	// PftReplicatorExBufferBlockCount 双活本地的同步补历史缓存还有多少数据块
+	PftReplicatorExBufferBlockCount = RtdbPerfTagID(C.PFT_REPLICATOR_EX_BUFFER_BLOCK_COUNT)
+
+	// PftReplicatorBlobBufferBlockCount 双活本地的同步历史缓存(blob string 数据)还有多少数据块
+	PftReplicatorBlobBufferBlockCount = RtdbPerfTagID(C.PFT_REPLICATOR_BLOB_BUFFER_BLOCK_COUNT)
+
+	// PftReplicatorBlobExBufferBlockCount 双活本地的同步补历史缓存(blob string 数据)还有多少数据块
+	PftReplicatorBlobExBufferBlockCount = RtdbPerfTagID(C.PFT_REPLICATOR_BLOB_EX_BUFFER_BLOCK_COUNT)
+
+	// PftSnapshotPutRate 每秒写入快照记录数，单位 条
+	PftSnapshotPutRate = RtdbPerfTagID(C.PFT_SNAPSHOT_PUT_RATE)
+
+	// PftSnapshotGetRate 每秒读取快照记录数，单位 条
+	PftSnapshotGetRate = RtdbPerfTagID(C.PFT_SNAPSHOT_GET_RATE)
+
+	// PftHistorianPutRate 每秒写入历史记录数，单位 条
+	PftHistorianPutRate = RtdbPerfTagID(C.PFT_HISTORIAN_PUT_RATE)
+
+	// PftHistorianGetRate 每秒读取历史记录数，单位 条
+	PftHistorianGetRate = RtdbPerfTagID(C.PFT_HISTORIAN_GET_RATE)
+
+	// PftHistorianWriteRecordCount 每秒写入历史数据块数
+	PftHistorianWriteRecordCount = RtdbPerfTagID(C.PFT_HISTORIAN_WRITE_RECORD_COUNT)
+
+	// PftHistorianReadRecordCount 每秒读取历史数据块数
+	PftHistorianReadRecordCount = RtdbPerfTagID(C.PFT_HISTORIAN_READ_RECORD_COUNT)
+
+	// PftServerNetworkReadBytes 网络服务网络 IO 每秒读取字节数
+	PftServerNetworkReadBytes = RtdbPerfTagID(C.PFT_SERVER_NETWORK_READ_BYTES)
+
+	// PftServerNetworkWriteBytes 网络服务网络 IO 每秒写入字节数
+	PftServerNetworkWriteBytes = RtdbPerfTagID(C.PFT_SERVER_NETWORK_WRITE_BYTES)
+
+	// PftEnd 信息数量
+	PftEnd = RtdbPerfTagID(C.PFT_END)
+)
+
 /////////////////////////////// 上面是结构定义 ////////////////////////////////////
 /////////////////////////////// -- 躺平的分隔线 -- ////////////////////////////////
 // 别问为啥不分文件，问就是懒 // 基本上是1:1还原的C端API // 这套API性能高但比较复杂 ///////
@@ -10759,24 +11166,38 @@ func RawRtdbpGetPerfTagsCountWarp(handle ConnectHandle) (int32, error) {
 func RawRtdbpGetPerfTagsInfoWarp() {}
 
 // RawRtdbpGetPerfValues64Warp 批量读取性能计数点的当前快照数值
-//   - 参数：
-//   - [handle]    连接句柄
-//   - [count]     整型，输入/输出，性能点个数，
-//   - 输入时表示 perf_ids、datetimes、ms、values、states、qualities、errors 的长度，
-//   - 输出时表示成功获取实时值的性能计数点个数
-//   - [perf_ids]  整型数组，输入，性能计数点标识列表，参考RTDB_PERF_TAG_ID
-//   - [datetimes] 整型数组，输出，实时数值时间列表,
-//   - 表示距离1970年1月1日08:00:00的秒数
-//   - [ms]        短整型数组，输出，实时数值时间列表，
-//   - 对于时间精度为纳秒的标签点，返回相应的纳秒值；否则为 0
-//   - [values]    双精度浮点型数组，输出，实时浮点型数值列表，
-//   - 对于数据类型为 RTDB_REAL16、RTDB_REAL32、RTDB_REAL64 的标签点，返回相应的快照值；否则为 0
-//   - [states]    64 位整型数组，输出，实时整型数值列表，
-//   - 对于数据类型为 RTDB_BOOL、RTDB_UINT8、RTDB_INT8、RTDB_CHAR、RTDB_UINT16、RTDB_INT16、
-//   - RTDB_UINT32、RTDB_INT32、RTDB_INT64 的标签点，返回相应的快照值；否则为 0
-//   - [qualities] 短整型数组，输出，实时数值品质列表，数据库预定义的品质参见枚举 RTDB_QUALITY
-//   - [errors]    无符号整型数组，输出，读取实时数据的返回值列表，参考rtdb_error.h
-//   - 备注：用户须保证 ids、datetimes、ms、values、states、qualities、errors 的长度与 count 一致。
 //
-// rtdb_error RTDBAPI_CALLRULE rtdbp_get_perf_values64_warp(rtdb_int32 handle, rtdb_int32* count, int* perf_ids, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float64* values, rtdb_int64* states, rtdb_int16* qualities, rtdb_error* errors)
-func RawRtdbpGetPerfValues64Warp() {}
+// input:
+//   - handle 连接句柄
+//   - ids 性能计数点标识列表，参考RTDB_PERF_TAG_ID
+//
+// output:
+//   - datetimes 实时数值时间列表,表示距离1970年1月1日08:00:00的秒数
+//   - subtimes 实时数值时间列表，对于时间精度为纳秒的标签点，返回相应的纳秒值；否则为 0
+//   - values 实时浮点型数值列表，对于数据类型为 RTDB_REAL16、RTDB_REAL32、RTDB_REAL64 的标签点，返回相应的快照值；否则为 0
+//   - states 实时整型数值列表，对于数据类型为 RTDB_BOOL、RTDB_UINT8、RTDB_INT8、RTDB_CHAR、RTDB_UINT16、RTDB_INT16、RTDB_UINT32、RTDB_INT32、RTDB_INT64 的标签点，返回相应的快照值；否则为 0
+//   - qualities 实时数值品质列表，数据库预定义的品质参见枚举 RTDB_QUALITY
+//   - errors 读取实时数据的返回值列表，参考rtdb_error.h
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbp_get_perf_values64_warp(rtdb_int32 handle, rtdb_int32* count, int* perf_ids, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float64* values, rtdb_int64* states, rtdb_int16* qualities, rtdb_error* errors)
+func RawRtdbpGetPerfValues64Warp(handle ConnectHandle, ids []RtdbPerfTagID) ([]TimestampType, []SubtimeType, []float64, []int64, []Quality, []error, error) {
+	cHandle := C.rtdb_int32(handle)
+	cCount := C.rtdb_int32(len(ids))
+	cIds := (*C.int)(unsafe.Pointer(&ids[0]))
+	datetimes := make([]TimestampType, cCount)
+	cDatetimes := (*C.rtdb_timestamp_type)(unsafe.Pointer(&datetimes[0]))
+	subtimes := make([]SubtimeType, cCount)
+	cSubtimes := (*C.rtdb_subtime_type)(unsafe.Pointer(&subtimes[0]))
+	values := make([]float64, cCount)
+	cValues := (*C.rtdb_float64)(unsafe.Pointer(&values[0]))
+	states := make([]int64, cCount)
+	cStates := (*C.rtdb_int64)(unsafe.Pointer(&states[0]))
+	qualities := make([]Quality, cCount)
+	cQualities := (*C.rtdb_int16)(unsafe.Pointer(&qualities[0]))
+	errs := make([]RtdbError, cCount)
+	cErrs := (*C.rtdb_error)(unsafe.Pointer(&errs[0]))
+	err := C.rtdbp_get_perf_values64_warp(cHandle, &cCount, cIds, cDatetimes, cSubtimes, cValues, cStates, cQualities, cErrs)
+	goErrs := RtdbErrorListToErrorList(errs)
+	return datetimes, subtimes, values, states, qualities, goErrs, RtdbError(err).GoError()
+}
