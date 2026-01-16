@@ -9463,7 +9463,7 @@ func RawRtdbaCancelBigJobWarp(handle ConnectHandle, process RtdbProcess) error {
 	return RtdbError(err).GoError()
 }
 
-// RawRtdbhArchivedValuesCount64Warp 获取单个标签点在一段时间范围内的存储值数量.
+// RawRtdbhArchivedValuesCount64Warp 获取单个标签点在一段时间范围内的存储值数量. (这个比较快，只需要读取索引，用于估算，无法处理标记删除)
 //
 // input:
 //   - handle 连接句柄
@@ -9492,19 +9492,34 @@ func RawRtdbhArchivedValuesCount64Warp(handle ConnectHandle, id PointID, datetim
 	return int32(cCount), RtdbError(err).GoError()
 }
 
-// RawRtdbhArchivedValuesRealCount64Warp 获取单个标签点在一段时间范围内的真实的存储值数量.
-//   - \param handle        连接句柄
-//   - \param id            整型，输入，标签点标识
-//   - \param datetime1     整型，输入，表示起始时间秒数。如果为 0，表示从存档中最早时间的数据开始读取
-//   - \param ms1           短整型，输入，如果 id 指定的标签点时间精度为纳秒，表示起始时间对应的纳秒；否则忽略
-//   - \param datetime2     整型，输入，表示结束时间秒数。如果为 0，表示读取直至存档中数据的最后时间
-//   - \param ms2           短整型，输入，如果 id 指定的标签点时间精度为纳秒，表示结束时间对应的纳秒；否则忽略
-//   - \param count         整型，输出，返回上述时间范围内的存储值数量
-//   - \remark 由 datetime1、ms1 形成的时间可以大于 datetime2、ms2 表示的时间，
+// RawRtdbhArchivedValuesRealCount64Warp 获取单个标签点在一段时间范围内的真实的存储值数量. (这个比较慢，需要全量读取)
+//
+// input:
+//   - handle 连接句柄
+//   - id 标签点标识
+//   - datetime1 表示起始时间秒数。如果为 0，表示从存档中最早时间的数据开始读取
+//   - subtime1 如果 id 指定的标签点时间精度为纳秒，表示起始时间对应的纳秒；否则忽略
+//   - datetime2 表示结束时间秒数。如果为 0，表示读取直至存档中数据的最后时间
+//   - subtime2 如果 id 指定的标签点时间精度为纳秒，表示结束时间对应的纳秒；否则忽略
+//   - 备注：由 datetime1、ms1 形成的时间可以大于 datetime2、ms2 表示的时间，
+//
+// output:
+//   - int32(count) 返回上述时间范围内的存储值数量
 //   - 此时前者表示结束时间，后者表示起始时间。
 //
+// raw_fn:
 // rtdb_error RTDBAPI_CALLRULE rtdbh_archived_values_real_count64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime1, rtdb_subtime_type subtime1, rtdb_timestamp_type datetime2, rtdb_subtime_type subtime2, rtdb_int32* count)
-func RawRtdbhArchivedValuesRealCount64Warp() {}
+func RawRtdbhArchivedValuesRealCount64Warp(handle ConnectHandle, id PointID, datetime1 TimestampType, subtime1 SubtimeType, datetime2 TimestampType, subtime2 SubtimeType) (int32, error) {
+	cHandle := C.rtdb_int32(handle)
+	cId := C.rtdb_int32(id)
+	cDatetime1 := C.rtdb_timestamp_type(datetime1)
+	cSubtime1 := C.rtdb_subtime_type(subtime1)
+	cDatetime2 := C.rtdb_timestamp_type(datetime2)
+	cSubtime2 := C.rtdb_subtime_type(subtime2)
+	cCount := C.rtdb_int32(0)
+	err := C.rtdbh_archived_values_real_count64_warp(cHandle, cId, cDatetime1, cSubtime1, cDatetime2, cSubtime2, &cCount)
+	return int32(cCount), RtdbError(err).GoError()
+}
 
 // RawRtdbhGetArchivedValues64Warp 读取单个标签点一段时间内的储存数据
 //   - \param handle        连接句柄
