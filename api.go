@@ -9346,46 +9346,49 @@ func RawRtdbaConvertIndexWarp(handle ConnectHandle, path string, file string) er
 }
 
 // RawRtdbaQueryBigJob64Warp 查询进程正在执行的后台任务类型、状态和进度
-//   - \param handle     连接句柄
-//   - \param process    所查询的进程代号，进程的标识参见枚举 RTDB_PROCESS_NAME,
-//   - RTDB_PROCESS_HISTORIAN: 历史服务进程，具有以下任务类型：
-//   - RTDB_MERGE: 合并附属文件到主文件;
-//   - RTDB_ARRANGE: 整理存档文件;
-//   - RTDB_REINDEX: 重建索引;
-//   - RTDB_BACKUP: 备份;
-//   - RTDB_REACTIVE: 激活为活动存档;
-//   - RTDB_PROCESS_EQUATION: 方程式服务进程，具有以下任务类型：
-//   - RTDB_COMPUTE: 历史计算;
-//   - RTDB_PROCESS_BASE: 标签信息服务进程，具有以下任务类型：
-//   - RTDB_UPDATE_TABLE: 修改表名称;
-//   - RTDB_REMOVE_TABLE: 删除表;
-//   - \param path       字符串，输出，长度至少为 RTDB_PATH_SIZE，
-//   - 对以下任务，这个字段表示存档文件所在目录路径：
-//   - RTDB_MERGE
-//   - RTDB_ARRANGE
-//   - RTDB_REINDEX
-//   - RTDB_BACKUP
-//   - RTDB_REACTIVE
-//   - 对于以下任务，这个字段表示原来的表名：
-//   - RTDB_UPDATE_TABLE
-//   - RTDB_REMOVE_TABLE
-//   - 对于其它任务不可用。
-//   - \param file       字符串，输出，长度至少为 RTDB_FILE_NAME_SIZE，
-//   - 对以下任务，这个字段表示存档文件名：
-//   - RTDB_MERGE
-//   - RTDB_ARRANGE
-//   - RTDB_REINDEX
-//   - RTDB_BACKUP
-//   - RTDB_REACTIVE
-//   - 对于以下任务，这个字段表示修改后的表名：
-//   - RTDB_UPDATE_TABLE
-//   - 对于其它任务不可用。
-//   - \param job        短整型，输出，任务的标识参见枚举 RTDB_BIG_JOB_NAME。
-//   - \param state      整型，输出，任务的执行状态，参考 rtdb_error.h
-//   - \param end_time   整型，输出，任务的完成时间。
-//   - \param progress   单精度浮点型，输出，任务的进度百分比。
-//   - \remark path 及 file 参数可传空指针，对应的信息将不再返回。
 //
+// input:
+//   - handle 连接句柄
+//
+// * \param process    所查询的进程代号，进程的标识参见枚举 RTDB_PROCESS_NAME,
+// *                     RTDB_PROCESS_HISTORIAN: 历史服务进程，具有以下任务类型：
+// *                         RTDB_MERGE: 合并附属文件到主文件;
+// *                         RTDB_ARRANGE: 整理存档文件;
+// *                         RTDB_REINDEX: 重建索引;
+// *                         RTDB_BACKUP: 备份;
+// *                         RTDB_REACTIVE: 激活为活动存档;
+// *                     RTDB_PROCESS_EQUATION: 方程式服务进程，具有以下任务类型：
+// *                         RTDB_COMPUTE: 历史计算;
+// *                     RTDB_PROCESS_BASE: 标签信息服务进程，具有以下任务类型：
+// *                         RTDB_UPDATE_TABLE: 修改表名称;
+// *                         RTDB_REMOVE_TABLE: 删除表;
+// * \param path       字符串，输出，长度至少为 RTDB_PATH_SIZE，
+// *                     对以下任务，这个字段表示存档文件所在目录路径：
+// *                         RTDB_MERGE
+// *                         RTDB_ARRANGE
+// *                         RTDB_REINDEX
+// *                         RTDB_BACKUP
+// *                         RTDB_REACTIVE
+// *                     对于以下任务，这个字段表示原来的表名：
+// *                         RTDB_UPDATE_TABLE
+// *                         RTDB_REMOVE_TABLE
+// *                     对于其它任务不可用。
+// * \param file       字符串，输出，长度至少为 RTDB_FILE_NAME_SIZE，
+// *                     对以下任务，这个字段表示存档文件名：
+// *                         RTDB_MERGE
+// *                         RTDB_ARRANGE
+// *                         RTDB_REINDEX
+// *                         RTDB_BACKUP
+// *                         RTDB_REACTIVE
+// *                     对于以下任务，这个字段表示修改后的表名：
+// *                          RTDB_UPDATE_TABLE
+// *                     对于其它任务不可用。
+// * \param job        短整型，输出，任务的标识参见枚举 RTDB_BIG_JOB_NAME。
+// * \param state      整型，输出，任务的执行状态，参考 rtdb_error.h
+// * \param end_time   整型，输出，任务的完成时间。
+// * \param progress   单精度浮点型，输出，任务的进度百分比。
+// * \remark path 及 file 参数可传空指针，对应的信息将不再返回。
+// */
 // rtdb_error RTDBAPI_CALLRULE rtdba_query_big_job64_warp(rtdb_int32 handle, rtdb_int32 process, char* path, char* file, rtdb_int16* job, rtdb_int32* state, rtdb_timestamp_type* end_time, rtdb_float32* progress)
 func RawRtdbaQueryBigJob64Warp() {}
 
