@@ -87,7 +87,7 @@ const (
 )
 
 // RtdbError 数据库错误
-type RtdbError int32
+type RtdbError uint32
 
 // IsOk 判断当前错误是否为RteOk
 func (re RtdbError) IsOk() bool {
@@ -9441,13 +9441,13 @@ func RawRtdbaQueryBigJob64Warp(handle ConnectHandle, processName RtdbProcess) (s
 	cPath := C.rtdb_path_string{}
 	cName := C.rtdb_filename_string{}
 	jobID := BigJobName(0)
-	state := RtdbError(0)
+	state := int32(0)
 	endTime := TimestampType(0)
 	process := float32(0)
 	err := C.rtdba_query_big_job64_warp(cHandle, cProcessName, &cPath[0], &cName[0], (*C.rtdb_int16)(&jobID), (*C.rtdb_int32)(&state), (*C.rtdb_timestamp_type)(&endTime), (*C.rtdb_float32)(&process))
 	goPath := C.GoString(&cPath[0])
 	goName := C.GoString(&cName[0])
-	return goPath, goName, jobID, state, endTime, process, RtdbError(err).GoError()
+	return goPath, goName, jobID, RtdbError(state), endTime, process, RtdbError(err).GoError()
 }
 
 // RawRtdbaCancelBigJobWarp 取消进程正在执行的后台任务
