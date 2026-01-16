@@ -9820,34 +9820,50 @@ func RawRtdbhGetTimedCoorValues64Warp(handle ConnectHandle, id PointID, datetime
 }
 
 //	RawRtdbhGetInterpoValues64Warp 获取单个标签点一段时间内等间隔历史插值
-//	* \param handle        连接句柄
-//	* \param id            整型，输入，标签点标识
-//	* \param count         整型，输入/输出，
-//	*                        输入时表示 datetimes、ms、values、states、qualities 的长度，
-//	*                        即需要的插值个数；输出时返回实际得到的插值个数
-//	* \param datetimes     整型数组，输入/输出，
-//	*                        输入时第一个元素表示起始时间秒数，
-//	*                        最后一个元素表示结束时间秒数，如果为 0，表示直到数据的最后时间；
-//	*                        输出时表示对应的历史数值时间秒数。
-//	* \param ms            短整型数组，输入/输出，如果 id 指定的标签点时间精度为纳秒，
-//	*                        则输入时第一个元素表示起始时间纳秒，
-//	*                        最后一个元素表示结束时间纳秒；
-//	*                        输出时表示对应的历史数值时间纳秒。
-//	*                        否则忽略输入，输出时为 0。
-//	* \param values        双精度浮点数数组，输出，浮点型历史插值数值列表
-//	*                        对于数据类型为 RTDB_REAL16、RTDB_REAL32、RTDB_REAL64 的标签点，存放相应的历史插值；否则为 0
-//	* \param states        64 位整数数组，输出，整型历史插值数值列表，
-//	*                        对于数据类型为 RTDB_BOOL、RTDB_UINT8、RTDB_INT8、RTDB_CHAR、RTDB_UINT16、RTDB_INT16、
-//	*                        RTDB_UINT32、RTDB_INT32、RTDB_INT64 的标签点，存放相应的历史插值；否则为 0
-//	* \param qualities     短整型数组，输出，历史插值品质列表，数据库预定义的品质参见枚举 RTDB_QUALITY
-//	* \remark 用户须保证 datetimes、ms、values、states、qualities 的长度与 count 一致，
-//	*        在输入时，datetimes、ms 中至少应有一个元素，第一个元素形成的时间可以
-//	*        大于最后一个元素形成的时间，此时第一个元素表示结束时间，
-//	*        最后一个元素表示开始时间。
-//	*        本接口对数据类型为 RTDB_COOR、RTDB_BLOB、RTDB_STRING 的标签点无效。
 //
-// rtdb_error RTDBAPI_CALLRULE rtdbh_get_interpo_values64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32* count, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float64* values, rtdb_int64* states, rtdb_int16* qualities)
-func RawRtdbhGetInterpoValues64Warp() {}
+// input:
+//   - handle 连接句柄
+//   - id 标签点标识
+//   - count 差值缓存数量
+//   - datetime1 开始时间，秒部分
+//   - subtime1 开始时间，纳秒部分
+//   - datetime2 结束时间，秒部分
+//   - subtime2 结束时间，纳秒部分
+//
+// output:
+//   - []TimestampType 时间戳数组，秒部分
+//   - []SubtimeType 时间戳数组，纳秒部分
+//   - []float64(values) 浮点型历史插值数值列表,对于数据类型为 RTDB_REAL16、RTDB_REAL32、RTDB_REAL64 的标签点，存放相应的历史插值；否则为 0
+//   - []int64(states) 整型历史插值数值列表，对于数据类型为 RTDB_BOOL、RTDB_UINT8、RTDB_INT8、RTDB_CHAR、RTDB_UINT16、RTDB_INT16、RTDB_UINT32、RTDB_INT32、RTDB_INT64 的标签点，存放相应的历史插值；否则为 0
+//   - []Quality(qualities) 历史插值品质列表，数据库预定义的品质参见枚举 RTDB_QUALITY
+//   - 在输入时，datetimes、ms 中至少应有一个元素，第一个元素形成的时间可以
+//   - 大于最后一个元素形成的时间，此时第一个元素表示结束时间，
+//   - 最后一个元素表示开始时间。
+//   - 本接口对数据类型为 RTDB_COOR、RTDB_BLOB、RTDB_STRING 的标签点无效。
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbh_get_interpo_values64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32* count, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float64* values, rtdb_int64* states, rtdb_int16* qualities)
+func RawRtdbhGetInterpoValues64Warp(handle ConnectHandle, id PointID, count int32, datetime1 TimestampType, subtime1 SubtimeType, datetime2 TimestampType, subtime2 SubtimeType) ([]TimestampType, []SubtimeType, []float64, []int64, []Quality, error) {
+	cHandle := C.rtdb_int32(handle)
+	cId := C.rtdb_int32(id)
+	cCount := C.rtdb_int32(count)
+	datetimes := make([]TimestampType, count)
+	datetimes[0] = datetime1
+	datetimes[count-1] = datetime2
+	cDatetimes := (*C.rtdb_timestamp_type)(unsafe.Pointer(&datetimes[0]))
+	subtimes := make([]SubtimeType, count)
+	subtimes[0] = subtime1
+	subtimes[count-1] = subtime2
+	cSubtimes := (*C.rtdb_subtime_type)(unsafe.Pointer(&subtimes[0]))
+	values := make([]float64, count)
+	cValues := (*C.rtdb_float64)(unsafe.Pointer(&values[0]))
+	states := make([]int64, count)
+	cStates := (*C.rtdb_int64)(unsafe.Pointer(&states[0]))
+	qualities := make([]Quality, count)
+	cQualities := (*C.rtdb_int16)(unsafe.Pointer(&qualities[0]))
+	err := C.rtdbh_get_interpo_values64_warp(cHandle, cId, &cCount, cDatetimes, cSubtimes, cValues, cStates, cQualities)
+	return datetimes[:cCount], subtimes[:cCount], values[:cCount], states[:cCount], qualities[:cCount], RtdbError(err).GoError()
+}
 
 // RawRtdbhGetIntervalValues64Warp 读取单个标签点某个时刻之后一定数量的等间隔内插值替换的历史数值
 //
