@@ -9264,11 +9264,23 @@ func RawRtdbaArrangeArchiveWarp(handle ConnectHandle, path string, file string) 
 }
 
 // RawRtdbaReindexArchiveWarp 为存档文件重新生成索引，用于恢复数据。
-// * \param handle     连接句柄
-// * \param path       字符串，输入，文件所在目录路径，必须以"\"或"/"结尾。
-// * \param file       字符串，输入，文件名。
-// rtdb_error RTDBAPI_CALLRULE rtdba_reindex_archive_warp(rtdb_int32 handle, const char *path, const char *file)
-func RawRtdbaReindexArchiveWarp() {}
+//
+// input:
+//   - handle     连接句柄
+//   - path       字符串，输入，文件所在目录路径，必须以"\"或"/"结尾。
+//   - file       字符串，输入，文件名。
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdba_reindex_archive_warp(rtdb_int32 handle, const char *path, const char *file)
+func RawRtdbaReindexArchiveWarp(handle ConnectHandle, path string, file string) error {
+	cHandle := C.rtdb_int32(handle)
+	cPath := C.CString(path)
+	defer C.free(unsafe.Pointer(cPath))
+	cFile := C.CString(file)
+	defer C.free(unsafe.Pointer(cFile))
+	err := C.rtdba_reindex_archive_warp(cHandle, cPath, cFile)
+	return RtdbError(err).GoError()
+}
 
 // RawRtdbaBackupArchiveWarp 备份主存档文件及其附属文件到指定路径
 // * \param handle     连接句柄
