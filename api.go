@@ -6135,6 +6135,36 @@ const (
 	PftEnd = RtdbPerfTagID(C.PFT_END)
 )
 
+// RtdbPerfTagInfo 性能计数点的信息
+type RtdbPerfTagInfo struct {
+	PerfID  RtdbPerfTagID // 性能计数点的ID 参考RTDB_PERF_TAG_ID
+	TagName string        // 性能计数点的名字
+	Desc    string        // 性能计数点的描述
+	Unit    string        // 性能计数点数值的单位
+	Type    RtdbType      // 性能计数点的数值类型
+}
+
+func goToCRtdbPerfTagInfo(info *RtdbPerfTagInfo) *C.RTDB_PERF_TAG_INFO {
+	rtn := C.RTDB_PERF_TAG_INFO{}
+	rtn.perf_id = C.int(info.PerfID)
+	GoStringToCCharArray(info.TagName, &rtn.tag_name[0], int(C.RTDB_TAG_SIZE))
+	GoStringToCCharArray(info.Desc, &rtn.desc[0], int(C.RTDB_DESC_SIZE))
+	GoStringToCCharArray(info.Unit, &rtn.unit[0], int(C.RTDB_UNIT_SIZE))
+	rtn._type = C.int(info.Type)
+	return &rtn
+}
+
+func cToGoRtdbPerfTagInfo(info *C.RTDB_PERF_TAG_INFO) *RtdbPerfTagInfo {
+	rtn := RtdbPerfTagInfo{
+		PerfID:  RtdbPerfTagID(info.perf_id),
+		TagName: CCharArrayToString(&info.tag_name[0], int(C.RTDB_TAG_SIZE)),
+		Desc:    CCharArrayToString(&info.desc[0], int(C.RTDB_DESC_SIZE)),
+		Unit:    CCharArrayToString(&info.unit[0], int(C.RTDB_UNIT_SIZE)),
+		Type:    RtdbType(info._type),
+	}
+	return &rtn
+}
+
 /////////////////////////////// 上面是结构定义 ////////////////////////////////////
 /////////////////////////////// -- 躺平的分隔线 -- ////////////////////////////////
 // 别问为啥不分文件，问就是懒 // 基本上是1:1还原的C端API // 这套API性能高但比较复杂 ///////
@@ -11154,16 +11184,34 @@ func RawRtdbpGetPerfTagsCountWarp(handle ConnectHandle) (int32, error) {
 }
 
 // RawRtdbpGetPerfTagsInfoWarp 根据性能计数点ID获取相关的性能计数点信息
-//   - 参数：
-//   - [handle]   连接句柄
-//   - [count]    整型，输入，输出
-//   - 输入时，表示想要获取的性能计数点信息的数量，也表示tags_info，errors等的长度
-//   - 输出时，表示实际获取到的性能计数点信息的数量
-//   - [errors] 无符号整型数组，输出，获取性能计数点信息的返回值列表，参考rtdb_error.h
-//   - 备注：用户须保证分配给 tags_info，errors 的空间与 count 相符
 //
-// rtdb_error RTDBAPI_CALLRULE rtdbp_get_perf_tags_info_warp(rtdb_int32 handle, rtdb_int32* count, RTDB_PERF_TAG_INFO* tags_info, rtdb_error* errors)
-func RawRtdbpGetPerfTagsInfoWarp() {}
+// input:
+//   - handle 连接句柄
+//   - ids 性能计数点ID列表
+//
+// output:
+//   - []RtdbPerfTagInfo 性能计数点对应的基本信息
+//   - []error 获取性能计数点信息的返回值列表，参考rtdb_error.h
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbp_get_perf_tags_info_warp(rtdb_int32 handle, rtdb_int32* count, RTDB_PERF_TAG_INFO* tags_info, rtdb_error* errors)
+func RawRtdbpGetPerfTagsInfoWarp(handle ConnectHandle, ids []RtdbPerfTagID) ([]RtdbPerfTagInfo, []error, error) {
+	cHandle := C.rtdb_int32(handle)
+	cCount := C.rtdb_int32(len(ids))
+	cInfos := make([]C.RTDB_PERF_TAG_INFO, cCount)
+	for i, id := range ids {
+		cInfos[i].perf_id = C.int(id)
+	}
+	errs := make([]RtdbError, cCount)
+	cErrs := (*C.rtdb_error)(unsafe.Pointer(&errs[0]))
+	err := C.rtdbp_get_perf_tags_info_warp(cHandle, &cCount, &cInfos[0], cErrs)
+	goInfos := make([]RtdbPerfTagInfo, 0)
+	for _, cInfo := range cInfos {
+		goInfos = append(goInfos, *cToGoRtdbPerfTagInfo(&cInfo))
+	}
+	goErrs := RtdbErrorListToErrorList(errs)
+	return goInfos, goErrs, RtdbError(err).GoError()
+}
 
 // RawRtdbpGetPerfValues64Warp 批量读取性能计数点的当前快照数值
 //
