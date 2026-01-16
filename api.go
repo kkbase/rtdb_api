@@ -9314,7 +9314,7 @@ func RawRtdbaBackupArchiveWarp(handle ConnectHandle, path string, file string, d
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdba_move_archive_warp(rtdb_int32 handle, const char *path, const char *file, const char *dest)
-func RawRtdbaMoveArchiveWarp(handle ConnectHandle, path string, file string, dest string) {
+func RawRtdbaMoveArchiveWarp(handle ConnectHandle, path string, file string, dest string) error {
 	cHandle := C.rtdb_int32(handle)
 	cPath := C.CString(path)
 	defer C.free(unsafe.Pointer(cPath))
@@ -9327,11 +9327,23 @@ func RawRtdbaMoveArchiveWarp(handle ConnectHandle, path string, file string, des
 }
 
 // RawRtdbaConvertIndexWarp 为存档文件转换索引格式。
-// *        [handle]     连接句柄
-// *        [path]       字符串，输入，文件所在目录路径，必须以"\"或"/"结尾。
-// *        [file]       字符串，输入，文件名。
-// rtdb_error RTDBAPI_CALLRULE rtdba_convert_index_warp(rtdb_int32 handle, const char *path, const char *file)
-func RawRtdbaConvertIndexWarp() {}
+//
+// input:
+//   - handle 连接句柄
+//   - path 文件所在目录路径，必须以"\"或"/"结尾。
+//   - file 文件名。
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdba_convert_index_warp(rtdb_int32 handle, const char *path, const char *file)
+func RawRtdbaConvertIndexWarp(handle ConnectHandle, path string, file string) error {
+	cHandle := C.rtdb_int32(handle)
+	cPath := C.CString(path)
+	defer C.free(unsafe.Pointer(cPath))
+	cFile := C.CString(file)
+	defer C.free(unsafe.Pointer(cFile))
+	err := C.rtdba_convert_index_warp(cHandle, cPath, cFile)
+	return RtdbError(err).GoError()
+}
 
 // RawRtdbaQueryBigJob64Warp 查询进程正在执行的后台任务类型、状态和进度
 //   - \param handle     连接句柄
