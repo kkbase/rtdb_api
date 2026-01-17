@@ -6165,6 +6165,44 @@ func cToGoRtdbPerfTagInfo(info *C.RTDB_PERF_TAG_INFO) *RtdbPerfTagInfo {
 	return &rtn
 }
 
+// RtdbGraphFlag 标签点拓扑图类型
+type RtdbGraphFlag int32
+
+const (
+	// RtdbGraphFlagAll 任何有关联的标签的关系图
+	RtdbGraphFlagAll = RtdbGraphFlag(C.RTDB_GRAPH_ALL)
+
+	// RtdgGraphFlagDirect 有直接关系的关系图
+	RtdgGraphFlagDirect = RtdbGraphFlag(C.RTDB_GRAPH_DIRECT)
+)
+
+// RtdbGraph 计算标签点方程式拓扑图键值对信息
+type RtdbGraph struct {
+	ID       int32  // 标签点ID
+	ParentID int32  // 标签点父ID，即父ID方程式中引用了子ID做运算
+	Tag      string // 标签点名称
+	ErrorMsg string // 无效标签点错误信息
+}
+
+func cToGoRtdbGraph(graph *RtdbGraph) *C.RTDB_GRAPH {
+	rtn := C.RTDB_GRAPH{}
+	rtn.id = C.int(graph.ID)
+	rtn.parent_id = C.int(graph.ParentID)
+	GoStringToCCharArray(graph.Tag, &rtn.tag[0], int(C.RTDB_TAG_SIZE))
+	GoStringToCCharArray(graph.ErrorMsg, &rtn.error_msg[0], int(C.RTDB_DESC_SIZE))
+	return &rtn
+}
+
+func goToCRtdbGraph(graph *C.RTDB_GRAPH) *RtdbGraph {
+	rtn := RtdbGraph{
+		ID:       int32(graph.id),
+		ParentID: int32(graph.parent_id),
+		Tag:      CCharArrayToString(&graph.tag[0], int(C.RTDB_TAG_SIZE)),
+		ErrorMsg: CCharArrayToString(&graph.error_msg[0], int(C.RTDB_DESC_SIZE)),
+	}
+	return &rtn
+}
+
 /////////////////////////////// 上面是结构定义 ////////////////////////////////////
 /////////////////////////////// -- 躺平的分隔线 -- ////////////////////////////////
 // 别问为啥不分文件，问就是懒 // 基本上是1:1还原的C端API // 这套API性能高但比较复杂 ///////
@@ -11133,38 +11171,72 @@ func RawRtdbeComputeHistory64Warp() {}
 func RawRtdbbGetEquationByFileNameWarp() {}
 
 // RawRtdbbGetEquationByIdWarp 根ID径获取方程式
-// * [handle]   连接句柄
-// * [id]				输入，整型，方程式ID
-// * [equation] 输出，返回的方程式长度最长为RTDB_MAX_EQUATION_SIZE-1
-// * 备注：用户调用时为equation分配的空间不得小于RTDB_MAX_EQUATION_SIZE
-// rtdb_error RTDBAPI_CALLRULE rtdbb_get_equation_by_id_warp(rtdb_int32 handle, rtdb_int32 id, char equation[RTDB_MAX_EQUATION_SIZE])
-func RawRtdbbGetEquationByIdWarp() {}
+//
+// input:
+//   - handle 连接句柄
+//   - id 方程式ID
+//
+// output:
+//   - []byte(equation) 返回的方程式长度最长为RTDB_MAX_EQUATION_SIZE-1
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbb_get_equation_by_id_warp(rtdb_int32 handle, rtdb_int32 id, char equation[RTDB_MAX_EQUATION_SIZE])
+func RawRtdbbGetEquationByIdWarp(handle ConnectHandle, id PointID) ([]byte, error) {
+	cHandle := C.rtdb_int32(handle)
+	cId := C.rtdb_int32(id)
+	cEquation := make([]byte, int(C.RTDB_MAX_EQUATION_SIZE))
+	err := C.rtdbb_get_equation_by_id_warp(cHandle, cId, &cEquation[0])
+	return cEquation, RtdbError(err).GoError()
+}
 
 // RawRtdbeGetEquationGraphCountWarp 根据标签点 id 获取相关联方程式键值对数量
-//   - 参数：
-//   - [handle]   连接句柄
-//   - [id]       整型，输入，标签点标识
-//   - [flag]     枚举，输入，获取的拓扑图的关系
-//   - [count]    整型，输入，拓扑图键值对数量
-//   - 备注：键值对为数据结构，存储方程式涉及到的各标签点ID、及其父ID等
-//   - 具体参考rtdbe_get_equation_graph_datas
 //
-// rtdb_error RTDBAPI_CALLRULE rtdbe_get_equation_graph_count_warp(rtdb_int32 handle, rtdb_int32 id, RTDB_GRAPH_FLAG flag, rtdb_int32 *count)
-func RawRtdbeGetEquationGraphCountWarp() {}
+// input:
+//   - handle 连接句柄
+//   - id 标签点标识
+//   - flag 获取的拓扑图的关系
+//
+// output:
+//   - count 拓扑图键值对数量
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbe_get_equation_graph_count_warp(rtdb_int32 handle, rtdb_int32 id, RTDB_GRAPH_FLAG flag, rtdb_int32 *count)
+func RawRtdbeGetEquationGraphCountWarp(handle ConnectHandle, id PointID, flag RtdbGraphFlag) (int32, error) {
+	cHandle := C.rtdb_int32(handle)
+	cId := C.rtdb_int32(id)
+	cFlag := C.RTDB_GRAPH_FLAG(flag)
+	cCount := C.rtdb_int32(0)
+	err := C.rtdbe_get_equation_graph_count_warp(cHandle, cId, cFlag, &cCount)
+	return int32(cCount), RtdbError(err).GoError()
+
+}
 
 // RawRtdbeGetEquationGraphDatasWarp 根据标签点 id 获取相关联方程式键值对数据
-//   - 参数：
-//   - [handle]   连接句柄
-//   - [id]       整型，输入，标签点标识
-//   - [flag]     枚举，输入，获取的拓扑图的关系
-//   - [count]    整型，输出
-//   - 输入时，表示拓扑图键值对数量
-//   - 输出时，表示实际获取到的拓扑图键值对数量
-//   - [graph]    输出，GOLDE_GRAPH数据结构，拓扑图键值对信息
-//   - 备注：键值对为数据结构，存储方程式涉及到的各标签点ID、及其父ID等
 //
-// rtdb_error RTDBAPI_CALLRULE rtdbe_get_equation_graph_datas_warp(rtdb_int32 handle, rtdb_int32 id, RTDB_GRAPH_FLAG flag, rtdb_int32 *count, RTDB_GRAPH *graph)
-func RawRtdbeGetEquationGraphDatasWarp() {}
+// input:
+//   - handle 连接句柄
+//   - id 标签点标识
+//   - flag 获取的拓扑图的关系
+//   - count 表示拓扑图键值对数量
+//
+// output:
+//   - []RtdbGraph(graph) 数据结构，拓扑图键值对信息
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbe_get_equation_graph_datas_warp(rtdb_int32 handle, rtdb_int32 id, RTDB_GRAPH_FLAG flag, rtdb_int32 *count, RTDB_GRAPH *graph)
+func RawRtdbeGetEquationGraphDatasWarp(handle ConnectHandle, id PointID, flag RtdbGraphFlag, count int32) ([]RtdbGraph, error) {
+	cHandle := C.rtdb_int32(handle)
+	cId := C.rtdb_int32(id)
+	cFlag := C.RTDB_GRAPH_FLAG(flag)
+	cCount := C.rtdb_int32(count)
+	graph := make([]C.RTDB_GRAPH, count)
+	err := C.rtdbe_get_equation_graph_datas_warp(cHandle, cId, cFlag, &cCount, &graph[0])
+	goGraph := make([]RtdbGraph, 0)
+	for _, g := range graph[:cCount] {
+		goGraph = append(goGraph, *goToCRtdbGraph(&g))
+	}
+	return goGraph[:cCount], RtdbError(err).GoError()
+}
 
 // RawRtdbpGetPerfTagsCountWarp 获取Perf服务中支持的性能计数点的数量
 //
