@@ -11185,7 +11185,7 @@ func RawRtdbbGetEquationByIdWarp(handle ConnectHandle, id PointID) ([]byte, erro
 	cHandle := C.rtdb_int32(handle)
 	cId := C.rtdb_int32(id)
 	cEquation := make([]byte, int(C.RTDB_MAX_EQUATION_SIZE))
-	err := C.rtdbb_get_equation_by_id_warp(cHandle, cId, &cEquation[0])
+	err := C.rtdbb_get_equation_by_id_warp(cHandle, cId, (*C.char)(unsafe.Pointer(&cEquation[0])))
 	return cEquation, RtdbError(err).GoError()
 }
 
