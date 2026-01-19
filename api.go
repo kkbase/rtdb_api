@@ -10630,11 +10630,27 @@ func RawRtdbhGetArchivedBlobValuesFilt64Warp(handle ConnectHandle, id PointID, m
 //   - \param dtlen           短整型，输入/输出，输入时表示 blob 的长度，
 //   - 输出时表示实际获取的datetime数据长度。
 //   - \param quality       短整型，输出，历史值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
-//   - \param type           短整型 datetime字符串的格式类型，默认为-1
+//
+// \param type          短整型，输入，“yyyy-mm-dd hh:mm:ss.000”的type为1， 同样默认输入格式也为 “yyyy-mm-dd hh:mm:ss.000”
+// “yyyy/mm/dd hh:mm:ss.000”的type为2, 使用默认格式输入 -1
 //   - \remark 本接口只对数据类型为 RTDB_DATETIME 的标签点有效。
 //
 // rtdb_error RTDBAPI_CALLRULE rtdbh_get_single_datetime_value64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32 mode, rtdb_timestamp_type* datetime, rtdb_subtime_type* subtime, rtdb_byte* dtblob, rtdb_length_type* dtlen, rtdb_int16* quality, rtdb_int16 type)
-func RawRtdbhGetSingleDatetimeValue64Warp() {}
+func RawRtdbhGetSingleDatetimeValue64Warp(handle ConnectHandle, id PointID, mode RtdbHisMode, datetime TimestampType, subtime SubtimeType, dtType int16) (TimestampType, SubtimeType, []byte, Quality, error) {
+	cHandle := C.rtdb_int32(handle)
+	cId := C.rtdb_int32(id)
+	cMode := C.rtdb_int32(mode)
+	cDatetime := C.rtdb_timestamp_type(datetime)
+	cSubtime := C.rtdb_subtime_type(subtime)
+	cDtType := C.rtdb_int16(dtType)
+	blob := make([]byte, 128)
+	cBlob := (*C.rtdb_byte)(unsafe.Pointer(&blob[0]))
+	cLen := C.rtdb_length_type(128)
+	quality := Quality(0)
+	cQuality := (*C.rtdb_int16)(unsafe.Pointer(&quality))
+	err := C.rtdbh_get_single_datetime_value64_warp(cHandle, cId, cMode, &cDatetime, &cSubtime, cBlob, &cLen, cQuality, cDtType)
+	return TimestampType(cDatetime), SubtimeType(cSubtime), blob[:cLen], quality, RtdbError(err).GoError()
+}
 
 // RawRtdbhGetArchivedDatetimeValues64Warp 读取单个标签点一段时间的时间类型历史数据
 //   - \param handle        连接句柄
