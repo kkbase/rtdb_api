@@ -6204,6 +6204,26 @@ func goToCRtdbGraph(graph *C.RTDB_GRAPH) *RtdbGraph {
 	return &rtn
 }
 
+// RtdbHisMode 历史数据搜索方式
+type RtdbHisMode int32
+
+const (
+	// RtdbHisModeNext 寻找下一个最近的数据
+	RtdbHisModeNext = RtdbHisMode(C.RTDB_NEXT)
+	// RtdbHisModePrevious 寻找上一个最近的数据
+	RtdbHisModePrevious = RtdbHisMode(C.RTDB_PREVIOUS)
+	// RtdbHisModeExact 取指定时间的数据，如果没有则返回错误 \b RtE_DATA_NOT_FOUND
+	RtdbHisModeExact = RtdbHisMode(C.RTDB_EXACT)
+	// RtdbHisModeInter 取指定时间的内插值数据
+	RtdbHisModeInter = RtdbHisMode(C.RTDB_INTER)
+	// RtdbHisModeExactOrNext 取指定时间的数据，如果没有则取下一条数据。如果都没有数据则返回错误 \b RtE_DATA_NOT_FOUND
+	RtdbHisModeExactOrNext = RtdbHisMode(C.RTDB_EXACT_OR_NEXT)
+	// RtdbHisModeExactOrPrev 取指定时间的数据，如果没有则取上一条数据。如果都没有数据则返回错误 \b RtE_DATA_NOT_FOUND
+	RtdbHisModeExactOrPrev = RtdbHisMode(C.RTDB_EXACT_OR_PREV)
+	// RtdbHisModeInterOrNext 取指定时间的内插值数据, 如果没有则取下一条数据。如果都没有数据则返回错误 \b RtE_DATA_NOT_FOUND
+	RtdbHisModeInterOrNext = RtdbHisMode(C.RTDB_INTER_OR_NEXT)
+)
+
 /////////////////////////////// 上面是结构定义 ////////////////////////////////////
 /////////////////////////////// -- 躺平的分隔线 -- ////////////////////////////////
 // 别问为啥不分文件，问就是懒 // 基本上是1:1还原的C端API // 这套API性能高但比较复杂 ///////
@@ -10383,29 +10403,34 @@ func RawRtdbhGetIntervalValues64Warp(handle ConnectHandle, id PointID, interval 
 
 // RawRtdbhGetSingleValue64Warp 读取单个标签点某个时间的历史数据
 //
-//	*
-//	* \param handle        连接句柄
-//	* \param id            整型，输入，标签点标识
-//	* \param mode          整型，输入，取值 RTDB_NEXT、RTDB_PREVIOUS、RTDB_EXACT、RTDB_INTER 之一：
-//	*                        RTDB_NEXT 寻找下一个最近的数据；
-//	*                        RTDB_PREVIOUS 寻找上一个最近的数据；
-//	*                        RTDB_EXACT 取指定时间的数据，如果没有则返回错误 RtE_DATA_NOT_FOUND；
-//	*                        RTDB_INTER 取指定时间的内插值数据。
-//	* \param datetime      整型，输入/输出，输入时表示时间秒数；
-//	*                        输出时表示实际取得的历史数值对应的时间秒数。
-//	* \param ms            短整型，输入/输出，如果 id 指定的标签点时间精度为纳秒，
-//	*                        则输入时表示时间纳秒数；输出时表示实际取得的历史数值时间纳秒数。
-//	*                        否则忽略输入，输出时为 0。
-//	* \param value         双精度浮点数，输出，浮点型历史数值
-//	*                        对于数据类型为 RTDB_REAL16、RTDB_REAL32、RTDB_REAL64 的标签点，存放相应的历史值；否则为 0
-//	* \param state         64 位整数，输出，整型历史数值，
-//	*                        对于数据类型为 RTDB_BOOL、RTDB_UINT8、RTDB_INT8、RTDB_CHAR、RTDB_UINT16、RTDB_INT16、
-//	*                        RTDB_UINT32、RTDB_INT32、RTDB_INT64 的标签点，存放相应的历史值；否则为 0
-//	* \param quality       短整型，输出，历史值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
-//	* \remark 本接口对数据类型为 RTDB_COOR、RTDB_BLOB、RTDB_STRING 的标签点无效。
+// input:
+//   - handle 连接句柄
+//   - id 标签点标识
+//   - mode 搜索模式
+//   - datetime 秒数
+//   - subtime 则输入时表示时间纳秒数
 //
-// rtdb_error RTDBAPI_CALLRULE rtdbh_get_single_value64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32 mode, rtdb_timestamp_type* datetime, rtdb_subtime_type* subtime, rtdb_float64* value, rtdb_int64* state, rtdb_int16* quality)
-func RawRtdbhGetSingleValue64Warp() {}
+// output:
+//   - TimestampType 秒数
+//   - SubtimeType 纳秒数
+//   - float64(value) 浮点型历史数值, 对于数据类型为 RTDB_REAL16、RTDB_REAL32、RTDB_REAL64 的标签点，存放相应的历史值；否则为 0
+//   - int64(state) 整型历史数值，对于数据类型为 RTDB_BOOL、RTDB_UINT8、RTDB_INT8、RTDB_CHAR、RTDB_UINT16、RTDB_INT16、RTDB_UINT32、RTDB_INT32、RTDB_INT64 的标签点，存放相应的历史值；否则为 0
+//   - int16(quality) 历史值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbh_get_single_value64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32 mode, rtdb_timestamp_type* datetime, rtdb_subtime_type* subtime, rtdb_float64* value, rtdb_int64* state, rtdb_int16* quality)
+func RawRtdbhGetSingleValue64Warp(handle ConnectHandle, id PointID, mode RtdbHisMode, datetime TimestampType, subtime SubtimeType) (TimestampType, SubtimeType, float64, int64, Quality, error) {
+	cHandle := C.rtdb_int32(handle)
+	cId := C.rtdb_int32(id)
+	cMode := C.rtdb_int32(mode)
+	cDatetime := C.rtdb_timestamp_type(datetime)
+	cSubtime := C.rtdb_subtime_type(subtime)
+	cValue := C.rtdb_float64(0)
+	cState := C.rtdb_int64(0)
+	cQuality := C.rtdb_int16(0)
+	err := C.rtdbh_get_single_value64_warp(cHandle, cId, cMode, &cDatetime, &cSubtime, &cValue, &cState, &cQuality)
+	return TimestampType(cDatetime), SubtimeType(cSubtime), float64(cValue), int64(cState), Quality(cQuality), RtdbError(err).GoError()
+}
 
 // RawRtdbhGetSingleCoorValue64Warp 读取单个标签点某个时间的坐标型历史数据
 //
