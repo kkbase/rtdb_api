@@ -10534,7 +10534,7 @@ func RawRtdbhGetArchivedBlobValues64Warp(handle ConnectHandle, id PointID, maxLe
 	cLens := (*C.rtdb_length_type)(unsafe.Pointer(&lens[0]))
 	blobs := make([]*C.rtdb_byte, 0)
 	for i := 0; i < int(maxCount); i++ {
-		blobs = append(blobs, (*C.rtdb_byte)(unsafe.Pointer(C.CBytes(make([]byte, maxLen)))))
+		blobs = append(blobs, (*C.rtdb_byte)(unsafe.Pointer(C.malloc(C.size_t(maxLen)))))
 	}
 	defer func() {
 		for i := 0; i < int(maxCount); i++ {
@@ -10595,7 +10595,7 @@ func RawRtdbhGetArchivedBlobValuesFilt64Warp(handle ConnectHandle, id PointID, m
 	cLens := (*C.rtdb_length_type)(unsafe.Pointer(&lens[0]))
 	blobs := make([]*C.rtdb_byte, 0)
 	for i := 0; i < int(maxCount); i++ {
-		blobs = append(blobs, (*C.rtdb_byte)(unsafe.Pointer(C.CBytes(make([]byte, maxLen)))))
+		blobs = append(blobs, (*C.rtdb_byte)(unsafe.Pointer(C.malloc(C.size_t(maxLen)))))
 	}
 	defer func() {
 		for i := 0; i < int(maxCount); i++ {
