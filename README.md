@@ -1,5 +1,8 @@
 # rtdb_api
 
+## 备注
+由于本库使用了CGO技术，需要编译一定量的C代码，因此首次编译时间较长，尤其是在Windows环境下，请耐心等待
+
 ## 一些基本概念
 * API库：这里特指连接数据库的so库，这个so库是用C写的，是负责和数据库进行通信的客户端，本包封装了这个so库的接口，使用FFI+Warp技术进行的。
 * CGO: 由于本库使用了部分C语言，因此编译的时候需要开启CGO，否则会导致无法编译，开启CGO命令:```go env -w CGO_ENABLED=1```
@@ -9,7 +12,7 @@
 * clibrary: C代码的(.so/.dll)部分，里面包含了跨平台的动态库(linux_amd64、linux_arm64、windows_amd64)
 * api.go: 基于C代码封装的原始API，函数名均以Raw开头，由于是基于C原始代码1比1封装，因此缺乏对象化，相对难用但功能全性能高
 * api_test.go: api.go中封装函数的代码示例
-* easy.go: 基于api.go进行二次封装的代码，更加简单易用，符合Golang语言风格
+* easy.go: 基于api.go进行二次封装的代码，更加简单易用，符合Golang语言风格，推荐使用easy封装的代码，更加简洁明了
 * easy_test.go: easy.go中封装函数的代码示例
 
 ## 注意：
