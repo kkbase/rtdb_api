@@ -10554,32 +10554,65 @@ func RawRtdbhGetArchivedBlobValues64Warp(handle ConnectHandle, id PointID, maxLe
 }
 
 // RawRtdbhGetArchivedBlobValuesFilt64Warp 读取并模糊搜索单个标签点一段时间的二进制/字符串型历史数据
-//   - \param handle        连接句柄
-//   - \param id            整型，输入，标签点标识
-//   - RTDB_EXACT 取指定时间的数据，如果没有则返回错误 RtE_DATA_NOT_FOUND；
-//   - \param count         整型，输入/输出，输入表示想要查询多少数据
-//   - 输出表示实际查到多少数据
-//   - \param datetime1     整型，输入，表示开始时间秒数；
-//   - \param ms1           短整型，输入，指定的标签点时间精度为纳秒，
-//   - 表示时间纳秒数；
-//   - \param datetime2     整型，输入,表示结束时间秒数；
-//   - \param ms2           短整型，输入，指定的标签点时间精度为纳秒，
-//   - 表示时间纳秒数；
-//   - \param filter        字符串，输入，支持通配符的模糊搜索字符串，多个模糊搜索的条件通过空格分隔，只针对string类型有效
-//   - 当filter为空指针时，表示不进行过滤,
-//   - 限制最大长度为RTDB_EQUATION_SIZE-1，超过此长度会返回错误
-//   - \param datetimes     整型数组，输出，表示实际取得的历史数值对应的时间秒数。
-//   - \param ms            短整型，输出，如果 id 指定的标签点时间精度为纳秒，
-//   - 表示实际取得的历史数值时间纳秒数。
-//   - \param lens          短整型数组，输入/输出，输入时表示 blob 的长度，
-//   - 输出时表示实际获取的二进制/字符串数据长度。
-//   - 当blobs为空指针时，表示只获取每条数据的长度，此时会忽略输入的lens
-//   - \param blobs         字节型数组，输出，二进制/字符串历史值。可以设置为空指针，表示只获取每条数据的长度
-//   - \param qualities     短整型数组，输出，历史值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
-//   - \remark 本接口只对数据类型为 RTDB_BLOB、RTDB_STRING 的标签点有效。
 //
-// rtdb_error RTDBAPI_CALLRULE rtdbh_get_archived_blob_values_filt64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32* count, rtdb_timestamp_type datetime1, rtdb_subtime_type subtime1, rtdb_timestamp_type datetime2, rtdb_subtime_type subtime2, const char* filter, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_length_type* lens, rtdb_byte* const* blobs, rtdb_int16* qualities)
-func RawRtdbhGetArchivedBlobValuesFilt64Warp() {}
+// input:
+//   - handle 连接句柄
+//   - id 标签点标识
+//   - maxCount 最大返回多少条数据
+//   - maxLen 每条Blob/String数据最大多少长度
+//   - filter 支持通配符的模糊搜索字符串，多个模糊搜索的条件通过空格分隔，只针对string类型有效
+//   - datetime1 表示开始时间秒数；
+//   - subtime1 指定的标签点时间精度为纳秒，
+//   - datetime2 表示结束时间秒数；
+//   - subtime2 指定的标签点时间精度为纳秒，
+//
+// output:
+//   - []TimestampType(datetimes) 表示实际取得的历史数值对应的时间秒数。
+//   - []SubtimeType(ms) 如果 id 指定的标签点时间精度为纳秒，表示实际取得的历史数值时间纳秒数。
+//   - [][]byte(blobs) 二进制/字符串历史值。可以设置为空指针，表示只获取每条数据的长度
+//   - []Quality(qualities) 历史值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbh_get_archived_blob_values_filt64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32* count, rtdb_timestamp_type datetime1, rtdb_subtime_type subtime1, rtdb_timestamp_type datetime2, rtdb_subtime_type subtime2, const char* filter, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_length_type* lens, rtdb_byte* const* blobs, rtdb_int16* qualities)
+func RawRtdbhGetArchivedBlobValuesFilt64Warp(handle ConnectHandle, id PointID, maxLen int32, maxCount int32, filter string, datetime1 TimestampType, subtime1 SubtimeType, datetime2 TimestampType, subtime2 SubtimeType) ([]TimestampType, []SubtimeType, [][]byte, []Quality, error) {
+	cHandle := C.rtdb_int32(handle)
+	cId := C.rtdb_int32(id)
+	cCount := C.rtdb_int32(maxCount)
+	cFilter := C.CString(filter)
+	defer C.free(unsafe.Pointer(cFilter))
+	cDatetime1 := C.rtdb_timestamp_type(datetime1)
+	cSubtime1 := C.rtdb_subtime_type(subtime1)
+	cDatetime2 := C.rtdb_timestamp_type(datetime2)
+	cSubtime2 := C.rtdb_subtime_type(subtime2)
+	datetimes := make([]TimestampType, maxCount)
+	cDatetimes := (*C.rtdb_timestamp_type)(unsafe.Pointer(&datetimes[0]))
+	subtimes := make([]SubtimeType, maxCount)
+	cSubtimes := (*C.rtdb_subtime_type)(unsafe.Pointer(&subtimes[0]))
+	lens := make([]int32, 0)
+	for i := 0; i < int(maxCount); i++ {
+		lens = append(lens, maxLen)
+	}
+	cLens := (*C.rtdb_length_type)(unsafe.Pointer(&lens[0]))
+	blobs := make([]*C.rtdb_byte, 0)
+	for i := 0; i < int(maxCount); i++ {
+		blobs = append(blobs, (*C.rtdb_byte)(unsafe.Pointer(C.CBytes(make([]byte, maxLen)))))
+	}
+	defer func() {
+		for i := 0; i < int(maxCount); i++ {
+			C.free(unsafe.Pointer(blobs[0]))
+		}
+	}()
+	cBlobs := &blobs[0]
+	qualities := make([]Quality, maxCount)
+	cQualities := (*C.rtdb_int16)(unsafe.Pointer(&qualities[0]))
+	err := C.rtdbh_get_archived_blob_values_filt64_warp(cHandle, cId, &cCount, cDatetime1, cSubtime1, cDatetime2, cSubtime2, cFilter, cDatetimes, cSubtimes, cLens, cBlobs, cQualities)
+	rtnBlobs := make([][]byte, 0)
+	for i := 0; i < int(cCount); i++ {
+		b := C.GoBytes(unsafe.Pointer(blobs[i]), C.int(lens[i]))
+		rtnBlobs = append(rtnBlobs, b)
+	}
+	return datetimes[:cCount], subtimes[:cCount], rtnBlobs, qualities[:cCount], RtdbError(err).GoError()
+}
 
 // RawRtdbhGetSingleDatetimeValue64Warp 读取单个标签点某个时间的datetime历史数据
 //   - \param handle        连接句柄
