@@ -10960,30 +10960,50 @@ func RawRtdbhGetPlotValues64Warp(handle ConnectHandle, id PointID, interval int3
 }
 
 // RawRtdbhGetCrossSectionValues64Warp 获取批量标签点在某一时间的历史断面数据
-// * \param handle        连接句柄
-// * \param ids           整型数组，输入，标签点标识列表
-// * \param mode          整型，输入，取值 RTDB_NEXT、RTDB_PREVIOUS、RTDB_EXACT、RTDB_INTER 之一：
-// *                        RTDB_NEXT 寻找下一个最近的数据；
-// *                        RTDB_PREVIOUS 寻找上一个最近的数据；
-// *                        RTDB_EXACT 取指定时间的数据，如果没有则返回错误 RtE_DATA_NOT_FOUND；
-// *                        RTDB_INTER 取指定时间的内插值数据。
-// * \param count         整型，输入，表示 ids、datetimes、ms、values、states、qualities 的长度，即标签点个数。
-// * \param datetimes     整型数组，输入/输出，输入时表示对应标签点的历史数值时间秒数，
-// *                        输出时表示根据 mode 实际寻找到的数值时间秒数。
-// * \param ms            短整型数组，输入/输出，对于时间精度为纳秒的标签点，
-// *                        输入时表示历史数值时间纳秒数，存放相应的纳秒值，
-// *                        输出时表示根据 mode 实际寻找到的数值时间纳秒数；否则忽略输入，输出时为 0。
-// * \param values        双精度浮点数数组，输出，浮点型历史值数值列表
-// *                        对于数据类型为 RTDB_REAL16、RTDB_REAL32、RTDB_REAL64 的标签点，存放相应的历史值；否则为 0
-// * \param states        64 位整数数组，输出，整型历史值数值列表，
-// *                        对于数据类型为 RTDB_BOOL、RTDB_UINT8、RTDB_INT8、RTDB_CHAR、RTDB_UINT16、RTDB_INT16、
-// *                        RTDB_UINT32、RTDB_INT32、RTDB_INT64 的标签点，存放相应的历史值；否则为 0
-// * \param qualities     短整型数组，输出，历史值品质列表，数据库预定义的品质参见枚举 RTDB_QUALITY
-// * \param errors        无符号整型数组，输出，读取历史数据的返回值列表，参考rtdb_error.h
-// * \remark 用户须保证 ids、datetimes、ms、values、states、qualities 的长度与 count 一致，
-// *        本接口对数据类型为 RTDB_COOR、RTDB_BLOB、RTDB_STRING 的标签点无效。
-// rtdb_error RTDBAPI_CALLRULE rtdbh_get_cross_section_values64_warp(rtdb_int32 handle, const rtdb_int32* ids, rtdb_int32 mode, rtdb_int32 count, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float64* values, rtdb_int64* states, rtdb_int16* qualities, rtdb_error* errors)
-func RawRtdbhGetCrossSectionValues64Warp() {}
+//
+// input:
+//   - handle 连接句柄
+//   - ids 标签点标识列表
+//   - mode 取数模式
+//   - datetime 时间戳，秒部分
+//   - subtime 时间戳，纳秒部分
+//
+// output:
+//   - []TimestampType(datetimes) 时间戳，秒部分
+//   - []SubtimeType(subtimes) 时间戳，纳秒部分
+//   - []float64(values) 浮点型历史值数值列表 对于数据类型为 RTDB_REAL16、RTDB_REAL32、RTDB_REAL64 的标签点，存放相应的历史值；否则为 0
+//   - []int64(states) 整型历史值数值列表，对于数据类型为 RTDB_BOOL、RTDB_UINT8、RTDB_INT8、RTDB_CHAR、RTDB_UINT16、RTDB_INT16、RTDB_UINT32、RTDB_INT32、RTDB_INT64 的标签点，存放相应的历史值；否则为 0
+//   - []Quality(qualities) 历史值品质列表，数据库预定义的品质参见枚举 RTDB_QUALITY
+//   - []RtdbError(errors) 读取历史数据的返回值列表，参考rtdb_error.h
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbh_get_cross_section_values64_warp(rtdb_int32 handle, const rtdb_int32* ids, rtdb_int32 mode, rtdb_int32 count, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float64* values, rtdb_int64* states, rtdb_int16* qualities, rtdb_error* errors)
+func RawRtdbhGetCrossSectionValues64Warp(handle ConnectHandle, ids []PointID, mode RtdbHisMode, datetime TimestampType, subtime SubtimeType) ([]TimestampType, []SubtimeType, []float64, []int64, []Quality, []RtdbError, error) {
+	cHandle := C.rtdb_int32(handle)
+	cIds := (*C.rtdb_int32)(unsafe.Pointer(&ids[0]))
+	cCount := C.rtdb_int32(len(ids))
+	cModel := C.rtdb_int32(mode)
+	datetimes := make([]TimestampType, len(ids))
+	for i := 0; i < int(cCount); i++ {
+		datetimes[i] = datetime
+	}
+	cDatetimes := (*C.rtdb_timestamp_type)(unsafe.Pointer(&datetimes[0]))
+	subtimes := make([]SubtimeType, len(ids))
+	for i := 0; i < int(cCount); i++ {
+		subtimes[i] = subtime
+	}
+	cSubtimes := (*C.rtdb_subtime_type)(unsafe.Pointer(&subtimes[0]))
+	values := make([]float64, len(ids))
+	cValues := (*C.rtdb_float64)(unsafe.Pointer(&values[0]))
+	states := make([]int64, len(ids))
+	cStates := (*C.rtdb_int64)(unsafe.Pointer(&states[0]))
+	qualities := make([]Quality, len(ids))
+	cQualities := (*C.rtdb_int16)(unsafe.Pointer(&qualities[0]))
+	errs := make([]RtdbError, len(ids))
+	cErrs := (*C.rtdb_error)(unsafe.Pointer(&errs[0]))
+	err := C.rtdbh_get_cross_section_values64_warp(cHandle, cIds, cModel, cCount, cDatetimes, cSubtimes, cValues, cStates, cQualities, cErrs)
+	return datetimes[:cCount], subtimes[:cCount], values[:cCount], states[:cCount], qualities[:cCount], errs[:cCount], RtdbError(err).GoError()
+}
 
 // RawRtdbhGetArchivedValuesFilt64Warp 读取单个标签点在一段时间内经复杂条件筛选后的历史储存值
 //   - \param handle        连接句柄
