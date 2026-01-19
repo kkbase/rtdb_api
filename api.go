@@ -10876,40 +10876,43 @@ func RawRtdbhSummaryDataWarp(handle ConnectHandle, id PointID, datetime1 Timesta
 
 // RawRtdbhSummaryDataInBatchesWarp 分批获取单一标签点一段时间内的统计值
 //
-//	  *
-//	- \param handle            连接句柄
-//	- \param id                整型，输入，标签点标识
-//	- \param count             整形，输入/输出，输入时表示 datatimes1、ms1、datatimes2、ms2、
-//	- max_values、min_values、total_values、calc_avgs、power_avgs、errors 的长度，
-//	- 即分段的个数；输出时表示成功取得统计值的分段个数。
-//	- \param interval          64 位整型，输入，分段时间间隔，单位为纳秒。
-//	- 如果为纳秒点，输入时间必须大于1纳秒，如果为秒级点，则必须大于1000000000纳秒。
-//	- \param datetimes1        整型数组，输入/输出，输入时第一个元素表示起始时间秒数。
-//	- 如果为 0，表示从存档中最早时间的数据开始进行统计。
-//	- 输出时返回各个分段对应的最大值的时间秒数。
-//	- \param ms1               短整型数组，输入/输出，如果 id 指定的标签点时间精度为纳秒，
-//	- 第一个元素表示起始时间对应的纳秒，
-//	- 输出时返回各个分段对应的最大值的时间纳秒数；否则忽略，返回值为 0
-//	- \param datetimes2        整型数组，输入/输出，输入时第一个元素表示结束时间秒数。
-//	- 如果为 0，表示统计到存档中最近时间的数据为止。
-//	- 输出时返回各个分段对应的最小值的时间秒数。
-//	- \param ms2               短整型数组，如果 id 指定的标签点时间精度为纳秒，
-//	- 第一个元素表示结束时间对应的纳秒，
-//	- 输出时返回各个分段对应的最小值的时间纳秒数；否则忽略，返回值为 0
-//	- \param max_values        双精度浮点型数组，输出，表示统计时间段内的最大数值。
-//	- \param min_values        双精度浮点型数组，输出，表示统计时间段内的最小数值。
-//	- \param total_values      双精度浮点型数组，输出，表示统计时间段内的累计值，结果的单位为标签点的工程单位。
-//	- \param calc_avgs         双精度浮点型数组，输出，表示统计时间段内的算术平均值。
-//	- \param power_avgs        双精度浮点型数组，输出，表示统计时间段内的加权平均值。
-//	- \param errors            无符号整型数组，输出，表示各个分段取得统计值的返回值。
-//	- \remark 由 datetimes1[0]、ms1[0] 表示的时间可以大于 datetimes2[0]、ms2[0] 表示的时间，
-//	- 此时前者表示结束时间，后者表示起始时间。
-//	- 如果输出的最大值或最小值的时间戳秒值为 0，
-//	- 则表明仅有累计值和加权平均值输出有效，其余统计结果无效。
-//	- 本接口对数据类型为 RTDB_COOR、RTDB_BLOB、RTDB_STRING 的标签点无效。
+// input:
+//   - handle 连接句柄
+//   - id 标签点标识
+//   - maxCount 表示最大输出summary长度
+//   - interval 分段时间间隔，单位为纳秒。
+//   - datetimes1 输入/输出，输入时第一个元素表示起始时间秒数。如果为 0，表示从存档中最早时间的数据开始进行统计。
+//   - subtime1 如果 id 指定的标签点时间精度为纳秒，第一个元素表示起始时间对应的纳秒，
+//   - datetimes2 输入时第一个元素表示结束时间秒数。表示统计到存档中最近时间的数据为止。
+//   - subtime2 如果 id 指定的标签点时间精度为纳秒，第一个元素表示结束时间对应的纳秒，
 //
-// rtdb_error RTDBAPI_CALLRULE rtdbh_summary_data_in_batches_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32* count, rtdb_int64 interval, rtdb_timestamp_type datetime1, rtdb_subtime_type subtime1, rtdb_timestamp_type datetime2, rtdb_subtime_type subtime2, RTDB_SUMMARY_DATA* summary_datas, rtdb_error* errors)
-func RawRtdbhSummaryDataInBatchesWarp() {}
+// output:
+//   - []RtdbSummaryData(summarys) 表示聚合的值
+//   - []RtdbError(errors) 表示各个分段取得统计值的返回值。
+//   - 备注：本接口对数据类型为 RTDB_COOR、RTDB_BLOB、RTDB_STRING 的标签点无效。
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbh_summary_data_in_batches_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32* count, rtdb_int64 interval, rtdb_timestamp_type datetime1, rtdb_subtime_type subtime1, rtdb_timestamp_type datetime2, rtdb_subtime_type subtime2, RTDB_SUMMARY_DATA* summary_datas, rtdb_error* errors)
+func RawRtdbhSummaryDataInBatchesWarp(handle ConnectHandle, id PointID, maxCount int32, interval time.Duration, datetime1 TimestampType, subtime1 SubtimeType, datetime2 TimestampType, subtime2 SubtimeType) ([]RtdbSummaryData, []error, error) {
+	cHandle := C.rtdb_int32(handle)
+	cId := C.rtdb_int32(id)
+	cMaxCount := C.rtdb_int32(maxCount)
+	cInterval := C.rtdb_int64(interval.Nanoseconds())
+	cDatetime1 := C.rtdb_timestamp_type(datetime1)
+	cSubtime1 := C.rtdb_subtime_type(subtime1)
+	cDatetime2 := C.rtdb_timestamp_type(datetime2)
+	cSubtime2 := C.rtdb_subtime_type(subtime2)
+	cDatas := make([]C.RTDB_SUMMARY_DATA, maxCount)
+	errs := make([]RtdbError, maxCount)
+	cErrs := (*C.rtdb_error)(unsafe.Pointer(&errs[0]))
+	err := C.rtdbh_summary_data_in_batches_warp(cHandle, cId, &cMaxCount, cInterval, cDatetime1, cSubtime1, cDatetime2, cSubtime2, &cDatas[0], cErrs)
+	goDatas := make([]RtdbSummaryData, 0)
+	for i := 0; i < int(cMaxCount); i++ {
+		goDatas = append(goDatas, *cToGoRtdbSummaryData(&cDatas[i]))
+	}
+	goErrs := RtdbErrorListToErrorList(errs[:cMaxCount])
+	return goDatas, goErrs, RtdbError(err).GoError()
+}
 
 //	RawRtdbhGetPlotValues64Warp 获取单个标签点一段时间内用于绘图的历史数据
 //	*
