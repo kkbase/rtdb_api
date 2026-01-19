@@ -11118,7 +11118,7 @@ func RawRtdbhGetIntervalValuesFilt64Warp(handle ConnectHandle, id PointID, filte
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbh_get_interpo_values_filt64_warp(rtdb_int32 handle, rtdb_int32 id, const char* filter, rtdb_int32* count, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float64* values, rtdb_int64* states, rtdb_int16* qualities)
-func RawRtdbhGetInterpoValuesFilt64Warp(handle ConnectHandle, id PointID, count int32, datetime1 TimestampType, subtime1 SubtimeType, datetime2 TimestampType, subtime2 SubtimeType) ([]TimestampType, []SubtimeType, []float64, []int64, []Quality, error) {
+func RawRtdbhGetInterpoValuesFilt64Warp(handle ConnectHandle, id PointID, filter string, count int32, datetime1 TimestampType, subtime1 SubtimeType, datetime2 TimestampType, subtime2 SubtimeType) ([]TimestampType, []SubtimeType, []float64, []int64, []Quality, error) {
 	cHandle := C.rtdb_int32(handle)
 	cId := C.rtdb_int32(id)
 	cCount := C.rtdb_int32(count)
@@ -11144,33 +11144,34 @@ func RawRtdbhGetInterpoValuesFilt64Warp(handle ConnectHandle, id PointID, count 
 
 // RawRtdbhSummaryDataFiltWarp 获取单个标签点一段时间内经复杂条件筛选后的统计值
 //
-//   - \param handle            连接句柄
-//   - \param id                整型，输入，标签点标识
-//   - \param filter            字符串，输入，由算术、逻辑运算符组成的复杂条件表达式，
-//   - 长度不得超过 RTDB_EQUATION_SIZE，长度为 0 则不进行条件筛选。
-//   - \param datetime1         整型，输入/输出，输入时表示起始时间秒数。
-//   - 如果为 0，表示从存档中最早时间的数据开始进行统计。
-//   - 输出时返回最大值的时间秒数。
-//   - \param ms1               短整型，输入/输出，如果 id 指定的标签点时间精度为纳秒，
-//   - 表示起始时间对应的纳秒，输出时表示最大值的时间纳秒数；否则忽略，返回值为 0
-//   - \param datetime2         整型，输入/输出，输入时表示结束时间秒数。
-//   - 如果为 0，表示统计到存档中最近时间的数据为止。
-//   - 输出时返回最小值的时间秒数。
-//   - \param ms2               短整型，如果 id 指定的标签点时间精度为纳秒，
-//   - 表示结束时间对应的纳秒，输出时表示最小值的时间纳秒数；否则忽略，返回值为 0
-//   - \param max_value         双精度浮点型，输出，表示统计时间段内的最大数值。
-//   - \param min_value         双精度浮点型，输出，表示统计时间段内的最小数值。
-//   - \param total_value       双精度浮点型，输出，表示统计时间段内的累计值，结果的单位为标签点的工程单位。
-//   - \param calc_avg          双精度浮点型，输出，表示统计时间段内的算术平均值。
-//   - \param power_avg         双精度浮点型，输出，表示统计时间段内的加权平均值。
-//   - \remark 由 datetime1、ms1 表示的时间可以大于 datetime2、ms2 表示的时间，
-//   - 此时前者表示结束时间，后者表示起始时间。
-//   - 如果输出的最大值或最小值的时间戳秒值为 0，
-//   - 则表明仅有累计值和加权平均值输出有效，其余统计结果无效。
-//   - 本接口对数据类型为 RTDB_COOR、RTDB_BLOB、RTDB_STRING 的标签点无效。
+// input:
+//   - handle 连接句柄
+//   - id 标签点标识
+//   - filter 由算术、逻辑运算符组成的复杂条件表达式，
+//   - datetime1 输入时表示起始时间秒数。如果为 0，表示从存档中最早时间的数据开始进行统计。
+//   - subtime1 如果 id 指定的标签点时间精度为纳秒，表示起始时间对应的纳秒，输出时表示最大值的时间纳秒数；否则忽略，返回值为 0
+//   - datetime2 输入时表示结束时间秒数。如果为 0，表示统计到存档中最近时间的数据为止。
+//   - subtime2 如果 id 指定的标签点时间精度为纳秒，表示结束时间对应的纳秒，输出时表示最小值的时间纳秒数；否则忽略，返回值为 0
 //
-// rtdb_error RTDBAPI_CALLRULE rtdbh_summary_data_filt_warp(rtdb_int32 handle, rtdb_int32 id, const char* filter, rtdb_timestamp_type datetime1, rtdb_subtime_type subtime1, rtdb_timestamp_type datetime2, rtdb_subtime_type subtime2, RTDB_SUMMARY_DATA* summary_data)
-func RawRtdbhSummaryDataFiltWarp() {}
+// output:
+//   - RtdbSummaryData(data) 聚合后的数据集
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbh_summary_data_filt_warp(rtdb_int32 handle, rtdb_int32 id, const char* filter, rtdb_timestamp_type datetime1, rtdb_subtime_type subtime1, rtdb_timestamp_type datetime2, rtdb_subtime_type subtime2, RTDB_SUMMARY_DATA* summary_data)
+func RawRtdbhSummaryDataFiltWarp(handle ConnectHandle, id PointID, filter string, datetime1 TimestampType, subtime1 SubtimeType, datetime2 TimestampType, subtime2 SubtimeType) (*RtdbSummaryData, error) {
+	cHandle := C.rtdb_int32(handle)
+	cId := C.rtdb_int32(id)
+	cFilter := C.CString(filter)
+	defer C.free(unsafe.Pointer(cFilter))
+	cDatetime1 := C.rtdb_timestamp_type(datetime1)
+	cSubtime1 := C.rtdb_subtime_type(subtime1)
+	cDatetime2 := C.rtdb_timestamp_type(datetime2)
+	cSubtime2 := C.rtdb_subtime_type(subtime2)
+	cData := C.RTDB_SUMMARY_DATA{}
+	err := C.rtdbh_summary_data_filt_warp(cHandle, cId, cFilter, cDatetime1, cSubtime1, cDatetime2, cSubtime2, &cData)
+	goData := cToGoRtdbSummaryData(&cData)
+	return goData, RtdbError(err).GoError()
+}
 
 // RawRtdbhSummaryDataFiltInBatchesWarp 分批获取单一标签点一段时间内经复杂条件筛选后的统计值
 //
