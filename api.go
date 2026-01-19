@@ -10366,10 +10366,10 @@ func RawRtdbhGetIntervalValues64Warp(handle ConnectHandle, id PointID, interval 
 	cInterval := C.rtdb_int64(interval.Nanoseconds())
 	cCount := C.rtdb_int32(count)
 	datetimes := make([]TimestampType, count)
-	datetimes[0] = C.rtdb_timestamp_type(datetime1)
+	datetimes[0] = datetime1
 	cDatetimes := (*C.rtdb_timestamp_type)(unsafe.Pointer(&datetimes[0]))
 	subtimes := make([]SubtimeType, count)
-	subtimes[0] = C.rtdb_subtime_type(subtime1)
+	subtimes[0] = subtime1
 	cSubtimes := (*C.rtdb_subtime_type)(unsafe.Pointer(&subtimes[0]))
 	values := make([]float64, count)
 	cValues := (*C.rtdb_float64)(unsafe.Pointer(&values[0]))
@@ -11176,12 +11176,24 @@ func RawRtdbhPutArchivedNamedTypeValues64Warp() {}
 func RawRtdbeComputeHistory64Warp() {}
 
 // RawRtdbbGetEquationByFileNameWarp 根据文件名获取方程式
-// *      [handle]   连接句柄
-// *      [file_name] 输入，字符串，方程式路径
-// *      [equation]  输出，返回的方程式长度最长为RTDB_MAX_EQUATION_SIZE-1
-// *备注：用户调用时为equation分配的空间不得小于RTDB_MAX_EQUATION_SIZE
-// rtdb_error RTDBAPI_CALLRULE rtdbb_get_equation_by_file_name_warp(rtdb_int32 handle, const char* file_name, char equation[RTDB_MAX_EQUATION_SIZE])
-func RawRtdbbGetEquationByFileNameWarp() {}
+//
+// input:
+//   - handle 连接句柄
+//   - file_name 方程式路径
+//
+// output:
+//   - equation 返回的方程式长度最长为RTDB_MAX_EQUATION_SIZE-1
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbb_get_equation_by_file_name_warp(rtdb_int32 handle, const char* file_name, char equation[RTDB_MAX_EQUATION_SIZE])
+func RawRtdbbGetEquationByFileNameWarp(handle ConnectHandle, name string) ([]byte, error) {
+	cHandle := C.rtdb_int32(handle)
+	cName := C.CString(name)
+	defer C.free(unsafe.Pointer(cName))
+	equation := make([]byte, int(C.RTDB_MAX_EQUATION_SIZE))
+	err := C.rtdbb_get_equation_by_file_name_warp(cHandle, cName, (*C.char)(unsafe.Pointer(&equation[0])))
+	return equation, RtdbError(err).GoError()
+}
 
 // RawRtdbbGetEquationByIdWarp 根ID径获取方程式
 //
