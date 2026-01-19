@@ -10434,26 +10434,34 @@ func RawRtdbhGetSingleValue64Warp(handle ConnectHandle, id PointID, mode RtdbHis
 
 // RawRtdbhGetSingleCoorValue64Warp 读取单个标签点某个时间的坐标型历史数据
 //
-//	*
-//	* \param handle        连接句柄
-//	* \param id            整型，输入，标签点标识
-//	* \param mode          整型，输入，取值 RTDB_NEXT、RTDB_PREVIOUS、RTDB_EXACT、RTDB_INTER 之一：
-//	*                        RTDB_NEXT 寻找下一个最近的数据；
-//	*                        RTDB_PREVIOUS 寻找上一个最近的数据；
-//	*                        RTDB_EXACT 取指定时间的数据，如果没有则返回错误 RtE_DATA_NOT_FOUND；
-//	*                        RTDB_INTER 取指定时间的内插值数据。
-//	* \param datetime      整型，输入/输出，输入时表示时间秒数；
-//	*                        输出时表示实际取得的历史数值对应的时间秒数。
-//	* \param ms            短整型，输入/输出，如果 id 指定的标签点时间精度为纳秒，
-//	*                        则输入时表示时间纳秒数；输出时表示实际取得的历史数值时间纳秒数。
-//	*                        否则忽略输入，输出时为 0。
-//	* \param x             单精度浮点型，输出，横坐标历史数值
-//	* \param y             单精度浮点型，输出，纵坐标历史数值
-//	* \param quality       短整型，输出，历史值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
-//	* \remark 本接口只对数据类型为 RTDB_COOR 的标签点有效。
+// input:
+//   - handle 连接句柄
+//   - id 标签点标识
+//   - mode 搜索模式
+//   - datetime 秒数
+//   - subtime 则输入时表示时间纳秒数
 //
-// rtdb_error RTDBAPI_CALLRULE rtdbh_get_single_coor_value64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32 mode, rtdb_timestamp_type* datetime, rtdb_subtime_type* subtime, rtdb_float32* x, rtdb_float32* y, rtdb_int16* quality)
-func RawRtdbhGetSingleCoorValue64Warp() {}
+// output:
+//   - TimestampType 秒数
+//   - SubtimeType 纳秒数
+//   - float32(x) 浮点型历史数值, 对于数据类型为 RTDB_REAL16、RTDB_REAL32、RTDB_REAL64 的标签点，存放相应的历史值；否则为 0
+//   - float32(y) 整型历史数值，对于数据类型为 RTDB_BOOL、RTDB_UINT8、RTDB_INT8、RTDB_CHAR、RTDB_UINT16、RTDB_INT16、RTDB_UINT32、RTDB_INT32、RTDB_INT64 的标签点，存放相应的历史值；否则为 0
+//   - int16(quality) 历史值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbh_get_single_coor_value64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32 mode, rtdb_timestamp_type* datetime, rtdb_subtime_type* subtime, rtdb_float32* x, rtdb_float32* y, rtdb_int16* quality)
+func RawRtdbhGetSingleCoorValue64Warp(handle ConnectHandle, id PointID, mode RtdbHisMode, datetime TimestampType, subtime SubtimeType) (TimestampType, SubtimeType, float32, float32, Quality, error) {
+	cHandle := C.rtdb_int32(handle)
+	cId := C.rtdb_int32(id)
+	cMode := C.rtdb_int32(mode)
+	cDatetime := C.rtdb_timestamp_type(datetime)
+	cSubtime := C.rtdb_subtime_type(subtime)
+	cX := C.rtdb_float32(0)
+	cY := C.rtdb_float32(0)
+	cQuality := C.rtdb_int16(0)
+	err := C.rtdbh_get_single_coor_value64_warp(cHandle, cId, cMode, &cDatetime, &cSubtime, &cX, &cY, &cQuality)
+	return TimestampType(cDatetime), SubtimeType(cSubtime), float32(cX), float32(cY), Quality(cQuality), RtdbError(err).GoError()
+}
 
 // RawRtdbhGetSingleBlobValue64Warp 读取单个标签点某个时间的二进制/字符串型历史数据
 //
