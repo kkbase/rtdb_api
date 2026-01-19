@@ -10915,40 +10915,49 @@ func RawRtdbhSummaryDataInBatchesWarp(handle ConnectHandle, id PointID, maxCount
 }
 
 //	RawRtdbhGetPlotValues64Warp 获取单个标签点一段时间内用于绘图的历史数据
-//	*
-//	* \param handle        连接句柄
-//	* \param id            整型，输入，标签点标识
-//	* \param interval      整型，输入，时间区间数量，单位为个，
-//	*                        一般会使用绘图的横轴(时间轴)所用屏幕像素数，
-//	*                        该功能将起始至结束时间等分为 interval 个区间，
-//	*                        并返回每个区间的第一个和最后一个数值、最大和最小数值、一条异常数值；
-//	*                        故参数 count 有可能输出五倍于 interval 的历史值个数，
-//	*                        所以推荐输入的 count 至少是 interval 的五倍。
-//	* \param count         整型，输入/输出，输入时表示 datetimes、ms、values、states、qualities 的长度，
-//	*                        即需要获取的最大历史值个数，输出时返回实际得到的历史值个数。
-//	* \param datetimes     整型数组，输入/输出，
-//	*                        输入时第一个元素表示起始时间秒数，
-//	*                        最后一个元素表示结束时间秒数，如果为 0，表示直到数据的最后时间；
-//	*                        输出时表示对应的历史数值时间秒数。
-//	* \param ms            短整型数组，输入/输出，如果 id 指定的标签点时间精度为纳秒，
-//	*                        则输入时第一个元素表示起始时间纳秒，
-//	*                        最后一个元素表示结束时间纳秒；
-//	*                        输出时表示对应的历史数值时间纳秒。
-//	*                        否则忽略输入，输出时为 0。
-//	* \param values        双精度浮点数数组，输出，浮点型历史值数值列表
-//	*                        对于数据类型为 RTDB_REAL16、RTDB_REAL32、RTDB_REAL64 的标签点，存放相应的历史值；否则为 0
-//	* \param states        64 位整数数组，输出，整型历史值数值列表，
-//	*                        对于数据类型为 RTDB_BOOL、RTDB_UINT8、RTDB_INT8、RTDB_CHAR、RTDB_UINT16、RTDB_INT16、
-//	*                        RTDB_UINT32、RTDB_INT32、RTDB_INT64 的标签点，存放相应的历史值；否则为 0
-//	* \param qualities     短整型数组，输出，历史值品质列表，数据库预定义的品质参见枚举 RTDB_QUALITY
-//	* \remark 用户须保证 datetimes、ms、values、states、qualities 的长度与 count 一致，
-//	*        在输入时，datetimes、ms 中至少应有一个元素，用以存放起始及结束时间。
-//	*        第一个元素形成的时间可以大于最后一个元素形成的时间，
-//	*        此时第一个元素表示结束时间，最后一个元素表示开始时间。
-//	*        本接口对数据类型为 RTDB_COOR、RTDB_BLOB、RTDB_STRING 的标签点无效。
 //
-// rtdb_error RTDBAPI_CALLRULE rtdbh_get_plot_values64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32 interval, rtdb_int32* count, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float64* values, rtdb_int64* states, rtdb_int16* qualities)
-func RawRtdbhGetPlotValues64Warp() {}
+// input:
+//   - handle 连接句柄
+//   - id 标签点标识
+//   - interval 时间区间数量，单位为个，一般会使用绘图的横轴(时间轴)所用屏幕像素数，该功能将起始至结束时间等分为 interval 个区间，并返回每个区间的第一个和最后一个数值、最大和最小数值、一条异常数值；故参数 count 有可能输出五倍于 interval 的历史值个数，所以推荐输入的 count 至少是 interval 的五倍。
+//   - datetime1 开始时间，秒级
+//   - subtime1 开始时间，纳秒级
+//   - datetime2 结束时间，秒级
+//   - subtime2 结束时间，纳秒级
+//
+// output:
+//   - []TimestampType(datetimes) 输出时表示对应的历史数值时间秒数。
+//   - []SubtimeType(subtimes) 输出时表示对应的历史数值时间纳秒
+//   - []float64(values) 浮点型历史值数值列表,对于数据类型为 RTDB_REAL16、RTDB_REAL32、RTDB_REAL64 的标签点，存放相应的历史值；否则为 0
+//   - []int64(states) 整型历史值数值列表，对于数据类型为 RTDB_BOOL、RTDB_UINT8、RTDB_INT8、RTDB_CHAR、RTDB_UINT16、RTDB_INT16、RTDB_UINT32、RTDB_INT32、RTDB_INT64 的标签点，存放相应的历史值；否则为 0
+//   - []Quality(qualities) 历史值品质列表，数据库预定义的品质参见枚举 RTDB_QUALITY
+//   - 本接口对数据类型为 RTDB_COOR、RTDB_BLOB、RTDB_STRING 的标签点无效。
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbh_get_plot_values64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32 interval, rtdb_int32* count, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float64* values, rtdb_int64* states, rtdb_int16* qualities)
+func RawRtdbhGetPlotValues64Warp(handle ConnectHandle, id PointID, interval int32, datetime1 TimestampType, subtime1 SubtimeType, datetime2 TimestampType, subtime2 SubtimeType) ([]TimestampType, []SubtimeType, []float64, []int64, []Quality, error) {
+	maxCount := interval * 5
+	cHandle := C.rtdb_int32(handle)
+	cId := C.rtdb_int32(id)
+	cInterval := C.rtdb_int32(interval)
+	cMaxCount := C.rtdb_int32(maxCount)
+	datetimes := make([]TimestampType, maxCount)
+	datetimes[0] = datetime1
+	datetimes[maxCount-1] = datetime2
+	cDatetimes := (*C.rtdb_timestamp_type)(unsafe.Pointer(&datetimes[0]))
+	subtimes := make([]SubtimeType, maxCount)
+	subtimes[0] = subtime1
+	subtimes[maxCount-1] = subtime2
+	cSubtimes := (*C.rtdb_subtime_type)(unsafe.Pointer(&subtimes[0]))
+	values := make([]float64, maxCount)
+	cValues := (*C.rtdb_float64)(unsafe.Pointer(&values[0]))
+	states := make([]int64, maxCount)
+	cStates := (*C.rtdb_int64)(unsafe.Pointer(&states[0]))
+	qualities := make([]Quality, maxCount)
+	cQualities := (*C.rtdb_int16)(unsafe.Pointer(&qualities[0]))
+	err := C.rtdbh_get_plot_values64_warp(cHandle, cId, cInterval, &cMaxCount, cDatetimes, cSubtimes, cValues, cStates, cQualities)
+	return datetimes[:cMaxCount], subtimes[:cMaxCount], values[:cMaxCount], states[:cMaxCount], qualities[:cMaxCount], RtdbError(err).GoError()
+}
 
 // RawRtdbhGetCrossSectionValues64Warp 获取批量标签点在某一时间的历史断面数据
 // * \param handle        连接句柄
