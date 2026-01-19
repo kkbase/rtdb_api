@@ -6224,6 +6224,98 @@ const (
 	RtdbHisModeInterOrNext = RtdbHisMode(C.RTDB_INTER_OR_NEXT)
 )
 
+/*
+//   - \param max_value         双精度浮点型，输出，表示统计时间段内的最大数值。
+//   - \param min_value         双精度浮点型，输出，表示统计时间段内的最小数值。
+//   - \param total_value       双精度浮点型，输出，表示统计时间段内的累计值，结果的单位为标签点的工程单位。
+//   - \param calc_avg          双精度浮点型，输出，表示统计时间段内的算术平均值。
+//   - \param power_avg         双精度浮点型，输出，表示统计时间段内的加权平均值。
+//   - 此时前者表示结束时间，后者表示起始时间。
+//   - 如果输出的最大值或最小值的时间戳秒值为 0，
+//   - 则表明仅有累计值和加权平均值输出有效，其余统计结果无效。
+//   - 本接口对数据类型为 RTDB_COOR、RTDB_BLOB、RTDB_STRING 的标签点无效。
+*/
+
+type RtdbSummaryData struct {
+	FirstTime    TimestampType // 首部时间戳精度，秒级
+	LastTime     TimestampType // 尾部时间戳精度，秒级
+	MaxTime      TimestampType // 最大时间戳精度，秒级
+	MinTime      TimestampType // 最小时间戳精度，秒级
+	FirstSubtime SubtimeType   // 首部时间戳精度，纳秒级
+	LastSubtime  SubtimeType   // 尾部时间戳精度，纳秒级
+	MaxSubtime   SubtimeType   // 最大时间戳精度，纳秒级
+	MinSubtime   SubtimeType   // 最小时间戳精度，纳秒级
+	FirstValue   float64       // 首部值
+	LastValue    float64       // 尾部值
+	MaxValue     float64       // 最大值
+	MinValue     float64       // 最小值
+	FirstQuality int16         // 首部质量
+	LastQuality  int16         // 尾部质量
+	MaxQuality   int16         // 最大质量
+	MinQuality   int16         // 最小质量
+	Power        float64       // 加权值
+	PowerAvg     float64       // 加权平均值
+	Total        float64       // 累计值
+	CalcAvg      float64       // 算数平均值
+	Count        int32         // 个数
+	ValidCount   int32         // 有效个数
+}
+
+func cToGoRtdbSummaryData(data *C.RTDB_SUMMARY_DATA) *RtdbSummaryData {
+	rtn := RtdbSummaryData{
+		FirstTime:    TimestampType(data.first_time),
+		LastTime:     TimestampType(data.last_time),
+		MaxTime:      TimestampType(data.max_time),
+		MinTime:      TimestampType(data.min_time),
+		FirstSubtime: SubtimeType(data.first_subtime),
+		LastSubtime:  SubtimeType(data.last_subtime),
+		MaxSubtime:   SubtimeType(data.max_subtime),
+		MinSubtime:   SubtimeType(data.min_subtime),
+		FirstValue:   float64(data.first_value),
+		LastValue:    float64(data.last_value),
+		MaxValue:     float64(data.max_value),
+		MinValue:     float64(data.min_value),
+		FirstQuality: int16(data.first_quality),
+		LastQuality:  int16(data.last_quality),
+		MaxQuality:   int16(data.max_quality),
+		MinQuality:   int16(data.min_quality),
+		Power:        float64(data.power),
+		PowerAvg:     float64(data.power_avg),
+		Total:        float64(data.total),
+		CalcAvg:      float64(data.calc_avg),
+		Count:        int32(data.count),
+		ValidCount:   int32(data.valid_cont),
+	}
+	return &rtn
+}
+
+func goToCRtdbSummaryData(data *RtdbSummaryData) *C.RTDB_SUMMARY_DATA {
+	rtn := C.RTDB_SUMMARY_DATA{}
+	rtn.first_time = C.rtdb_timestamp_type(data.FirstTime)
+	rtn.last_time = C.rtdb_timestamp_type(data.LastTime)
+	rtn.max_time = C.rtdb_timestamp_type(data.MaxTime)
+	rtn.min_time = C.rtdb_timestamp_type(data.MinTime)
+	rtn.first_subtime = C.rtdb_subtime_type(data.FirstSubtime)
+	rtn.last_subtime = C.rtdb_subtime_type(data.LastSubtime)
+	rtn.max_subtime = C.rtdb_subtime_type(data.MaxSubtime)
+	rtn.min_subtime = C.rtdb_subtime_type(data.MinSubtime)
+	rtn.first_value = C.rtdb_float64(data.FirstValue)
+	rtn.last_value = C.rtdb_float64(data.LastValue)
+	rtn.max_value = C.rtdb_float64(data.MaxValue)
+	rtn.min_value = C.rtdb_float64(data.MinValue)
+	rtn.first_quality = C.rtdb_int16(data.FirstQuality)
+	rtn.last_quality = C.rtdb_int16(data.LastQuality)
+	rtn.max_quality = C.rtdb_int16(data.MaxQuality)
+	rtn.min_quality = C.rtdb_int16(data.MinQuality)
+	rtn.power = C.rtdb_float64(data.Power)
+	rtn.power_avg = C.rtdb_float64(data.PowerAvg)
+	rtn.total = C.rtdb_float64(data.Total)
+	rtn.calc_avg = C.rtdb_float64(data.CalcAvg)
+	rtn.count = C.rtdb_int32(data.Count)
+	rtn.valid_cont = C.rtdb_int32(data.ValidCount)
+	return &rtn
+}
+
 /////////////////////////////// 上面是结构定义 ////////////////////////////////////
 /////////////////////////////// -- 躺平的分隔线 -- ////////////////////////////////
 // 别问为啥不分文件，问就是懒 // 基本上是1:1还原的C端API // 这套API性能高但比较复杂 ///////
@@ -10711,52 +10803,76 @@ func RawRtdbhGetArchivedDatetimeValues64Warp(handle ConnectHandle, id PointID, m
 }
 
 // RawRtdbhPutArchivedDatetimeValues64Warp 写入批量标签点批量时间型历史存储数据
-//   - \param handle        连接句柄
-//   - \param count         整型，输入/输出，
-//   - 输入时表示 ids、datetimes、ms、dtlens、dtvalues、qualities、errors 的长度，
-//   - 即历史值个数；输出时返回实际写入的数值个数
-//   - \param ids           整型数组，输入，标签点标识
-//   - \param datetimes     整型数组，输入，表示对应的历史数值时间秒数。
-//   - \param ms            短整型数组，输入，如果 id 指定的标签点时间精度为纳秒，
-//   - 表示对应的历史数值时间纳秒；否则忽略。
-//   - \param dtvalues      字节型指针数组，输入，实时时间数值
-//   - \param dtlens        短整型数组，输入，时间数值长度，
-//   - 表示对应的 dtvalues 指针指向的缓冲区长度，超过一个页大小数据将被截断。
-//   - \param qualities     短整型数组，输入，历史数值品质列表，数据库预定义的品质参见枚举 RTDB_QUALITY
-//   - \param errors        无符号整型数组，输出，写入历史数据的返回值列表，参考rtdb_error.h
-//   - \remark 用户须保证 ids、datetimes、ms、dtlens、dtvalues、qualities、errors 的长度与 count 一致，
-//   - 本接口仅对数据类型为 RTDB_DATETIME 的标签点有效。
-//   - 如果 datetimes、ms 标识的数据已经存在，其值将被替换。
 //
-// rtdb_error RTDBAPI_CALLRULE rtdbh_put_archived_datetime_values64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, const rtdb_byte* const* dtvalues, const rtdb_length_type* dtlens, const rtdb_int16* qualities, rtdb_error* errors)
-func RawRtdbhPutArchivedDatetimeValues64Warp() {}
+// input:
+//   - handle 连接句柄
+//   - ids 标签点标识
+//   - datetimes 表示对应的历史数值时间秒数。
+//   - subtimes 如果 id 指定的标签点时间精度为纳秒，表示对应的历史数值时间纳秒；否则忽略。
+//   - dtvalues 实时时间数值
+//   - qualities 历史数值品质列表，数据库预定义的品质参见枚举 RTDB_QUALITY
+//
+// output:
+//   - errors 写入历史数据的返回值列表，参考rtdb_error.h
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbh_put_archived_datetime_values64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, const rtdb_byte* const* dtvalues, const rtdb_length_type* dtlens, const rtdb_int16* qualities, rtdb_error* errors)
+func RawRtdbhPutArchivedDatetimeValues64Warp(handle ConnectHandle, ids []PointID, datetimes []TimestampType, subtimes []SubtimeType, dtValues [][]byte, qualities []Quality) ([]error, error) {
+	cHandle := C.rtdb_int32(handle)
+	cCount := C.rtdb_int32(len(ids))
+	cIds := (*C.rtdb_int32)(unsafe.Pointer(&ids[0]))
+	cDatetimes := (*C.rtdb_timestamp_type)(unsafe.Pointer(&datetimes[0]))
+	cSubtimes := (*C.rtdb_subtime_type)(unsafe.Pointer(&subtimes[0]))
+	cDtValues := make([]*C.rtdb_byte, 0)
+	for i := 0; i < len(ids); i++ {
+		cDtValues = append(cDtValues, (*C.rtdb_byte)(unsafe.Pointer(C.CBytes([]byte(dtValues[i])))))
+	}
+	defer func() {
+		for i := 0; i < len(ids); i++ {
+			C.free(unsafe.Pointer(cDtValues[i]))
+		}
+	}()
+	ccDtValues := &cDtValues[0]
+	lens := make([]int32, 0)
+	for _, b := range dtValues {
+		lens = append(lens, int32(len(b)))
+	}
+	cLens := (*C.rtdb_length_type)(unsafe.Pointer(&lens[0]))
+	cQualities := (*C.rtdb_int16)(unsafe.Pointer(&qualities[0]))
+	errs := make([]RtdbError, len(ids))
+	cErrs := (*C.rtdb_error)(unsafe.Pointer(&errs[0]))
+	err := C.rtdbh_put_archived_datetime_values64_warp(cHandle, &cCount, cIds, cDatetimes, cSubtimes, ccDtValues, cLens, cQualities, cErrs)
+	goErrs := RtdbErrorListToErrorList(errs)
+	return goErrs, RtdbError(err).GoError()
+}
 
 // RawRtdbhSummaryDataWarp 获取单个标签点一段时间内的统计值。
-//   - \param handle            连接句柄
-//   - \param id                整型，输入，标签点标识
-//   - \param datetime1         整型，输入/输出，输入时表示起始时间秒数。
-//   - 如果为 0，表示从存档中最早时间的数据开始进行统计。
-//   - 输出时返回最大值的时间秒数。
-//   - \param ms1               短整型，输入/输出，如果 id 指定的标签点时间精度为纳秒，
-//   - 表示起始时间对应的纳秒，输出时表示最大值的时间纳秒数；否则忽略，返回值为 0
-//   - \param datetime2         整型，输入/输出，输入时表示结束时间秒数。
-//   - 如果为 0，表示统计到存档中最近时间的数据为止。
-//   - 输出时返回最小值的时间秒数。
-//   - \param ms2               短整型，如果 id 指定的标签点时间精度为纳秒，
-//   - 表示结束时间对应的纳秒，输出时表示最小值的时间纳秒数；否则忽略，返回值为 0
-//   - \param max_value         双精度浮点型，输出，表示统计时间段内的最大数值。
-//   - \param min_value         双精度浮点型，输出，表示统计时间段内的最小数值。
-//   - \param total_value       双精度浮点型，输出，表示统计时间段内的累计值，结果的单位为标签点的工程单位。
-//   - \param calc_avg          双精度浮点型，输出，表示统计时间段内的算术平均值。
-//   - \param power_avg         双精度浮点型，输出，表示统计时间段内的加权平均值。
-//   - \remark 由 datetime1、ms1 表示的时间可以大于 datetime2、ms2 表示的时间，
-//   - 此时前者表示结束时间，后者表示起始时间。
-//   - 如果输出的最大值或最小值的时间戳秒值为 0，
-//   - 则表明仅有累计值和加权平均值输出有效，其余统计结果无效。
-//   - 本接口对数据类型为 RTDB_COOR、RTDB_BLOB、RTDB_STRING 的标签点无效。
 //
-// rtdb_error RTDBAPI_CALLRULE rtdbh_summary_data_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime1, rtdb_subtime_type subtime1, rtdb_timestamp_type datetime2, rtdb_subtime_type subtime2, RTDB_SUMMARY_DATA* summary_data)
-func RawRtdbhSummaryDataWarp() {}
+// input:
+//   - handle 连接句柄
+//   - id 标签点标识
+//   - datetime1 输入时表示起始时间秒数。如果为 0，表示从存档中最早时间的数据开始进行统计。
+//   - subtime1 如果 id 指定的标签点时间精度为纳秒，表示起始时间对应的纳秒，输出时表示最大值的时间纳秒数；否则忽略，返回值为 0
+//   - datetime2 输入时表示结束时间秒数。如果为 0，表示统计到存档中最近时间的数据为止。
+//   - subtime2 如果 id 指定的标签点时间精度为纳秒，表示结束时间对应的纳秒，输出时表示最小值的时间纳秒数；否则忽略，返回值为 0
+//
+// output:
+//   - RtdbSummaryData(data) 聚合后的数据集
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbh_summary_data_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime1, rtdb_subtime_type subtime1, rtdb_timestamp_type datetime2, rtdb_subtime_type subtime2, RTDB_SUMMARY_DATA* summary_data)
+func RawRtdbhSummaryDataWarp(handle ConnectHandle, id PointID, datetime1 TimestampType, subtime1 SubtimeType, datetime2 TimestampType, subtime2 SubtimeType) (*RtdbSummaryData, error) {
+	cHandle := C.rtdb_int32(handle)
+	cId := C.rtdb_int32(id)
+	cDatetime1 := C.rtdb_timestamp_type(datetime1)
+	cSubtime1 := C.rtdb_subtime_type(subtime1)
+	cDatetime2 := C.rtdb_timestamp_type(datetime2)
+	cSubtime2 := C.rtdb_subtime_type(subtime2)
+	cData := C.RTDB_SUMMARY_DATA{}
+	err := C.rtdbh_summary_data_warp(cHandle, cId, cDatetime1, cSubtime1, cDatetime2, cSubtime2, &cData)
+	goData := cToGoRtdbSummaryData(&cData)
+	return goData, RtdbError(err).GoError()
+}
 
 // RawRtdbhSummaryDataInBatchesWarp 分批获取单一标签点一段时间内的统计值
 //
