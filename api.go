@@ -6284,7 +6284,7 @@ func cToGoRtdbSummaryData(data *C.RTDB_SUMMARY_DATA) *RtdbSummaryData {
 		Total:        float64(data.total),
 		CalcAvg:      float64(data.calc_avg),
 		Count:        int32(data.count),
-		ValidCount:   int32(data.valid_cont),
+		ValidCount:   int32(data.valid_count),
 	}
 	return &rtn
 }
@@ -6312,7 +6312,7 @@ func goToCRtdbSummaryData(data *RtdbSummaryData) *C.RTDB_SUMMARY_DATA {
 	rtn.total = C.rtdb_float64(data.Total)
 	rtn.calc_avg = C.rtdb_float64(data.CalcAvg)
 	rtn.count = C.rtdb_int32(data.Count)
-	rtn.valid_cont = C.rtdb_int32(data.ValidCount)
+	rtn.valid_count = C.rtdb_int32(data.ValidCount)
 	return &rtn
 }
 
