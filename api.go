@@ -13,6 +13,7 @@ import (
 	"path/filepath"
 	"runtime"
 	"strings"
+	"time"
 	"unsafe"
 )
 
@@ -10342,31 +10343,43 @@ func RawRtdbhGetInterpoValues64Warp(handle ConnectHandle, id PointID, count int3
 
 // RawRtdbhGetIntervalValues64Warp 读取单个标签点某个时刻之后一定数量的等间隔内插值替换的历史数值
 //
-//	*
-//	* \param handle        连接句柄
-//	* \param id            整型，输入，标签点标识
-//	* \param interval      整型，输入，插值时间间隔，单位为纳秒
-//	* \param count         整型，输入，表示 datetimes、ms、values、states、qualities 的长度，
-//	*                        即需要的插值个数。
-//	* \param datetimes     整型数组，输入/输出，
-//	*                        输入时第一个元素表示起始时间秒数；
-//	*                        输出时表示对应的历史数值时间秒数。
-//	* \param ms            短整型数组，输入/输出，如果 id 指定的标签点时间精度为纳秒，
-//	*                        则输入时第一个元素表示起始时间纳秒；
-//	*                        输出时表示对应的历史数值时间纳秒。
-//	*                        否则忽略输入，输出时为 0。
-//	* \param values        双精度浮点数数组，输出，浮点型历史插值数值列表
-//	*                        对于数据类型为 RTDB_REAL16、RTDB_REAL32、RTDB_REAL64 的标签点，存放相应的历史插值；否则为 0
-//	* \param states        64 位整数数组，输出，整型历史插值数值列表，
-//	*                        对于数据类型为 RTDB_BOOL、RTDB_UINT8、RTDB_INT8、RTDB_CHAR、RTDB_UINT16、RTDB_INT16、
-//	*                        RTDB_UINT32、RTDB_INT32、RTDB_INT64 的标签点，存放相应的历史插值；否则为 0
-//	* \param qualities     短整型数组，输出，历史插值品质列表，数据库预定义的品质参见枚举 RTDB_QUALITY
-//	* \remark 用户须保证 datetimes、ms、values、states、qualities 的长度与 count 一致，
-//	*        在输入时，datetimes、ms 中至少应有一个元素用于存放起始时间。
-//	*        本接口对数据类型为 RTDB_COOR、RTDB_BLOB、RTDB_STRING 的标签点无效。
+// input:
+//   - handle 连接句柄
+//   - id 标签点标识
+//   - interval 单位为纳秒
+//   - count 表示 datetimes、ms、values、states、qualities 的长度，即需要的插值个数。
+//   - datetime1 第一个元素表示起始时间秒数；
+//   - subtime1  第一个元素表示起始时间纳秒；
 //
-// rtdb_error RTDBAPI_CALLRULE rtdbh_get_interval_values64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int64 interval, rtdb_int32 count, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float64* values, rtdb_int64* states, rtdb_int16* qualities)
-func RawRtdbhGetIntervalValues64Warp() {}
+// output:
+//   - datetimes 秒数组
+//   - subtimes 纳秒数组
+//   - values 浮点型历史插值数值列表 对于数据类型为 RTDB_REAL16、RTDB_REAL32、RTDB_REAL64 的标签点，存放相应的历史插值；否则为 0
+//   - states 整型历史插值数值列表， 对于数据类型为 RTDB_BOOL、RTDB_UINT8、RTDB_INT8、RTDB_CHAR、RTDB_UINT16、RTDB_INT16、RTDB_UINT32、RTDB_INT32、RTDB_INT64 的标签点，存放相应的历史插值；否则为 0
+//   - qualities 历史插值品质列表，数据库预定义的品质参见枚举 RTDB_QUALITY
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbh_get_interval_values64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int64 interval, rtdb_int32 count, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float64* values, rtdb_int64* states, rtdb_int16* qualities)
+func RawRtdbhGetIntervalValues64Warp(handle ConnectHandle, id PointID, interval time.Duration, count int32, datetime1 TimestampType, subtime1 SubtimeType) ([]TimestampType, []SubtimeType, []float64, []int64, []Quality, error) {
+	cHandle := C.rtdb_int32(handle)
+	cId := C.rtdb_int32(id)
+	cInterval := C.rtdb_int64(interval.Nanoseconds())
+	cCount := C.rtdb_int32(count)
+	datetimes := make([]TimestampType, count)
+	datetimes[0] = C.rtdb_timestamp_type(datetime1)
+	cDatetimes := (*C.rtdb_timestamp_type)(unsafe.Pointer(&datetimes[0]))
+	subtimes := make([]SubtimeType, count)
+	subtimes[0] = C.rtdb_subtime_type(subtime1)
+	cSubtimes := (*C.rtdb_subtime_type)(unsafe.Pointer(&subtimes[0]))
+	values := make([]float64, count)
+	cValues := (*C.rtdb_float64)(unsafe.Pointer(&values[0]))
+	states := make([]int64, count)
+	cStates := (*C.rtdb_int64)(unsafe.Pointer(&states[0]))
+	qualities := make([]Quality, count)
+	cQualities := (*C.rtdb_int16)(unsafe.Pointer(&qualities[0]))
+	err := C.rtdbh_get_interval_values64_warp(cHandle, cId, cInterval, cCount, cDatetimes, cSubtimes, cValues, cStates, cQualities)
+	return datetimes, subtimes, values, states, qualities, RtdbError(err).GoError()
+}
 
 // RawRtdbhGetSingleValue64Warp 读取单个标签点某个时间的历史数据
 //
