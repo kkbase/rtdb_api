@@ -8285,7 +8285,7 @@ func RawRtdbbFindPointsExWarp(handle ConnectHandle, tableDotTags []string) ([]Po
 	cErrs := (*C.rtdb_error)(unsafe.Pointer(&errs[0]))
 
 	err := C.rtdbb_find_points_ex_warp(cHandle, &cCount, cTableDotTags, cIds, cTypes, cClassof, cPrecisions, cErrs)
-	return ids[:cCount], types[:cCount], classof[:cCount], precisions[:cCount], errs[:cCount], RtdbError(err)
+	return ids, types, classof, precisions, errs, RtdbError(err)
 }
 
 // RawRtdbbSortPointsWarp 根据标签属性字段对标签点标识进行排序
