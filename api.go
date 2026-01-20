@@ -7260,8 +7260,10 @@ func RawRtdbSetTimeoutWarp(handle ConnectHandle, socket SocketHandle, timeout Da
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_get_timeout_warp(rtdb_int32 handle, rtdb_int32 socket, rtdb_int32 *timeout)
 func RawRtdbGetTimeoutWarp(handle ConnectHandle, socket SocketHandle) (DateTimeType, RtdbError) {
+	cHandle := C.rtdb_int32(handle)
+	cSocket := C.rtdb_int32(socket)
 	timeout := C.rtdb_int32(0)
-	err := C.rtdb_get_timeout_warp(C.rtdb_int32(handle), C.rtdb_int32(socket), &timeout)
+	err := C.rtdb_get_timeout_warp(cHandle, cSocket, &timeout)
 	return DateTimeType(timeout), RtdbError(err)
 }
 
