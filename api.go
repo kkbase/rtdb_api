@@ -9,6 +9,7 @@ import "C"
 import (
 	_ "embed"
 	"errors"
+	"fmt"
 	"os"
 	"path/filepath"
 	"runtime"
