@@ -13,5 +13,5 @@ func TestLoginLogout(t *testing.T) {
 	}
 	defer func() { _ = conn.Logout() }()
 
-	fmt.Println(conn.SyncInfos)
+	fmt.Println(conn.SyncInfos, conn.StringBlobMaxLen)
 }

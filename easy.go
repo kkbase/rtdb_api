@@ -6,11 +6,11 @@ type RtdbConnect struct {
 	UserName         string         // 用户名
 	Password         string         // 密码
 	ConnectHandle    ConnectHandle  // 连接句柄
+	Priv             PrivGroup      // 用户权限
 	SyncInfos        []RtdbSyncInfo // 元数据信息
-	SocketHandle     SocketHandle   // 套接字句柄
+	SocketHandles    []SocketHandle // 套接字句柄
 	ServerOsType     RtdbOsType     // 服务端操作系统类型
 	StringBlobMaxLen int32          // 最大支持String/Blob长度
-	Priv             PrivGroup      // 用户权限
 }
 
 // Login 登录数据库
@@ -21,18 +21,22 @@ func Login(hostName string, port int32, userName string, password string) (*Rtdb
 		UserName: userName,
 		Password: password,
 	}
+
+	// 连接数据库
 	cHandle, err := RawRtdbConnectWarp(rtn.HostName, rtn.Port)
 	if err != nil {
 		return nil, err
 	}
 	rtn.ConnectHandle = cHandle
 
+	// 登录数据库
 	priv, err := RawRtdbLoginWarp(rtn.ConnectHandle, rtn.UserName, rtn.Password)
 	if err != nil {
 		return nil, err
 	}
 	rtn.Priv = priv
 
+	// 获取元信息
 	infos, errs, err := RawRtdbbGetMetaSyncInfoWarp(rtn.ConnectHandle, 0)
 	if err != nil {
 		return nil, err
@@ -43,6 +47,29 @@ func Login(hostName string, port int32, userName string, password string) (*Rtdb
 		}
 	}
 	rtn.SyncInfos = infos
+
+	// 获取套接字句柄
+	for i := range infos {
+		sHandle, err := RawRtdbGetOwnConnectionWarp(rtn.ConnectHandle, int32(i+1))
+		if err != nil {
+			return nil, err
+		}
+		rtn.SocketHandles = append(rtn.SocketHandles, sHandle)
+	}
+
+	// 获取服务器操作系统类型
+	osType, err := RawRtdbOsType(rtn.ConnectHandle)
+	if err != nil {
+		return nil, err
+	}
+	rtn.ServerOsType = osType
+
+	// 获取String/Blob最大长度
+	maxLen, err := RawRtdbGetMaxBlobLenWarp(rtn.ConnectHandle)
+	if err != nil {
+		return nil, err
+	}
+	rtn.StringBlobMaxLen = maxLen
 
 	return &rtn, nil
 }
