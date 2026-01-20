@@ -6879,9 +6879,10 @@ func RawRtdbRemoveBlacklistWarp(handle ConnectHandle, addr string, mask string) 
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_get_blacklist_warp(rtdb_int32 handle, char* const* addrs, char* const* masks, char* const* descs, rtdb_int32 *count)
 func RawRtdbGetBlacklistWarp(handle ConnectHandle) ([]BlackList, RtdbError) {
+	cHandle := C.rtdb_int32(handle)
 	cAddrs := make([]*C.char, RtdbConstMaxBlacklistLen)
 	for i := int32(0); i < int32(RtdbConstMaxBlacklistLen); i++ {
-		cAddrs[i] = (*C.char)(C.CBytes(make([]byte, 32)))
+		cAddrs[i] = (*C.char)(unsafe.Pointer(C.malloc(C.size_t(32))))
 	}
 	defer func() {
 		for i := int32(0); i < int32(RtdbConstMaxBlacklistLen); i++ {
@@ -6892,7 +6893,7 @@ func RawRtdbGetBlacklistWarp(handle ConnectHandle) ([]BlackList, RtdbError) {
 
 	cMakes := make([]*C.char, RtdbConstMaxBlacklistLen)
 	for i := int32(0); i < int32(RtdbConstMaxBlacklistLen); i++ {
-		cMakes[i] = (*C.char)(C.CBytes(make([]byte, 32)))
+		cMakes[i] = (*C.char)(unsafe.Pointer(C.malloc(C.size_t(32))))
 	}
 	defer func() {
 		for i := int32(0); i < int32(RtdbConstMaxBlacklistLen); i++ {
@@ -6903,7 +6904,7 @@ func RawRtdbGetBlacklistWarp(handle ConnectHandle) ([]BlackList, RtdbError) {
 
 	cDescs := make([]*C.char, RtdbConstMaxBlacklistLen)
 	for i := int32(0); i < int32(RtdbConstMaxBlacklistLen); i++ {
-		cDescs[i] = (*C.char)(C.CBytes(make([]byte, 512)))
+		cDescs[i] = (*C.char)(unsafe.Pointer(C.malloc(C.size_t(512))))
 	}
 	defer func() {
 		for i := int32(0); i < int32(RtdbConstMaxBlacklistLen); i++ {
@@ -6913,7 +6914,7 @@ func RawRtdbGetBlacklistWarp(handle ConnectHandle) ([]BlackList, RtdbError) {
 	cgoDescs := &cDescs[0]
 
 	cgoCount := C.rtdb_int32(RtdbConstMaxBlacklistLen)
-	err := C.rtdb_get_blacklist_warp(C.rtdb_int32(handle), cgoAddrs, cgoMasks, cgoDescs, &cgoCount)
+	err := C.rtdb_get_blacklist_warp(cHandle, cgoAddrs, cgoMasks, cgoDescs, &cgoCount)
 
 	rtn := make([]BlackList, 0)
 	for i := int32(0); i < int32(cgoCount); i++ {
@@ -6937,13 +6938,14 @@ func RawRtdbGetBlacklistWarp(handle ConnectHandle) ([]BlackList, RtdbError) {
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_add_authorization_warp(rtdb_int32 handle, const char *addr, const char *mask, rtdb_int32 priv, const char *desc)
 func RawRtdbAddAuthorizationWarp(handle ConnectHandle, addr string, mask string, desc string, priv PrivGroup) RtdbError {
+	cHandle := C.rtdb_int32(handle)
 	cAddr := C.CString(addr)
 	defer C.free(unsafe.Pointer(cAddr))
 	cMask := C.CString(mask)
 	defer C.free(unsafe.Pointer(cMask))
 	cDesc := C.CString(desc)
 	defer C.free(unsafe.Pointer(cDesc))
-	err := C.rtdb_add_authorization_warp(C.rtdb_int32(handle), cAddr, cMask, C.rtdb_int32(priv), cDesc)
+	err := C.rtdb_add_authorization_warp(cHandle, cAddr, cMask, C.rtdb_int32(priv), cDesc)
 	return RtdbError(err)
 }
 
@@ -6961,6 +6963,7 @@ func RawRtdbAddAuthorizationWarp(handle ConnectHandle, addr string, mask string,
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_update_authorization_warp(rtdb_int32 handle, const char *addr, const char *mask, const char *addr_new, const char *mask_new, rtdb_int32 priv, const char *desc)
 func RawRtdbUpdateAuthorizationWarp(handle ConnectHandle, oldAddr string, oldMask string, newAddr string, newMask string, newDesc string, priv PrivGroup) RtdbError {
+	cHandle := C.rtdb_int32(handle)
 	cOldAddr := C.CString(oldAddr)
 	defer C.free(unsafe.Pointer(cOldAddr))
 	cOldMask := C.CString(oldMask)
@@ -6971,7 +6974,7 @@ func RawRtdbUpdateAuthorizationWarp(handle ConnectHandle, oldAddr string, oldMas
 	defer C.free(unsafe.Pointer(cNewMask))
 	cNewDesc := C.CString(newDesc)
 	defer C.free(unsafe.Pointer(cNewDesc))
-	err := C.rtdb_update_authorization_warp(C.rtdb_int32(handle), cOldAddr, cOldMask, cNewAddr, cNewMask, C.rtdb_int32(priv), cNewDesc)
+	err := C.rtdb_update_authorization_warp(cHandle, cOldAddr, cOldMask, cNewAddr, cNewMask, C.rtdb_int32(priv), cNewDesc)
 	return RtdbError(err)
 }
 
@@ -6985,11 +6988,12 @@ func RawRtdbUpdateAuthorizationWarp(handle ConnectHandle, oldAddr string, oldMas
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_remove_authorization_warp(rtdb_int32 handle, const char *addr, const char *mask)
 func RawRtdbRemoveAuthorizationWarp(handle ConnectHandle, addr string, mask string) RtdbError {
+	cHandle := C.rtdb_int32(handle)
 	cAddr := C.CString(addr)
 	defer C.free(unsafe.Pointer(cAddr))
 	cMask := C.CString(mask)
 	defer C.free(unsafe.Pointer(cMask))
-	err := C.rtdb_remove_authorization_warp(C.rtdb_int32(handle), cAddr, cMask)
+	err := C.rtdb_remove_authorization_warp(cHandle, cAddr, cMask)
 	return RtdbError(err)
 }
 
