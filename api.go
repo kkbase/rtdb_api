@@ -8727,35 +8727,31 @@ func RawRtdbbRemoveNamedTypeWarp(handle int32, name string) RtdbError {
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_get_named_type_names_property_warp(rtdb_int32 handle, rtdb_int32 *count, rtdb_int32 *ids, char* const *named_type_names, rtdb_int32 *field_counts, rtdb_error *errors)
-func RawRtdbbGetNamedTypeNamesPropertyWarp(handle ConnectHandle, ids []PointID) ([]string, []int32, []error, RtdbError) {
-	cgoHandle := C.rtdb_int32(handle)
+func RawRtdbbGetNamedTypeNamesPropertyWarp(handle ConnectHandle, ids []PointID) ([]string, []int32, []RtdbError, RtdbError) {
+	cHandle := C.rtdb_int32(handle)
 	count := len(ids)
-	cgoCount := C.rtdb_int32(count)
-	cgoIds := (*C.rtdb_int32)(unsafe.Pointer(&ids[0]))
+	cCount := C.rtdb_int32(count)
+	cIds := (*C.rtdb_int32)(unsafe.Pointer(&ids[0]))
 	namedTypeNames := make([]*C.char, count)
-	for i := 0; i < int(count); i++ {
+	for i := 0; i < count; i++ {
 		namedTypeNames[i] = (*C.char)(C.CBytes(make([]byte, 4096)))
 	}
 	defer func() {
-		for i := 0; i < int(count); i++ {
+		for i := 0; i < count; i++ {
 			C.free(unsafe.Pointer(namedTypeNames[i]))
 		}
 	}()
-	cgoNamedTypeNames := (**C.char)(unsafe.Pointer(&namedTypeNames[0]))
+	cNamedTypeNames := (**C.char)(unsafe.Pointer(&namedTypeNames[0]))
 	counts := make([]int32, count)
-	cgoCounts := (*C.rtdb_int32)(unsafe.Pointer(&counts[0]))
-	errors := make([]RtdbError, count)
-	cgoErrors := (*C.rtdb_error)(unsafe.Pointer(&errors[0]))
-	err := C.rtdbb_get_named_type_names_property_warp(cgoHandle, &cgoCount, cgoIds, cgoNamedTypeNames, cgoCounts, cgoErrors)
+	cCounts := (*C.rtdb_int32)(unsafe.Pointer(&counts[0]))
+	errs := make([]RtdbError, count)
+	cErrs := (*C.rtdb_error)(unsafe.Pointer(&errs[0]))
+	err := C.rtdbb_get_named_type_names_property_warp(cHandle, &cCount, cIds, cNamedTypeNames, cCounts, cErrs)
 	names := make([]string, 0)
-	for i := 0; i < int(cgoCount); i++ {
+	for i := 0; i < count; i++ {
 		names = append(names, C.GoString(namedTypeNames[i]))
 	}
-	errs := make([]error, 0)
-	for _, err := range errors[:cgoCount] {
-		errs = append(errs, err.GoError())
-	}
-	return names[:cgoCount], counts[:cgoCount], errs[:cgoCount], RtdbError(err)
+	return names, counts, errs, RtdbError(err)
 }
 
 // RawRtdbbGetRecycledNamedTypeNamesPropertyWarp 根据回收站标签点id查询标签点所对应的自定义类型的名字和字段总数
