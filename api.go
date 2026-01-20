@@ -11620,19 +11620,28 @@ func RawRtdbhGetArchivedNamedTypeValues64Warp(handle ConnectHandle, id PointID, 
 }
 
 // RawRtdbhPutSingleNamedTypeValue64Warp 写入自定义类型标签点的单个历史事件
-//   - 参数：
-//   - [handle]    连接句柄
-//   - [id]        整型，输入，标签点标识
-//   - [datetime]  整型，输入，数值时间列表,
-//   - 表示距离1970年1月1日08:00:00的秒数
-//   - [ms]        短整型，输入，历史数值时间，
-//   - 对于时间精度为纳秒的标签点，存放相应的纳秒值；否则忽略
-//   - [object]    void数组，输入，历史自定义类型标签点数值
-//   - [length]    短整型，输入，自定义类型标签点数值长度，超过一个页大小数据将被截断。
-//   - [quality]   短整型，输入，历史数值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
 //
-// rtdb_error RTDBAPI_CALLRULE rtdbh_put_single_named_type_value64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime, rtdb_subtime_type subtime, const void* object, rtdb_length_type length, rtdb_int16 quality)
-func RawRtdbhPutSingleNamedTypeValue64Warp() {}
+// input:
+//   - handle 连接句柄
+//   - id 标签点标识
+//   - datetime 数值时间列表, 表示距离1970年1月1日08:00:00的秒数
+//   - subtime 历史数值时间， 对于时间精度为纳秒的标签点，存放相应的纳秒值；否则忽略
+//   - object 历史自定义类型标签点数值
+//   - quality 历史数值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbh_put_single_named_type_value64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime, rtdb_subtime_type subtime, const void* object, rtdb_length_type length, rtdb_int16 quality)
+func RawRtdbhPutSingleNamedTypeValue64Warp(handle ConnectHandle, id PointID, datetime TimestampType, subtime SubtimeType, object []byte, quality Quality) error {
+	cHandle := C.rtdb_int32(handle)
+	cId := C.rtdb_int32(id)
+	cDatetime := C.rtdb_timestamp_type(datetime)
+	cSubimte := C.rtdb_subtime_type(subtime)
+	cObject := unsafe.Pointer(&object[0])
+	cLength := C.rtdb_length_type(len(object))
+	cQuality := C.rtdb_int16(quality)
+	err := C.rtdbh_put_single_named_type_value64_warp(cHandle, cId, cDatetime, cSubimte, cObject, cLength, cQuality)
+	return RtdbError(err).GoError()
+}
 
 // RawRtdbhPutArchivedNamedTypeValues64Warp 批量补写自定义类型标签点的历史事件
 //   - [handle]        连接句柄
