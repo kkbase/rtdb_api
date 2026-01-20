@@ -7791,10 +7791,11 @@ func RawRtdbbGetTablePropertyByNameWarp(handle ConnectHandle, tableName string) 
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_insert_max_point_warp(rtdb_int32 handle, RTDB_POINT *base, RTDB_SCAN_POINT *scan, RTDB_MAX_CALC_POINT *calc)
 func RawRtdbbInsertMaxPointWarp(handle ConnectHandle, base *RtdbPoint, scan *RtdbScan, calc *RtdbCalc) (*RtdbPoint, *RtdbScan, *RtdbCalc, RtdbError) {
+	cHandle := C.rtdb_int32(handle)
 	cBase := goToCRtdbPoint(base)
 	cScan := goToCRtdbScan(scan)
 	cCalc := goToCRtdbCalc(calc)
-	err := C.rtdbb_insert_max_point_warp(C.rtdb_int32(handle), cBase, cScan, cCalc)
+	err := C.rtdbb_insert_max_point_warp(cHandle, cBase, cScan, cCalc)
 	return cToRtdbPoint(cBase), cToRtdbScan(cScan), cToRtdbCalc(cCalc), RtdbError(err)
 }
 
@@ -7807,7 +7808,9 @@ func RawRtdbbInsertMaxPointWarp(handle ConnectHandle, base *RtdbPoint, scan *Rtd
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_remove_point_by_id_warp(rtdb_int32 handle, rtdb_int32 id)
 func RawRtdbbRemovePointByIdWarp(handle ConnectHandle, id PointID) RtdbError {
-	err := C.rtdbb_remove_point_by_id_warp(C.rtdb_int32(handle), C.rtdb_int32(id))
+	cHandle := C.rtdb_int32(handle)
+	cId := C.rtdb_int32(id)
+	err := C.rtdbb_remove_point_by_id_warp(cHandle, cId)
 	return RtdbError(err)
 }
 
@@ -7820,9 +7823,10 @@ func RawRtdbbRemovePointByIdWarp(handle ConnectHandle, id PointID) RtdbError {
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_remove_point_by_name_warp(rtdb_int32 handle, const char *table_dot_tag)
 func RawRtdbbRemovePointByNameWarp(handle ConnectHandle, tableDotTag string) RtdbError {
+	cHandle := C.rtdb_int32(handle)
 	cTableDotTag := C.CString(tableDotTag)
 	defer C.free(unsafe.Pointer(cTableDotTag))
-	err := C.rtdbb_remove_point_by_name_warp(C.rtdb_int32(handle), cTableDotTag)
+	err := C.rtdbb_remove_point_by_name_warp(cHandle, cTableDotTag)
 	return RtdbError(err)
 }
 
@@ -7870,11 +7874,12 @@ func RawRtdbbRemovePointByNameWarp(handle ConnectHandle, tableDotTag string) Rtd
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_insert_named_type_point_warp(rtdb_int32 handle, RTDB_POINT *base, RTDB_SCAN_POINT *scan, const char* name)
 func RawRtdbbInsertNamedTypePointWarp(handle ConnectHandle, base *RtdbPoint, scan *RtdbScan, name string) (*RtdbPoint, *RtdbScan, RtdbError) {
+	cHandle := C.rtdb_int32(handle)
 	cBase := goToCRtdbPoint(base)
 	cScan := goToCRtdbScan(scan)
 	cName := C.CString(name)
 	defer C.free(unsafe.Pointer(cName))
-	err := C.rtdbb_insert_named_type_point_warp(C.rtdb_int32(handle), cBase, cScan, cName)
+	err := C.rtdbb_insert_named_type_point_warp(cHandle, cBase, cScan, cName)
 	return cToRtdbPoint(cBase), cToRtdbScan(cScan), RtdbError(err)
 }
 
@@ -7887,10 +7892,12 @@ func RawRtdbbInsertNamedTypePointWarp(handle ConnectHandle, base *RtdbPoint, sca
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_move_point_by_id_warp(rtdb_int32 handle, rtdb_int32 id, const char* dest_table_name)
-func RawRtdbbMovePointByIdWarp(handle ConnectHandle, pointID PointID, tableName string) RtdbError {
+func RawRtdbbMovePointByIdWarp(handle ConnectHandle, id PointID, tableName string) RtdbError {
+	cHandle := C.rtdb_int32(handle)
+	cId := C.rtdb_int32(id)
 	cTableName := C.CString(tableName)
 	defer C.free(unsafe.Pointer(cTableName))
-	err := C.rtdbb_move_point_by_id_warp(C.rtdb_int32(handle), C.rtdb_int32(pointID), cTableName)
+	err := C.rtdbb_move_point_by_id_warp(cHandle, cId, cTableName)
 	return RtdbError(err)
 }
 
@@ -7917,20 +7924,22 @@ func RawRtdbbMovePointByIdWarp(handle ConnectHandle, pointID PointID, tableName 
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_get_max_points_property_warp(rtdb_int32 handle, rtdb_int32 count, RTDB_POINT *base, RTDB_SCAN_POINT *scan, RTDB_MAX_CALC_POINT *calc, rtdb_error *errors)
-func RawRtdbbGetMaxPointsPropertyWarp(handle ConnectHandle, pointIDs []PointID) ([]RtdbPoint, []RtdbScan, []RtdbCalc, []RtdbError, RtdbError) {
-	bases := make([]C.RTDB_POINT, len(pointIDs))
-	for i, id := range pointIDs {
+func RawRtdbbGetMaxPointsPropertyWarp(handle ConnectHandle, ids []PointID) ([]RtdbPoint, []RtdbScan, []RtdbCalc, []RtdbError, RtdbError) {
+	cHandle := C.rtdb_int32(handle)
+	cCount := C.rtdb_int32(len(ids))
+	bases := make([]C.RTDB_POINT, len(ids))
+	for i, id := range ids {
 		bases[i].id = C.int(id)
 	}
-	scans := make([]C.RTDB_SCAN_POINT, len(pointIDs))
-	calcs := make([]C.RTDB_MAX_CALC_POINT, len(pointIDs))
-	errs := make([]RtdbError, len(pointIDs))
+	scans := make([]C.RTDB_SCAN_POINT, len(ids))
+	calcs := make([]C.RTDB_MAX_CALC_POINT, len(ids))
+	errs := make([]RtdbError, len(ids))
 	cErrs := (*C.rtdb_error)(unsafe.Pointer(&errs[0]))
-	err := C.rtdbb_get_max_points_property_warp(C.rtdb_int32(handle), C.rtdb_int32(len(pointIDs)), &bases[0], &scans[0], &calcs[0], cErrs)
+	err := C.rtdbb_get_max_points_property_warp(cHandle, cCount, &bases[0], &scans[0], &calcs[0], cErrs)
 	rtnBases := make([]RtdbPoint, 0)
 	rtnScans := make([]RtdbScan, 0)
 	rtnCalcs := make([]RtdbCalc, 0)
-	for i := 0; i < len(pointIDs); i++ {
+	for i := 0; i < len(ids); i++ {
 		rtnBases = append(rtnBases, *cToRtdbPoint(&bases[i]))
 		rtnScans = append(rtnScans, *cToRtdbScan(&scans[i]))
 		rtnCalcs = append(rtnCalcs, *cToRtdbCalc(&calcs[i]))
