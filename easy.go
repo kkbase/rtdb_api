@@ -79,3 +79,9 @@ func (c *RtdbConnect) Logout() error {
 	err := RawRtdbDisconnectWarp(c.ConnectHandle)
 	return err
 }
+
+// GetClientVersion 获取客户端版本
+func (c *RtdbConnect) GetClientVersion() (ApiVersion, error) {
+	version, err := RawRtdbGetApiVersionWarp()
+	return version, err
+}
