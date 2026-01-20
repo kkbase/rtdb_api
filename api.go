@@ -8015,6 +8015,8 @@ func RawRtdbbGetMaxPointsPropertyWarp(handle ConnectHandle, ids []PointID) ([]Rt
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_search_in_batches_warp(rtdb_int32 handle, rtdb_int32 start, const char *tagmask, const char *tablemask, const char *source, const char *unit, const char *desc, const char *instrument, rtdb_int32 mode, rtdb_int32 *ids, rtdb_int32 *count)
 func RawRtdbbSearchInBatchesWarp(handle ConnectHandle, start int32, tagMask, tableMask, source, unit, desc, instrument string, model RtdbSortFlag) ([]PointID, RtdbError) {
+	cHandle := C.rtdb_int32(handle)
+	cStart := C.rtdb_int32(start)
 	if strings.TrimSpace(tagMask) == "" {
 		tagMask = "*"
 	}
@@ -8038,7 +8040,7 @@ func RawRtdbbSearchInBatchesWarp(handle ConnectHandle, start int32, tagMask, tab
 	cIds := (*C.rtdb_int32)(unsafe.Pointer(&ids[0]))
 	cModel := C.rtdb_int32(model)
 
-	err := C.rtdbb_search_in_batches_warp(C.rtdb_int32(handle), C.rtdb_int32(start), cTagMask, cTableMask, cSource, cUnit, cDesc, cInstrument, cModel, cIds, &cCount)
+	err := C.rtdbb_search_in_batches_warp(cHandle, cStart, cTagMask, cTableMask, cSource, cUnit, cDesc, cInstrument, cModel, cIds, &cCount)
 	return ids[:cCount], RtdbError(err)
 }
 
@@ -8067,6 +8069,7 @@ func RawRtdbbSearchInBatchesWarp(handle ConnectHandle, start int32, tagMask, tab
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_search_ex_warp(rtdb_int32 handle, const char *tagmask, const char *tablemask, const char *source, const char *unit, const char *desc, const char *instrument, const char *typemask, rtdb_int32 classofmask, rtdb_int32 timeunitmask, rtdb_int32 othertypemask, const char *othertypemaskvalue, rtdb_int32 mode, rtdb_int32 *ids, rtdb_int32 *count)
 func RawRtdbbSearchExWarp(handle ConnectHandle, maxCount int32, tagMask, tableMask, source, unit, desc, instrument, typeMask string, classOfMask RtdbType, timeUnitMask RtdbPrecision, otherTypeMask RtdbSearch, otherTypeMaskValue string, model RtdbSortFlag) ([]PointID, RtdbError) {
+	cHandle := C.rtdb_int32(handle)
 	if strings.TrimSpace(tagMask) == "" {
 		tagMask = "*"
 	}
@@ -8092,12 +8095,12 @@ func RawRtdbbSearchExWarp(handle ConnectHandle, maxCount int32, tagMask, tableMa
 	cOtherTypeMask := C.rtdb_int32(otherTypeMask)
 	cOtherTypeMaskValue := C.CString(otherTypeMaskValue)
 	defer C.free(unsafe.Pointer(cOtherTypeMaskValue))
-	count := C.rtdb_int32(maxCount)
-	ids := make([]PointID, count)
+	cCount := C.rtdb_int32(maxCount)
+	ids := make([]PointID, maxCount)
 	cIds := (*C.rtdb_int32)(unsafe.Pointer(&ids[0]))
 	cModel := C.rtdb_int32(model)
-	err := C.rtdbb_search_ex_warp(C.rtdb_int32(handle), cTagMask, cTableMask, cSource, cUnit, cDesc, cInstrument, cTypeMask, cClassOfMask, cTimeUnitMask, cOtherTypeMask, cOtherTypeMaskValue, cModel, cIds, &count)
-	return ids[:count], RtdbError(err)
+	err := C.rtdbb_search_ex_warp(cHandle, cTagMask, cTableMask, cSource, cUnit, cDesc, cInstrument, cTypeMask, cClassOfMask, cTimeUnitMask, cOtherTypeMask, cOtherTypeMaskValue, cModel, cIds, &cCount)
+	return ids[:cCount], RtdbError(err)
 }
 
 // RawRtdbbSearchPointsCountWarp 搜索符合条件的标签点，获取标签点数，使用标签点名时支持通配符
@@ -8124,6 +8127,7 @@ func RawRtdbbSearchExWarp(handle ConnectHandle, maxCount int32, tagMask, tableMa
 // raw_fn:
 // rtdb_error RTDBAPI_CALLRULE rtdbb_search_points_count_warp(rtdb_int32 handle, const char *tagmask, const char *tablemask, const char *source, const char *unit, const char *desc, const char *instrument, const char *typemask, rtdb_int32 classofmask, rtdb_int32 timeunitmask, rtdb_int32 othertypemask, const char *othertypemaskvalue, rtdb_int32 *count)
 func RawRtdbbSearchPointsCountWarp(handle ConnectHandle, tagMask, tableMask, source, unit, desc, instrument, typeMask string, classOfMask RtdbType, timeUnitMask RtdbPrecision, otherTypeMask RtdbSearch, otherTypeMaskValue string) (int32, RtdbError) {
+	cHandle := C.rtdb_int32(handle)
 	if strings.TrimSpace(tagMask) == "" {
 		tagMask = "*"
 	}
@@ -8150,7 +8154,7 @@ func RawRtdbbSearchPointsCountWarp(handle ConnectHandle, tagMask, tableMask, sou
 	cOtherTypeMaskValue := C.CString(otherTypeMaskValue)
 	defer C.free(unsafe.Pointer(cOtherTypeMaskValue))
 	count := C.rtdb_int32(1024)
-	err := C.rtdbb_search_points_count_warp(C.rtdb_int32(handle), cTagMask, cTableMask, cSource, cUnit, cDesc, cInstrument, cTypeMask, cClassOfMask, cTimeUnitMask, cOtherTypeMask, cOtherTypeMaskValue, &count)
+	err := C.rtdbb_search_points_count_warp(cHandle, cTagMask, cTableMask, cSource, cUnit, cDesc, cInstrument, cTypeMask, cClassOfMask, cTimeUnitMask, cOtherTypeMask, cOtherTypeMaskValue, &count)
 	return int32(count), RtdbError(err)
 }
 
@@ -8188,10 +8192,11 @@ func RawRtdbbSearchPointsCountWarp(handle ConnectHandle, tagMask, tableMask, sou
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_update_max_point_property_warp(rtdb_int32 handle, const RTDB_POINT *base, const RTDB_SCAN_POINT *scan, const RTDB_MAX_CALC_POINT *calc)
 func RawRtdbbUpdateMaxPointPropertyWarp(handle ConnectHandle, base *RtdbPoint, scan *RtdbScan, calc *RtdbCalc) RtdbError {
+	cHandle := C.rtdb_int32(handle)
 	cBase := goToCRtdbPoint(base)
 	cScan := goToCRtdbScan(scan)
 	cCalc := goToCRtdbCalc(calc)
-	err := C.rtdbb_update_max_point_property_warp(C.rtdb_int32(handle), cBase, cScan, cCalc)
+	err := C.rtdbb_update_max_point_property_warp(cHandle, cBase, cScan, cCalc)
 	return RtdbError(err)
 }
 
@@ -8253,9 +8258,8 @@ func RawRtdbbUpdateMaxPointPropertyWarp(handle ConnectHandle, base *RtdbPoint, s
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_find_points_ex_warp(rtdb_int32 handle, rtdb_int32* count, const char* const* table_dot_tags, rtdb_int32* ids, rtdb_int32* types, rtdb_int32* classof, rtdb_precision_type* precisions, rtdb_error* errors)
 func RawRtdbbFindPointsExWarp(handle ConnectHandle, tableDotTags []string) ([]PointID, []RtdbType, []RtdbClass, []RtdbPrecision, []RtdbError, RtdbError) {
 	if len(tableDotTags) == 0 {
-		return nil, nil, nil, nil, nil, RtdbError(RteOk)
+		return nil, nil, nil, nil, nil, RteOk
 	}
-
 	count := len(tableDotTags)
 	cCount := C.rtdb_int32(count)
 	cHandle := C.rtdb_int32(handle)
