@@ -7550,11 +7550,11 @@ func RawRtdbFormatQualityWarp(handle ConnectHandle, qualities []Quality) ([]stri
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_judge_connect_status_warp(rtdb_int32 handle, rtdb_int8* change_connection GAPI_DEFAULT_VALUE(0), char* current_ip_addr GAPI_DEFAULT_VALUE(0), rtdb_int32 size GAPI_DEFAULT_VALUE(0))
 func RawRtdbJudgeConnectStatusWarp(handle ConnectHandle) RtdbError {
-	cgoHandle := C.rtdb_int32(handle)
-	cgoChangeConnection := C.rtdb_int8(0)
-	cgoAddr := (*C.char)(C.CBytes(make([]byte, 1024)))
-	defer C.free(unsafe.Pointer(cgoAddr))
-	err := C.rtdb_judge_connect_status_warp(cgoHandle, &cgoChangeConnection, cgoAddr, 1024)
+	cHandle := C.rtdb_int32(handle)
+	cChangeConnection := C.rtdb_int8(0)
+	cAddr := (*C.char)(C.CBytes(make([]byte, 1024)))
+	defer C.free(unsafe.Pointer(cAddr))
+	err := C.rtdb_judge_connect_status_warp(cHandle, &cChangeConnection, cAddr, 1024)
 	return RtdbError(err)
 }
 
@@ -7589,11 +7589,11 @@ func RawRtdbJudgeConnectStatusWarp(handle ConnectHandle) RtdbError {
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_append_table_warp(rtdb_int32 handle, RTDB_TABLE *field)
 func RawRtdbbAppendTableWarp(handle ConnectHandle, tableName, tableDesc string) (RtdbTable, RtdbError) {
-	cgoHandle := C.rtdb_int32(handle)
+	cHandle := C.rtdb_int32(handle)
 	table := C.RTDB_TABLE{}
 	GoStringToCCharArray(tableName, &table.name[0], int(C.RTDB_TAG_SIZE))
 	GoStringToCCharArray(tableDesc, &table.desc[0], int(C.RTDB_DESC_SIZE))
-	err := C.rtdbb_append_table_warp(cgoHandle, &table)
+	err := C.rtdbb_append_table_warp(cHandle, &table)
 	return cToRtdbTable(&table), RtdbError(err)
 }
 
@@ -7606,7 +7606,9 @@ func RawRtdbbAppendTableWarp(handle ConnectHandle, tableName, tableDesc string) 
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_remove_table_by_id_warp(rtdb_int32 handle, rtdb_int32 id)
 func RawRtdbbRemoveTableByIdWarp(handle ConnectHandle, tableID TableID) RtdbError {
-	err := C.rtdbb_remove_table_by_id_warp(C.rtdb_int32(handle), C.rtdb_int32(tableID))
+	cHandle := C.rtdb_int32(handle)
+	cTableID := C.rtdb_int32(tableID)
+	err := C.rtdbb_remove_table_by_id_warp(cHandle, cTableID)
 	return RtdbError(err)
 }
 
