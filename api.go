@@ -11309,37 +11309,54 @@ func RawRtdbhRemoveValues64Warp(handle ConnectHandle, id PointID, datetime1 Time
 }
 
 // RawRtdbhPutSingleValue64Warp 写入单个标签点在某一时间的历史数据。
-//   - \param handle        连接句柄
-//   - \param id            整型，输入，标签点标识
-//   - \param datetime      整型，输入，时间秒数
-//   - \param ms            短整型，输入，如果 id 指定的标签点时间精度为纳秒，
-//   - 表示时间纳秒数；否则忽略。
-//   - \param value         双精度浮点数，输入，浮点型历史数值
-//   - 对于数据类型为 RTDB_REAL16、RTDB_REAL32、RTDB_REAL64 的标签点，存放历史值；否则忽略
-//   - \param state         64 位整数，输入，整型历史数值，
-//   - 对于数据类型为 RTDB_BOOL、RTDB_UINT8、RTDB_INT8、RTDB_CHAR、RTDB_UINT16、RTDB_INT16、
-//   - RTDB_UINT32、RTDB_INT32、RTDB_INT64 的标签点，存放历史值；否则忽略
-//   - \param quality       短整型，输入，历史值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
-//   - \remark 本接口对数据类型为 RTDB_COOR、RTDB_BLOB、RTDB_STRING 的标签点无效。
-//   - 如果 datetimes、ms 标识的数据已经存在，其值将被替换。
 //
-// rtdb_error RTDBAPI_CALLRULE rtdbh_put_single_value64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime, rtdb_subtime_type subtime, rtdb_float64 value, rtdb_int64 state, rtdb_int16 quality)
-func RawRtdbhPutSingleValue64Warp() {}
+// input:
+//   - handle 连接句柄
+//   - id 标签点标识
+//   - datetime 时间秒数
+//   - subtime 如果 id 指定的标签点时间精度为纳秒，表示时间纳秒数；否则忽略。
+//   - value 浮点型历史数值, 对于数据类型为 RTDB_REAL16、RTDB_REAL32、RTDB_REAL64 的标签点，存放历史值；否则忽略
+//   - state 整型历史数值，对于数据类型为 RTDB_BOOL、RTDB_UINT8、RTDB_INT8、RTDB_CHAR、RTDB_UINT16、RTDB_INT16、RTDB_UINT32、RTDB_INT32、RTDB_INT64 的标签点，存放历史值；否则忽略
+//   - quality 历史值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbh_put_single_value64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime, rtdb_subtime_type subtime, rtdb_float64 value, rtdb_int64 state, rtdb_int16 quality)
+func RawRtdbhPutSingleValue64Warp(handle ConnectHandle, id PointID, datetime TimestampType, subtime SubtimeType, value float64, state int64, quality Quality) error {
+	cHandle := C.rtdb_int32(handle)
+	cId := C.rtdb_int32(id)
+	cDatetime := C.rtdb_timestamp_type(datetime)
+	cSubtime := C.rtdb_subtime_type(subtime)
+	cValue := C.rtdb_float64(value)
+	cState := C.rtdb_int64(state)
+	cQuality := C.rtdb_int16(quality)
+	err := C.rtdbh_put_single_value64_warp(cHandle, cId, cDatetime, cSubtime, cValue, cState, cQuality)
+	return RtdbError(err).GoError()
+}
 
 // RawRtdbhPutSingleCoorValue64Warp 写入单个标签点在某一时间的坐标型历史数据。
-//   - \param handle              连接句柄
-//   - \param id            整型，输入，标签点标识
-//   - \param datetime      整型，输入，时间秒数
-//   - \param ms            短整型，输入，如果 id 指定的标签点时间精度为纳秒，
-//   - 表示时间纳秒数；否则忽略。
-//   - \param x             单精度浮点型，输入，横坐标历史数值
-//   - \param y             单精度浮点型，输入，纵坐标历史数值
-//   - \param quality       短整型，输入，历史值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
-//   - \remark 本接口对数据类型为 RTDB_COOR、RTDB_BLOB、RTDB_STRING 的标签点无效。
-//   - 如果 datetimes、ms 标识的数据已经存在，其值将被替换。
 //
-// rtdb_error RTDBAPI_CALLRULE rtdbh_put_single_coor_value64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime, rtdb_subtime_type subtime, rtdb_float32 x, rtdb_float32 y, rtdb_int16 quality)
-func RawRtdbhPutSingleCoorValue64Warp() {}
+// input:
+//   - handle 连接句柄
+//   - id 标签点标识
+//   - datetime 时间秒数
+//   - subtime 如果 id 指定的标签点时间精度为纳秒，表示时间纳秒数；否则忽略。
+//   - x 横坐标历史数值
+//   - y 纵坐标历史数值
+//   - quality 历史值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbh_put_single_coor_value64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime, rtdb_subtime_type subtime, rtdb_float32 x, rtdb_float32 y, rtdb_int16 quality)
+func RawRtdbhPutSingleCoorValue64Warp(handle ConnectHandle, id PointID, datetime TimestampType, subtime SubtimeType, x float32, y float32, quality Quality) {
+	cHandle := C.rtdb_int32(handle)
+	cId := C.rtdb_int32(id)
+	cDatetime := C.rtdb_timestamp_type(datetime)
+	cSubtime := C.rtdb_subtime_type(subtime)
+	cX := C.rtdb_float32(x)
+	cY := C.rtdb_float32(y)
+	cQuality := C.rtdb_int16(quality)
+	err := C.rtdbh_put_single_coor_value64_warp(cHandle, cId, cDatetime, cSubtime, cX, cY, cQuality)
+	return RtdbError(err).GoError()
+}
 
 // RawRtdbhPutSingleBlobValue64Warp 写入单个二进制/字符串标签点在某一时间的历史数据
 //   - \param handle    连接句柄
