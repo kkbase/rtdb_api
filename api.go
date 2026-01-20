@@ -7008,9 +7008,10 @@ func RawRtdbRemoveAuthorizationWarp(handle ConnectHandle, addr string, mask stri
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_get_authorizations_warp(rtdb_int32 handle, char* const* addrs, char* const* masks, rtdb_int32 *privs, char* const* descs, rtdb_int32 *count)
 func RawRtdbGetAuthorizationsWarp(handle ConnectHandle) ([]AuthorizationsList, RtdbError) {
+	cHandle := C.rtdb_int32(handle)
 	cAddrs := make([]*C.char, RtdbConstMaxAuthCount)
 	for i := int32(0); i < int32(RtdbConstMaxAuthCount); i++ {
-		cAddrs[i] = (*C.char)(C.CBytes(make([]byte, 32)))
+		cAddrs[i] = (*C.char)(unsafe.Pointer(C.malloc(C.size_t(32))))
 	}
 	defer func() {
 		for i := int32(0); i < int32(RtdbConstMaxAuthCount); i++ {
@@ -7021,7 +7022,7 @@ func RawRtdbGetAuthorizationsWarp(handle ConnectHandle) ([]AuthorizationsList, R
 
 	cMakes := make([]*C.char, RtdbConstMaxAuthCount)
 	for i := int32(0); i < int32(RtdbConstMaxAuthCount); i++ {
-		cMakes[i] = (*C.char)(C.CBytes(make([]byte, 32)))
+		cMakes[i] = (*C.char)(unsafe.Pointer(C.malloc(C.size_t(32))))
 	}
 	defer func() {
 		for i := int32(0); i < int32(RtdbConstMaxAuthCount); i++ {
@@ -7032,7 +7033,7 @@ func RawRtdbGetAuthorizationsWarp(handle ConnectHandle) ([]AuthorizationsList, R
 
 	cDescs := make([]*C.char, RtdbConstMaxAuthCount)
 	for i := int32(0); i < int32(RtdbConstMaxAuthCount); i++ {
-		cDescs[i] = (*C.char)(C.CBytes(make([]byte, 512)))
+		cDescs[i] = (*C.char)(unsafe.Pointer(C.malloc(C.size_t(512))))
 	}
 	defer func() {
 		for i := int32(0); i < int32(RtdbConstMaxAuthCount); i++ {
@@ -7044,7 +7045,7 @@ func RawRtdbGetAuthorizationsWarp(handle ConnectHandle) ([]AuthorizationsList, R
 
 	privs := make([]PrivGroup, int32(RtdbConstMaxAuthCount))
 	cgoPrivs := (*C.rtdb_int32)(unsafe.Pointer(&privs[0]))
-	err := C.rtdb_get_authorizations_warp(C.rtdb_int32(handle), cgoAddrs, cgoMasks, cgoPrivs, cgoDescs, &cgoCount)
+	err := C.rtdb_get_authorizations_warp(cHandle, cgoAddrs, cgoMasks, cgoPrivs, cgoDescs, &cgoCount)
 
 	rtn := make([]AuthorizationsList, 0)
 	for i := int32(0); i < int32(cgoCount); i++ {
@@ -7083,8 +7084,9 @@ func RawRtdbGetAuthorizationsWarp(handle ConnectHandle) ([]AuthorizationsList, R
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_host_time64_warp(rtdb_int32 handle, rtdb_timestamp_type* hosttime)
 func RawRtdbHostTime64Warp(handle ConnectHandle) (TimestampType, RtdbError) {
+	cHandle := C.rtdb_int32(handle)
 	ts := C.rtdb_timestamp_type(0)
-	err := C.rtdb_host_time64_warp(C.rtdb_int32(handle), &ts)
+	err := C.rtdb_host_time64_warp(cHandle, &ts)
 	return TimestampType(ts), RtdbError(err)
 }
 
