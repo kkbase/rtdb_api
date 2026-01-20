@@ -11644,46 +11644,80 @@ func RawRtdbhPutSingleNamedTypeValue64Warp(handle ConnectHandle, id PointID, dat
 }
 
 // RawRtdbhPutArchivedNamedTypeValues64Warp 批量补写自定义类型标签点的历史事件
-//   - [handle]        连接句柄
-//   - [count]         整型，输入/输出，
-//   - 输入时表示 ids、datetimes、ms、lens、blobs、qualities、errors 的长度，
-//   - 即历史值个数；输出时返回实际写入的数值个数
-//   - [ids]           整型数组，输入，标签点标识
-//   - [datetimes]     整型数组，输入，表示对应的历史数值时间秒数。
-//   - [ms]            短整型数组，输入，如果 id 指定的标签点时间精度为纳秒，
-//   - 表示对应的历史数值时间纳秒；否则忽略。
-//   - [objects]       void类型指针数组，输入，自定义类型标签点数值
-//   - [lengths]       短整型数组，输入，自定义类型标签点数值长度，
-//   - 表示对应的 objects 指针指向的缓冲区长度，超过一个页大小数据将被截断。
-//   - [qualities]     短整型数组，输入，历史数值品质列表，数据库预定义的品质参见枚举 RTDB_QUALITY
-//   - [errors]        无符号整型数组，输出，写入历史数据的返回值列表，参考rtdb_error.h
-//   - 备注：用户须保证 ids、datetimes、ms、lens、objects、qualities、errors 的长度与 count 一致，
-//   - 如果 datetimes、ms 标识的数据已经存在，其值将被替换。
 //
-// rtdb_error RTDBAPI_CALLRULE rtdbh_put_archived_named_type_values64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, const void* const* objects, const rtdb_length_type* lengths, const rtdb_int16* qualities, rtdb_error* errors)
-func RawRtdbhPutArchivedNamedTypeValues64Warp() {}
+// input:
+//   - handle 连接句柄
+//   - ids 标签点标识
+//   - datetimes 表示对应的历史数值时间秒数。
+//   - subtimes 如果 id 指定的标签点时间精度为纳秒，表示对应的历史数值时间纳秒；否则忽略。
+//   - objects 自定义类型标签点数值
+//   - qualities 历史数值品质列表，数据库预定义的品质参见枚举 RTDB_QUALITY
+//
+// output:
+//   - []error(errors) 写入历史数据的返回值列表，参考rtdb_error.h
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbh_put_archived_named_type_values64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, const void* const* objects, const rtdb_length_type* lengths, const rtdb_int16* qualities, rtdb_error* errors)
+func RawRtdbhPutArchivedNamedTypeValues64Warp(handle ConnectHandle, ids []PointID, datetimes []TimestampType, subtimes []SubtimeType, objects [][]byte, qualities []Quality) ([]error, error) {
+	cHandle := C.rtdb_int32(handle)
+	cCount := C.rtdb_int32(len(ids))
+	cIds := (*C.rtdb_int32)(unsafe.Pointer(&ids[0]))
+	cDatetimes := (*C.rtdb_timestamp_type)(unsafe.Pointer(&datetimes[0]))
+	cSubtimes := (*C.rtdb_subtime_type)(unsafe.Pointer(&subtimes[0]))
+	cObjects := make([]unsafe.Pointer, 0)
+	for _, obj := range objects {
+		cObjects = append(cObjects, unsafe.Pointer(C.CBytes(obj)))
+	}
+	defer func() {
+		for _, cObj := range cObjects {
+			C.free(cObj)
+		}
+	}()
+	ccObjects := &cObjects[0]
+	lens := make([]int32, 0)
+	for _, obj := range objects {
+		lens = append(lens, int32(len(obj)))
+	}
+	cLens := (*C.rtdb_length_type)(unsafe.Pointer(&lens[0]))
+	cQualities := (*C.rtdb_int16)(unsafe.Pointer(&qualities[0]))
+	errs := make([]RtdbError, len(ids))
+	cErrs := (*C.rtdb_error)(unsafe.Pointer(&errs[0]))
+	err := C.rtdbh_put_archived_named_type_values64_warp(cHandle, &cCount, cIds, cDatetimes, cSubtimes, ccObjects, cLens, cQualities, cErrs)
+	goErrs := RtdbErrorListToErrorList(errs)
+	return goErrs, RtdbError(err).GoError()
+}
 
 // RawRtdbeComputeHistory64Warp 重算或补算批量计算标签点历史数据
 //
-//	*
-//	* \param handle        连接句柄
-//	* \param count         整型，输入/输出，
-//	*                        输入时表示 ids、errors 的长度，
-//	*                        即标签点个数；输出时返回成功开始计算的标签点个数
-//	* \param flag          短整型，输入，不为 0 表示进行重算，删除时间范围内已经存在历史数据；
-//	*                        为 0 表示补算，保留时间范围内已经存在历史数据，覆盖同时刻的计算值。
-//	* \param datetime1     整型，输入，表示起始时间秒数。
-//	* \param ms1           短整型，输入，如果 id 指定的标签点时间精度为纳秒，表示起始时间对应的纳秒；否则忽略
-//	* \param datetime2     整型，输入，表示结束时间秒数。如果为 0，表示计算直至存档中数据的最后时间
-//	* \param ms2           短整型，输入，如果 id 指定的标签点时间精度为纳秒，表示结束时间对应的纳秒；否则忽略
-//	* \param ids           整型数组，输入，标签点标识
-//	* \param errors        无符号整型数组，输出，计算历史数据的返回值列表，参考rtdb_error.h
-//	* \remark 用户须保证 ids、errors 的长度与 count 一致，本接口仅对带有计算扩展属性的标签点有效。
-//	*        由 datetime1、ms1 表示的时间可以大于 datetime2、ms2 表示的时间，
-//	*        此时前者表示结束时间，后者表示起始时间。
+// input:
+//   - handle 连接句柄
+//   - flag 不为 0 表示进行重算，删除时间范围内已经存在历史数据；为 0 表示补算，保留时间范围内已经存在历史数据，覆盖同时刻的计算值。
+//   - datetime1 表示起始时间秒数。
+//   - subtime1 如果 id 指定的标签点时间精度为纳秒，表示起始时间对应的纳秒；否则忽略
+//   - datetime2 表示结束时间秒数。如果为 0，表示计算直至存档中数据的最后时间
+//   - subtime2 如果 id 指定的标签点时间精度为纳秒，表示结束时间对应的纳秒；否则忽略
+//   - ids 标签点标识
 //
-// rtdb_error RTDBAPI_CALLRULE rtdbe_compute_history64_warp(rtdb_int32 handle, rtdb_int32* count, rtdb_int16 flag, rtdb_timestamp_type datetime1, rtdb_subtime_type subtime1, rtdb_timestamp_type datetime2, rtdb_subtime_type subtime2, const rtdb_int32* ids, rtdb_error* errors)
-func RawRtdbeComputeHistory64Warp() {}
+// output:
+//   - errors 计算历史数据的返回值列表，参考rtdb_error.h
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbe_compute_history64_warp(rtdb_int32 handle, rtdb_int32* count, rtdb_int16 flag, rtdb_timestamp_type datetime1, rtdb_subtime_type subtime1, rtdb_timestamp_type datetime2, rtdb_subtime_type subtime2, const rtdb_int32* ids, rtdb_error* errors)
+func RawRtdbeComputeHistory64Warp(handle ConnectHandle, ids []PointID, flag int16, datetime1 TimestampType, subtime1 SubtimeType, datetime2 TimestampType, subtime2 SubtimeType) ([]error, error) {
+	cHandle := C.rtdb_int32(handle)
+	cCount := C.rtdb_int32(len(ids))
+	cFlag := C.rtdb_int16(flag)
+	cDatetime1 := C.rtdb_timestamp_type(datetime1)
+	cSubtime1 := C.rtdb_subtime_type(subtime1)
+	cDatetime2 := C.rtdb_timestamp_type(datetime2)
+	cSubtime2 := C.rtdb_subtime_type(subtime2)
+	cIds := (*C.rtdb_int32)(unsafe.Pointer(&ids[0]))
+	errs := make([]RtdbError, len(ids))
+	cErrs := (*C.rtdb_error)(unsafe.Pointer(&errs[0]))
+	err := C.rtdbe_compute_history64_warp(cHandle, &cCount, cFlag, cDatetime1, cSubtime1, cDatetime2, cSubtime2, cIds, cErrs)
+	goErrs := RtdbErrorListToErrorList(errs)
+	return goErrs, RtdbError(err).GoError()
+}
 
 // RawRtdbbGetEquationByFileNameWarp 根据文件名获取方程式
 //
