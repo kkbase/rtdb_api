@@ -11567,27 +11567,57 @@ func RawRtdbhGetSingleNamedTypeValue64Warp(handle ConnectHandle, id PointID, mod
 }
 
 // RawRtdbhGetArchivedNamedTypeValues64Warp 连续读取自定义类型标签点的历史数据
-//   - 参数：
-//   - [handle]        连接句柄
-//   - [id]            整型，输入，标签点标识
-//   - RTDB_EXACT 取指定时间的数据，如果没有则返回错误 RtE_DATA_NOT_FOUND；
-//   - [datetime1]     整型，输入，表示开始时间秒数；
-//   - [ms1]           短整型，输入，指定的标签点时间精度为纳秒，
-//   - 表示时间纳秒数；
-//   - [datetime2]     整型，输入,表示结束时间秒数；
-//   - [ms2]           短整型，输入，指定的标签点时间精度为纳秒，
-//   - 表示时间纳秒数；
-//   - [length]        短整型数组，输入，输入时表示 objects 的长度，
-//   - [count]         整型，输入/输出，输入表示想要查询多少数据
-//   - 输出表示实际查到多少数据
-//   - [datetimes]     整型数组，输出，表示实际取得的历史数值对应的时间秒数。
-//   - [ms]            短整型，输出，如果 id 指定的标签点时间精度为纳秒，
-//   - 表示实际取得的历史数值时间纳秒数。
-//   - [objects]       void类型数组，输出，自定义类型标签点历史值
-//   - [qualities]     短整型数组，输出，历史值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
 //
-// rtdb_error RTDBAPI_CALLRULE rtdbh_get_archived_named_type_values64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime1, rtdb_subtime_type subtime1, rtdb_timestamp_type datetime2, rtdb_subtime_type subtime2, rtdb_length_type length, rtdb_int32* count, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, void* const* objects, rtdb_int16* qualities)
-func RawRtdbhGetArchivedNamedTypeValues64Warp() {}
+// input:
+//   - handle 连接句柄
+//   - id 标签点标识
+//   - datetime1 表示开始时间秒数；
+//   - subtime1 指定的标签点时间精度为纳秒，表示时间纳秒数；
+//   - datetime2 表示结束时间秒数；
+//   - subtime2 指定的标签点时间精度为纳秒，表示时间纳秒数；
+//   - length 输入时表示 objects 的长度，
+//   - maxCount 输入表示想要查询多少数据
+//
+// output:
+//   - []TimestampType(datetimes) 表示实际取得的历史数值对应的时间秒数。
+//   - []SubtimeType(subtimes) 如果 id 指定的标签点时间精度为纳秒，表示实际取得的历史数值时间纳秒数。
+//   - [][]byte(objects) 自定义类型标签点历史值
+//   - []Quality(qualities) 数据库预定义的品质参见枚举 RTDB_QUALITY
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbh_get_archived_named_type_values64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime1, rtdb_subtime_type subtime1, rtdb_timestamp_type datetime2, rtdb_subtime_type subtime2, rtdb_length_type length, rtdb_int32* count, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, void* const* objects, rtdb_int16* qualities)
+func RawRtdbhGetArchivedNamedTypeValues64Warp(handle ConnectHandle, id PointID, datetime1 TimestampType, subtime1 SubtimeType, datetime2 TimestampType, subtime2 SubtimeType, length int32, maxCount int32) ([]TimestampType, []SubtimeType, [][]byte, []Quality, error) {
+	cHandle := C.rtdb_int32(handle)
+	cId := C.rtdb_int32(id)
+	cLength := C.rtdb_length_type(length)
+	cDatetime1 := C.rtdb_timestamp_type(datetime1)
+	cSubtime1 := C.rtdb_subtime_type(subtime1)
+	cDatetime2 := C.rtdb_timestamp_type(datetime2)
+	cSubtime2 := C.rtdb_subtime_type(subtime2)
+	datetimes := make([]TimestampType, maxCount)
+	cDatetimes := (*C.rtdb_timestamp_type)(unsafe.Pointer(&datetimes[0]))
+	subtimes := make([]SubtimeType, maxCount)
+	cSubtimes := (*C.rtdb_subtime_type)(unsafe.Pointer(&subtimes[0]))
+	cObjects := make([]unsafe.Pointer, 0)
+	for i := 0; i < int(maxCount); i++ {
+		cObjects = append(cObjects, C.malloc(C.size_t(length)))
+	}
+	defer func() {
+		for _, obj := range cObjects {
+			C.free(obj)
+		}
+	}()
+	ccObjects := &cObjects[0]
+	qualities := make([]Quality, maxCount)
+	cQualities := (*C.rtdb_int16)(unsafe.Pointer(&qualities[0]))
+	cCount := C.rtdb_int32(maxCount)
+	err := C.rtdbh_get_archived_named_type_values64_warp(cHandle, cId, cDatetime1, cSubtime1, cDatetime2, cSubtime2, cLength, &cCount, cDatetimes, cSubtimes, ccObjects, cQualities)
+	goObjects := make([][]byte, 0)
+	for i := 0; i < int(cCount); i++ {
+		goObjects = append(goObjects, C.GoBytes(cObjects[i], C.int(length)))
+	}
+	return datetimes[:cCount], subtimes[:cCount], goObjects, qualities[:cCount], RtdbError(err).GoError()
+}
 
 // RawRtdbhPutSingleNamedTypeValue64Warp 写入自定义类型标签点的单个历史事件
 //   - 参数：
