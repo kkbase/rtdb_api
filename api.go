@@ -8322,9 +8322,11 @@ func RawRtdbbSortPointsWarp(handle ConnectHandle, ids []PointID, index RtdbTagIn
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_update_table_name_warp(rtdb_int32 handle, rtdb_int32 tab_id, const char *name)
 func RawRtdbbUpdateTableNameWarp(handle ConnectHandle, id TableID, name string) RtdbError {
+	cHandle := C.rtdb_int32(handle)
+	cId := C.rtdb_int32(id)
 	cName := C.CString(name)
 	defer C.free(unsafe.Pointer(cName))
-	err := C.rtdbb_update_table_name_warp(C.rtdb_int32(handle), C.rtdb_int32(id), cName)
+	err := C.rtdbb_update_table_name_warp(cHandle, cId, cName)
 	return RtdbError(err)
 }
 
@@ -8338,9 +8340,11 @@ func RawRtdbbUpdateTableNameWarp(handle ConnectHandle, id TableID, name string) 
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_update_table_desc_by_id_warp(rtdb_int32 handle, rtdb_int32 tab_id, const char *desc)
 func RawRtdbbUpdateTableDescByIdWarp(handle ConnectHandle, id TableID, desc string) RtdbError {
+	cHandle := C.rtdb_int32(handle)
+	cId := C.rtdb_int32(id)
 	cDesc := C.CString(desc)
 	defer C.free(unsafe.Pointer(cDesc))
-	err := C.rtdbb_update_table_desc_by_id_warp(C.rtdb_int32(handle), C.rtdb_int32(id), cDesc)
+	err := C.rtdbb_update_table_desc_by_id_warp(cHandle, cId, cDesc)
 	return RtdbError(err)
 }
 
@@ -8354,11 +8358,12 @@ func RawRtdbbUpdateTableDescByIdWarp(handle ConnectHandle, id TableID, desc stri
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_update_table_desc_by_name_warp(rtdb_int32 handle, const char *name, const char *desc)
 func RawRtdbbUpdateTableDescByNameWarp(handle ConnectHandle, name string, desc string) RtdbError {
+	cHandle := C.rtdb_int32(handle)
 	cName := C.CString(name)
 	defer C.free(unsafe.Pointer(cName))
 	cDesc := C.CString(desc)
 	defer C.free(unsafe.Pointer(cDesc))
-	err := C.rtdbb_update_table_desc_by_name_warp(C.rtdb_int32(handle), cName, cDesc)
+	err := C.rtdbb_update_table_desc_by_name_warp(cHandle, cName, cDesc)
 	return RtdbError(err)
 }
 
@@ -8372,7 +8377,10 @@ func RawRtdbbUpdateTableDescByNameWarp(handle ConnectHandle, name string, desc s
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_recover_point_warp(rtdb_int32 handle, rtdb_int32 table_id, rtdb_int32 point_id)
 func RawRtdbbRecoverPointWarp(handle ConnectHandle, tableID TableID, pointID PointID) RtdbError {
-	err := C.rtdbb_recover_point_warp(C.rtdb_int32(handle), C.rtdb_int32(tableID), C.rtdb_int32(pointID))
+	cHandle := C.rtdb_int32(handle)
+	cTableId := C.rtdb_int32(tableID)
+	cPointId := C.rtdb_int32(pointID)
+	err := C.rtdbb_recover_point_warp(cHandle, cTableId, cPointId)
 	return RtdbError(err)
 }
 
@@ -8385,7 +8393,9 @@ func RawRtdbbRecoverPointWarp(handle ConnectHandle, tableID TableID, pointID Poi
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_purge_point_warp(rtdb_int32 handle, rtdb_int32 id)
 func RawRtdbbPurgePointWarp(handle ConnectHandle, id PointID) RtdbError {
-	err := C.rtdbb_purge_point_warp(C.rtdb_int32(handle), C.rtdb_int32(id))
+	cHandle := C.rtdb_int32(handle)
+	cId := C.rtdb_int32(id)
+	err := C.rtdbb_purge_point_warp(cHandle, cId)
 	return RtdbError(err)
 }
 
@@ -8398,8 +8408,9 @@ func RawRtdbbPurgePointWarp(handle ConnectHandle, id PointID) RtdbError {
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_get_recycled_points_count_warp(rtdb_int32 handle, rtdb_int32 *count)
 func RawRtdbbGetRecycledPointsCountWarp(handle ConnectHandle) (int32, RtdbError) {
+	cHandle := C.rtdb_int32(handle)
 	count := C.rtdb_int32(0)
-	err := C.rtdbb_get_recycled_points_count_warp(C.rtdb_int32(handle), &count)
+	err := C.rtdbb_get_recycled_points_count_warp(cHandle, &count)
 	return int32(count), RtdbError(err)
 }
 
@@ -8416,12 +8427,14 @@ func RawRtdbbGetRecycledPointsCountWarp(handle ConnectHandle) (int32, RtdbError)
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_get_recycled_points_warp(rtdb_int32 handle, rtdb_int32 *ids, rtdb_int32 *count)
 func RawRtdbbGetRecycledPointsWarp(handle ConnectHandle, count int32) ([]RtdbPoint, RtdbError) {
 	if count == 0 {
-		return nil, RtdbError(RteOk)
+		return nil, RteOk
 	}
 
+	cHandle := C.rtdb_int32(handle)
 	cCount := C.rtdb_int32(count)
 	points := make([]RtdbPoint, cCount)
-	err := C.rtdbb_get_recycled_points_warp(C.rtdb_int32(handle), (*C.rtdb_int32)(unsafe.Pointer(&points[0])), &cCount)
+	cPoints := (*C.rtdb_int32)(unsafe.Pointer(&points[0]))
+	err := C.rtdbb_get_recycled_points_warp(cHandle, cPoints, &cCount)
 
 	return points[:cCount], RtdbError(err)
 }
@@ -8468,6 +8481,8 @@ func RawRtdbbGetRecycledPointsWarp(handle ConnectHandle, count int32) ([]RtdbPoi
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_search_recycled_points_in_batches_warp(rtdb_int32 handle, rtdb_int32 start, const char *tagmask, const char *fullmask, const char *source, const char *unit, const char *desc, const char *instrument, rtdb_int32 mode, rtdb_int32 *ids, rtdb_int32 *count)
 func RawRtdbbSearchRecycledPointsInBatchesWarp(handle ConnectHandle, start int32, tagMask, fullMask, source, unit, desc, instrument string, mode RtdbSortFlag) ([]PointID, RtdbError) {
+	cHandle := C.rtdb_int32(handle)
+	cStart := C.rtdb_int32(start)
 	cTagMask := C.CString(tagMask)
 	defer C.free(unsafe.Pointer(cTagMask))
 	cFullMask := C.CString(fullMask)
@@ -8480,10 +8495,11 @@ func RawRtdbbSearchRecycledPointsInBatchesWarp(handle ConnectHandle, start int32
 	defer C.free(unsafe.Pointer(cDesc))
 	cInstrument := C.CString(instrument)
 	defer C.free(unsafe.Pointer(cInstrument))
+	cMode := C.rtdb_int32(mode)
 	ids := make([]PointID, 1024)
 	cIds := (*C.rtdb_int32)(unsafe.Pointer(&ids[0]))
 	cCount := C.rtdb_int32(len(ids))
-	err := C.rtdbb_search_recycled_points_in_batches_warp(C.rtdb_int32(handle), C.rtdb_int32(start), cTagMask, cFullMask, cSource, cUnit, cDesc, cInstrument, C.rtdb_int32(mode), cIds, &cCount)
+	err := C.rtdbb_search_recycled_points_in_batches_warp(cHandle, cStart, cTagMask, cFullMask, cSource, cUnit, cDesc, cInstrument, cMode, cIds, &cCount)
 	return ids[:cCount], RtdbError(err)
 }
 
@@ -8513,11 +8529,12 @@ func RawRtdbbSearchRecycledPointsInBatchesWarp(handle ConnectHandle, start int32
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_get_recycled_max_point_property_warp(rtdb_int32 handle, RTDB_POINT* base, RTDB_SCAN_POINT* scan, RTDB_MAX_CALC_POINT* calc)
 func RawRtdbbGetRecycledMaxPointPropertyWarp(handle ConnectHandle, id PointID) (*RtdbPoint, *RtdbScan, *RtdbCalc, RtdbError) {
+	cHandle := C.rtdb_int32(handle)
 	base := C.RTDB_POINT{}
 	base.id = C.rtdb_int32(id)
 	scan := C.RTDB_SCAN_POINT{}
 	calc := C.RTDB_MAX_CALC_POINT{}
-	err := C.rtdbb_get_recycled_max_point_property_warp(C.rtdb_int32(handle), &base, &scan, &calc)
+	err := C.rtdbb_get_recycled_max_point_property_warp(cHandle, &base, &scan, &calc)
 	return cToRtdbPoint(&base), cToRtdbScan(&scan), cToRtdbCalc(&calc), RtdbError(err)
 }
 
@@ -8529,7 +8546,8 @@ func RawRtdbbGetRecycledMaxPointPropertyWarp(handle ConnectHandle, id PointID) (
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_clear_recycler_warp(rtdb_int32 handle)
 func RawRtdbbClearRecyclerWarp(handle ConnectHandle) RtdbError {
-	err := C.rtdbb_clear_recycler_warp(C.rtdb_int32(handle))
+	cHandle := C.rtdb_int32(handle)
+	err := C.rtdbb_clear_recycler_warp(cHandle)
 	return RtdbError(err)
 }
 
@@ -8558,7 +8576,9 @@ func RawRtdbbClearRecyclerWarp(handle ConnectHandle) RtdbError {
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_subscribe_tags_ex_warp(rtdb_int32 handle, rtdb_uint32 options, void* param, rtdbb_tags_change_event_ex callback)
 func RawRtdbbSubscribeTagsExWarp(handle ConnectHandle, options RtdbSubscribeOption, param unsafe.Pointer) RtdbError {
-	err := C.rtdbb_subscribe_tags_ex_warp(C.rtdb_int32(handle), C.rtdb_uint32(options), param, (C.rtdbb_tags_change_event_ex)(unsafe.Pointer(C.goSubscribeTagsEx)))
+	cHandle := C.rtdb_int32(handle)
+	cOptions := C.rtdb_uint32(options)
+	err := C.rtdbb_subscribe_tags_ex_warp(cHandle, cOptions, param, (C.rtdbb_tags_change_event_ex)(unsafe.Pointer(C.goSubscribeTagsEx)))
 	return RtdbError(err)
 }
 
@@ -8570,7 +8590,8 @@ func RawRtdbbSubscribeTagsExWarp(handle ConnectHandle, options RtdbSubscribeOpti
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_cancel_subscribe_tags_warp(rtdb_int32 handle)
 func RawRtdbbCancelSubscribeTagsWarp(handle ConnectHandle) RtdbError {
-	err := C.rtdbb_cancel_subscribe_tags_warp(C.rtdb_int32(handle))
+	cHandle := C.rtdb_int32(handle)
+	err := C.rtdbb_cancel_subscribe_tags_warp(cHandle)
 	return RtdbError(err)
 }
 
@@ -8584,15 +8605,17 @@ func RawRtdbbCancelSubscribeTagsWarp(handle ConnectHandle) RtdbError {
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_create_named_type_warp(rtdb_int32 handle, const char* name, rtdb_int32 field_count, const RTDB_DATA_TYPE_FIELD* fields, char desc[RTDB_DESC_SIZE])
 func RawRtdbbCreateNamedTypeWarp(handle ConnectHandle, name string, fields []RtdbDataTypeField, desc string) RtdbError {
+	cHandle := C.rtdb_int32(handle)
 	cName := C.CString(name)
 	defer C.free(unsafe.Pointer(cName))
 	cDesc := C.CString(desc)
 	defer C.free(unsafe.Pointer(cDesc))
+	cCount := C.rtdb_int32(len(fields))
 	cFields := make([]C.RTDB_DATA_TYPE_FIELD, 0)
 	for _, field := range fields {
 		cFields = append(cFields, *goToCRtdbDataTypeField(&field))
 	}
-	err := C.rtdbb_create_named_type_warp(C.rtdb_int32(handle), cName, C.rtdb_int32(len(fields)), &cFields[0], cDesc)
+	err := C.rtdbb_create_named_type_warp(cHandle, cName, cCount, &cFields[0], cDesc)
 	return RtdbError(err)
 }
 
@@ -8604,8 +8627,9 @@ func RawRtdbbCreateNamedTypeWarp(handle ConnectHandle, name string, fields []Rtd
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_get_named_types_count_warp(rtdb_int32 handle, rtdb_int32* count)
 func RawRtdbbGetNamedTypesCountWarp(handle ConnectHandle) (int32, RtdbError) {
+	cHandle := C.rtdb_int32(handle)
 	count := C.rtdb_int32(0)
-	err := C.rtdbb_get_named_types_count_warp(C.rtdb_int32(handle), &count)
+	err := C.rtdbb_get_named_types_count_warp(cHandle, &count)
 	return int32(count), RtdbError(err)
 }
 
