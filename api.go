@@ -7224,14 +7224,14 @@ func RawRtdbFormatMessageWarp(err RtdbError) (string, string) {
 // raw_fn:
 //   - void RTDBAPI_CALLRULE rtdb_job_message_warp(rtdb_int32 job_id, char *desc, char *name, rtdb_int32 size)
 func RawRtdbJobMessageWarp(jobID int32) (string, string) {
-	cgoDesc := (*C.char)(C.CBytes(make([]byte, 1024)))
-	defer C.free(unsafe.Pointer(cgoDesc))
-	cgoName := (*C.char)(C.CBytes(make([]byte, 1024)))
-	defer C.free(unsafe.Pointer(cgoName))
-	cgoSize := C.rtdb_int32(1024)
-	cgoJob := C.rtdb_int32(jobID)
-	C.rtdb_job_message_warp(cgoJob, cgoDesc, cgoName, cgoSize)
-	return C.GoString(cgoName), C.GoString(cgoDesc)
+	cDesc := (*C.char)(C.CBytes(make([]byte, 1024)))
+	defer C.free(unsafe.Pointer(cDesc))
+	cName := (*C.char)(C.CBytes(make([]byte, 1024)))
+	defer C.free(unsafe.Pointer(cName))
+	cSize := C.rtdb_int32(1024)
+	cJob := C.rtdb_int32(jobID)
+	C.rtdb_job_message_warp(cJob, cDesc, cName, cSize)
+	return C.GoString(cName), C.GoString(cDesc)
 }
 
 // RawRtdbSetTimeoutWarp 设置连接超时时间
