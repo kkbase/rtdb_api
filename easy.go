@@ -20,11 +20,18 @@ func Login(hostName string, port int32, userName string, password string) (*Rtdb
 		UserName: userName,
 		Password: password,
 	}
-	cHandle, err := RawRtdbConnectWarp(rtn.UserName, rtn.Port)
+	cHandle, err := RawRtdbConnectWarp(rtn.HostName, rtn.Port)
 	if err != nil {
 		return nil, err
 	}
 	rtn.ConnectHandle = cHandle
+
+	priv, err := RawRtdbLoginWarp(rtn.ConnectHandle, rtn.UserName, rtn.HostName)
+	if err != nil {
+		return nil, err
+	}
+	rtn.Priv = priv
+
 	return &rtn, nil
 }
 
