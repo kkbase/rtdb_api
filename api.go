@@ -5436,6 +5436,7 @@ type RtdbSyncInfo struct {
 	Role     RtdbSyncRole   // 角色
 	Status   RtdbSyncStatus // 状态
 	IP       uint32         // IP地址
+	IpString string         // StringIP地址
 	Version  uint64         // 同步版本
 	DataSize uint64         // 堆积数据大小
 }
@@ -5445,19 +5446,10 @@ func cToGoRtdbSyncInfo(info *C.RTDB_SYNC_INFO) *RtdbSyncInfo {
 		Role:     RtdbSyncRole(info.role),
 		Status:   RtdbSyncStatus(info.status),
 		IP:       uint32(info.ip),
+		IpString: fmt.Sprintf("%d.%d.%d.%d", byte(info.ip>>24), byte(info.ip>>16), byte(info.ip>>8), byte(info.ip)),
 		Version:  uint64(info.version),
 		DataSize: uint64(info.data_size),
 	}
-	return &rtn
-}
-
-func goToCRtdbSyncInfo(info *RtdbSyncInfo) *C.RTDB_SYNC_INFO {
-	rtn := C.RTDB_SYNC_INFO{}
-	rtn.role = C.rtdb_int8(info.Role)
-	rtn.status = C.rtdb_int8(info.Status)
-	rtn.ip = C.rtdb_uint32(info.IP)
-	rtn.version = C.rtdb_uint64(info.Version)
-	rtn.data_size = C.rtdb_uint64(info.DataSize)
 	return &rtn
 }
 
