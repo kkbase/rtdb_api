@@ -85,3 +85,9 @@ func (c *RtdbConnect) GetClientVersion() (ApiVersion, error) {
 	version, err := RawRtdbGetApiVersionWarp()
 	return version, err
 }
+
+// SetClientOption 设置客户端参数
+func (c *RtdbConnect) SetClientOption(option RtdbApiOption, value int32) error {
+	err := RawRtdbSetOptionWarp(option, value)
+	return err
+}
