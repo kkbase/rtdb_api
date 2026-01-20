@@ -11536,25 +11536,35 @@ func RawRtdbhFlushArchivedValuesWarp(handle ConnectHandle, id PointID) (int32, e
 }
 
 // RawRtdbhGetSingleNamedTypeValue64Warp 读取单个自定义类型标签点某个时间的历史数据
-//   - 参数：
-//   - [handle]        连接句柄
-//   - [id]            整型，输入，标签点标识
-//   - [mode]          整型，输入，取值 RTDB_NEXT、RTDB_PREVIOUS、RTDB_EXACT 之一：
-//   - RTDB_NEXT 寻找下一个最近的数据；
-//   - RTDB_PREVIOUS 寻找上一个最近的数据；
-//   - RTDB_EXACT 取指定时间的数据，如果没有则返回错误 RtE_DATA_NOT_FOUND；
-//   - [datetime]      整型，输入/输出，输入时表示时间秒数；
-//   - 输出时表示实际取得的历史数值对应的时间秒数。
-//   - [ms]            短整型，输入/输出，如果 id 指定的标签点时间精度为纳秒，
-//   - 则输入时表示时间纳秒数；输出时表示实际取得的历史数值时间纳秒数。
-//   - 否则忽略输入，输出时为 0。
-//   - [object]        void数组，输出，自定义类型标签点历史值
-//   - [length]        短整型，输入/输出，输入时表示 object 的长度，
-//   - 输出时表示实际获取的自定义类型标签点数据长度。
-//   - [quality]       短整型，输出，历史值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
 //
-// rtdb_error RTDBAPI_CALLRULE rtdbh_get_single_named_type_value64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32 mode, rtdb_timestamp_type* datetime, rtdb_subtime_type* subtime, void* object, rtdb_length_type* length, rtdb_int16* quality)
-func RawRtdbhGetSingleNamedTypeValue64Warp() {}
+// input:
+//   - handle 连接句柄
+//   - id 标签点标识
+//   - mode 查找模式
+//   - datetime 输入时表示时间秒数；
+//   - subtime 如果 id 指定的标签点时间精度为纳秒，则输入时表示时间纳秒数；输出时表示实际取得的历史数值时间纳秒数。
+//
+// output:
+//   - TimestampType(datetime) 实际时间戳，秒部分
+//   - SubtimeType(subtime) 实际时间戳，纳秒部分
+//   - object 自定义类型标签点历史值
+//   - quality 历史值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbh_get_single_named_type_value64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32 mode, rtdb_timestamp_type* datetime, rtdb_subtime_type* subtime, void* object, rtdb_length_type* length, rtdb_int16* quality)
+func RawRtdbhGetSingleNamedTypeValue64Warp(handle ConnectHandle, id PointID, mode RtdbHisMode, datetime TimestampType, subtime SubtimeType, length int32) (TimestampType, SubtimeType, []byte, Quality, error) {
+	cHandle := C.rtdb_int32(handle)
+	cId := C.rtdb_int32(id)
+	cMode := C.rtdb_int32(mode)
+	cDatetime := C.rtdb_timestamp_type(datetime)
+	cSubtime := C.rtdb_subtime_type(subtime)
+	object := make([]byte, length)
+	cObject := unsafe.Pointer(&object[0])
+	cLength := C.rtdb_length_type(length)
+	cQuality := C.rtdb_int16(0)
+	err := C.rtdbh_get_single_named_type_value64_warp(cHandle, cId, cMode, &cDatetime, &cSubtime, cObject, &cLength, &cQuality)
+	return TimestampType(cDatetime), SubtimeType(cSubtime), object[:cLength], Quality(cQuality), RtdbError(err).GoError()
+}
 
 // RawRtdbhGetArchivedNamedTypeValues64Warp 连续读取自定义类型标签点的历史数据
 //   - 参数：
