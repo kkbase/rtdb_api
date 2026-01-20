@@ -7276,7 +7276,9 @@ func RawRtdbGetTimeoutWarp(handle ConnectHandle, socket SocketHandle) (DateTimeT
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_kill_connection_warp(rtdb_int32 handle, rtdb_int32 socket)
 func RawRtdbKillConnectionWarp(handle ConnectHandle, socket SocketHandle) RtdbError {
-	err := C.rtdb_kill_connection_warp(C.rtdb_int32(handle), C.rtdb_int32(socket))
+	cHandle := C.rtdb_int32(handle)
+	cSocket := C.rtdb_int32(socket)
+	err := C.rtdb_kill_connection_warp(cHandle, cSocket)
 	return RtdbError(err)
 }
 
@@ -7291,9 +7293,10 @@ func RawRtdbKillConnectionWarp(handle ConnectHandle, socket SocketHandle) RtdbEr
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_get_logical_drivers_warp(rtdb_int32 handle, char *drivers)
 func RawRtdbGetLogicalDriversWarp(handle ConnectHandle) ([]string, RtdbError) {
+	cHandle := C.rtdb_int32(handle)
 	drives := make([]byte, 512)
 	cDrives := (*C.char)(unsafe.Pointer(&drives[0]))
-	err := C.rtdb_get_logical_drivers_warp(C.rtdb_int32(handle), cDrives)
+	err := C.rtdb_get_logical_drivers_warp(cHandle, cDrives)
 	sDs := C.GoString(cDrives)
 	rtn := make([]string, 0)
 	for _, c := range sDs {
