@@ -8887,7 +8887,7 @@ func RawRtdbsPutSnapshots64Warp(handle ConnectHandle, ids []PointID, datetimes [
 	return rtnEs[:count], RtdbError(err).GoError()
 }
 
-// RawRtdbsPutSnapshots 批量覆盖写入开关量、模拟量快照数值 (时间戳相同的时候更新原有值)
+// RawRtdbsFixSnapshots64Warp 批量覆盖写入开关量、模拟量快照数值 (时间戳相同的时候更新原有值)
 //
 // input:
 //   - handle 连接句柄
@@ -8903,7 +8903,7 @@ func RawRtdbsPutSnapshots64Warp(handle ConnectHandle, ids []PointID, datetimes [
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbs_fix_snapshots64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, const rtdb_float64* values, const rtdb_int64* states, const rtdb_int16* qualities, rtdb_error* errors)
-func RawRtdbsPutSnapshots(handle ConnectHandle, ids []PointID, datetimes []TimestampType, ms []SubtimeType, values []float64, states []int64, qualities []Quality) ([]error, error) {
+func RawRtdbsFixSnapshots64Warp(handle ConnectHandle, ids []PointID, datetimes []TimestampType, ms []SubtimeType, values []float64, states []int64, qualities []Quality) ([]error, error) {
 	count := C.rtdb_int32(len(ids))
 	cIds := (*C.rtdb_int32)(unsafe.Pointer(&ids[0]))
 	cDatetimes := (*C.rtdb_timestamp_type)(unsafe.Pointer(&datetimes[0]))
@@ -9016,7 +9016,7 @@ func RawRtdbsPutCoorSnapshots64Warp(handle ConnectHandle, ids []PointID, datetim
 	return rtnEs[:count], RtdbError(err).GoError()
 }
 
-// RawRtdbsPutCoorSnapshots 批量写入坐标实时数据(修复写入)
+// RawRtdbsFixCoorSnapshots64Warp 批量写入坐标实时数据(修复写入)
 //
 // input:
 //   - handle 连接句柄
@@ -9032,7 +9032,7 @@ func RawRtdbsPutCoorSnapshots64Warp(handle ConnectHandle, ids []PointID, datetim
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbs_fix_coor_snapshots64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, const rtdb_float32* x, const rtdb_float32* y, const rtdb_int16* qualities, rtdb_error* errors)
-func RawRtdbsPutCoorSnapshots(handle ConnectHandle, ids []PointID, datetimes []TimestampType, ms []SubtimeType, xs []float32, ys []float32, qualities []Quality) ([]error, error) {
+func RawRtdbsFixCoorSnapshots64Warp(handle ConnectHandle, ids []PointID, datetimes []TimestampType, ms []SubtimeType, xs []float32, ys []float32, qualities []Quality) ([]error, error) {
 	count := C.rtdb_int32(len(ids))
 	cIds := (*C.rtdb_int32)(unsafe.Pointer(&ids[0]))
 	cDatetimes := (*C.rtdb_timestamp_type)(unsafe.Pointer(&datetimes[0]))
