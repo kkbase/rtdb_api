@@ -5433,11 +5433,11 @@ func (ss RtdbSyncStatus) Desc() string {
 
 // RtdbSyncInfo 节点的元数据同步信息
 type RtdbSyncInfo struct {
-	Role     RtdbSyncRole
-	Status   RtdbSyncStatus
-	IP       uint32
-	Version  uint64
-	DataSize uint64
+	Role     RtdbSyncRole   // 角色
+	Status   RtdbSyncStatus // 状态
+	IP       uint32         // IP地址
+	Version  uint64         // 同步版本
+	DataSize uint64         // 堆积数据大小
 }
 
 func cToGoRtdbSyncInfo(info *C.RTDB_SYNC_INFO) *RtdbSyncInfo {
@@ -8806,7 +8806,7 @@ func RawRtdbbModifyNamedTypeWarp(handle ConnectHandle, name string, modifyName s
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_get_meta_sync_info_warp(rtdb_int32 handle, rtdb_int32 node_number, rtdb_int32* count, RTDB_SYNC_INFO* sync_infos, rtdb_error* errors)
 func RawRtdbbGetMetaSyncInfoWarp(handle ConnectHandle, nodeNumber int32) ([]RtdbSyncInfo, []error, error) {
 	infos := make([]C.RTDB_SYNC_INFO, 2)
-	count := C.rtdb_int32(0)
+	count := C.rtdb_int32(2)
 	errs := make([]RtdbError, 2)
 	err := C.rtdbb_get_meta_sync_info_warp(C.rtdb_int32(handle), C.rtdb_int32(nodeNumber), &count, &infos[0], (*C.rtdb_error)(unsafe.Pointer(&errs[0])))
 	rtnInfo := make([]RtdbSyncInfo, 0)

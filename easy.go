@@ -1,15 +1,16 @@
 package rtdb_api
 
 type RtdbConnect struct {
-	HostName         string        // 服务端名称
-	Port             int32         // 服务端端口
-	UserName         string        // 用户名
-	Password         string        // 密码
-	ConnectHandle    ConnectHandle // 连接句柄
-	SocketHandle     SocketHandle  // 套接字句柄
-	ServerOsType     RtdbOsType    // 服务端操作系统类型
-	StringBlobMaxLen int32         // 最大支持String/Blob长度
-	Priv             PrivGroup     // 用户权限
+	HostName         string         // 服务端名称
+	Port             int32          // 服务端端口
+	UserName         string         // 用户名
+	Password         string         // 密码
+	ConnectHandle    ConnectHandle  // 连接句柄
+	SyncInfos        []RtdbSyncInfo // 元数据信息
+	SocketHandle     SocketHandle   // 套接字句柄
+	ServerOsType     RtdbOsType     // 服务端操作系统类型
+	StringBlobMaxLen int32          // 最大支持String/Blob长度
+	Priv             PrivGroup      // 用户权限
 }
 
 // Login 登录数据库
@@ -31,6 +32,17 @@ func Login(hostName string, port int32, userName string, password string) (*Rtdb
 		return nil, err
 	}
 	rtn.Priv = priv
+
+	infos, errs, err := RawRtdbbGetMetaSyncInfoWarp(rtn.ConnectHandle, 0)
+	if err != nil {
+		return nil, err
+	}
+	for _, err := range errs {
+		if err != nil {
+			return nil, err
+		}
+	}
+	rtn.SyncInfos = infos
 
 	return &rtn, nil
 }

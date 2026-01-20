@@ -1,6 +1,9 @@
 package rtdb_api
 
-import "testing"
+import (
+	"fmt"
+	"testing"
+)
 
 // 测试用户登录/登出
 func TestLoginLogout(t *testing.T) {
@@ -9,4 +12,6 @@ func TestLoginLogout(t *testing.T) {
 		t.Fatal("登录用户失败", err)
 	}
 	defer func() { _ = conn.Logout() }()
+
+	fmt.Println(conn.SyncInfos)
 }
