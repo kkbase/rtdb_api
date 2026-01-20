@@ -6342,7 +6342,9 @@ func RawRtdbGetApiVersionWarp() (ApiVersion, RtdbError) {
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_set_option_warp(rtdb_int32 type, rtdb_int32 value)
 func RawRtdbSetOptionWarp(optionType RtdbApiOption, value int32) RtdbError {
-	err := C.rtdb_set_option_warp(C.rtdb_int32(optionType), C.rtdb_int32(value))
+	cOptionType := C.rtdb_int32(optionType)
+	cValue := C.rtdb_int32(value)
+	err := C.rtdb_set_option_warp(cOptionType, cValue)
 	return RtdbError(err)
 }
 
@@ -6359,9 +6361,10 @@ func RawRtdbSetOptionWarp(optionType RtdbApiOption, value int32) RtdbError {
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_create_datagram_handle_warp(rtdb_int32 port, const char* remotehost, rtdb_datagram_handle* handle)
 func RawRtdbCreateDatagramHandleWarp(port int32, remoteHost string) (DatagramHandle, RtdbError) {
 	var handle C.rtdb_datagram_handle
+	cPort := C.rtdb_int32(port)
 	cRemoteHost := C.CString(remoteHost)
 	defer C.free(unsafe.Pointer(cRemoteHost))
-	err := C.rtdb_create_datagram_handle_warp(C.rtdb_int32(port), cRemoteHost, &handle)
+	err := C.rtdb_create_datagram_handle_warp(cPort, cRemoteHost, &handle)
 	return DatagramHandle{handle: handle}, RtdbError(err)
 }
 
