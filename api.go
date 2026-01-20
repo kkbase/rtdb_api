@@ -11346,7 +11346,7 @@ func RawRtdbhPutSingleValue64Warp(handle ConnectHandle, id PointID, datetime Tim
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbh_put_single_coor_value64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime, rtdb_subtime_type subtime, rtdb_float32 x, rtdb_float32 y, rtdb_int16 quality)
-func RawRtdbhPutSingleCoorValue64Warp(handle ConnectHandle, id PointID, datetime TimestampType, subtime SubtimeType, x float32, y float32, quality Quality) {
+func RawRtdbhPutSingleCoorValue64Warp(handle ConnectHandle, id PointID, datetime TimestampType, subtime SubtimeType, x float32, y float32, quality Quality) error {
 	cHandle := C.rtdb_int32(handle)
 	cId := C.rtdb_int32(id)
 	cDatetime := C.rtdb_timestamp_type(datetime)
@@ -11359,19 +11359,29 @@ func RawRtdbhPutSingleCoorValue64Warp(handle ConnectHandle, id PointID, datetime
 }
 
 // RawRtdbhPutSingleBlobValue64Warp 写入单个二进制/字符串标签点在某一时间的历史数据
-//   - \param handle    连接句柄
-//   - \param id        整型，输入，标签点标识
-//   - \param datetime  整型，输入，数值时间列表,
-//   - 表示距离1970年1月1日08:00:00的秒数
-//   - \param ms        短整型，输入，历史数值时间，
-//   - 对于时间精度为纳秒的标签点，存放相应的纳秒值；否则忽略
-//   - \param blob      字节型数组，输入，历史二进制/字符串数值
-//   - \param len       短整型，输入，二进制/字符串数值长度，超过一个页大小数据将被截断。
-//   - \param quality   短整型，输入，历史数值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
-//   - \remark 本接口只对数据类型为 RTDB_BLOB、RTDB_STRING 的标签点有效。
 //
-// rtdb_error RTDBAPI_CALLRULE rtdbh_put_single_blob_value64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime, rtdb_subtime_type subtime, const rtdb_byte* blob, rtdb_length_type len, rtdb_int16 quality)
-func RawRtdbhPutSingleBlobValue64Warp() {}
+// input:
+//   - handle 连接句柄
+//   - id 标签点标识
+//   - datetime 数值时间列表, 表示距离1970年1月1日08:00:00的秒数
+//   - subtime 历史数值时间，对于时间精度为纳秒的标签点，存放相应的纳秒值；否则忽略
+//   - blob 历史二进制/字符串数值
+//   - len 二进制/字符串数值长度，超过一个页大小数据将被截断。
+//   - quality 历史数值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbh_put_single_blob_value64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime, rtdb_subtime_type subtime, const rtdb_byte* blob, rtdb_length_type len, rtdb_int16 quality)
+func RawRtdbhPutSingleBlobValue64Warp(handle ConnectHandle, id PointID, datetime TimestampType, subtime SubtimeType, blob []byte, quality Quality) error {
+	cHandle := C.rtdb_int32(handle)
+	cId := C.rtdb_int32(id)
+	cDatetime := C.rtdb_timestamp_type(datetime)
+	cSubtime := C.rtdb_subtime_type(subtime)
+	cBlob := (*C.rtdb_byte)(unsafe.Pointer(&blob[0]))
+	cLen := C.rtdb_length_type(len(blob))
+	cQuality := C.rtdb_int16(quality)
+	err := C.rtdbh_put_single_blob_value64_warp(cHandle, cId, cDatetime, cSubtime, cBlob, cLen, cQuality)
+	return RtdbError(err).GoError()
+}
 
 // RawRtdbhPutArchivedValues64Warp 写入批量标签点批量历史存储数据
 //
