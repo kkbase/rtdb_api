@@ -12,6 +12,10 @@ type RtdbConnect struct {
 	Priv             PrivGroup     // 用户权限
 }
 
-func New() *RtdbConnect {
+// Login 登录数据库
+func Login(hostName string, Port int16, userName string, password string) *RtdbConnect {
 	return &RtdbConnect{}
 }
+
+// Logout 登出数据库
+func (c *RtdbConnect) Logout() {}
