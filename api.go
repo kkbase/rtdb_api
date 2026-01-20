@@ -8683,13 +8683,14 @@ func RawRtdbbGetAllNamedTypesWarp(handle ConnectHandle, count int32) ([]string, 
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_get_named_type_warp(rtdb_int32 handle, const char* name, rtdb_int32* field_count, RTDB_DATA_TYPE_FIELD* fields, rtdb_int32* type_size, char desc[RTDB_DESC_SIZE])
 func RawRtdbbGetNamedTypeWarp(handle ConnectHandle, name string, fieldCount int32) ([]RtdbDataTypeField, int32, string, RtdbError) {
+	cHandle := C.rtdb_int32(handle)
 	cName := C.CString(name)
 	defer C.free(unsafe.Pointer(cName))
 	cFieldCount := C.rtdb_int32(fieldCount)
 	fields := make([]C.RTDB_DATA_TYPE_FIELD, cFieldCount)
 	typeSize := C.rtdb_int32(0)
 	desc := make([]C.char, int(C.RTDB_DESC_SIZE))
-	err := C.rtdbb_get_named_type_warp(C.rtdb_int32(handle), cName, &cFieldCount, &fields[0], &typeSize, &desc[0])
+	err := C.rtdbb_get_named_type_warp(cHandle, cName, &cFieldCount, &fields[0], &typeSize, &desc[0])
 	rtn := make([]RtdbDataTypeField, 0)
 	for _, field := range fields[:cFieldCount] {
 		rtn = append(rtn, *cToRtdbDataTypeField(&field))
@@ -8706,10 +8707,10 @@ func RawRtdbbGetNamedTypeWarp(handle ConnectHandle, name string, fieldCount int3
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_remove_named_type_warp(rtdb_int32 handle, const char* name, rtdb_int32 reserved GAPI_DEFAULT_VALUE(0))
 func RawRtdbbRemoveNamedTypeWarp(handle int32, name string) RtdbError {
-	cgoHandle := C.rtdb_int32(handle)
-	cgoName := C.CString(name)
-	defer C.free(unsafe.Pointer(cgoName))
-	err := C.rtdbb_remove_named_type_warp(cgoHandle, cgoName, 0)
+	cHandle := C.rtdb_int32(handle)
+	cName := C.CString(name)
+	defer C.free(unsafe.Pointer(cName))
+	err := C.rtdbb_remove_named_type_warp(cHandle, cName, 0)
 	return RtdbError(err)
 }
 
