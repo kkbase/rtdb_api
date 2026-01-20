@@ -11495,7 +11495,7 @@ func RawRtdbhPutArchivedBlobValues64Warp(handle ConnectHandle, ids []PointID, da
 	cIds := (*C.rtdb_int32)(unsafe.Pointer(&ids[0]))
 	cDatetimes := (*C.rtdb_timestamp_type)(unsafe.Pointer(&datetimes[0]))
 	cSubtimes := (*C.rtdb_subtime_type)(unsafe.Pointer(&subtimes[0]))
-	cBlobs := make([]*C.rtdb_byte)
+	cBlobs := make([]*C.rtdb_byte, 0)
 	for _, blob := range blobs {
 		cBlobs = append(cBlobs, (*C.rtdb_byte)(unsafe.Pointer(C.CBytes(blob))))
 	}
