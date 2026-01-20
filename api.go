@@ -8646,8 +8646,8 @@ func RawRtdbbGetNamedTypesCountWarp(handle ConnectHandle) (int32, RtdbError) {
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_get_all_named_types_warp(rtdb_int32 handle, rtdb_int32* count, char* name[RTDB_TYPE_NAME_SIZE], rtdb_int32* field_counts)
 func RawRtdbbGetAllNamedTypesWarp(handle ConnectHandle, count int32) ([]string, []int32, RtdbError) {
-	cgoHandle := C.rtdb_int32(handle)
-	cgoCount := C.rtdb_int32(count)
+	cHandle := C.rtdb_int32(handle)
+	cCount := C.rtdb_int32(count)
 	names := make([]*C.char, count)
 	for i := 0; i < int(count); i++ {
 		names[i] = (*C.char)(C.CBytes(make([]byte, RtdbConstTypeNameSize)))
@@ -8657,15 +8657,15 @@ func RawRtdbbGetAllNamedTypesWarp(handle ConnectHandle, count int32) ([]string, 
 			C.free(unsafe.Pointer(names[i]))
 		}
 	}()
-	cgoNames := (**C.char)(unsafe.Pointer(&names[0]))
+	cNames := (**C.char)(unsafe.Pointer(&names[0]))
 	counts := make([]int32, count)
-	cgoCounts := (*C.rtdb_int32)(unsafe.Pointer(&counts[0]))
-	err := C.rtdbb_get_all_named_types_warp(cgoHandle, &cgoCount, cgoNames, cgoCounts)
+	cCounts := (*C.rtdb_int32)(unsafe.Pointer(&counts[0]))
+	err := C.rtdbb_get_all_named_types_warp(cHandle, &cCount, cNames, cCounts)
 	goNames := make([]string, 0)
-	for i := 0; i < int(count); i++ {
+	for i := 0; i < int(cCount); i++ {
 		goNames = append(goNames, C.GoString(names[i]))
 	}
-	return goNames, counts[:cgoCount], RtdbError(err)
+	return goNames, counts[:cCount], RtdbError(err)
 }
 
 // RawRtdbbGetNamedTypeWarp 获取自定义类型的所有字段
