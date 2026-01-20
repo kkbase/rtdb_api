@@ -32,8 +32,6 @@ func Login(hostName string, port int32, userName string, password string) (*Rtdb
 	}
 	rtn.Priv = priv
 
-	// RawRtdbGetOwnConnectionWarp()
-
 	return &rtn, nil
 }
 
