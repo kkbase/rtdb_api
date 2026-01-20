@@ -11241,20 +11241,30 @@ func RawRtdbhUpdateValue64Warp(handle ConnectHandle, id PointID, datetime Timest
 	return RtdbError(err).GoError()
 }
 
-// RawRtdbhUpdateCoorValue64Warp 修改单个标签点某一时间的历史存储值.
+// RawRtdbhUpdateCoorValue64Warp 修改单个标签点某一时间的历史存储值(坐标类型)
 //
-//   - \param handle        连接句柄
-//   - \param id            整型，输入，标签点标识
-//   - \param datetime      整型，输入，时间秒数
-//   - \param ms            短整型，输入，如果 id 指定的标签点时间精度为纳秒，
-//   - 表示时间纳秒数；否则忽略。
-//   - \param x             单精度浮点型，输入，新的横坐标历史数值
-//   - \param y             单精度浮点型，输入，新的纵坐标历史数值
-//   - \param quality       短整型，输入，新的历史值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
-//   - \remark 本接口仅对数据类型为 RTDB_COOR 的标签点有效。
+// input:
+//   - handle 连接句柄
+//   - id 标签点标识
+//   - datetime 时间秒数
+//   - ms 如果 id 指定的标签点时间精度为纳秒，表示时间纳秒数；否则忽略。
+//   - x 新的横坐标历史数值
+//   - y 新的纵坐标历史数值
+//   - quality 新的历史值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
 //
-// rtdb_error RTDBAPI_CALLRULE rtdbh_update_coor_value64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime, rtdb_subtime_type subtime, rtdb_float32 x, rtdb_float32 y, rtdb_int16 quality)
-func RawRtdbhUpdateCoorValue64Warp() {}
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbh_update_coor_value64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime, rtdb_subtime_type subtime, rtdb_float32 x, rtdb_float32 y, rtdb_int16 quality)
+func RawRtdbhUpdateCoorValue64Warp(handle ConnectHandle, id PointID, datetime TimestampType, subtime SubtimeType, x float32, y float32, quality Quality) error {
+	cHandle := C.rtdb_int32(handle)
+	cId := C.rtdb_int32(id)
+	cDatetime := C.rtdb_timestamp_type(datetime)
+	cSubtime := C.rtdb_subtime_type(subtime)
+	cX := C.rtdb_float32(x)
+	cY := C.rtdb_float32(y)
+	cQuality := C.rtdb_int16(quality)
+	err := C.rtdbh_update_coor_value64_warp(cHandle, cId, cDatetime, cSubtime, cX, cY, cQuality)
+	return RtdbError(err).GoError()
+}
 
 // RawRtdbhRemoveValue64Warp 删除单个标签点某个时间的历史存储值
 //
