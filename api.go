@@ -11385,29 +11385,36 @@ func RawRtdbhPutSingleBlobValue64Warp(handle ConnectHandle, id PointID, datetime
 
 // RawRtdbhPutArchivedValues64Warp 写入批量标签点批量历史存储数据
 //
-//	  *
-//	- \param handle        连接句柄
-//	- \param count         整型，输入/输出，
-//	- 输入时表示 ids、datetimes、ms、values、states、qualities、errors 的长度，
-//	- 即历史值个数；输出时返回实际写入的数值个数
-//	- \param ids           整型数组，输入，标签点标识，同一个标签点标识可以出现多次，
-//	- 但它们的时间戳必需是递增的。
-//	- \param datetimes     整型数组，输入，表示对应的历史数值时间秒数。
-//	- \param ms            短整型数组，输入，如果 id 指定的标签点时间精度为纳秒，
-//	- 表示对应的历史数值时间纳秒；否则忽略。
-//	- \param values        双精度浮点数数组，输入，浮点型历史数值列表
-//	- 对于数据类型为 RTDB_REAL16、RTDB_REAL32、RTDB_REAL64 的标签点，表示相应的历史存储值；否则忽略
-//	- \param states        64 位整数数组，输入，整型历史数值列表，
-//	- 对于数据类型为 RTDB_BOOL、RTDB_UINT8、RTDB_INT8、RTDB_CHAR、RTDB_UINT16、RTDB_INT16、
-//	- RTDB_UINT32、RTDB_INT32、RTDB_INT64 的标签点，表示相应的历史存储值；否则忽略
-//	- \param qualities     短整型数组，输入，历史数值品质列表，数据库预定义的品质参见枚举 RTDB_QUALITY
-//	- \param errors        无符号整型数组，输出，写入历史数据的返回值列表，参考rtdb_error.h
-//	- \remark 用户须保证 ids、datetimes、ms、values、states、qualities、errors 的长度与 count 一致，
-//	- 本接口对数据类型为 RTDB_COOR、RTDB_BLOB、RTDB_STRING 的标签点无效。
-//	- 如果 datetimes、ms 标识的数据已经存在，其值将被替换。
+// input:
+//   - handle 连接句柄
+//   - ids 标签点标识，同一个标签点标识可以出现多次，但它们的时间戳必需是递增的。
+//   - datetimes 表示对应的历史数值时间秒数。
+//   - subtimes 如果 id 指定的标签点时间精度为纳秒，表示对应的历史数值时间纳秒；否则忽略。
+//   - values 浮点型历史数值列表 对于数据类型为 RTDB_REAL16、RTDB_REAL32、RTDB_REAL64 的标签点，表示相应的历史存储值；否则忽略
+//   - states 整型历史数值列表，对于数据类型为 RTDB_BOOL、RTDB_UINT8、RTDB_INT8、RTDB_CHAR、RTDB_UINT16、RTDB_INT16、RTDB_UINT32、RTDB_INT32、RTDB_INT64 的标签点，表示相应的历史存储值；否则忽略
+//   - qualities 历史数值品质列表，数据库预定义的品质参见枚举 RTDB_QUALITY
+//   - errors 写入历史数据的返回值列表，参考rtdb_error.h
 //
-// rtdb_error RTDBAPI_CALLRULE rtdbh_put_archived_values64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, const rtdb_float64* values, const rtdb_int64* states, const rtdb_int16* qualities, rtdb_error* errors)
-func RawRtdbhPutArchivedValues64Warp() {}
+// output:
+//   - []error(error) 错误数组
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbh_put_archived_values64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, const rtdb_float64* values, const rtdb_int64* states, const rtdb_int16* qualities, rtdb_error* errors)
+func RawRtdbhPutArchivedValues64Warp(handle ConnectHandle, ids []PointID, datetimes []TimestampType, subtimes []SubtimeType, values []float64, states []int64, qualities []Quality) ([]error, error) {
+	cHandle := C.rtdb_int32(handle)
+	cCount := C.rtdb_int32(len(ids))
+	cIds := (*C.rtdb_int32)(unsafe.Pointer(&ids[0]))
+	cDatetimes := (*C.rtdb_timestamp_type)(unsafe.Pointer(&datetimes[0]))
+	cSubtimes := (*C.rtdb_subtime_type)(unsafe.Pointer(&subtimes[0]))
+	cValues := (*C.rtdb_float64)(unsafe.Pointer(&values[0]))
+	cStates := (*C.rtdb_int64)(unsafe.Pointer(&states[0]))
+	cQualities := (*C.rtdb_int16)(unsafe.Pointer(&qualities[0]))
+	errs := make([]RtdbError, len(ids))
+	cErrs := (*C.rtdb_error)(unsafe.Pointer(&errs[0]))
+	err := C.rtdbh_put_archived_values64_warp(cHandle, &cCount, cIds, cDatetimes, cSubtimes, cValues, cStates, cQualities, cErrs)
+	goErrs := RtdbErrorListToErrorList(errs)
+	return goErrs, RtdbError(err).GoError()
+}
 
 // RawRtdbhPutArchivedCoorValues64Warp 写入批量标签点批量坐标型历史存储数据
 //   - \param handle        连接句柄
@@ -11427,7 +11434,30 @@ func RawRtdbhPutArchivedValues64Warp() {}
 //   - 如果 datetimes、ms 标识的数据已经存在，其值将被替换。
 //
 // rtdb_error RTDBAPI_CALLRULE rtdbh_put_archived_coor_values64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, const rtdb_float32* x, const rtdb_float32* y, const rtdb_int16* qualities, rtdb_error* errors)
-func RawRtdbhPutArchivedCoorValues64Warp() {}
+func RawRtdbhPutArchivedCoorValues64Warp() {
+	/*
+		cDtValues := make([]*C.rtdb_byte, 0)
+		for i := 0; i < len(ids); i++ {
+			cDtValues = append(cDtValues, (*C.rtdb_byte)(unsafe.Pointer(C.CBytes([]byte(dtValues[i])))))
+		}
+		defer func() {
+			for i := 0; i < len(ids); i++ {
+				C.free(unsafe.Pointer(cDtValues[i]))
+			}
+		}()
+		ccDtValues := &cDtValues[0]
+		lens := make([]int32, 0)
+		for _, b := range dtValues {
+			lens = append(lens, int32(len(b)))
+		}
+		cLens := (*C.rtdb_length_type)(unsafe.Pointer(&lens[0]))
+		cQualities := (*C.rtdb_int16)(unsafe.Pointer(&qualities[0]))
+		errs := make([]RtdbError, len(ids))
+		cErrs := (*C.rtdb_error)(unsafe.Pointer(&errs[0]))
+		err := C.rtdbh_put_archived_datetime_values64_warp(cHandle, &cCount, cIds, cDatetimes, cSubtimes, ccDtValues, cLens, cQualities, cErrs)
+		goErrs := RtdbErrorListToErrorList(errs)
+	*/
+}
 
 // RawRtdbhPutSingleDatetimeValue64Warp 写入单个datetime标签点在某一时间的历史数据
 //
