@@ -6435,12 +6435,13 @@ func RawRtdbConnectWarp(hostname string, port int32) (ConnectHandle, RtdbError) 
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_login_warp(rtdb_int32 handle, const char *user, const char *password, rtdb_int32 *priv)
 func RawRtdbLoginWarp(handle ConnectHandle, user string, password string) (PrivGroup, RtdbError) {
+	cHandle := C.rtdb_int32(handle)
 	cUser := C.CString(user)
 	defer C.free(unsafe.Pointer(cUser))
 	cPassword := C.CString(password)
 	defer C.free(unsafe.Pointer(cPassword))
 	cPriv := C.rtdb_int32(0)
-	err := C.rtdb_login_warp(C.rtdb_int32(handle), cUser, cPassword, &cPriv)
+	err := C.rtdb_login_warp(cHandle, cUser, cPassword, &cPriv)
 	return PrivGroup(cPriv), RtdbError(err)
 }
 
@@ -6452,7 +6453,8 @@ func RawRtdbLoginWarp(handle ConnectHandle, user string, password string) (PrivG
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_disconnect_warp(rtdb_int32 handle)
 func RawRtdbDisconnectWarp(handle ConnectHandle) RtdbError {
-	err := C.rtdb_disconnect_warp(C.rtdb_int32(handle))
+	cHandle := C.rtdb_int32(handle)
+	err := C.rtdb_disconnect_warp(cHandle)
 	return RtdbError(err)
 }
 
@@ -6485,9 +6487,11 @@ func RawRtdbConnectionCountWarp(handle ConnectHandle, nodeNumber int32) (int32, 
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_get_db_info1_warp(rtdb_int32 handle, rtdb_int32 index, char *str, rtdb_int32 size)
 func RawRtdbGetDbInfo1Warp(handle ConnectHandle, param RtdbParam) (ParamString, RtdbError) {
+	cHandle := C.rtdb_int32(handle)
+	cParam := C.rtdb_int32(param)
 	goStr := make([]byte, RtdbConstApiServerDescriptionLen)
 	cStr := (*C.char)(unsafe.Pointer(&goStr[0]))
-	err := C.rtdb_get_db_info1_warp(C.rtdb_int32(handle), C.rtdb_int32(param), cStr, C.rtdb_int32(RtdbConstApiServerDescriptionLen))
+	err := C.rtdb_get_db_info1_warp(cHandle, cParam, cStr, C.rtdb_int32(RtdbConstApiServerDescriptionLen))
 	rtn := C.GoString((*C.char)(unsafe.Pointer(&goStr[0])))
 	return ParamString(rtn), RtdbError(err)
 }
