@@ -11218,21 +11218,28 @@ func RawRtdbhSummaryDataFiltInBatchesWarp(handle ConnectHandle, id PointID, filt
 
 // RawRtdbhUpdateValue64Warp 修改单个标签点某一时间的历史存储值.
 //
-//   - \param handle        连接句柄
-//   - \param id            整型，输入，标签点标识
-//   - \param datetime      整型，输入，时间秒数
-//   - \param ms            短整型，输入，如果 id 指定的标签点时间精度为纳秒，
-//   - 表示时间纳秒数；否则忽略。
-//   - \param value         双精度浮点数，输入，浮点型历史数值
-//   - 对于数据类型为 RTDB_REAL16、RTDB_REAL32、RTDB_REAL64 的标签点，存放新的历史值；否则忽略
-//   - \param state         64 位整数，输入，整型历史数值，
-//   - 对于数据类型为 RTDB_BOOL、RTDB_UINT8、RTDB_INT8、RTDB_CHAR、RTDB_UINT16、RTDB_INT16、
-//   - RTDB_UINT32、RTDB_INT32、RTDB_INT64 的标签点，存放新的历史值；否则忽略
-//   - \param quality       短整型，输入，新的历史值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
-//   - \remark 本接口对数据类型为 RTDB_COOR、RTDB_BLOB、RTDB_STRING 的标签点无效。
+// input:
+//   - handle 连接句柄
+//   - id 标签点标识
+//   - datetime 时间秒数
+//   - subtime 如果 id 指定的标签点时间精度为纳秒，表示时间纳秒数；否则忽略。
+//   - value 浮点型历史数值 对于数据类型为 RTDB_REAL16、RTDB_REAL32、RTDB_REAL64 的标签点，存放新的历史值；否则忽略
+//   - state 整型历史数值，对于数据类型为 RTDB_BOOL、RTDB_UINT8、RTDB_INT8、RTDB_CHAR、RTDB_UINT16、RTDB_INT16、RTDB_UINT32、RTDB_INT32、RTDB_INT64 的标签点，存放新的历史值；否则忽略
+//   - quality 新的历史值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
 //
-// rtdb_error RTDBAPI_CALLRULE rtdbh_update_value64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime, rtdb_subtime_type subtime, rtdb_float64 value, rtdb_int64 state, rtdb_int16 quality)
-func RawRtdbhUpdateValue64Warp() {}
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbh_update_value64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime, rtdb_subtime_type subtime, rtdb_float64 value, rtdb_int64 state, rtdb_int16 quality)
+func RawRtdbhUpdateValue64Warp(handle ConnectHandle, id PointID, datetime TimestampType, subtime SubtimeType, value float64, state int64, quality Quality) error {
+	cHandle := C.rtdb_int32(handle)
+	cId := C.rtdb_int32(id)
+	cDatetime := C.rtdb_timestamp_type(datetime)
+	cSubtime := C.rtdb_subtime_type(subtime)
+	cValue := C.rtdb_float64(value)
+	cState := C.rtdb_int64(state)
+	cQuality := C.rtdb_int16(quality)
+	err := C.rtdbh_update_value64_warp(cHandle, cId, cDatetime, cSubtime, cValue, cState, cQuality)
+	return RtdbError(err).GoError()
+}
 
 // RawRtdbhUpdateCoorValue64Warp 修改单个标签点某一时间的历史存储值.
 //
