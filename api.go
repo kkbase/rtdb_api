@@ -7314,9 +7314,10 @@ func RawRtdbGetLogicalDriversWarp(handle ConnectHandle) ([]string, RtdbError) {
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_open_path_warp(rtdb_int32 handle, const char *dir)
 func RawRtdbOpenPathWarp(handle ConnectHandle, dir string) RtdbError {
+	cHandle := C.rtdb_int32(handle)
 	cDir := C.CString(dir)
 	defer C.free(unsafe.Pointer(cDir))
-	err := C.rtdb_open_path_warp(C.rtdb_int32(handle), cDir)
+	err := C.rtdb_open_path_warp(cHandle, cDir)
 	return RtdbError(err)
 }
 
@@ -7378,22 +7379,22 @@ func RawRtdbOpenPathWarp(handle ConnectHandle, dir string) RtdbError {
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_read_path64_warp(rtdb_int32 handle, char* path, rtdb_int16* is_dir, rtdb_timestamp_type* atime, rtdb_timestamp_type* ctime, rtdb_timestamp_type* mtime, rtdb_int64* size)
 func RawRtdbReadPath64Warp(handle ConnectHandle) (DirItem, RtdbError) {
-	cgoHandle := C.rtdb_int32(handle)
-	cgoPath := (*C.char)(C.CBytes(make([]byte, RtdbMaxPath)))
-	defer C.free(unsafe.Pointer(cgoPath))
-	cgoIsDir := C.rtdb_int16(0)
-	cgoATime := C.rtdb_timestamp_type(0)
-	cgoCTime := C.rtdb_timestamp_type(0)
-	cgoMTime := C.rtdb_timestamp_type(0)
-	cgoSize := C.rtdb_int64(0)
-	err := C.rtdb_read_path64_warp(cgoHandle, cgoPath, &cgoIsDir, &cgoATime, &cgoCTime, &cgoMTime, &cgoSize)
+	cHandle := C.rtdb_int32(handle)
+	cPath := (*C.char)(C.CBytes(make([]byte, RtdbMaxPath)))
+	defer C.free(unsafe.Pointer(cPath))
+	cIsDir := C.rtdb_int16(0)
+	cATime := C.rtdb_timestamp_type(0)
+	cCTime := C.rtdb_timestamp_type(0)
+	cMTime := C.rtdb_timestamp_type(0)
+	cSize := C.rtdb_int64(0)
+	err := C.rtdb_read_path64_warp(cHandle, cPath, &cIsDir, &cATime, &cCTime, &cMTime, &cSize)
 
-	rtnIsDir := Switch(cgoIsDir)
-	rtnPath := C.GoString(cgoPath)
-	rtnATime := TimestampType(cgoATime)
-	rtnCTime := TimestampType(cgoCTime)
-	rtnMTime := TimestampType(cgoMTime)
-	rtnSize := int64(cgoSize)
+	rtnIsDir := Switch(cIsDir)
+	rtnPath := C.GoString(cPath)
+	rtnATime := TimestampType(cATime)
+	rtnCTime := TimestampType(cCTime)
+	rtnMTime := TimestampType(cMTime)
+	rtnSize := int64(cSize)
 
 	item := DirItem{
 		Path:  rtnPath,
@@ -7415,7 +7416,8 @@ func RawRtdbReadPath64Warp(handle ConnectHandle) (DirItem, RtdbError) {
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_close_path_warp(rtdb_int32 handle)
 func RawRtdbClosePathWarp(handle ConnectHandle) RtdbError {
-	err := C.rtdb_close_path_warp(C.rtdb_int32(handle))
+	cHandle := C.rtdb_int32(handle)
+	err := C.rtdb_close_path_warp(cHandle)
 	return RtdbError(err)
 }
 
@@ -7446,10 +7448,11 @@ func RawRtdbMkdirWarp(handle ConnectHandle, dirName string) RtdbError {
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_get_file_size_warp(rtdb_int32 handle, const char *file, rtdb_int64 *size)
 func RawRtdbGetFileSizeWarp(handle ConnectHandle, filePath string) (int64, RtdbError) {
+	cHandle := C.rtdb_int32(handle)
 	cFilePath := C.CString(filePath)
 	defer C.free(unsafe.Pointer(cFilePath))
 	cSize := C.rtdb_int64(0)
-	err := C.rtdb_get_file_size_warp(C.rtdb_int32(handle), cFilePath, &cSize)
+	err := C.rtdb_get_file_size_warp(cHandle, cFilePath, &cSize)
 	return int64(cSize), RtdbError(err)
 }
 
@@ -7466,13 +7469,15 @@ func RawRtdbGetFileSizeWarp(handle ConnectHandle, filePath string) (int64, RtdbE
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_read_file_warp(rtdb_int32 handle, const char *file, char *content, rtdb_int64 pos, rtdb_int64 *size)
 func RawRtdbReadFileWarp(handle ConnectHandle, filePath string, pos int64, cacheSize int64) ([]byte, RtdbError) {
+	cHandle := C.rtdb_int32(handle)
 	cFilePath := C.CString(filePath)
 	defer C.free(unsafe.Pointer(cFilePath))
 	buf := make([]byte, cacheSize)
 	cBuf := (*C.char)(unsafe.Pointer(&buf[0]))
+	cPos := C.rtdb_int64(pos)
 	cSize := C.rtdb_int64(cacheSize)
-	err := C.rtdb_read_file_warp(C.rtdb_int32(handle), cFilePath, cBuf, C.rtdb_int64(pos), &cSize)
-	return buf[:int64(cSize)], RtdbError(err)
+	err := C.rtdb_read_file_warp(cHandle, cFilePath, cBuf, cPos, &cSize)
+	return buf[:cSize], RtdbError(err)
 }
 
 // RawRtdbGetMaxBlobLenWarp 取得数据库允许的blob与str类型测点的最大长度
@@ -7486,8 +7491,9 @@ func RawRtdbReadFileWarp(handle ConnectHandle, filePath string, pos int64, cache
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_get_max_blob_len_warp(rtdb_int32 handle, rtdb_int32 *len)
 func RawRtdbGetMaxBlobLenWarp(handle ConnectHandle) (int32, RtdbError) {
+	cHandle := C.rtdb_int32(handle)
 	cLen := C.rtdb_int32(0)
-	err := C.rtdb_get_max_blob_len_warp(C.rtdb_int32(handle), &cLen)
+	err := C.rtdb_get_max_blob_len_warp(cHandle, &cLen)
 	return int32(cLen), RtdbError(err)
 }
 
@@ -7508,26 +7514,26 @@ func RawRtdbGetMaxBlobLenWarp(handle ConnectHandle) (int32, RtdbError) {
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_format_quality_warp(rtdb_int32 handle, rtdb_int32 *count, rtdb_int16 *qualities, rtdb_byte **definitions, rtdb_int32 *lens)
 func RawRtdbFormatQualityWarp(handle ConnectHandle, qualities []Quality) ([]string, RtdbError) {
-	cgoHandle := C.rtdb_int32(handle)
+	cHandle := C.rtdb_int32(handle)
 	count := len(qualities)
-	cgoCount := C.rtdb_int32(count)
-	cgoQualities := (*C.rtdb_int16)(unsafe.Pointer(&qualities[0]))
+	cCount := C.rtdb_int32(count)
+	cQualities := (*C.rtdb_int16)(unsafe.Pointer(&qualities[0]))
 	definitions := make([]*C.rtdb_byte, count)
+	for i := 0; i < count; i++ {
+		definitions[i] = (*C.rtdb_byte)(C.CBytes(make([]byte, 256)))
+	}
 	defer func() {
 		for i := 0; i < count; i++ {
 			C.free(unsafe.Pointer(definitions[i]))
 		}
 	}()
-	for i := 0; i < count; i++ {
-		definitions[i] = (*C.rtdb_byte)(C.CBytes(make([]byte, 256)))
-	}
-	cgoDefinitions := (**C.rtdb_byte)(unsafe.Pointer(&definitions[0]))
+	cDefinitions := (**C.rtdb_byte)(unsafe.Pointer(&definitions[0]))
 	lens := make([]int32, count)
-	cgoLens := (*C.rtdb_int32)(unsafe.Pointer(&lens[0]))
-	err := C.rtdb_format_quality_warp(cgoHandle, &cgoCount, cgoQualities, cgoDefinitions, cgoLens)
+	cLens := (*C.rtdb_int32)(unsafe.Pointer(&lens[0]))
+	err := C.rtdb_format_quality_warp(cHandle, &cCount, cQualities, cDefinitions, cLens)
 
 	rtnDefinitions := make([]string, 0)
-	for i := 0; i < int(cgoCount); i++ {
+	for i := 0; i < int(cCount); i++ {
 		bs := C.GoBytes(unsafe.Pointer(definitions[i]), 256)
 		st := string(bs[3:lens[i]])
 		rtnDefinitions = append(rtnDefinitions, st)
