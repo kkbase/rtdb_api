@@ -6322,7 +6322,7 @@ func goToCRtdbSummaryData(data *RtdbSummaryData) *C.RTDB_SUMMARY_DATA {
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_get_api_version_warp(rtdb_int32 *major, rtdb_int32 *minor, rtdb_int32 *beta)
-func RawRtdbGetApiVersionWarp() (ApiVersion, error) {
+func RawRtdbGetApiVersionWarp() (ApiVersion, RtdbError) {
 	major, minor, beta := C.rtdb_int32(0), C.rtdb_int32(0), C.rtdb_int32(0)
 	err := C.rtdb_get_api_version_warp(&major, &minor, &beta)
 	version := ApiVersion{
@@ -6330,7 +6330,7 @@ func RawRtdbGetApiVersionWarp() (ApiVersion, error) {
 		Minor: int32(minor),
 		Beta:  int32(beta),
 	}
-	return version, RtdbError(err).GoError()
+	return version, RtdbError(err)
 }
 
 // RawRtdbSetOptionWarp 配置 API库 的行为参数，详见 RtdbApiOption 枚举
@@ -6341,9 +6341,9 @@ func RawRtdbGetApiVersionWarp() (ApiVersion, error) {
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_set_option_warp(rtdb_int32 type, rtdb_int32 value)
-func RawRtdbSetOptionWarp(optionType RtdbApiOption, value int32) error {
+func RawRtdbSetOptionWarp(optionType RtdbApiOption, value int32) RtdbError {
 	err := C.rtdb_set_option_warp(C.rtdb_int32(optionType), C.rtdb_int32(value))
-	return RtdbError(err).GoError()
+	return RtdbError(err)
 }
 
 // RawRtdbCreateDatagramHandleWarp 创建数据流
@@ -6357,12 +6357,12 @@ func RawRtdbSetOptionWarp(optionType RtdbApiOption, value int32) error {
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_create_datagram_handle_warp(rtdb_int32 port, const char* remotehost, rtdb_datagram_handle* handle)
-func RawRtdbCreateDatagramHandleWarp(port int32, remoteHost string) (DatagramHandle, error) {
+func RawRtdbCreateDatagramHandleWarp(port int32, remoteHost string) (DatagramHandle, RtdbError) {
 	var handle C.rtdb_datagram_handle
 	cRemoteHost := C.CString(remoteHost)
 	defer C.free(unsafe.Pointer(cRemoteHost))
 	err := C.rtdb_create_datagram_handle_warp(C.rtdb_int32(port), cRemoteHost, &handle)
-	return DatagramHandle{handle: handle}, RtdbError(err).GoError()
+	return DatagramHandle{handle: handle}, RtdbError(err)
 }
 
 // RawRtdbRemoveDatagramHandleWarp 删除数据流
@@ -6372,9 +6372,9 @@ func RawRtdbCreateDatagramHandleWarp(port int32, remoteHost string) (DatagramHan
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_remove_datagram_handle_warp(rtdb_datagram_handle handle)
-func RawRtdbRemoveDatagramHandleWarp(handle DatagramHandle) error {
+func RawRtdbRemoveDatagramHandleWarp(handle DatagramHandle) RtdbError {
 	err := C.rtdb_remove_datagram_handle_warp(handle.handle)
-	return RtdbError(err).GoError()
+	return RtdbError(err)
 }
 
 // RawRtdbRecvDatagramWarp 接收数据流
@@ -6390,13 +6390,13 @@ func RawRtdbRemoveDatagramHandleWarp(handle DatagramHandle) error {
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_recv_datagram_warp(char* message, rtdb_int32* message_len, rtdb_datagram_handle handle, char* remote_addr, rtdb_int32 timeout)
-func RawRtdbRecvDatagramWarp(handle DatagramHandle, cacheLen int32, remoteAddr string, timeout int32) ([]byte, error) {
+func RawRtdbRecvDatagramWarp(handle DatagramHandle, cacheLen int32, remoteAddr string, timeout int32) ([]byte, RtdbError) {
 	message := make([]byte, cacheLen)
 	messageLen := C.rtdb_int32(cacheLen)
 	cRemoteAddr := C.CString(remoteAddr)
 	defer C.free(unsafe.Pointer(cRemoteAddr))
 	err := C.rtdb_recv_datagram_warp((*C.char)(unsafe.Pointer(&message[0])), &messageLen, handle.handle, cRemoteAddr, C.rtdb_int32(timeout))
-	return message[0:messageLen], RtdbError(err).GoError()
+	return message[0:messageLen], RtdbError(err)
 }
 
 // RawRtdbConnectWarp 建立同 RTDB 数据库的网络连接, 注意这里只是创建连接，并没有进行用户登陆
@@ -6410,13 +6410,13 @@ func RawRtdbRecvDatagramWarp(handle DatagramHandle, cacheLen int32, remoteAddr s
 //
 // raw_fn:
 // - rtdb_error RTDBAPI_CALLRULE rtdb_connect_warp(const char *hostname, rtdb_int32 port, rtdb_int32 *handle)
-func RawRtdbConnectWarp(hostname string, port int32) (ConnectHandle, error) {
+func RawRtdbConnectWarp(hostname string, port int32) (ConnectHandle, RtdbError) {
 	cHostname := C.CString(hostname)
 	defer C.free(unsafe.Pointer(cHostname))
 	cPort := C.rtdb_int32(port)
 	cHandle := C.rtdb_int32(0)
 	err := C.rtdb_connect_warp(cHostname, cPort, &cHandle)
-	return ConnectHandle(cHandle), RtdbError(err).GoError()
+	return ConnectHandle(cHandle), RtdbError(err)
 }
 
 // RawRtdbLoginWarp 以有效帐户登录
@@ -6431,14 +6431,14 @@ func RawRtdbConnectWarp(hostname string, port int32) (ConnectHandle, error) {
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_login_warp(rtdb_int32 handle, const char *user, const char *password, rtdb_int32 *priv)
-func RawRtdbLoginWarp(handle ConnectHandle, user string, password string) (PrivGroup, error) {
+func RawRtdbLoginWarp(handle ConnectHandle, user string, password string) (PrivGroup, RtdbError) {
 	cUser := C.CString(user)
 	defer C.free(unsafe.Pointer(cUser))
 	cPassword := C.CString(password)
 	defer C.free(unsafe.Pointer(cPassword))
 	cPriv := C.rtdb_int32(0)
 	err := C.rtdb_login_warp(C.rtdb_int32(handle), cUser, cPassword, &cPriv)
-	return PrivGroup(cPriv), RtdbError(err).GoError()
+	return PrivGroup(cPriv), RtdbError(err)
 }
 
 // RawRtdbDisconnectWarp 断开同 RTDB 数据平台的连接
@@ -6448,9 +6448,9 @@ func RawRtdbLoginWarp(handle ConnectHandle, user string, password string) (PrivG
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_disconnect_warp(rtdb_int32 handle)
-func RawRtdbDisconnectWarp(handle ConnectHandle) error {
+func RawRtdbDisconnectWarp(handle ConnectHandle) RtdbError {
 	err := C.rtdb_disconnect_warp(C.rtdb_int32(handle))
-	return RtdbError(err).GoError()
+	return RtdbError(err)
 }
 
 // RawRtdbConnectionCountWarp 获取 RTDB 服务器当前连接个数
@@ -6464,10 +6464,10 @@ func RawRtdbDisconnectWarp(handle ConnectHandle) error {
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_connection_count_warp(rtdb_int32 handle, rtdb_int32 node_number, rtdb_int32 *count)
-func RawRtdbConnectionCountWarp(handle ConnectHandle, nodeNumber int32) (int32, error) {
+func RawRtdbConnectionCountWarp(handle ConnectHandle, nodeNumber int32) (int32, RtdbError) {
 	count := C.rtdb_int32(0)
 	err := C.rtdb_connection_count_warp(C.rtdb_int32(handle), C.rtdb_int32(nodeNumber), &count)
-	return int32(count), RtdbError(err).GoError()
+	return int32(count), RtdbError(err)
 }
 
 // RawRtdbGetDbInfo1Warp 获得字符串型数据库系统参数
@@ -6481,12 +6481,12 @@ func RawRtdbConnectionCountWarp(handle ConnectHandle, nodeNumber int32) (int32, 
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_get_db_info1_warp(rtdb_int32 handle, rtdb_int32 index, char *str, rtdb_int32 size)
-func RawRtdbGetDbInfo1Warp(handle ConnectHandle, param RtdbParam) (ParamString, error) {
+func RawRtdbGetDbInfo1Warp(handle ConnectHandle, param RtdbParam) (ParamString, RtdbError) {
 	goStr := make([]byte, RtdbConstApiServerDescriptionLen)
 	cStr := (*C.char)(unsafe.Pointer(&goStr[0]))
 	err := C.rtdb_get_db_info1_warp(C.rtdb_int32(handle), C.rtdb_int32(param), cStr, C.rtdb_int32(RtdbConstApiServerDescriptionLen))
 	rtn := C.GoString((*C.char)(unsafe.Pointer(&goStr[0])))
-	return ParamString(rtn), RtdbError(err).GoError()
+	return ParamString(rtn), RtdbError(err)
 }
 
 // RawRtdbGetDbInfo2Warp 获得整型数据库系统参数
@@ -6500,10 +6500,10 @@ func RawRtdbGetDbInfo1Warp(handle ConnectHandle, param RtdbParam) (ParamString, 
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_get_db_info2_warp(rtdb_int32 handle, rtdb_int32 index, rtdb_uint32 *value)
-func RawRtdbGetDbInfo2Warp(handle ConnectHandle, param RtdbParam) (ParamInt, error) {
+func RawRtdbGetDbInfo2Warp(handle ConnectHandle, param RtdbParam) (ParamInt, RtdbError) {
 	value := C.rtdb_uint32(0)
 	err := C.rtdb_get_db_info2_warp(C.rtdb_int32(handle), C.rtdb_int32(param), &value)
-	return ParamInt(value), RtdbError(err).GoError()
+	return ParamInt(value), RtdbError(err)
 }
 
 // RawRtdbSetDbInfo1Warp 设置字符串型数据库系统参数
@@ -6515,11 +6515,11 @@ func RawRtdbGetDbInfo2Warp(handle ConnectHandle, param RtdbParam) (ParamInt, err
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_set_db_info1_warp(rtdb_int32 handle, rtdb_int32 index, const char *str)
-func RawRtdbSetDbInfo1Warp(handle ConnectHandle, param RtdbParam, value ParamString) error {
+func RawRtdbSetDbInfo1Warp(handle ConnectHandle, param RtdbParam, value ParamString) RtdbError {
 	cValue := C.CString(string(value))
 	defer C.free(unsafe.Pointer(cValue))
 	err := C.rtdb_set_db_info1_warp(C.rtdb_int32(handle), C.rtdb_int32(param), cValue)
-	return RtdbError(err).GoError()
+	return RtdbError(err)
 }
 
 // RawRtdbSetDbInfo2Warp 设置整型数据库系统参数
@@ -6531,9 +6531,9 @@ func RawRtdbSetDbInfo1Warp(handle ConnectHandle, param RtdbParam, value ParamStr
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_set_db_info2_warp(rtdb_int32 handle, rtdb_int32 index, rtdb_uint32 value)
-func RawRtdbSetDbInfo2Warp(handle ConnectHandle, param RtdbParam, value ParamInt) error {
+func RawRtdbSetDbInfo2Warp(handle ConnectHandle, param RtdbParam, value ParamInt) RtdbError {
 	err := C.rtdb_set_db_info2_warp(C.rtdb_int32(handle), C.rtdb_int32(param), C.rtdb_uint32(value))
-	return RtdbError(err).GoError()
+	return RtdbError(err)
 }
 
 // RawRtdbGetConnectionsWarp 列出 RTDB 服务器的所有socket连接句柄, 注意这里指的是socket连接，区分于ConnectHandle
@@ -6547,16 +6547,16 @@ func RawRtdbSetDbInfo2Warp(handle ConnectHandle, param RtdbParam, value ParamInt
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_get_connections_warp(rtdb_int32 handle, rtdb_int32 node_number, rtdb_int32 *sockets, rtdb_int32 *count)
-func RawRtdbGetConnectionsWarp(handle ConnectHandle, nodeNumber int32) ([]SocketHandle, error) {
+func RawRtdbGetConnectionsWarp(handle ConnectHandle, nodeNumber int32) ([]SocketHandle, RtdbError) {
 	connectionCount, err := RawRtdbGetDbInfo2Warp(handle, RtdbParamServerConnectionCount)
-	if err != nil {
+	if !err.IsOk() {
 		return nil, err
 	}
 	cCount := C.rtdb_int32(connectionCount)
 	sockets := make([]SocketHandle, int32(cCount))
 	cSockets := (*C.rtdb_int32)(unsafe.Pointer(&sockets[0]))
 	err2 := C.rtdb_get_connections_warp(C.rtdb_int32(handle), C.rtdb_int32(nodeNumber), cSockets, &cCount)
-	return sockets[0:cCount], RtdbError(err2).GoError()
+	return sockets[0:cCount], RtdbError(err2)
 }
 
 // RawRtdbGetOwnConnectionWarp 获取当前连接的socket句柄
@@ -6570,10 +6570,10 @@ func RawRtdbGetConnectionsWarp(handle ConnectHandle, nodeNumber int32) ([]Socket
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_get_own_connection_warp(rtdb_int32 handle, rtdb_int32 node_number, rtdb_int32* socket)
-func RawRtdbGetOwnConnectionWarp(handle ConnectHandle, nodeNumber int32) (SocketHandle, error) {
+func RawRtdbGetOwnConnectionWarp(handle ConnectHandle, nodeNumber int32) (SocketHandle, RtdbError) {
 	socket := C.rtdb_int32(0)
 	err := C.rtdb_get_own_connection_warp(C.rtdb_int32(handle), C.rtdb_int32(nodeNumber), &socket)
-	return SocketHandle(socket), RtdbError(err).GoError()
+	return SocketHandle(socket), RtdbError(err)
 }
 
 // RawRtdbGetConnectionInfoWarp 获取 RTDB 服务器指定连接的信息
@@ -6608,11 +6608,11 @@ func RawRtdbGetOwnConnectionWarp(handle ConnectHandle, nodeNumber int32) (Socket
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_get_connection_info_ipv6_warp(rtdb_int32 handle, rtdb_int32 node_number, rtdb_int32 socket, RTDB_HOST_CONNECT_INFO_IPV6* info)
-func RawRtdbGetConnectionInfoIpv6Warp(handle ConnectHandle, nodeNumber int32, socket SocketHandle) (RtdbHostConnectInfoIpv6, error) {
+func RawRtdbGetConnectionInfoIpv6Warp(handle ConnectHandle, nodeNumber int32, socket SocketHandle) (RtdbHostConnectInfoIpv6, RtdbError) {
 	cInfo := C.RTDB_HOST_CONNECT_INFO_IPV6{}
 	err := C.rtdb_get_connection_info_ipv6_warp(C.rtdb_int32(handle), C.rtdb_int32(nodeNumber), C.rtdb_int32(socket), &cInfo)
 	goInfo := cToRtdbHostConnectInfoIpv6(&cInfo)
-	return goInfo, RtdbError(err).GoError()
+	return goInfo, RtdbError(err)
 }
 
 // RawRtdbOsType 获取连接句柄所连接的服务器操作系统类型
@@ -6625,10 +6625,10 @@ func RawRtdbGetConnectionInfoIpv6Warp(handle ConnectHandle, nodeNumber int32, so
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_get_linked_ostype_warp(rtdb_int32 handle, RTDB_OS_TYPE* ostype)
-func RawRtdbOsType(handle ConnectHandle) (RtdbOsType, error) {
+func RawRtdbOsType(handle ConnectHandle) (RtdbOsType, RtdbError) {
 	osType := C.RTDB_OS_TYPE(C.RTDB_OS_INVALID)
 	err := C.rtdb_get_linked_ostype_warp(C.rtdb_int32(handle), &osType)
-	return RtdbOsType(osType), RtdbError(err).GoError()
+	return RtdbOsType(osType), RtdbError(err)
 }
 
 // RawRtdbChangePasswordWarp 修改用户帐户口令
@@ -6640,13 +6640,13 @@ func RawRtdbOsType(handle ConnectHandle) (RtdbOsType, error) {
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_change_password_warp(rtdb_int32 handle, const char *user, const char *password)
-func RawRtdbChangePasswordWarp(handle ConnectHandle, user string, password string) error {
+func RawRtdbChangePasswordWarp(handle ConnectHandle, user string, password string) RtdbError {
 	cUser := C.CString(user)
 	defer C.free(unsafe.Pointer(cUser))
 	cPassword := C.CString(password)
 	defer C.free(unsafe.Pointer(cPassword))
 	err := C.rtdb_change_password_warp(C.rtdb_int32(handle), cUser, cPassword)
-	return RtdbError(err).GoError()
+	return RtdbError(err)
 }
 
 // RawRtdbChangeMyPasswordWarp 用户修改自己帐户口令
@@ -6658,13 +6658,13 @@ func RawRtdbChangePasswordWarp(handle ConnectHandle, user string, password strin
 //
 // raw_fn
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_change_my_password_warp(rtdb_int32 handle, const char *old_pwd, const char *new_pwd)
-func RawRtdbChangeMyPasswordWarp(handle ConnectHandle, oldPwd string, newPwd string) error {
+func RawRtdbChangeMyPasswordWarp(handle ConnectHandle, oldPwd string, newPwd string) RtdbError {
 	cOldPwd := C.CString(oldPwd)
 	defer C.free(unsafe.Pointer(cOldPwd))
 	cNewPwd := C.CString(newPwd)
 	defer C.free(unsafe.Pointer(cNewPwd))
 	err := C.rtdb_change_my_password_warp(C.rtdb_int32(handle), cOldPwd, cNewPwd)
-	return RtdbError(err).GoError()
+	return RtdbError(err)
 }
 
 // RawRtdbGetPrivWarp 获取连接权限
@@ -6677,10 +6677,10 @@ func RawRtdbChangeMyPasswordWarp(handle ConnectHandle, oldPwd string, newPwd str
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_get_priv_warp(rtdb_int32 handle, rtdb_int32 *priv)
-func RawRtdbGetPrivWarp(handle ConnectHandle) (PrivGroup, error) {
+func RawRtdbGetPrivWarp(handle ConnectHandle) (PrivGroup, RtdbError) {
 	priv := C.rtdb_int32(0)
 	err := C.rtdb_get_priv_warp(C.rtdb_int32(handle), &priv)
-	return PrivGroup(priv), RtdbError(err).GoError()
+	return PrivGroup(priv), RtdbError(err)
 }
 
 // RawRtdbChangePrivWarp 修改用户帐户权限, 只有管理员有修改权限
@@ -6692,11 +6692,11 @@ func RawRtdbGetPrivWarp(handle ConnectHandle) (PrivGroup, error) {
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_change_priv_warp(rtdb_int32 handle, const char *user, rtdb_int32 priv)
-func RawRtdbChangePrivWarp(handle ConnectHandle, user string, priv PrivGroup) error {
+func RawRtdbChangePrivWarp(handle ConnectHandle, user string, priv PrivGroup) RtdbError {
 	cUser := C.CString(user)
 	defer C.free(unsafe.Pointer(cUser))
 	err := C.rtdb_change_priv_warp(C.rtdb_int32(handle), cUser, C.rtdb_int32(priv))
-	return RtdbError(err).GoError()
+	return RtdbError(err)
 }
 
 // RawRtdbAddUserWarp 添加用户帐户
@@ -6709,13 +6709,13 @@ func RawRtdbChangePrivWarp(handle ConnectHandle, user string, priv PrivGroup) er
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_add_user_warp(rtdb_int32 handle, const char *user, const char *password, rtdb_int32 priv)
-func RawRtdbAddUserWarp(handle ConnectHandle, user string, password string, priv PrivGroup) error {
+func RawRtdbAddUserWarp(handle ConnectHandle, user string, password string, priv PrivGroup) RtdbError {
 	cUser := C.CString(user)
 	defer C.free(unsafe.Pointer(cUser))
 	cPassword := C.CString(password)
 	defer C.free(unsafe.Pointer(cPassword))
 	err := C.rtdb_add_user_warp(C.rtdb_int32(handle), cUser, cPassword, C.rtdb_int32(priv))
-	return RtdbError(err).GoError()
+	return RtdbError(err)
 }
 
 // RawRtdbRemoveUserWarp 删除用户帐户
@@ -6726,11 +6726,11 @@ func RawRtdbAddUserWarp(handle ConnectHandle, user string, password string, priv
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_remove_user_warp(rtdb_int32 handle, const char *user)
-func RawRtdbRemoveUserWarp(handle ConnectHandle, user string) error {
+func RawRtdbRemoveUserWarp(handle ConnectHandle, user string) RtdbError {
 	cUser := C.CString(user)
 	defer C.free(unsafe.Pointer(cUser))
 	err := C.rtdb_remove_user_warp(C.rtdb_int32(handle), cUser)
-	return RtdbError(err).GoError()
+	return RtdbError(err)
 }
 
 // RawRtdbLockUserWarp 启用或禁用用户, 只有管理员有启用禁用权限
@@ -6742,11 +6742,11 @@ func RawRtdbRemoveUserWarp(handle ConnectHandle, user string) error {
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_lock_user_warp(rtdb_int32 handle, const char *user, rtdb_int8 lock)
-func RawRtdbLockUserWarp(handle ConnectHandle, user string, lock Switch) error {
+func RawRtdbLockUserWarp(handle ConnectHandle, user string, lock Switch) RtdbError {
 	cUser := C.CString(user)
 	defer C.free(unsafe.Pointer(cUser))
 	err := C.rtdb_lock_user_warp(C.rtdb_int32(handle), cUser, C.rtdb_int8(lock))
-	return RtdbError(err).GoError()
+	return RtdbError(err)
 }
 
 // RawRtdbGetUsersWarp 获得所有用户
@@ -6759,7 +6759,7 @@ func RawRtdbLockUserWarp(handle ConnectHandle, user string, lock Switch) error {
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_get_users_warp(rtdb_int32 handle, rtdb_int32 *count, RTDB_USER_INFO *infos)
-func RawRtdbGetUsersWarp(handle ConnectHandle) ([]RtdbUserInfo, error) {
+func RawRtdbGetUsersWarp(handle ConnectHandle) ([]RtdbUserInfo, RtdbError) {
 	cCount := C.rtdb_int32(RtdbConstMaxUserCount)
 	cInfos := make([]C.RTDB_USER_INFO, RtdbConstMaxUserCount)
 	err := C.rtdb_get_users_warp(C.rtdb_int32(handle), &cCount, &cInfos[0])
@@ -6767,7 +6767,7 @@ func RawRtdbGetUsersWarp(handle ConnectHandle) ([]RtdbUserInfo, error) {
 	for i := 0; i < int(cCount); i++ {
 		goInfos = append(goInfos, cToRtdbUserInfo(&cInfos[i]))
 	}
-	return goInfos, RtdbError(err).GoError()
+	return goInfos, RtdbError(err)
 }
 
 // RawRtdbAddBlacklistWarp 添加连接黑名单项
@@ -6780,7 +6780,7 @@ func RawRtdbGetUsersWarp(handle ConnectHandle) ([]RtdbUserInfo, error) {
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_add_blacklist_warp(rtdb_int32 handle, const char *addr, const char *mask, const char *desc)
-func RawRtdbAddBlacklistWarp(handle ConnectHandle, addr string, mask string, desc string) error {
+func RawRtdbAddBlacklistWarp(handle ConnectHandle, addr string, mask string, desc string) RtdbError {
 	cAddr := C.CString(addr)
 	defer C.free(unsafe.Pointer(cAddr))
 	cMask := C.CString(mask)
@@ -6788,7 +6788,7 @@ func RawRtdbAddBlacklistWarp(handle ConnectHandle, addr string, mask string, des
 	cDesc := C.CString(desc)
 	defer C.free(unsafe.Pointer(cDesc))
 	err := C.rtdb_add_blacklist_warp(C.rtdb_int32(handle), cAddr, cMask, cDesc)
-	return RtdbError(err).GoError()
+	return RtdbError(err)
 }
 
 // RawRtdbUpdateBlacklistWarp 更新连接连接黑名单项
@@ -6803,7 +6803,7 @@ func RawRtdbAddBlacklistWarp(handle ConnectHandle, addr string, mask string, des
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_update_blacklist_warp(rtdb_int32 handle, const char *addr, const char *mask, const char *addr_new, const char *mask_new, const char *desc)
-func RawRtdbUpdateBlacklistWarp(handle ConnectHandle, oldAddr string, oldMask string, newAddr string, newMask string, newDesc string) error {
+func RawRtdbUpdateBlacklistWarp(handle ConnectHandle, oldAddr string, oldMask string, newAddr string, newMask string, newDesc string) RtdbError {
 	cOldAddr := C.CString(oldAddr)
 	defer C.free(unsafe.Pointer(cOldAddr))
 	cOldMask := C.CString(oldMask)
@@ -6815,7 +6815,7 @@ func RawRtdbUpdateBlacklistWarp(handle ConnectHandle, oldAddr string, oldMask st
 	cNewDesc := C.CString(newDesc)
 	defer C.free(unsafe.Pointer(cNewDesc))
 	err := C.rtdb_update_blacklist_warp(C.rtdb_int32(handle), cOldAddr, cOldMask, cNewAddr, cNewMask, cNewDesc)
-	return RtdbError(err).GoError()
+	return RtdbError(err)
 }
 
 // RawRtdbRemoveBlacklistWarp 删除连接黑名单项
@@ -6827,13 +6827,13 @@ func RawRtdbUpdateBlacklistWarp(handle ConnectHandle, oldAddr string, oldMask st
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_remove_blacklist_warp(rtdb_int32 handle, const char *addr, const char *mask)
-func RawRtdbRemoveBlacklistWarp(handle ConnectHandle, addr string, mask string) error {
+func RawRtdbRemoveBlacklistWarp(handle ConnectHandle, addr string, mask string) RtdbError {
 	cAddr := C.CString(addr)
 	defer C.free(unsafe.Pointer(cAddr))
 	cMask := C.CString(mask)
 	defer C.free(unsafe.Pointer(cMask))
 	err := C.rtdb_remove_blacklist_warp(C.rtdb_int32(handle), cAddr, cMask)
-	return RtdbError(err).GoError()
+	return RtdbError(err)
 }
 
 // RawRtdbGetBlacklistWarp 获得连接黑名单
@@ -6846,7 +6846,7 @@ func RawRtdbRemoveBlacklistWarp(handle ConnectHandle, addr string, mask string) 
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_get_blacklist_warp(rtdb_int32 handle, char* const* addrs, char* const* masks, char* const* descs, rtdb_int32 *count)
-func RawRtdbGetBlacklistWarp(handle ConnectHandle) ([]BlackList, error) {
+func RawRtdbGetBlacklistWarp(handle ConnectHandle) ([]BlackList, RtdbError) {
 	cAddrs := make([]*C.char, RtdbConstMaxBlacklistLen)
 	for i := int32(0); i < int32(RtdbConstMaxBlacklistLen); i++ {
 		cAddrs[i] = (*C.char)(C.CBytes(make([]byte, 32)))
@@ -6891,7 +6891,7 @@ func RawRtdbGetBlacklistWarp(handle ConnectHandle) ([]BlackList, error) {
 			Desc: CCharArrayToString(cDescs[i], 512),
 		})
 	}
-	return rtn, RtdbError(err).GoError()
+	return rtn, RtdbError(err)
 }
 
 // RawRtdbAddAuthorizationWarp 添加信任连接段
@@ -6904,7 +6904,7 @@ func RawRtdbGetBlacklistWarp(handle ConnectHandle) ([]BlackList, error) {
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_add_authorization_warp(rtdb_int32 handle, const char *addr, const char *mask, rtdb_int32 priv, const char *desc)
-func RawRtdbAddAuthorizationWarp(handle ConnectHandle, addr string, mask string, desc string, priv PrivGroup) error {
+func RawRtdbAddAuthorizationWarp(handle ConnectHandle, addr string, mask string, desc string, priv PrivGroup) RtdbError {
 	cAddr := C.CString(addr)
 	defer C.free(unsafe.Pointer(cAddr))
 	cMask := C.CString(mask)
@@ -6912,7 +6912,7 @@ func RawRtdbAddAuthorizationWarp(handle ConnectHandle, addr string, mask string,
 	cDesc := C.CString(desc)
 	defer C.free(unsafe.Pointer(cDesc))
 	err := C.rtdb_add_authorization_warp(C.rtdb_int32(handle), cAddr, cMask, C.rtdb_int32(priv), cDesc)
-	return RtdbError(err).GoError()
+	return RtdbError(err)
 }
 
 // RawRtdbUpdateAuthorizationWarp 更新信任连接段
@@ -6928,7 +6928,7 @@ func RawRtdbAddAuthorizationWarp(handle ConnectHandle, addr string, mask string,
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_update_authorization_warp(rtdb_int32 handle, const char *addr, const char *mask, const char *addr_new, const char *mask_new, rtdb_int32 priv, const char *desc)
-func RawRtdbUpdateAuthorizationWarp(handle ConnectHandle, oldAddr string, oldMask string, newAddr string, newMask string, newDesc string, priv PrivGroup) error {
+func RawRtdbUpdateAuthorizationWarp(handle ConnectHandle, oldAddr string, oldMask string, newAddr string, newMask string, newDesc string, priv PrivGroup) RtdbError {
 	cOldAddr := C.CString(oldAddr)
 	defer C.free(unsafe.Pointer(cOldAddr))
 	cOldMask := C.CString(oldMask)
@@ -6940,7 +6940,7 @@ func RawRtdbUpdateAuthorizationWarp(handle ConnectHandle, oldAddr string, oldMas
 	cNewDesc := C.CString(newDesc)
 	defer C.free(unsafe.Pointer(cNewDesc))
 	err := C.rtdb_update_authorization_warp(C.rtdb_int32(handle), cOldAddr, cOldMask, cNewAddr, cNewMask, C.rtdb_int32(priv), cNewDesc)
-	return RtdbError(err).GoError()
+	return RtdbError(err)
 }
 
 // RawRtdbRemoveAuthorizationWarp 删除信任连接段
@@ -6952,13 +6952,13 @@ func RawRtdbUpdateAuthorizationWarp(handle ConnectHandle, oldAddr string, oldMas
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_remove_authorization_warp(rtdb_int32 handle, const char *addr, const char *mask)
-func RawRtdbRemoveAuthorizationWarp(handle ConnectHandle, addr string, mask string) error {
+func RawRtdbRemoveAuthorizationWarp(handle ConnectHandle, addr string, mask string) RtdbError {
 	cAddr := C.CString(addr)
 	defer C.free(unsafe.Pointer(cAddr))
 	cMask := C.CString(mask)
 	defer C.free(unsafe.Pointer(cMask))
 	err := C.rtdb_remove_authorization_warp(C.rtdb_int32(handle), cAddr, cMask)
-	return RtdbError(err).GoError()
+	return RtdbError(err)
 }
 
 // RawRtdbGetAuthorizationsWarp 获得所有信任连接段
@@ -6971,7 +6971,7 @@ func RawRtdbRemoveAuthorizationWarp(handle ConnectHandle, addr string, mask stri
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_get_authorizations_warp(rtdb_int32 handle, char* const* addrs, char* const* masks, rtdb_int32 *privs, char* const* descs, rtdb_int32 *count)
-func RawRtdbGetAuthorizationsWarp(handle ConnectHandle) ([]AuthorizationsList, error) {
+func RawRtdbGetAuthorizationsWarp(handle ConnectHandle) ([]AuthorizationsList, RtdbError) {
 	cAddrs := make([]*C.char, RtdbConstMaxAuthCount)
 	for i := int32(0); i < int32(RtdbConstMaxAuthCount); i++ {
 		cAddrs[i] = (*C.char)(C.CBytes(make([]byte, 32)))
@@ -7019,7 +7019,7 @@ func RawRtdbGetAuthorizationsWarp(handle ConnectHandle) ([]AuthorizationsList, e
 			Priv: privs[i],
 		})
 	}
-	return rtn, RtdbError(err).GoError()
+	return rtn, RtdbError(err)
 }
 
 // RawRtdbHostTimeWarp 获取 RTDB 服务器当前UTC时间
@@ -7046,10 +7046,10 @@ func RawRtdbGetAuthorizationsWarp(handle ConnectHandle) ([]AuthorizationsList, e
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_host_time64_warp(rtdb_int32 handle, rtdb_timestamp_type* hosttime)
-func RawRtdbHostTime64Warp(handle ConnectHandle) (TimestampType, error) {
+func RawRtdbHostTime64Warp(handle ConnectHandle) (TimestampType, RtdbError) {
 	ts := C.rtdb_timestamp_type(0)
 	err := C.rtdb_host_time64_warp(C.rtdb_int32(handle), &ts)
-	return TimestampType(ts), RtdbError(err).GoError()
+	return TimestampType(ts), RtdbError(err)
 }
 
 // RawRtdbFormatTimespanWarp 根据时间跨度值生成时间格式字符串, 如：输入10， 输出10s, 输入60，输出1n
@@ -7069,13 +7069,13 @@ func RawRtdbHostTime64Warp(handle ConnectHandle) (TimestampType, error) {
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_format_timespan_warp(char *str, rtdb_int32 timespan)
-func RawRtdbFormatTimespanWarp(timespan int32) (string, error) {
+func RawRtdbFormatTimespanWarp(timespan int32) (string, RtdbError) {
 	cgoStr := (*C.char)(C.CBytes(make([]byte, 512)))
 	defer C.free(unsafe.Pointer(cgoStr))
 	cgoDatetime := C.rtdb_int32(timespan)
 	err := C.rtdb_format_timespan_warp(cgoStr, cgoDatetime)
 	tStr := C.GoString(cgoStr)
-	return tStr, RtdbError(err).GoError()
+	return tStr, RtdbError(err)
 }
 
 // RawRtdbParseTimespanWarp 根据时间格式字符串解析时间跨度值, 如：输入2n，输出120，表示2分钟
@@ -7098,12 +7098,12 @@ func RawRtdbFormatTimespanWarp(timespan int32) (string, error) {
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_parse_timespan_warp(const char *str, rtdb_int32 *timespan)
-func RawRtdbParseTimespanWarp(tStr string) (DateTimeType, error) {
+func RawRtdbParseTimespanWarp(tStr string) (DateTimeType, RtdbError) {
 	cStr := C.CString(tStr)
 	defer C.free(unsafe.Pointer(cStr))
 	ts := C.rtdb_int32(0)
 	err := C.rtdb_parse_timespan_warp(cStr, &ts)
-	return DateTimeType(ts), RtdbError(err).GoError()
+	return DateTimeType(ts), RtdbError(err)
 }
 
 // RawRtdbParseTimeWarp 根据时间格式字符串解析时间值
@@ -7143,13 +7143,13 @@ func RawRtdbParseTimespanWarp(tStr string) (DateTimeType, error) {
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_parse_time_warp(const char *str, rtdb_int64 *datetime, rtdb_int16 *ms)
-func RawRtdbParseTimeWarp(tStr string) (TimestampType, SubtimeType, error) {
+func RawRtdbParseTimeWarp(tStr string) (TimestampType, SubtimeType, RtdbError) {
 	cStr := C.CString(tStr)
 	defer C.free(unsafe.Pointer(cStr))
 	ts := C.rtdb_int64(0)
 	ms := C.rtdb_int16(0)
 	err := C.rtdb_parse_time_warp(cStr, &ts, &ms)
-	return TimestampType(ts), SubtimeType(ms), RtdbError(err).GoError()
+	return TimestampType(ts), SubtimeType(ms), RtdbError(err)
 }
 
 // RawRtdbFormatMessageWarp 获取 Rtdb API 调用返回值的简短描述(错误码对应的Desc)
@@ -7205,9 +7205,9 @@ func RawRtdbJobMessageWarp(jobID int32) (string, string) {
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_set_timeout_warp(rtdb_int32 handle, rtdb_int32 socket, rtdb_int32 timeout)
-func RawRtdbSetTimeoutWarp(handle ConnectHandle, socket SocketHandle, timeout DateTimeType) error {
+func RawRtdbSetTimeoutWarp(handle ConnectHandle, socket SocketHandle, timeout DateTimeType) RtdbError {
 	err := C.rtdb_set_timeout_warp(C.rtdb_int32(handle), C.rtdb_int32(socket), C.rtdb_int32(timeout))
-	return RtdbError(err).GoError()
+	return RtdbError(err)
 }
 
 // RawRtdbGetTimeoutWarp 获得连接超时时间
@@ -7221,10 +7221,10 @@ func RawRtdbSetTimeoutWarp(handle ConnectHandle, socket SocketHandle, timeout Da
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_get_timeout_warp(rtdb_int32 handle, rtdb_int32 socket, rtdb_int32 *timeout)
-func RawRtdbGetTimeoutWarp(handle ConnectHandle, socket SocketHandle) (DateTimeType, error) {
+func RawRtdbGetTimeoutWarp(handle ConnectHandle, socket SocketHandle) (DateTimeType, RtdbError) {
 	timeout := C.rtdb_int32(0)
 	err := C.rtdb_get_timeout_warp(C.rtdb_int32(handle), C.rtdb_int32(socket), &timeout)
-	return DateTimeType(timeout), RtdbError(err).GoError()
+	return DateTimeType(timeout), RtdbError(err)
 }
 
 // RawRtdbKillConnectionWarp 断开已知连接
@@ -7235,9 +7235,9 @@ func RawRtdbGetTimeoutWarp(handle ConnectHandle, socket SocketHandle) (DateTimeT
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_kill_connection_warp(rtdb_int32 handle, rtdb_int32 socket)
-func RawRtdbKillConnectionWarp(handle ConnectHandle, socket SocketHandle) error {
+func RawRtdbKillConnectionWarp(handle ConnectHandle, socket SocketHandle) RtdbError {
 	err := C.rtdb_kill_connection_warp(C.rtdb_int32(handle), C.rtdb_int32(socket))
-	return RtdbError(err).GoError()
+	return RtdbError(err)
 }
 
 // RawRtdbGetLogicalDriversWarp 获得逻辑盘符
@@ -7250,7 +7250,7 @@ func RawRtdbKillConnectionWarp(handle ConnectHandle, socket SocketHandle) error 
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_get_logical_drivers_warp(rtdb_int32 handle, char *drivers)
-func RawRtdbGetLogicalDriversWarp(handle ConnectHandle) ([]string, error) {
+func RawRtdbGetLogicalDriversWarp(handle ConnectHandle) ([]string, RtdbError) {
 	drives := make([]byte, 512)
 	cDrives := (*C.char)(unsafe.Pointer(&drives[0]))
 	err := C.rtdb_get_logical_drivers_warp(C.rtdb_int32(handle), cDrives)
@@ -7259,7 +7259,7 @@ func RawRtdbGetLogicalDriversWarp(handle ConnectHandle) ([]string, error) {
 	for _, c := range sDs {
 		rtn = append(rtn, string(c))
 	}
-	return rtn, RtdbError(err).GoError()
+	return rtn, RtdbError(err)
 }
 
 // RawRtdbOpenPathWarp 打开目录以便遍历其中的文件和子目录。
@@ -7270,11 +7270,11 @@ func RawRtdbGetLogicalDriversWarp(handle ConnectHandle) ([]string, error) {
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_open_path_warp(rtdb_int32 handle, const char *dir)
-func RawRtdbOpenPathWarp(handle ConnectHandle, dir string) error {
+func RawRtdbOpenPathWarp(handle ConnectHandle, dir string) RtdbError {
 	cDir := C.CString(dir)
 	defer C.free(unsafe.Pointer(cDir))
 	err := C.rtdb_open_path_warp(C.rtdb_int32(handle), cDir)
-	return RtdbError(err).GoError()
+	return RtdbError(err)
 }
 
 // RawRtdbReadPathWarp 读取目录中的文件或子目录
@@ -7334,7 +7334,7 @@ func RawRtdbOpenPathWarp(handle ConnectHandle, dir string) error {
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_read_path64_warp(rtdb_int32 handle, char* path, rtdb_int16* is_dir, rtdb_timestamp_type* atime, rtdb_timestamp_type* ctime, rtdb_timestamp_type* mtime, rtdb_int64* size)
-func RawRtdbReadPath64Warp(handle ConnectHandle) (DirItem, error) {
+func RawRtdbReadPath64Warp(handle ConnectHandle) (DirItem, RtdbError) {
 	cgoHandle := C.rtdb_int32(handle)
 	cgoPath := (*C.char)(C.CBytes(make([]byte, RtdbMaxPath)))
 	defer C.free(unsafe.Pointer(cgoPath))
@@ -7361,7 +7361,7 @@ func RawRtdbReadPath64Warp(handle ConnectHandle) (DirItem, error) {
 		Size:  rtnSize,
 	}
 
-	return item, RtdbError(err).GoError()
+	return item, RtdbError(err)
 }
 
 // RawRtdbClosePathWarp 关闭当前遍历的目录
@@ -7371,9 +7371,9 @@ func RawRtdbReadPath64Warp(handle ConnectHandle) (DirItem, error) {
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_close_path_warp(rtdb_int32 handle)
-func RawRtdbClosePathWarp(handle ConnectHandle) error {
+func RawRtdbClosePathWarp(handle ConnectHandle) RtdbError {
 	err := C.rtdb_close_path_warp(C.rtdb_int32(handle))
-	return RtdbError(err).GoError()
+	return RtdbError(err)
 }
 
 // RawRtdbMkdirWarp 建立目录
@@ -7384,11 +7384,11 @@ func RawRtdbClosePathWarp(handle ConnectHandle) error {
 //
 // output:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_mkdir_warp(rtdb_int32 handle, const char *dir)
-func RawRtdbMkdirWarp(handle ConnectHandle, dirName string) error {
+func RawRtdbMkdirWarp(handle ConnectHandle, dirName string) RtdbError {
 	cDirName := C.CString(dirName)
 	defer C.free(unsafe.Pointer(cDirName))
 	err := C.rtdb_mkdir_warp(C.rtdb_int32(handle), cDirName)
-	return RtdbError(err).GoError()
+	return RtdbError(err)
 }
 
 // RawRtdbGetFileSizeWarp 获得指定服务器端文件的大小
@@ -7402,12 +7402,12 @@ func RawRtdbMkdirWarp(handle ConnectHandle, dirName string) error {
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_get_file_size_warp(rtdb_int32 handle, const char *file, rtdb_int64 *size)
-func RawRtdbGetFileSizeWarp(handle ConnectHandle, filePath string) (int64, error) {
+func RawRtdbGetFileSizeWarp(handle ConnectHandle, filePath string) (int64, RtdbError) {
 	cFilePath := C.CString(filePath)
 	defer C.free(unsafe.Pointer(cFilePath))
 	cSize := C.rtdb_int64(0)
 	err := C.rtdb_get_file_size_warp(C.rtdb_int32(handle), cFilePath, &cSize)
-	return int64(cSize), RtdbError(err).GoError()
+	return int64(cSize), RtdbError(err)
 }
 
 // RawRtdbReadFileWarp 读取服务器端指定文件的内容
@@ -7422,14 +7422,14 @@ func RawRtdbGetFileSizeWarp(handle ConnectHandle, filePath string) (int64, error
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_read_file_warp(rtdb_int32 handle, const char *file, char *content, rtdb_int64 pos, rtdb_int64 *size)
-func RawRtdbReadFileWarp(handle ConnectHandle, filePath string, pos int64, cacheSize int64) ([]byte, error) {
+func RawRtdbReadFileWarp(handle ConnectHandle, filePath string, pos int64, cacheSize int64) ([]byte, RtdbError) {
 	cFilePath := C.CString(filePath)
 	defer C.free(unsafe.Pointer(cFilePath))
 	buf := make([]byte, cacheSize)
 	cBuf := (*C.char)(unsafe.Pointer(&buf[0]))
 	cSize := C.rtdb_int64(cacheSize)
 	err := C.rtdb_read_file_warp(C.rtdb_int32(handle), cFilePath, cBuf, C.rtdb_int64(pos), &cSize)
-	return buf[:int64(cSize)], RtdbError(err).GoError()
+	return buf[:int64(cSize)], RtdbError(err)
 }
 
 // RawRtdbGetMaxBlobLenWarp 取得数据库允许的blob与str类型测点的最大长度
@@ -7442,10 +7442,10 @@ func RawRtdbReadFileWarp(handle ConnectHandle, filePath string, pos int64, cache
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_get_max_blob_len_warp(rtdb_int32 handle, rtdb_int32 *len)
-func RawRtdbGetMaxBlobLenWarp(handle ConnectHandle) (int32, error) {
+func RawRtdbGetMaxBlobLenWarp(handle ConnectHandle) (int32, RtdbError) {
 	cLen := C.rtdb_int32(0)
 	err := C.rtdb_get_max_blob_len_warp(C.rtdb_int32(handle), &cLen)
-	return int32(cLen), RtdbError(err).GoError()
+	return int32(cLen), RtdbError(err)
 }
 
 // RawRtdbFormatQualityWarp 取得质量码对应的定义
@@ -7464,7 +7464,7 @@ func RawRtdbGetMaxBlobLenWarp(handle ConnectHandle) (int32, error) {
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_format_quality_warp(rtdb_int32 handle, rtdb_int32 *count, rtdb_int16 *qualities, rtdb_byte **definitions, rtdb_int32 *lens)
-func RawRtdbFormatQualityWarp(handle ConnectHandle, qualities []Quality) ([]string, error) {
+func RawRtdbFormatQualityWarp(handle ConnectHandle, qualities []Quality) ([]string, RtdbError) {
 	cgoHandle := C.rtdb_int32(handle)
 	count := len(qualities)
 	cgoCount := C.rtdb_int32(count)
@@ -7490,7 +7490,7 @@ func RawRtdbFormatQualityWarp(handle ConnectHandle, qualities []Quality) ([]stri
 		rtnDefinitions = append(rtnDefinitions, st)
 	}
 
-	return rtnDefinitions, RtdbError(err).GoError()
+	return rtnDefinitions, RtdbError(err)
 }
 
 // RawRtdbJudgeConnectStatusWarp 判断连接是否可用
@@ -7500,13 +7500,13 @@ func RawRtdbFormatQualityWarp(handle ConnectHandle, qualities []Quality) ([]stri
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_judge_connect_status_warp(rtdb_int32 handle, rtdb_int8* change_connection GAPI_DEFAULT_VALUE(0), char* current_ip_addr GAPI_DEFAULT_VALUE(0), rtdb_int32 size GAPI_DEFAULT_VALUE(0))
-func RawRtdbJudgeConnectStatusWarp(handle ConnectHandle) error {
+func RawRtdbJudgeConnectStatusWarp(handle ConnectHandle) RtdbError {
 	cgoHandle := C.rtdb_int32(handle)
 	cgoChangeConnection := C.rtdb_int8(0)
 	cgoAddr := (*C.char)(C.CBytes(make([]byte, 1024)))
 	defer C.free(unsafe.Pointer(cgoAddr))
 	err := C.rtdb_judge_connect_status_warp(cgoHandle, &cgoChangeConnection, cgoAddr, 1024)
-	return RtdbError(err).GoError()
+	return RtdbError(err)
 }
 
 // RawRtdbFormatIpaddrWarp 将整形IP转换为字符串形式的IP
@@ -7539,13 +7539,13 @@ func RawRtdbJudgeConnectStatusWarp(handle ConnectHandle) error {
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_append_table_warp(rtdb_int32 handle, RTDB_TABLE *field)
-func RawRtdbbAppendTableWarp(handle ConnectHandle, tableName, tableDesc string) (RtdbTable, error) {
+func RawRtdbbAppendTableWarp(handle ConnectHandle, tableName, tableDesc string) (RtdbTable, RtdbError) {
 	cgoHandle := C.rtdb_int32(handle)
 	table := C.RTDB_TABLE{}
 	GoStringToCCharArray(tableName, &table.name[0], int(C.RTDB_TAG_SIZE))
 	GoStringToCCharArray(tableDesc, &table.desc[0], int(C.RTDB_DESC_SIZE))
 	err := C.rtdbb_append_table_warp(cgoHandle, &table)
-	return cToRtdbTable(&table), RtdbError(err).GoError()
+	return cToRtdbTable(&table), RtdbError(err)
 }
 
 // RawRtdbbRemoveTableByIdWarp 根据表 id 删除表及表中标签点
@@ -7556,9 +7556,9 @@ func RawRtdbbAppendTableWarp(handle ConnectHandle, tableName, tableDesc string) 
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_remove_table_by_id_warp(rtdb_int32 handle, rtdb_int32 id)
-func RawRtdbbRemoveTableByIdWarp(handle ConnectHandle, tableID TableID) error {
+func RawRtdbbRemoveTableByIdWarp(handle ConnectHandle, tableID TableID) RtdbError {
 	err := C.rtdbb_remove_table_by_id_warp(C.rtdb_int32(handle), C.rtdb_int32(tableID))
-	return RtdbError(err).GoError()
+	return RtdbError(err)
 }
 
 // RawRtdbbRemoveTableByNameWarp 根据表名删除表及表中标签点
@@ -7569,11 +7569,11 @@ func RawRtdbbRemoveTableByIdWarp(handle ConnectHandle, tableID TableID) error {
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_remove_table_by_name_warp(rtdb_int32 handle, const char *name)
-func RawRtdbbRemoveTableByNameWarp(handle ConnectHandle, name string) error {
+func RawRtdbbRemoveTableByNameWarp(handle ConnectHandle, name string) RtdbError {
 	cName := C.CString(name)
 	defer C.free(unsafe.Pointer(cName))
 	err := C.rtdbb_remove_table_by_name_warp(C.rtdb_int32(handle), cName)
-	return RtdbError(err).GoError()
+	return RtdbError(err)
 }
 
 // RawRtdbbTablesCountWarp 取得标签点表总数
@@ -7586,10 +7586,10 @@ func RawRtdbbRemoveTableByNameWarp(handle ConnectHandle, name string) error {
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_tables_count_warp(rtdb_int32 handle, rtdb_int32 *count)
-func RawRtdbbTablesCountWarp(handle ConnectHandle) (int32, error) {
+func RawRtdbbTablesCountWarp(handle ConnectHandle) (int32, RtdbError) {
 	cCount := C.rtdb_int32(0)
 	err := C.rtdbb_tables_count_warp(C.rtdb_int32(handle), &cCount)
-	return int32(cCount), RtdbError(err).GoError()
+	return int32(cCount), RtdbError(err)
 }
 
 // RawRtdbbGetTablesWarp 取得所有标签点表的ID
@@ -7602,16 +7602,16 @@ func RawRtdbbTablesCountWarp(handle ConnectHandle) (int32, error) {
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_get_tables_warp(rtdb_int32 handle, rtdb_int32 *ids, rtdb_int32 *count)
-func RawRtdbbGetTablesWarp(handle ConnectHandle) ([]TableID, error) {
+func RawRtdbbGetTablesWarp(handle ConnectHandle) ([]TableID, RtdbError) {
 	count, err := RawRtdbbTablesCountWarp(handle)
-	if err != nil {
+	if !err.IsOk() {
 		return nil, err
 	}
 	ids := make([]TableID, count)
 	cgoIDs := (*C.rtdb_int32)(unsafe.Pointer(&ids[0]))
 	cgoCount := C.rtdb_int32(count)
-	e := C.rtdbb_get_tables_warp(C.rtdb_int32(handle), cgoIDs, &cgoCount)
-	return ids[:cgoCount], RtdbError(e).GoError()
+	err2 := C.rtdbb_get_tables_warp(C.rtdb_int32(handle), cgoIDs, &cgoCount)
+	return ids[:cgoCount], RtdbError(err2)
 }
 
 // RawRtdbbGetTableSizeByIdWarp 根据表 id 获取表中包含的标签点数量(大概数量, 包含被标记删除的点)
@@ -7625,10 +7625,10 @@ func RawRtdbbGetTablesWarp(handle ConnectHandle) ([]TableID, error) {
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_get_table_size_by_id_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32 *size)
-func RawRtdbbGetTableSizeByIdWarp(handle ConnectHandle, tableID TableID) (int32, error) {
+func RawRtdbbGetTableSizeByIdWarp(handle ConnectHandle, tableID TableID) (int32, RtdbError) {
 	cSize := C.rtdb_int32(0)
 	err := C.rtdbb_get_table_size_by_id_warp(C.rtdb_int32(handle), C.rtdb_int32(tableID), &cSize)
-	return int32(cSize), RtdbError(err).GoError()
+	return int32(cSize), RtdbError(err)
 }
 
 // RawRtdbbGetTableSizeByNameWarp 根据表名称获取表中包含的标签点数量(大概数量, 包含被标记删除的点)
@@ -7642,12 +7642,12 @@ func RawRtdbbGetTableSizeByIdWarp(handle ConnectHandle, tableID TableID) (int32,
 //
 // raw_fn:
 // rtdb_error RTDBAPI_CALLRULE rtdbb_get_table_size_by_name_warp(rtdb_int32 handle, const char *name, rtdb_int32 *size)
-func RawRtdbbGetTableSizeByNameWarp(handle ConnectHandle, tableName string) (int32, error) {
+func RawRtdbbGetTableSizeByNameWarp(handle ConnectHandle, tableName string) (int32, RtdbError) {
 	cSize := C.rtdb_int32(0)
 	cName := C.CString(tableName)
 	defer C.free(unsafe.Pointer(cName))
 	err := C.rtdbb_get_table_size_by_name_warp(C.rtdb_int32(handle), cName, &cSize)
-	return int32(cSize), RtdbError(err).GoError()
+	return int32(cSize), RtdbError(err)
 }
 
 // RawRtdbbGetTableRealSizeByIdWarp 根据表 id 获取表中实际包含的标签点数量(实际数量, 不含被删除的点)
@@ -7661,10 +7661,10 @@ func RawRtdbbGetTableSizeByNameWarp(handle ConnectHandle, tableName string) (int
 //
 // raw_fn:
 // rtdb_error RTDBAPI_CALLRULE rtdbb_get_table_real_size_by_id_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32 *size)
-func RawRtdbbGetTableRealSizeByIdWarp(handle ConnectHandle, tableID TableID) (int32, error) {
+func RawRtdbbGetTableRealSizeByIdWarp(handle ConnectHandle, tableID TableID) (int32, RtdbError) {
 	cSize := C.rtdb_int32(0)
 	err := C.rtdbb_get_table_real_size_by_id_warp(C.rtdb_int32(handle), C.rtdb_int32(tableID), &cSize)
-	return int32(cSize), RtdbError(err).GoError()
+	return int32(cSize), RtdbError(err)
 }
 
 // RawRtdbbGetTablePropertyByIdWarp 根据标签点表 id 获取表属性
@@ -7677,11 +7677,11 @@ func RawRtdbbGetTableRealSizeByIdWarp(handle ConnectHandle, tableID TableID) (in
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_get_table_property_by_id_warp(rtdb_int32 handle, RTDB_TABLE *field)
-func RawRtdbbGetTablePropertyByIdWarp(handle ConnectHandle, tableID TableID) (RtdbTable, error) {
+func RawRtdbbGetTablePropertyByIdWarp(handle ConnectHandle, tableID TableID) (RtdbTable, RtdbError) {
 	table := C.RTDB_TABLE{}
 	table.id = C.rtdb_int32(tableID)
 	err := C.rtdbb_get_table_property_by_id_warp(C.rtdb_int32(handle), &table)
-	return cToRtdbTable(&table), RtdbError(err).GoError()
+	return cToRtdbTable(&table), RtdbError(err)
 }
 
 // RawRtdbbGetTablePropertyByNameWarp 根据表名获取标签点表属性
@@ -7695,11 +7695,11 @@ func RawRtdbbGetTablePropertyByIdWarp(handle ConnectHandle, tableID TableID) (Rt
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_get_table_property_by_name_warp(rtdb_int32 handle, RTDB_TABLE *field)
-func RawRtdbbGetTablePropertyByNameWarp(handle ConnectHandle, tableName string) (RtdbTable, error) {
+func RawRtdbbGetTablePropertyByNameWarp(handle ConnectHandle, tableName string) (RtdbTable, RtdbError) {
 	table := C.RTDB_TABLE{}
 	GoStringToCCharArray(tableName, &table.name[0], int(C.RTDB_TAG_SIZE))
 	err := C.rtdbb_get_table_property_by_name_warp(C.rtdb_int32(handle), &table)
-	return cToRtdbTable(&table), RtdbError(err).GoError()
+	return cToRtdbTable(&table), RtdbError(err)
 }
 
 // RawRtdbbInsertPointWarp 使用完整的属性集来创建单个标签点
@@ -7731,12 +7731,12 @@ func RawRtdbbGetTablePropertyByNameWarp(handle ConnectHandle, tableName string) 
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_insert_max_point_warp(rtdb_int32 handle, RTDB_POINT *base, RTDB_SCAN_POINT *scan, RTDB_MAX_CALC_POINT *calc)
-func RawRtdbbInsertMaxPointWarp(handle ConnectHandle, base *RtdbPoint, scan *RtdbScan, calc *RtdbCalc) (*RtdbPoint, *RtdbScan, *RtdbCalc, error) {
+func RawRtdbbInsertMaxPointWarp(handle ConnectHandle, base *RtdbPoint, scan *RtdbScan, calc *RtdbCalc) (*RtdbPoint, *RtdbScan, *RtdbCalc, RtdbError) {
 	cBase := goToCRtdbPoint(base)
 	cScan := goToCRtdbScan(scan)
 	cCalc := goToCRtdbCalc(calc)
 	err := C.rtdbb_insert_max_point_warp(C.rtdb_int32(handle), cBase, cScan, cCalc)
-	return cToRtdbPoint(cBase), cToRtdbScan(cScan), cToRtdbCalc(cCalc), RtdbError(err).GoError()
+	return cToRtdbPoint(cBase), cToRtdbScan(cScan), cToRtdbCalc(cCalc), RtdbError(err)
 }
 
 // RawRtdbbRemovePointByIdWarp 根据 id 删除单个标签点
@@ -7747,9 +7747,9 @@ func RawRtdbbInsertMaxPointWarp(handle ConnectHandle, base *RtdbPoint, scan *Rtd
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_remove_point_by_id_warp(rtdb_int32 handle, rtdb_int32 id)
-func RawRtdbbRemovePointByIdWarp(handle ConnectHandle, id PointID) error {
+func RawRtdbbRemovePointByIdWarp(handle ConnectHandle, id PointID) RtdbError {
 	err := C.rtdbb_remove_point_by_id_warp(C.rtdb_int32(handle), C.rtdb_int32(id))
-	return RtdbError(err).GoError()
+	return RtdbError(err)
 }
 
 // RawRtdbbRemovePointByNameWarp 根据标签点全名删除单个标签点
@@ -7760,11 +7760,11 @@ func RawRtdbbRemovePointByIdWarp(handle ConnectHandle, id PointID) error {
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_remove_point_by_name_warp(rtdb_int32 handle, const char *table_dot_tag)
-func RawRtdbbRemovePointByNameWarp(handle ConnectHandle, tableDotTag string) error {
+func RawRtdbbRemovePointByNameWarp(handle ConnectHandle, tableDotTag string) RtdbError {
 	cTableDotTag := C.CString(tableDotTag)
 	defer C.free(unsafe.Pointer(cTableDotTag))
 	err := C.rtdbb_remove_point_by_name_warp(C.rtdb_int32(handle), cTableDotTag)
-	return RtdbError(err).GoError()
+	return RtdbError(err)
 }
 
 // RawRtdbbInsertMaxPointsWarp 使用最大长度的完整属性集来批量创建标签点
@@ -7810,13 +7810,13 @@ func RawRtdbbRemovePointByNameWarp(handle ConnectHandle, tableDotTag string) err
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_insert_named_type_point_warp(rtdb_int32 handle, RTDB_POINT *base, RTDB_SCAN_POINT *scan, const char* name)
-func RawRtdbbInsertNamedTypePointWarp(handle ConnectHandle, base *RtdbPoint, scan *RtdbScan, name string) (*RtdbPoint, *RtdbScan, error) {
+func RawRtdbbInsertNamedTypePointWarp(handle ConnectHandle, base *RtdbPoint, scan *RtdbScan, name string) (*RtdbPoint, *RtdbScan, RtdbError) {
 	cBase := goToCRtdbPoint(base)
 	cScan := goToCRtdbScan(scan)
 	cName := C.CString(name)
 	defer C.free(unsafe.Pointer(cName))
 	err := C.rtdbb_insert_named_type_point_warp(C.rtdb_int32(handle), cBase, cScan, cName)
-	return cToRtdbPoint(cBase), cToRtdbScan(cScan), RtdbError(err).GoError()
+	return cToRtdbPoint(cBase), cToRtdbScan(cScan), RtdbError(err)
 }
 
 // RawRtdbbMovePointByIdWarp 根据 id 移动单个标签点到其他表
@@ -7828,11 +7828,11 @@ func RawRtdbbInsertNamedTypePointWarp(handle ConnectHandle, base *RtdbPoint, sca
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_move_point_by_id_warp(rtdb_int32 handle, rtdb_int32 id, const char* dest_table_name)
-func RawRtdbbMovePointByIdWarp(handle ConnectHandle, pointID PointID, tableName string) error {
+func RawRtdbbMovePointByIdWarp(handle ConnectHandle, pointID PointID, tableName string) RtdbError {
 	cTableName := C.CString(tableName)
 	defer C.free(unsafe.Pointer(cTableName))
 	err := C.rtdbb_move_point_by_id_warp(C.rtdb_int32(handle), C.rtdb_int32(pointID), cTableName)
-	return RtdbError(err).GoError()
+	return RtdbError(err)
 }
 
 // RawRtdbbGetPointsPropertyWarp 批量获取标签点属性
@@ -7858,26 +7858,25 @@ func RawRtdbbMovePointByIdWarp(handle ConnectHandle, pointID PointID, tableName 
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_get_max_points_property_warp(rtdb_int32 handle, rtdb_int32 count, RTDB_POINT *base, RTDB_SCAN_POINT *scan, RTDB_MAX_CALC_POINT *calc, rtdb_error *errors)
-func RawRtdbbGetMaxPointsPropertyWarp(handle ConnectHandle, pointIDs []PointID) ([]RtdbPoint, []RtdbScan, []RtdbCalc, []error, error) {
+func RawRtdbbGetMaxPointsPropertyWarp(handle ConnectHandle, pointIDs []PointID) ([]RtdbPoint, []RtdbScan, []RtdbCalc, []RtdbError, RtdbError) {
 	bases := make([]C.RTDB_POINT, len(pointIDs))
 	for i, id := range pointIDs {
 		bases[i].id = C.int(id)
 	}
 	scans := make([]C.RTDB_SCAN_POINT, len(pointIDs))
 	calcs := make([]C.RTDB_MAX_CALC_POINT, len(pointIDs))
-	errors := make([]C.rtdb_error, len(pointIDs))
-	err := C.rtdbb_get_max_points_property_warp(C.rtdb_int32(handle), C.rtdb_int32(len(pointIDs)), &bases[0], &scans[0], &calcs[0], &errors[0])
+	errs := make([]RtdbError, len(pointIDs))
+	cErrs := (*C.rtdb_error)(unsafe.Pointer(&errs[0]))
+	err := C.rtdbb_get_max_points_property_warp(C.rtdb_int32(handle), C.rtdb_int32(len(pointIDs)), &bases[0], &scans[0], &calcs[0], cErrs)
 	rtnBases := make([]RtdbPoint, 0)
 	rtnScans := make([]RtdbScan, 0)
 	rtnCalcs := make([]RtdbCalc, 0)
-	rtnError := make([]error, 0)
 	for i := 0; i < len(pointIDs); i++ {
 		rtnBases = append(rtnBases, *cToRtdbPoint(&bases[i]))
 		rtnScans = append(rtnScans, *cToRtdbScan(&scans[i]))
 		rtnCalcs = append(rtnCalcs, *cToRtdbCalc(&calcs[i]))
-		rtnError = append(rtnError, RtdbError(errors[i]).GoError())
 	}
-	return rtnBases, rtnScans, rtnCalcs, rtnError, RtdbError(err).GoError()
+	return rtnBases, rtnScans, rtnCalcs, errs, RtdbError(err)
 }
 
 // RawRtdbbSearchWarp 搜索符合条件的标签点，使用标签点名时支持通配符
@@ -7947,7 +7946,7 @@ func RawRtdbbGetMaxPointsPropertyWarp(handle ConnectHandle, pointIDs []PointID) 
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_search_in_batches_warp(rtdb_int32 handle, rtdb_int32 start, const char *tagmask, const char *tablemask, const char *source, const char *unit, const char *desc, const char *instrument, rtdb_int32 mode, rtdb_int32 *ids, rtdb_int32 *count)
-func RawRtdbbSearchInBatchesWarp(handle ConnectHandle, start int32, tagMask, tableMask, source, unit, desc, instrument string, model RtdbSortFlag) ([]PointID, error) {
+func RawRtdbbSearchInBatchesWarp(handle ConnectHandle, start int32, tagMask, tableMask, source, unit, desc, instrument string, model RtdbSortFlag) ([]PointID, RtdbError) {
 	if strings.TrimSpace(tagMask) == "" {
 		tagMask = "*"
 	}
@@ -7972,7 +7971,7 @@ func RawRtdbbSearchInBatchesWarp(handle ConnectHandle, start int32, tagMask, tab
 	cModel := C.rtdb_int32(model)
 
 	err := C.rtdbb_search_in_batches_warp(C.rtdb_int32(handle), C.rtdb_int32(start), cTagMask, cTableMask, cSource, cUnit, cDesc, cInstrument, cModel, cIds, &cCount)
-	return ids[:cCount], RtdbError(err).GoError()
+	return ids[:cCount], RtdbError(err)
 }
 
 // RawRtdbbSearchExWarp 搜索符合条件的标签点，使用标签点名时支持通配符
@@ -7999,7 +7998,7 @@ func RawRtdbbSearchInBatchesWarp(handle ConnectHandle, start int32, tagMask, tab
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_search_ex_warp(rtdb_int32 handle, const char *tagmask, const char *tablemask, const char *source, const char *unit, const char *desc, const char *instrument, const char *typemask, rtdb_int32 classofmask, rtdb_int32 timeunitmask, rtdb_int32 othertypemask, const char *othertypemaskvalue, rtdb_int32 mode, rtdb_int32 *ids, rtdb_int32 *count)
-func RawRtdbbSearchExWarp(handle ConnectHandle, maxCount int32, tagMask, tableMask, source, unit, desc, instrument, typeMask string, classOfMask RtdbType, timeUnitMask RtdbPrecision, otherTypeMask RtdbSearch, otherTypeMaskValue string, model RtdbSortFlag) ([]PointID, error) {
+func RawRtdbbSearchExWarp(handle ConnectHandle, maxCount int32, tagMask, tableMask, source, unit, desc, instrument, typeMask string, classOfMask RtdbType, timeUnitMask RtdbPrecision, otherTypeMask RtdbSearch, otherTypeMaskValue string, model RtdbSortFlag) ([]PointID, RtdbError) {
 	if strings.TrimSpace(tagMask) == "" {
 		tagMask = "*"
 	}
@@ -8030,7 +8029,7 @@ func RawRtdbbSearchExWarp(handle ConnectHandle, maxCount int32, tagMask, tableMa
 	cIds := (*C.rtdb_int32)(unsafe.Pointer(&ids[0]))
 	cModel := C.rtdb_int32(model)
 	err := C.rtdbb_search_ex_warp(C.rtdb_int32(handle), cTagMask, cTableMask, cSource, cUnit, cDesc, cInstrument, cTypeMask, cClassOfMask, cTimeUnitMask, cOtherTypeMask, cOtherTypeMaskValue, cModel, cIds, &count)
-	return ids[:count], RtdbError(err).GoError()
+	return ids[:count], RtdbError(err)
 }
 
 // RawRtdbbSearchPointsCountWarp 搜索符合条件的标签点，获取标签点数，使用标签点名时支持通配符
@@ -8056,7 +8055,7 @@ func RawRtdbbSearchExWarp(handle ConnectHandle, maxCount int32, tagMask, tableMa
 //
 // raw_fn:
 // rtdb_error RTDBAPI_CALLRULE rtdbb_search_points_count_warp(rtdb_int32 handle, const char *tagmask, const char *tablemask, const char *source, const char *unit, const char *desc, const char *instrument, const char *typemask, rtdb_int32 classofmask, rtdb_int32 timeunitmask, rtdb_int32 othertypemask, const char *othertypemaskvalue, rtdb_int32 *count)
-func RawRtdbbSearchPointsCountWarp(handle ConnectHandle, tagMask, tableMask, source, unit, desc, instrument, typeMask string, classOfMask RtdbType, timeUnitMask RtdbPrecision, otherTypeMask RtdbSearch, otherTypeMaskValue string) (int32, error) {
+func RawRtdbbSearchPointsCountWarp(handle ConnectHandle, tagMask, tableMask, source, unit, desc, instrument, typeMask string, classOfMask RtdbType, timeUnitMask RtdbPrecision, otherTypeMask RtdbSearch, otherTypeMaskValue string) (int32, RtdbError) {
 	if strings.TrimSpace(tagMask) == "" {
 		tagMask = "*"
 	}
@@ -8084,7 +8083,7 @@ func RawRtdbbSearchPointsCountWarp(handle ConnectHandle, tagMask, tableMask, sou
 	defer C.free(unsafe.Pointer(cOtherTypeMaskValue))
 	count := C.rtdb_int32(1024)
 	err := C.rtdbb_search_points_count_warp(C.rtdb_int32(handle), cTagMask, cTableMask, cSource, cUnit, cDesc, cInstrument, cTypeMask, cClassOfMask, cTimeUnitMask, cOtherTypeMask, cOtherTypeMaskValue, &count)
-	return int32(count), RtdbError(err).GoError()
+	return int32(count), RtdbError(err)
 }
 
 // RawRtdbbUpdatePointPropertyWarp 更新单个标签点属性
@@ -8120,12 +8119,12 @@ func RawRtdbbSearchPointsCountWarp(handle ConnectHandle, tagMask, tableMask, sou
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_update_max_point_property_warp(rtdb_int32 handle, const RTDB_POINT *base, const RTDB_SCAN_POINT *scan, const RTDB_MAX_CALC_POINT *calc)
-func RawRtdbbUpdateMaxPointPropertyWarp(handle ConnectHandle, base *RtdbPoint, scan *RtdbScan, calc *RtdbCalc) error {
+func RawRtdbbUpdateMaxPointPropertyWarp(handle ConnectHandle, base *RtdbPoint, scan *RtdbScan, calc *RtdbCalc) RtdbError {
 	cBase := goToCRtdbPoint(base)
 	cScan := goToCRtdbScan(scan)
 	cCalc := goToCRtdbCalc(calc)
 	err := C.rtdbb_update_max_point_property_warp(C.rtdb_int32(handle), cBase, cScan, cCalc)
-	return RtdbError(err).GoError()
+	return RtdbError(err)
 }
 
 // RawRtdbbFindPointsWarp 根据 "表名.标签点名" 格式批量获取标签点标识
@@ -8184,9 +8183,9 @@ func RawRtdbbUpdateMaxPointPropertyWarp(handle ConnectHandle, base *RtdbPoint, s
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_find_points_ex_warp(rtdb_int32 handle, rtdb_int32* count, const char* const* table_dot_tags, rtdb_int32* ids, rtdb_int32* types, rtdb_int32* classof, rtdb_precision_type* precisions, rtdb_error* errors)
-func RawRtdbbFindPointsExWarp(handle ConnectHandle, tableDotTags []string) ([]PointID, []RtdbType, []RtdbClass, []RtdbPrecision, []RtdbError, error) {
+func RawRtdbbFindPointsExWarp(handle ConnectHandle, tableDotTags []string) ([]PointID, []RtdbType, []RtdbClass, []RtdbPrecision, []RtdbError, RtdbError) {
 	if len(tableDotTags) == 0 {
-		return nil, nil, nil, nil, nil, nil
+		return nil, nil, nil, nil, nil, RtdbError(RteOk)
 	}
 
 	count := len(tableDotTags)
@@ -8214,7 +8213,7 @@ func RawRtdbbFindPointsExWarp(handle ConnectHandle, tableDotTags []string) ([]Po
 	cErrs := (*C.rtdb_error)(unsafe.Pointer(&errs[0]))
 
 	err := C.rtdbb_find_points_ex_warp(cHandle, &cCount, cTableDotTags, cIds, cTypes, cClassof, cPrecisions, cErrs)
-	return ids[:cCount], types[:cCount], classof[:cCount], precisions[:cCount], errs[:cCount], RtdbError(err).GoError()
+	return ids[:cCount], types[:cCount], classof[:cCount], precisions[:cCount], errs[:cCount], RtdbError(err)
 }
 
 // RawRtdbbSortPointsWarp 根据标签属性字段对标签点标识进行排序
@@ -8231,9 +8230,9 @@ func RawRtdbbFindPointsExWarp(handle ConnectHandle, tableDotTags []string) ([]Po
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_sort_points_warp(rtdb_int32 handle, rtdb_int32 count, rtdb_int32 *ids, rtdb_int32 index, rtdb_int32 flag)
-func RawRtdbbSortPointsWarp(handle ConnectHandle, ids []PointID, index RtdbTagIndex, flag RtdbSortFlag) ([]PointID, error) {
+func RawRtdbbSortPointsWarp(handle ConnectHandle, ids []PointID, index RtdbTagIndex, flag RtdbSortFlag) ([]PointID, RtdbError) {
 	err := C.rtdbb_sort_points_warp(C.rtdb_int32(handle), C.rtdb_int32(len(ids)), (*C.rtdb_int32)(unsafe.Pointer(&ids[0])), C.rtdb_int32(index), C.rtdb_int32(flag))
-	return ids, RtdbError(err).GoError()
+	return ids, RtdbError(err)
 }
 
 // RawRtdbbUpdateTableNameWarp 根据表 ID 更新表名称。
@@ -8245,11 +8244,11 @@ func RawRtdbbSortPointsWarp(handle ConnectHandle, ids []PointID, index RtdbTagIn
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_update_table_name_warp(rtdb_int32 handle, rtdb_int32 tab_id, const char *name)
-func RawRtdbbUpdateTableNameWarp(handle ConnectHandle, id TableID, name string) error {
+func RawRtdbbUpdateTableNameWarp(handle ConnectHandle, id TableID, name string) RtdbError {
 	cName := C.CString(name)
 	defer C.free(unsafe.Pointer(cName))
 	err := C.rtdbb_update_table_name_warp(C.rtdb_int32(handle), C.rtdb_int32(id), cName)
-	return RtdbError(err).GoError()
+	return RtdbError(err)
 }
 
 // RawRtdbbUpdateTableDescByIdWarp 根据表 ID 更新表描述。
@@ -8261,11 +8260,11 @@ func RawRtdbbUpdateTableNameWarp(handle ConnectHandle, id TableID, name string) 
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_update_table_desc_by_id_warp(rtdb_int32 handle, rtdb_int32 tab_id, const char *desc)
-func RawRtdbbUpdateTableDescByIdWarp(handle ConnectHandle, id TableID, desc string) error {
+func RawRtdbbUpdateTableDescByIdWarp(handle ConnectHandle, id TableID, desc string) RtdbError {
 	cDesc := C.CString(desc)
 	defer C.free(unsafe.Pointer(cDesc))
 	err := C.rtdbb_update_table_desc_by_id_warp(C.rtdb_int32(handle), C.rtdb_int32(id), cDesc)
-	return RtdbError(err).GoError()
+	return RtdbError(err)
 }
 
 // RawRtdbbUpdateTableDescByNameWarp 根据表名称更新表描述。
@@ -8277,13 +8276,13 @@ func RawRtdbbUpdateTableDescByIdWarp(handle ConnectHandle, id TableID, desc stri
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_update_table_desc_by_name_warp(rtdb_int32 handle, const char *name, const char *desc)
-func RawRtdbbUpdateTableDescByNameWarp(handle ConnectHandle, name string, desc string) error {
+func RawRtdbbUpdateTableDescByNameWarp(handle ConnectHandle, name string, desc string) RtdbError {
 	cName := C.CString(name)
 	defer C.free(unsafe.Pointer(cName))
 	cDesc := C.CString(desc)
 	defer C.free(unsafe.Pointer(cDesc))
 	err := C.rtdbb_update_table_desc_by_name_warp(C.rtdb_int32(handle), cName, cDesc)
-	return RtdbError(err).GoError()
+	return RtdbError(err)
 }
 
 // RawRtdbbRecoverPointWarp 恢复已删除标签点
@@ -8295,9 +8294,9 @@ func RawRtdbbUpdateTableDescByNameWarp(handle ConnectHandle, name string, desc s
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_recover_point_warp(rtdb_int32 handle, rtdb_int32 table_id, rtdb_int32 point_id)
-func RawRtdbbRecoverPointWarp(handle ConnectHandle, tableID TableID, pointID PointID) error {
+func RawRtdbbRecoverPointWarp(handle ConnectHandle, tableID TableID, pointID PointID) RtdbError {
 	err := C.rtdbb_recover_point_warp(C.rtdb_int32(handle), C.rtdb_int32(tableID), C.rtdb_int32(pointID))
-	return RtdbError(err).GoError()
+	return RtdbError(err)
 }
 
 // RawRtdbbPurgePointWarp 清除标签点
@@ -8308,9 +8307,9 @@ func RawRtdbbRecoverPointWarp(handle ConnectHandle, tableID TableID, pointID Poi
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_purge_point_warp(rtdb_int32 handle, rtdb_int32 id)
-func RawRtdbbPurgePointWarp(handle ConnectHandle, id PointID) error {
+func RawRtdbbPurgePointWarp(handle ConnectHandle, id PointID) RtdbError {
 	err := C.rtdbb_purge_point_warp(C.rtdb_int32(handle), C.rtdb_int32(id))
-	return RtdbError(err).GoError()
+	return RtdbError(err)
 }
 
 // RawRtdbbGetRecycledPointsCountWarp 获取可回收标签点数量
@@ -8321,10 +8320,10 @@ func RawRtdbbPurgePointWarp(handle ConnectHandle, id PointID) error {
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_get_recycled_points_count_warp(rtdb_int32 handle, rtdb_int32 *count)
-func RawRtdbbGetRecycledPointsCountWarp(handle ConnectHandle) (int32, error) {
+func RawRtdbbGetRecycledPointsCountWarp(handle ConnectHandle) (int32, RtdbError) {
 	count := C.rtdb_int32(0)
 	err := C.rtdbb_get_recycled_points_count_warp(C.rtdb_int32(handle), &count)
-	return int32(count), RtdbError(err).GoError()
+	return int32(count), RtdbError(err)
 }
 
 // RawRtdbbGetRecycledPointsWarp 获取可回收标签点 id 列表
@@ -8338,16 +8337,16 @@ func RawRtdbbGetRecycledPointsCountWarp(handle ConnectHandle) (int32, error) {
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_get_recycled_points_warp(rtdb_int32 handle, rtdb_int32 *ids, rtdb_int32 *count)
-func RawRtdbbGetRecycledPointsWarp(handle ConnectHandle, count int32) ([]RtdbPoint, error) {
+func RawRtdbbGetRecycledPointsWarp(handle ConnectHandle, count int32) ([]RtdbPoint, RtdbError) {
 	if count == 0 {
-		return nil, nil
+		return nil, RtdbError(RteOk)
 	}
 
 	cCount := C.rtdb_int32(count)
 	points := make([]RtdbPoint, cCount)
 	err := C.rtdbb_get_recycled_points_warp(C.rtdb_int32(handle), (*C.rtdb_int32)(unsafe.Pointer(&points[0])), &cCount)
 
-	return points[:cCount], RtdbError(err).GoError()
+	return points[:cCount], RtdbError(err)
 }
 
 // RawRtdbbSearchRecycledPointsWarp 搜索符合条件的可回收标签点，使用标签点名时支持通配符
@@ -8391,7 +8390,7 @@ func RawRtdbbGetRecycledPointsWarp(handle ConnectHandle, count int32) ([]RtdbPoi
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_search_recycled_points_in_batches_warp(rtdb_int32 handle, rtdb_int32 start, const char *tagmask, const char *fullmask, const char *source, const char *unit, const char *desc, const char *instrument, rtdb_int32 mode, rtdb_int32 *ids, rtdb_int32 *count)
-func RawRtdbbSearchRecycledPointsInBatchesWarp(handle ConnectHandle, start int32, tagMask, fullMask, source, unit, desc, instrument string, mode RtdbSortFlag) ([]PointID, error) {
+func RawRtdbbSearchRecycledPointsInBatchesWarp(handle ConnectHandle, start int32, tagMask, fullMask, source, unit, desc, instrument string, mode RtdbSortFlag) ([]PointID, RtdbError) {
 	cTagMask := C.CString(tagMask)
 	defer C.free(unsafe.Pointer(cTagMask))
 	cFullMask := C.CString(fullMask)
@@ -8408,7 +8407,7 @@ func RawRtdbbSearchRecycledPointsInBatchesWarp(handle ConnectHandle, start int32
 	cIds := (*C.rtdb_int32)(unsafe.Pointer(&ids[0]))
 	cCount := C.rtdb_int32(len(ids))
 	err := C.rtdbb_search_recycled_points_in_batches_warp(C.rtdb_int32(handle), C.rtdb_int32(start), cTagMask, cFullMask, cSource, cUnit, cDesc, cInstrument, C.rtdb_int32(mode), cIds, &cCount)
-	return ids[:cCount], RtdbError(err).GoError()
+	return ids[:cCount], RtdbError(err)
 }
 
 // RawRtdbbGetRecycledPointPropertyWarp 获取可回收标签点的属性
@@ -8436,13 +8435,13 @@ func RawRtdbbSearchRecycledPointsInBatchesWarp(handle ConnectHandle, start int32
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_get_recycled_max_point_property_warp(rtdb_int32 handle, RTDB_POINT* base, RTDB_SCAN_POINT* scan, RTDB_MAX_CALC_POINT* calc)
-func RawRtdbbGetRecycledMaxPointPropertyWarp(handle ConnectHandle, id PointID) (*RtdbPoint, *RtdbScan, *RtdbCalc, error) {
+func RawRtdbbGetRecycledMaxPointPropertyWarp(handle ConnectHandle, id PointID) (*RtdbPoint, *RtdbScan, *RtdbCalc, RtdbError) {
 	base := C.RTDB_POINT{}
 	base.id = C.rtdb_int32(id)
 	scan := C.RTDB_SCAN_POINT{}
 	calc := C.RTDB_MAX_CALC_POINT{}
 	err := C.rtdbb_get_recycled_max_point_property_warp(C.rtdb_int32(handle), &base, &scan, &calc)
-	return cToRtdbPoint(&base), cToRtdbScan(&scan), cToRtdbCalc(&calc), RtdbError(err).GoError()
+	return cToRtdbPoint(&base), cToRtdbScan(&scan), cToRtdbCalc(&calc), RtdbError(err)
 }
 
 // RawRtdbbClearRecyclerWarp 清空标签点回收站
@@ -8452,9 +8451,9 @@ func RawRtdbbGetRecycledMaxPointPropertyWarp(handle ConnectHandle, id PointID) (
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_clear_recycler_warp(rtdb_int32 handle)
-func RawRtdbbClearRecyclerWarp(handle ConnectHandle) error {
+func RawRtdbbClearRecyclerWarp(handle ConnectHandle) RtdbError {
 	err := C.rtdbb_clear_recycler_warp(C.rtdb_int32(handle))
-	return RtdbError(err).GoError()
+	return RtdbError(err)
 }
 
 // RawRtdbbSubscribeTagsExWarp 标签点属性更改通知订阅
@@ -8481,7 +8480,7 @@ func RawRtdbbClearRecyclerWarp(handle ConnectHandle) error {
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_subscribe_tags_ex_warp(rtdb_int32 handle, rtdb_uint32 options, void* param, rtdbb_tags_change_event_ex callback)
-func RawRtdbbSubscribeTagsExWarp(handle ConnectHandle, options RtdbSubscribeOption, param unsafe.Pointer) error {
+func RawRtdbbSubscribeTagsExWarp(handle ConnectHandle, options RtdbSubscribeOption, param unsafe.Pointer) RtdbError {
 	err := C.rtdbb_subscribe_tags_ex_warp(C.rtdb_int32(handle), C.rtdb_uint32(options), param, (C.rtdbb_tags_change_event_ex)(unsafe.Pointer(C.goSubscribeTagsEx)))
 	return RtdbError(err)
 }
@@ -8493,9 +8492,9 @@ func RawRtdbbSubscribeTagsExWarp(handle ConnectHandle, options RtdbSubscribeOpti
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_cancel_subscribe_tags_warp(rtdb_int32 handle)
-func RawRtdbbCancelSubscribeTagsWarp(handle ConnectHandle) error {
+func RawRtdbbCancelSubscribeTagsWarp(handle ConnectHandle) RtdbError {
 	err := C.rtdbb_cancel_subscribe_tags_warp(C.rtdb_int32(handle))
-	return RtdbError(err).GoError()
+	return RtdbError(err)
 }
 
 // RawRtdbbCreateNamedTypeWarp 创建自定义类型
@@ -8507,7 +8506,7 @@ func RawRtdbbCancelSubscribeTagsWarp(handle ConnectHandle) error {
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_create_named_type_warp(rtdb_int32 handle, const char* name, rtdb_int32 field_count, const RTDB_DATA_TYPE_FIELD* fields, char desc[RTDB_DESC_SIZE])
-func RawRtdbbCreateNamedTypeWarp(handle ConnectHandle, name string, fields []RtdbDataTypeField, desc string) error {
+func RawRtdbbCreateNamedTypeWarp(handle ConnectHandle, name string, fields []RtdbDataTypeField, desc string) RtdbError {
 	cName := C.CString(name)
 	defer C.free(unsafe.Pointer(cName))
 	cDesc := C.CString(desc)
@@ -8517,7 +8516,7 @@ func RawRtdbbCreateNamedTypeWarp(handle ConnectHandle, name string, fields []Rtd
 		cFields = append(cFields, *goToCRtdbDataTypeField(&field))
 	}
 	err := C.rtdbb_create_named_type_warp(C.rtdb_int32(handle), cName, C.rtdb_int32(len(fields)), &cFields[0], cDesc)
-	return RtdbError(err).GoError()
+	return RtdbError(err)
 }
 
 // RawRtdbbGetNamedTypesCountWarp 获取所有的自定义类型的总数
@@ -8527,10 +8526,10 @@ func RawRtdbbCreateNamedTypeWarp(handle ConnectHandle, name string, fields []Rtd
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_get_named_types_count_warp(rtdb_int32 handle, rtdb_int32* count)
-func RawRtdbbGetNamedTypesCountWarp(handle ConnectHandle) (int32, error) {
+func RawRtdbbGetNamedTypesCountWarp(handle ConnectHandle) (int32, RtdbError) {
 	count := C.rtdb_int32(0)
 	err := C.rtdbb_get_named_types_count_warp(C.rtdb_int32(handle), &count)
-	return int32(count), RtdbError(err).GoError()
+	return int32(count), RtdbError(err)
 }
 
 // RawRtdbbGetAllNamedTypesWarp 获取所有的自定义类型
@@ -8545,7 +8544,7 @@ func RawRtdbbGetNamedTypesCountWarp(handle ConnectHandle) (int32, error) {
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_get_all_named_types_warp(rtdb_int32 handle, rtdb_int32* count, char* name[RTDB_TYPE_NAME_SIZE], rtdb_int32* field_counts)
-func RawRtdbbGetAllNamedTypesWarp(handle ConnectHandle, count int32) ([]string, []int32, error) {
+func RawRtdbbGetAllNamedTypesWarp(handle ConnectHandle, count int32) ([]string, []int32, RtdbError) {
 	cgoHandle := C.rtdb_int32(handle)
 	cgoCount := C.rtdb_int32(count)
 	names := make([]*C.char, count)
@@ -8582,7 +8581,7 @@ func RawRtdbbGetAllNamedTypesWarp(handle ConnectHandle, count int32) ([]string, 
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_get_named_type_warp(rtdb_int32 handle, const char* name, rtdb_int32* field_count, RTDB_DATA_TYPE_FIELD* fields, rtdb_int32* type_size, char desc[RTDB_DESC_SIZE])
-func RawRtdbbGetNamedTypeWarp(handle ConnectHandle, name string, fieldCount int32) ([]RtdbDataTypeField, int32, string, error) {
+func RawRtdbbGetNamedTypeWarp(handle ConnectHandle, name string, fieldCount int32) ([]RtdbDataTypeField, int32, string, RtdbError) {
 	cName := C.CString(name)
 	defer C.free(unsafe.Pointer(cName))
 	cFieldCount := C.rtdb_int32(fieldCount)
@@ -8594,7 +8593,7 @@ func RawRtdbbGetNamedTypeWarp(handle ConnectHandle, name string, fieldCount int3
 	for _, field := range fields[:cFieldCount] {
 		rtn = append(rtn, *cToRtdbDataTypeField(&field))
 	}
-	return rtn, int32(typeSize), C.GoString(&desc[0]), RtdbError(err).GoError()
+	return rtn, int32(typeSize), C.GoString(&desc[0]), RtdbError(err)
 }
 
 // RawRtdbbRemoveNamedTypeWarp 删除自定义类型
@@ -8605,12 +8604,12 @@ func RawRtdbbGetNamedTypeWarp(handle ConnectHandle, name string, fieldCount int3
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_remove_named_type_warp(rtdb_int32 handle, const char* name, rtdb_int32 reserved GAPI_DEFAULT_VALUE(0))
-func RawRtdbbRemoveNamedTypeWarp(handle int32, name string) error {
+func RawRtdbbRemoveNamedTypeWarp(handle int32, name string) RtdbError {
 	cgoHandle := C.rtdb_int32(handle)
 	cgoName := C.CString(name)
 	defer C.free(unsafe.Pointer(cgoName))
 	err := C.rtdbb_remove_named_type_warp(cgoHandle, cgoName, 0)
-	return RtdbError(err).GoError()
+	return RtdbError(err)
 }
 
 // RawRtdbbGetNamedTypeNamesPropertyWarp 根据标签点id查询标签点所对应的自定义类型的名字和字段总数
@@ -8626,7 +8625,7 @@ func RawRtdbbRemoveNamedTypeWarp(handle int32, name string) error {
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_get_named_type_names_property_warp(rtdb_int32 handle, rtdb_int32 *count, rtdb_int32 *ids, char* const *named_type_names, rtdb_int32 *field_counts, rtdb_error *errors)
-func RawRtdbbGetNamedTypeNamesPropertyWarp(handle ConnectHandle, ids []PointID) ([]string, []int32, []error, error) {
+func RawRtdbbGetNamedTypeNamesPropertyWarp(handle ConnectHandle, ids []PointID) ([]string, []int32, []error, RtdbError) {
 	cgoHandle := C.rtdb_int32(handle)
 	count := len(ids)
 	cgoCount := C.rtdb_int32(count)
@@ -8670,7 +8669,7 @@ func RawRtdbbGetNamedTypeNamesPropertyWarp(handle ConnectHandle, ids []PointID) 
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_get_recycled_named_type_names_property_warp(rtdb_int32 handle, rtdb_int32 *count, rtdb_int32 *ids, char* const *named_type_names, rtdb_int32 *field_counts, rtdb_error *errors)
-func RawRtdbbGetRecycledNamedTypeNamesPropertyWarp(handle ConnectHandle, ids []PointID) ([]string, []int32, []error, error) {
+func RawRtdbbGetRecycledNamedTypeNamesPropertyWarp(handle ConnectHandle, ids []PointID) ([]string, []int32, []RtdbError, RtdbError) {
 	cgoHandle := C.rtdb_int32(handle)
 	count := len(ids)
 	cgoCount := C.rtdb_int32(count)
@@ -8687,16 +8686,12 @@ func RawRtdbbGetRecycledNamedTypeNamesPropertyWarp(handle ConnectHandle, ids []P
 	cgoNamedTypeNames := (**C.char)(unsafe.Pointer(&namedTypeNames[0]))
 	fieldCounts := make([]int32, count)
 	cgoCounts := (*C.rtdb_int32)(unsafe.Pointer(&fieldCounts[0]))
-	errors := make([]RtdbError, count)
-	cgoErrors := (*C.rtdb_error)(unsafe.Pointer(&errors[0]))
-	err := C.rtdbb_get_recycled_named_type_names_property_warp(cgoHandle, &cgoCount, cgoIds, cgoNamedTypeNames, cgoCounts, cgoErrors)
+	errs := make([]RtdbError, count)
+	cgoErrs := (*C.rtdb_error)(unsafe.Pointer(&errs[0]))
+	err := C.rtdbb_get_recycled_named_type_names_property_warp(cgoHandle, &cgoCount, cgoIds, cgoNamedTypeNames, cgoCounts, cgoErrs)
 	names := make([]string, 0)
 	for i := 0; i < int(cgoCount); i++ {
 		names = append(names, C.GoString(namedTypeNames[i]))
-	}
-	errs := make([]error, 0)
-	for _, err := range errors[:cgoCount] {
-		errs = append(errs, err.GoError())
 	}
 	return names[:cgoCount], fieldCounts[:cgoCount], errs[:cgoCount], RtdbError(err)
 }
@@ -8712,13 +8707,13 @@ func RawRtdbbGetRecycledNamedTypeNamesPropertyWarp(handle ConnectHandle, ids []P
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_get_named_type_points_count_warp(rtdb_int32 handle, const char* name, rtdb_int32 *points_count)
-func RawRtdbbGetNamedTypePointsCountWarp(handle ConnectHandle, name string) (int32, error) {
+func RawRtdbbGetNamedTypePointsCountWarp(handle ConnectHandle, name string) (int32, RtdbError) {
 	cgoHandle := C.rtdb_int32(handle)
 	cgoName := C.CString(name)
 	defer C.free(unsafe.Pointer(cgoName))
 	cgoCount := C.rtdb_int32(0)
 	err := C.rtdbb_get_named_type_points_count_warp(cgoHandle, cgoName, &cgoCount)
-	return int32(cgoCount), RtdbError(err).GoError()
+	return int32(cgoCount), RtdbError(err)
 }
 
 // RawRtdbbGetBaseTypePointsCountWarp 获取该内置的基本类型的所有标签点个数
@@ -8732,12 +8727,12 @@ func RawRtdbbGetNamedTypePointsCountWarp(handle ConnectHandle, name string) (int
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_get_base_type_points_count_warp(rtdb_int32 handle, rtdb_int32 type, rtdb_int32 *points_count)
-func RawRtdbbGetBaseTypePointsCountWarp(handle ConnectHandle, rtdbType RtdbType) (int32, error) {
+func RawRtdbbGetBaseTypePointsCountWarp(handle ConnectHandle, rtdbType RtdbType) (int32, RtdbError) {
 	cgoHandle := C.rtdb_int32(handle)
 	cgoType := C.rtdb_int32(rtdbType)
 	cgoCount := C.rtdb_int32(0)
 	err := C.rtdbb_get_base_type_points_count_warp(cgoHandle, cgoType, &cgoCount)
-	return int32(cgoCount), RtdbError(err).GoError()
+	return int32(cgoCount), RtdbError(err)
 }
 
 // RawRtdbbModifyNamedTypeWarp 修改自定义类型名称,描述,字段名称,字段描述
@@ -8752,7 +8747,7 @@ func RawRtdbbGetBaseTypePointsCountWarp(handle ConnectHandle, rtdbType RtdbType)
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_modify_named_type_warp(rtdb_int32 handle, const char* name, const char* modify_name, const char* modify_desc, const char* modify_field_name[RTDB_TYPE_NAME_SIZE], const char* modify_field_desc[RTDB_DESC_SIZE], rtdb_int32 field_count)
-func RawRtdbbModifyNamedTypeWarp(handle ConnectHandle, name string, modifyName string, modifyDesc string, fieldNames []string, fieldDescs []string) error {
+func RawRtdbbModifyNamedTypeWarp(handle ConnectHandle, name string, modifyName string, modifyDesc string, fieldNames []string, fieldDescs []string) RtdbError {
 	cgoHandle := C.rtdb_int32(handle)
 	cgoName := C.CString(name)
 	defer C.free(unsafe.Pointer(cgoName))
@@ -8782,7 +8777,7 @@ func RawRtdbbModifyNamedTypeWarp(handle ConnectHandle, name string, modifyName s
 	}()
 	cgoDescs := (**C.char)(unsafe.Pointer(&descs[0]))
 	err := C.rtdbb_modify_named_type_warp(cgoHandle, cgoName, cgoModifyName, cgoModifyDesc, cgoNames, cgoDescs, cgoFieldLen)
-	return RtdbError(err).GoError()
+	return RtdbError(err)
 }
 
 // RawRtdbbGetMetaSyncInfoWarp 获取元数据同步信息
@@ -8797,7 +8792,7 @@ func RawRtdbbModifyNamedTypeWarp(handle ConnectHandle, name string, modifyName s
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_get_meta_sync_info_warp(rtdb_int32 handle, rtdb_int32 node_number, rtdb_int32* count, RTDB_SYNC_INFO* sync_infos, rtdb_error* errors)
-func RawRtdbbGetMetaSyncInfoWarp(handle ConnectHandle, nodeNumber int32) ([]RtdbSyncInfo, []error, error) {
+func RawRtdbbGetMetaSyncInfoWarp(handle ConnectHandle, nodeNumber int32) ([]RtdbSyncInfo, []RtdbError, RtdbError) {
 	infos := make([]C.RTDB_SYNC_INFO, 2)
 	count := C.rtdb_int32(2)
 	errs := make([]RtdbError, 2)
@@ -8806,11 +8801,7 @@ func RawRtdbbGetMetaSyncInfoWarp(handle ConnectHandle, nodeNumber int32) ([]Rtdb
 	for i := 0; i < int(count); i++ {
 		rtnInfo = append(rtnInfo, *cToGoRtdbSyncInfo(&infos[i]))
 	}
-	rtnErr := make([]error, 0)
-	for i := 0; i < int(count); i++ {
-		rtnErr = append(rtnErr, errs[i].GoError())
-	}
-	return rtnInfo, rtnErr, RtdbError(err).GoError()
+	return rtnInfo, errs[:count], RtdbError(err)
 }
 
 // RawRtdbsGetSnapshots64Warp 批量读取开关量、模拟量快照数值
@@ -8829,7 +8820,7 @@ func RawRtdbbGetMetaSyncInfoWarp(handle ConnectHandle, nodeNumber int32) ([]Rtdb
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbs_get_snapshots64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float64* values, rtdb_int64* states, rtdb_int16* qualities, rtdb_error* errors)
-func RawRtdbsGetSnapshots64Warp(handle ConnectHandle, ids []PointID) ([]TimestampType, []SubtimeType, []float64, []int64, []Quality, []error, error) {
+func RawRtdbsGetSnapshots64Warp(handle ConnectHandle, ids []PointID) ([]TimestampType, []SubtimeType, []float64, []int64, []Quality, []RtdbError, RtdbError) {
 	count := C.rtdb_int32(len(ids))
 	cIds := (*C.rtdb_int32)(unsafe.Pointer(&ids[0]))
 	ts := make([]TimestampType, count)
@@ -8845,8 +8836,7 @@ func RawRtdbsGetSnapshots64Warp(handle ConnectHandle, ids []PointID) ([]Timestam
 	es := make([]RtdbError, count)
 	cEs := (*C.rtdb_error)(unsafe.Pointer(&es[0]))
 	err := C.rtdbs_get_snapshots64_warp(C.rtdb_int32(handle), &count, cIds, cTs, cMs, cFvs, cIvs, cQs, cEs)
-	rtnEs := RtdbErrorListToErrorList(es[:count])
-	return ts[:count], ms[:count], fvs[:count], ivs[:count], qs[:count], rtnEs[:count], RtdbError(err).GoError()
+	return ts[:count], ms[:count], fvs[:count], ivs[:count], qs[:count], es[:count], RtdbError(err)
 }
 
 // RawRtdbsPutSnapshots64Warp 批量写入开关量、模拟量快照数值
@@ -8865,7 +8855,7 @@ func RawRtdbsGetSnapshots64Warp(handle ConnectHandle, ids []PointID) ([]Timestam
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbs_put_snapshots64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, const rtdb_float64* values, const rtdb_int64* states, const rtdb_int16* qualities, rtdb_error* errors)
-func RawRtdbsPutSnapshots64Warp(handle ConnectHandle, ids []PointID, datetimes []TimestampType, ms []SubtimeType, values []float64, states []int64, qualities []Quality) ([]error, error) {
+func RawRtdbsPutSnapshots64Warp(handle ConnectHandle, ids []PointID, datetimes []TimestampType, ms []SubtimeType, values []float64, states []int64, qualities []Quality) ([]RtdbError, RtdbError) {
 	count := C.rtdb_int32(len(ids))
 	cIds := (*C.rtdb_int32)(unsafe.Pointer(&ids[0]))
 	cDatetimes := (*C.rtdb_timestamp_type)(unsafe.Pointer(&datetimes[0]))
@@ -8876,8 +8866,7 @@ func RawRtdbsPutSnapshots64Warp(handle ConnectHandle, ids []PointID, datetimes [
 	errs := make([]RtdbError, count)
 	cErrs := (*C.rtdb_error)(unsafe.Pointer(&errs[0]))
 	err := C.rtdbs_put_snapshots64_warp(C.rtdb_int32(handle), &count, cIds, cDatetimes, cMs, cValues, cStates, cQualities, cErrs)
-	rtnEs := RtdbErrorListToErrorList(errs[:count])
-	return rtnEs[:count], RtdbError(err).GoError()
+	return errs[:count], RtdbError(err)
 }
 
 // RawRtdbsFixSnapshots64Warp 批量覆盖写入开关量、模拟量快照数值 (时间戳相同的时候更新原有值)
@@ -8896,7 +8885,7 @@ func RawRtdbsPutSnapshots64Warp(handle ConnectHandle, ids []PointID, datetimes [
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbs_fix_snapshots64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, const rtdb_float64* values, const rtdb_int64* states, const rtdb_int16* qualities, rtdb_error* errors)
-func RawRtdbsFixSnapshots64Warp(handle ConnectHandle, ids []PointID, datetimes []TimestampType, ms []SubtimeType, values []float64, states []int64, qualities []Quality) ([]error, error) {
+func RawRtdbsFixSnapshots64Warp(handle ConnectHandle, ids []PointID, datetimes []TimestampType, ms []SubtimeType, values []float64, states []int64, qualities []Quality) ([]RtdbError, RtdbError) {
 	count := C.rtdb_int32(len(ids))
 	cIds := (*C.rtdb_int32)(unsafe.Pointer(&ids[0]))
 	cDatetimes := (*C.rtdb_timestamp_type)(unsafe.Pointer(&datetimes[0]))
@@ -8907,8 +8896,7 @@ func RawRtdbsFixSnapshots64Warp(handle ConnectHandle, ids []PointID, datetimes [
 	errs := make([]RtdbError, count)
 	cErrs := (*C.rtdb_error)(unsafe.Pointer(&errs[0]))
 	err := C.rtdbs_fix_snapshots64_warp(C.rtdb_int32(handle), &count, cIds, cDatetimes, cMs, cValues, cStates, cQualities, cErrs)
-	rtnEs := RtdbErrorListToErrorList(errs[:count])
-	return rtnEs[:count], RtdbError(err).GoError()
+	return errs[:count], RtdbError(err)
 }
 
 // RawRtdbsBackSnapshots64Warp 批量回溯快照, 批量将标签点的快照值vtmq改成传入的vtmq，如果传入的时间戳早于当前快照，会删除传入时间戳到当前快照的历史存储值。如果传入的时间戳等于或者晚于当前快照，什么也不做。
@@ -8927,7 +8915,7 @@ func RawRtdbsFixSnapshots64Warp(handle ConnectHandle, ids []PointID, datetimes [
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbs_back_snapshots64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, const rtdb_float64* values, const rtdb_int64* states, const rtdb_int16* qualities, rtdb_error* errors)
-func RawRtdbsBackSnapshots64Warp(handle ConnectHandle, ids []PointID, datetimes []TimestampType, ms []SubtimeType, values []float64, states []int64, qualities []Quality) ([]error, error) {
+func RawRtdbsBackSnapshots64Warp(handle ConnectHandle, ids []PointID, datetimes []TimestampType, ms []SubtimeType, values []float64, states []int64, qualities []Quality) ([]RtdbError, RtdbError) {
 	count := C.rtdb_int32(len(ids))
 	cIds := (*C.rtdb_int32)(unsafe.Pointer(&ids[0]))
 	cDatetimes := (*C.rtdb_timestamp_type)(unsafe.Pointer(&datetimes[0]))
@@ -8938,8 +8926,7 @@ func RawRtdbsBackSnapshots64Warp(handle ConnectHandle, ids []PointID, datetimes 
 	errs := make([]RtdbError, count)
 	cErrs := (*C.rtdb_error)(unsafe.Pointer(&errs[0]))
 	err := C.rtdbs_back_snapshots64_warp(C.rtdb_int32(handle), &count, cIds, cDatetimes, cMs, cValues, cStates, cQualities, cErrs)
-	rtnEs := RtdbErrorListToErrorList(errs[:count])
-	return rtnEs[:count], RtdbError(err).GoError()
+	return errs[:count], RtdbError(err)
 }
 
 // RawRtdbsGetCoorSnapshots64Warp 批量读取坐标实时数据
@@ -8958,7 +8945,7 @@ func RawRtdbsBackSnapshots64Warp(handle ConnectHandle, ids []PointID, datetimes 
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbs_get_coor_snapshots64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float32* x, rtdb_float32* y, rtdb_int16* qualities, rtdb_error* errors)
-func RawRtdbsGetCoorSnapshots64Warp(handle ConnectHandle, ids []PointID) ([]TimestampType, []SubtimeType, []float32, []float32, []Quality, []error, error) {
+func RawRtdbsGetCoorSnapshots64Warp(handle ConnectHandle, ids []PointID) ([]TimestampType, []SubtimeType, []float32, []float32, []Quality, []RtdbError, RtdbError) {
 	count := C.rtdb_int32(len(ids))
 	cIds := (*C.rtdb_int32)(unsafe.Pointer(&ids[0]))
 	ts := make([]TimestampType, count)
@@ -8974,8 +8961,7 @@ func RawRtdbsGetCoorSnapshots64Warp(handle ConnectHandle, ids []PointID) ([]Time
 	es := make([]RtdbError, count)
 	cEs := (*C.rtdb_error)(unsafe.Pointer(&es[0]))
 	err := C.rtdbs_get_coor_snapshots64_warp(C.rtdb_int32(handle), &count, cIds, cTs, cMs, cXs, cYs, cQs, cEs)
-	rtnEs := RtdbErrorListToErrorList(es[:count])
-	return ts[:count], ms[:count], xs[:count], ys[:count], qs[:count], rtnEs[:count], RtdbError(err).GoError()
+	return ts[:count], ms[:count], xs[:count], ys[:count], qs[:count], es[:count], RtdbError(err)
 }
 
 // RawRtdbsPutCoorSnapshots64Warp 批量写入坐标实时数据
@@ -8994,7 +8980,7 @@ func RawRtdbsGetCoorSnapshots64Warp(handle ConnectHandle, ids []PointID) ([]Time
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbs_put_coor_snapshots64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, const rtdb_float32* x, const rtdb_float32* y, const rtdb_int16* qualities, rtdb_error* errors)
-func RawRtdbsPutCoorSnapshots64Warp(handle ConnectHandle, ids []PointID, datetimes []TimestampType, ms []SubtimeType, xs []float32, ys []float32, qualities []Quality) ([]error, error) {
+func RawRtdbsPutCoorSnapshots64Warp(handle ConnectHandle, ids []PointID, datetimes []TimestampType, ms []SubtimeType, xs []float32, ys []float32, qualities []Quality) ([]RtdbError, RtdbError) {
 	count := C.rtdb_int32(len(ids))
 	cIds := (*C.rtdb_int32)(unsafe.Pointer(&ids[0]))
 	cDatetimes := (*C.rtdb_timestamp_type)(unsafe.Pointer(&datetimes[0]))
@@ -9005,8 +8991,7 @@ func RawRtdbsPutCoorSnapshots64Warp(handle ConnectHandle, ids []PointID, datetim
 	errs := make([]RtdbError, count)
 	cErrs := (*C.rtdb_error)(unsafe.Pointer(&errs[0]))
 	err := C.rtdbs_put_coor_snapshots64_warp(C.rtdb_int32(handle), &count, cIds, cDatetimes, cMs, cXs, cYs, cQualities, cErrs)
-	rtnEs := RtdbErrorListToErrorList(errs[:count])
-	return rtnEs[:count], RtdbError(err).GoError()
+	return errs[:count], RtdbError(err)
 }
 
 // RawRtdbsFixCoorSnapshots64Warp 批量写入坐标实时数据(修复写入)
@@ -9025,7 +9010,7 @@ func RawRtdbsPutCoorSnapshots64Warp(handle ConnectHandle, ids []PointID, datetim
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbs_fix_coor_snapshots64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, const rtdb_float32* x, const rtdb_float32* y, const rtdb_int16* qualities, rtdb_error* errors)
-func RawRtdbsFixCoorSnapshots64Warp(handle ConnectHandle, ids []PointID, datetimes []TimestampType, ms []SubtimeType, xs []float32, ys []float32, qualities []Quality) ([]error, error) {
+func RawRtdbsFixCoorSnapshots64Warp(handle ConnectHandle, ids []PointID, datetimes []TimestampType, ms []SubtimeType, xs []float32, ys []float32, qualities []Quality) ([]RtdbError, RtdbError) {
 	count := C.rtdb_int32(len(ids))
 	cIds := (*C.rtdb_int32)(unsafe.Pointer(&ids[0]))
 	cDatetimes := (*C.rtdb_timestamp_type)(unsafe.Pointer(&datetimes[0]))
@@ -9036,8 +9021,7 @@ func RawRtdbsFixCoorSnapshots64Warp(handle ConnectHandle, ids []PointID, datetim
 	errs := make([]RtdbError, count)
 	cErrs := (*C.rtdb_error)(unsafe.Pointer(&errs[0]))
 	err := C.rtdbs_fix_coor_snapshots64_warp(C.rtdb_int32(handle), &count, cIds, cDatetimes, cMs, cXs, cYs, cQualities, cErrs)
-	rtnEs := RtdbErrorListToErrorList(errs[:count])
-	return rtnEs[:count], RtdbError(err).GoError()
+	return errs[:count], RtdbError(err)
 }
 
 // RawRtdbsGetBlobSnapshot64Warp 读取二进制/字符串实时数据
@@ -9054,7 +9038,7 @@ func RawRtdbsFixCoorSnapshots64Warp(handle ConnectHandle, ids []PointID, datetim
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbs_get_blob_snapshot64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type* datetime, rtdb_subtime_type* subtime, rtdb_byte* blob, rtdb_length_type* len, rtdb_int16* quality)
-func RawRtdbsGetBlobSnapshot64Warp(handle ConnectHandle, id PointID, maxLen int32) (TimestampType, SubtimeType, []byte, Quality, error) {
+func RawRtdbsGetBlobSnapshot64Warp(handle ConnectHandle, id PointID, maxLen int32) (TimestampType, SubtimeType, []byte, Quality, RtdbError) {
 	datetime := C.rtdb_timestamp_type(0)
 	subtime := C.rtdb_subtime_type(0)
 	blob := make([]byte, maxLen)
@@ -9062,7 +9046,7 @@ func RawRtdbsGetBlobSnapshot64Warp(handle ConnectHandle, id PointID, maxLen int3
 	quality := C.rtdb_int16(0)
 	length := C.rtdb_length_type(len(blob))
 	e := C.rtdbs_get_blob_snapshot64_warp(C.rtdb_int32(handle), C.rtdb_int32(id), &datetime, &subtime, cBlob, &length, &quality)
-	return TimestampType(datetime), SubtimeType(subtime), blob[:length], Quality(quality), RtdbError(e).GoError()
+	return TimestampType(datetime), SubtimeType(subtime), blob[:length], Quality(quality), RtdbError(e)
 }
 
 // RawRtdbsGetBlobSnapshots64Warp 批量读取二进制/字符串实时数据
@@ -9080,7 +9064,7 @@ func RawRtdbsGetBlobSnapshot64Warp(handle ConnectHandle, id PointID, maxLen int3
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbs_get_blob_snapshots64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_byte* const* blobs, rtdb_length_type* lens, rtdb_int16* qualities, rtdb_error* errors)
-func RawRtdbsGetBlobSnapshots64Warp(handle ConnectHandle, ids []PointID, maxLen int32) ([]TimestampType, []SubtimeType, [][]byte, []Quality, []error, error) {
+func RawRtdbsGetBlobSnapshots64Warp(handle ConnectHandle, ids []PointID, maxLen int32) ([]TimestampType, []SubtimeType, [][]byte, []Quality, []RtdbError, RtdbError) {
 	cgoHandle := C.rtdb_int32(handle)
 	cgoCount := C.rtdb_int32(len(ids))
 	cgoIds := (*C.rtdb_int32)(unsafe.Pointer(&ids[0]))
@@ -9105,15 +9089,14 @@ func RawRtdbsGetBlobSnapshots64Warp(handle ConnectHandle, ids []PointID, maxLen 
 	cgoLens := (*C.rtdb_length_type)(unsafe.Pointer(&lens[0]))
 	qualities := make([]Quality, cgoCount)
 	cgoQualities := (*C.rtdb_int16)(unsafe.Pointer(&qualities[0]))
-	errors := make([]RtdbError, cgoCount)
-	cgoErrors := (*C.rtdb_error)(unsafe.Pointer(&errors[0]))
+	errs := make([]RtdbError, cgoCount)
+	cgoErrors := (*C.rtdb_error)(unsafe.Pointer(&errs[0]))
 	e := C.rtdbs_get_blob_snapshots64_warp(cgoHandle, &cgoCount, cgoIds, cgoDatetimes, cgoMs, cgoBlobs, cgoLens, cgoQualities, cgoErrors)
 	goBlobs := make([][]byte, 0)
 	for i := 0; i < int(cgoCount); i++ {
 		goBlobs = append(goBlobs, C.GoBytes(unsafe.Pointer(blobs[i]), C.int(lens[i])))
 	}
-	rtnErrs := RtdbErrorListToErrorList(errors[:cgoCount])
-	return datetimes[:cgoCount], ms[:cgoCount], goBlobs[:cgoCount], qualities[:cgoCount], rtnErrs[:cgoCount], RtdbError(e).GoError()
+	return datetimes[:cgoCount], ms[:cgoCount], goBlobs[:cgoCount], qualities[:cgoCount], errs[:cgoCount], RtdbError(e)
 }
 
 // RawRtdbsPutBlobSnapshot64Warp 写入二进制/字符串实时数据
@@ -9128,10 +9111,10 @@ func RawRtdbsGetBlobSnapshots64Warp(handle ConnectHandle, ids []PointID, maxLen 
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbs_put_blob_snapshot64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime, rtdb_subtime_type subtime, const rtdb_byte* blob, rtdb_length_type len, rtdb_int16 quality)
-func RawRtdbsPutBlobSnapshot64Warp(handle ConnectHandle, id PointID, datetime TimestampType, subtime SubtimeType, blob []byte, quality Quality) error {
+func RawRtdbsPutBlobSnapshot64Warp(handle ConnectHandle, id PointID, datetime TimestampType, subtime SubtimeType, blob []byte, quality Quality) RtdbError {
 	cBlob := (*C.rtdb_byte)(unsafe.Pointer(&blob[0]))
 	err := C.rtdbs_put_blob_snapshot64_warp(C.rtdb_int32(handle), C.rtdb_int32(id), C.rtdb_timestamp_type(datetime), C.rtdb_subtime_type(subtime), cBlob, C.rtdb_length_type(len(blob)), C.rtdb_int16(quality))
-	return RtdbError(err).GoError()
+	return RtdbError(err)
 }
 
 // RawRtdbsPutBlobSnapshots64Warp 批量写入二进制/字符串实时数据
@@ -9149,7 +9132,7 @@ func RawRtdbsPutBlobSnapshot64Warp(handle ConnectHandle, id PointID, datetime Ti
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbs_put_blob_snapshots64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, const rtdb_byte* const* blobs, const rtdb_length_type* lens, const rtdb_int16* qualities, rtdb_error* errors)
-func RawRtdbsPutBlobSnapshots64Warp(handle ConnectHandle, ids []PointID, datetimes []TimestampType, subtimes []SubtimeType, blobs []string, qualities []Quality) ([]error, error) {
+func RawRtdbsPutBlobSnapshots64Warp(handle ConnectHandle, ids []PointID, datetimes []TimestampType, subtimes []SubtimeType, blobs []string, qualities []Quality) ([]RtdbError, RtdbError) {
 	cgoHandle := C.rtdb_int32(handle)
 	cgoCount := C.rtdb_int32(len(ids))
 	cgoIds := (*C.rtdb_int32)(&ids[0])
@@ -9171,12 +9154,11 @@ func RawRtdbsPutBlobSnapshots64Warp(handle ConnectHandle, ids []PointID, datetim
 	}
 	cgoLens := (*C.rtdb_length_type)(unsafe.Pointer(&lens[0]))
 	cgoQualities := (*C.rtdb_int16)(unsafe.Pointer(&qualities[0]))
-	errors := make([]RtdbError, int(cgoCount))
-	cgoErrors := (*C.rtdb_error)(unsafe.Pointer(&errors[0]))
+	errs := make([]RtdbError, int(cgoCount))
+	cgoErrors := (*C.rtdb_error)(unsafe.Pointer(&errs[0]))
 
 	err := C.rtdbs_put_blob_snapshots64_warp(cgoHandle, &cgoCount, cgoIds, cgoDatetimes, cgoSubtimes, cgoBs, cgoLens, cgoQualities, cgoErrors)
-	rtnErr := RtdbErrorListToErrorList(errors[:cgoCount])
-	return rtnErr[:cgoCount], RtdbError(err).GoError()
+	return errs[:cgoCount], RtdbError(err)
 }
 
 // RawRtdbsGetDatetimeSnapshots64Warp 批量读取datetime类型标签点实时数据
@@ -9195,7 +9177,7 @@ func RawRtdbsPutBlobSnapshots64Warp(handle ConnectHandle, ids []PointID, datetim
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbs_get_datetime_snapshots64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_byte* const* dtvalues, rtdb_length_type* dtlens, rtdb_int16* qualities, rtdb_error* errors, rtdb_int16 type)
-func RawRtdbsGetDatetimeSnapshots64Warp(handle ConnectHandle, ids []PointID, typ int16) ([]TimestampType, []SubtimeType, []string, []Quality, []error, error) {
+func RawRtdbsGetDatetimeSnapshots64Warp(handle ConnectHandle, ids []PointID, typ int16) ([]TimestampType, []SubtimeType, []string, []Quality, []RtdbError, RtdbError) {
 	cgoHandle := C.rtdb_int32(handle)
 	count := len(ids)
 	cgoCount := C.rtdb_int32(count)
@@ -9221,8 +9203,8 @@ func RawRtdbsGetDatetimeSnapshots64Warp(handle ConnectHandle, ids []PointID, typ
 	cgoDtLens := (*C.rtdb_length_type)(unsafe.Pointer(&dtLens[0]))
 	qualities := make([]Quality, count)
 	cgoQualities := (*C.rtdb_int16)(unsafe.Pointer(&qualities[0]))
-	errors := make([]RtdbError, count)
-	cgoErrors := (*C.rtdb_error)(unsafe.Pointer(&errors[0]))
+	errs := make([]RtdbError, count)
+	cgoErrors := (*C.rtdb_error)(unsafe.Pointer(&errs[0]))
 	cgoType := C.rtdb_int16(typ)
 
 	err := C.rtdbs_get_datetime_snapshots64_warp(cgoHandle, &cgoCount, cgoIds, cgoDatetimes, cgoMs, cgoDtValues, cgoDtLens, cgoQualities, cgoErrors, cgoType)
@@ -9231,8 +9213,7 @@ func RawRtdbsGetDatetimeSnapshots64Warp(handle ConnectHandle, ids []PointID, typ
 		vv := C.GoBytes(unsafe.Pointer(v), 128)
 		goValues = append(goValues, string(vv[:dtLens[i]]))
 	}
-	rtnErr := RtdbErrorListToErrorList(errors[:cgoCount])
-	return datetimes[:cgoCount], ms[:cgoCount], goValues[:cgoCount], qualities[:cgoCount], rtnErr[:cgoCount], RtdbError(err)
+	return datetimes[:cgoCount], ms[:cgoCount], goValues[:cgoCount], qualities[:cgoCount], errs[:cgoCount], RtdbError(err)
 }
 
 // RawRtdbsPutDatetimeSnapshots64Warp 批量插入datetime类型标签点数据
@@ -9250,7 +9231,7 @@ func RawRtdbsGetDatetimeSnapshots64Warp(handle ConnectHandle, ids []PointID, typ
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbs_put_datetime_snapshots64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, const rtdb_byte* const* dtvalues, const rtdb_length_type* dtlens, const rtdb_int16* qualities, rtdb_error* errors)
-func RawRtdbsPutDatetimeSnapshots64Warp(handle ConnectHandle, ids []PointID, datetimes []TimestampType, subtimes []SubtimeType, dtValues []string, qualities []Quality) ([]error, error) {
+func RawRtdbsPutDatetimeSnapshots64Warp(handle ConnectHandle, ids []PointID, datetimes []TimestampType, subtimes []SubtimeType, dtValues []string, qualities []Quality) ([]RtdbError, RtdbError) {
 	cgoHandle := C.rtdb_int32(handle)
 	cgoCount := C.rtdb_int32(len(ids))
 	cgoIds := (*C.rtdb_int32)(unsafe.Pointer(&ids[0]))
@@ -9272,11 +9253,10 @@ func RawRtdbsPutDatetimeSnapshots64Warp(handle ConnectHandle, ids []PointID, dat
 		lens = append(lens, C.rtdb_length_type(len(s)))
 	}
 	cgoLens := (*C.rtdb_length_type)(unsafe.Pointer(&lens[0]))
-	errors := make([]RtdbError, len(ids))
-	cgoErrors := (*C.rtdb_error)(unsafe.Pointer(&errors[0]))
+	errs := make([]RtdbError, len(ids))
+	cgoErrors := (*C.rtdb_error)(unsafe.Pointer(&errs[0]))
 	err := C.rtdbs_put_datetime_snapshots64_warp(cgoHandle, &cgoCount, cgoIds, cgoDatetimes, cgoSubtimes, cgoValues, cgoLens, cgoQualities, cgoErrors)
-	rtnErrs := RtdbErrorListToErrorList(errors[:cgoCount])
-	return rtnErrs[:cgoCount], RtdbError(err)
+	return errs[:cgoCount], RtdbError(err)
 
 }
 
@@ -9329,13 +9309,12 @@ func RawRtdbsPutDatetimeSnapshots64Warp(handle ConnectHandle, ids []PointID, dat
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbs_subscribe_snapshots_ex64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, rtdb_uint32 options, void* param, rtdbs_snaps_event_ex64 callback, rtdb_error* errors)
-func RawRtdbsSubscribeSnapshotsEx64Warp(handle ConnectHandle, ids []PointID, options RtdbSubscribeOption, param unsafe.Pointer) ([]error, error) {
+func RawRtdbsSubscribeSnapshotsEx64Warp(handle ConnectHandle, ids []PointID, options RtdbSubscribeOption, param unsafe.Pointer) ([]RtdbError, RtdbError) {
 	cCount := C.rtdb_int32(len(ids))
 	cIds := (*C.rtdb_int32)(unsafe.Pointer(&ids[0]))
 	errs := make([]RtdbError, len(ids))
 	err := C.rtdbs_subscribe_snapshots_ex64_warp(C.rtdb_int32(handle), &cCount, cIds, C.rtdb_uint32(options), param, (C.rtdbs_snaps_event_ex64)(unsafe.Pointer(C.goSnapsEventEx)), (*C.rtdb_error)(unsafe.Pointer(&errs[0])))
-	rtnErrs := RtdbErrorListToErrorList(errs[:cCount])
-	return rtnErrs, RtdbError(err).GoError()
+	return errs[:cCount], RtdbError(err)
 }
 
 // RawRtdbsSubscribeDeltaSnapshots64Warp 批量标签点快照改变的通知订阅 (增量订阅，指的是数值超出一定变化后才会触发，可减少网络流量占用)
@@ -9388,7 +9367,7 @@ func RawRtdbsSubscribeSnapshotsEx64Warp(handle ConnectHandle, ids []PointID, opt
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbs_subscribe_delta_snapshots64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_float64* delta_values, const rtdb_int64* delta_states, rtdb_uint32 options, void* param, rtdbs_snaps_event_ex64 callback, rtdb_error* errors)
-func RawRtdbsSubscribeDeltaSnapshots64Warp(handle ConnectHandle, ids []PointID, deltaValues []float64, deltaStates []int64, options RtdbSubscribeOption, param unsafe.Pointer) ([]error, error) {
+func RawRtdbsSubscribeDeltaSnapshots64Warp(handle ConnectHandle, ids []PointID, deltaValues []float64, deltaStates []int64, options RtdbSubscribeOption, param unsafe.Pointer) ([]RtdbError, RtdbError) {
 	cCount := C.rtdb_int32(len(ids))
 	cIds := (*C.rtdb_int32)(unsafe.Pointer(&ids[0]))
 	cDeltaValues := (*C.rtdb_float64)(unsafe.Pointer(&deltaValues[0]))
@@ -9396,8 +9375,7 @@ func RawRtdbsSubscribeDeltaSnapshots64Warp(handle ConnectHandle, ids []PointID, 
 	errs := make([]RtdbError, len(ids))
 	cErrs := (*C.rtdb_error)(unsafe.Pointer(&errs[0]))
 	err := C.rtdbs_subscribe_delta_snapshots64_warp(C.rtdb_int32(handle), &cCount, cIds, cDeltaValues, cDeltaStates, C.rtdb_uint32(options), param, (C.rtdbs_snaps_event_ex64)(unsafe.Pointer(C.goSnapsEventEx)), cErrs)
-	rtnErrs := RtdbErrorListToErrorList(errs[:cCount])
-	return rtnErrs, RtdbError(err).GoError()
+	return errs[:cCount], RtdbError(err)
 }
 
 // RawRtdbsChangeSubscribeSnapshotsWarp 批量修改订阅标签点信息
@@ -9420,7 +9398,7 @@ func RawRtdbsSubscribeDeltaSnapshots64Warp(handle ConnectHandle, ids []PointID, 
 //   - 数据库的修改结果，会异步通知给api的回调函数，通过rtdbs_snaps_event_ex的RTDB_E_CHANGED事件通知修改结果
 //
 // rtdb_error RTDBAPI_CALLRULE rtdbs_change_subscribe_snapshots_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_float64* delta_values, const rtdb_int64* delta_states, const rtdb_int32* changed_types, rtdb_error* errors)
-func RawRtdbsChangeSubscribeSnapshotsWarp(handle ConnectHandle, ids []PointID, deltaValues []float64, deltaStates []int64, changedTypes []RtdbSubscribeChangeType) ([]error, error) {
+func RawRtdbsChangeSubscribeSnapshotsWarp(handle ConnectHandle, ids []PointID, deltaValues []float64, deltaStates []int64, changedTypes []RtdbSubscribeChangeType) ([]RtdbError, RtdbError) {
 	cCount := C.rtdb_int32(len(ids))
 	cIds := (*C.rtdb_int32)(unsafe.Pointer(&ids[0]))
 	cDeltaValues := (*C.rtdb_float64)(unsafe.Pointer(&deltaValues[0]))
@@ -9429,8 +9407,7 @@ func RawRtdbsChangeSubscribeSnapshotsWarp(handle ConnectHandle, ids []PointID, d
 	errs := make([]RtdbError, len(ids))
 	cErrs := (*C.rtdb_error)(unsafe.Pointer(&errs[0]))
 	err := C.rtdbs_change_subscribe_snapshots_warp(C.rtdb_int32(handle), &cCount, cIds, cDeltaValues, cDeltaStates, cChangedTypes, cErrs)
-	rtnErrs := RtdbErrorListToErrorList(errs[:cCount])
-	return rtnErrs, RtdbError(err).GoError()
+	return errs[:cCount], RtdbError(err)
 }
 
 // RawRtdbsCancelSubscribeSnapshotsWarp 取消标签点快照更改通知订阅
@@ -9440,9 +9417,9 @@ func RawRtdbsChangeSubscribeSnapshotsWarp(handle ConnectHandle, ids []PointID, d
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbs_cancel_subscribe_snapshots_warp(rtdb_int32 handle)
-func RawRtdbsCancelSubscribeSnapshotsWarp(handle ConnectHandle) error {
+func RawRtdbsCancelSubscribeSnapshotsWarp(handle ConnectHandle) RtdbError {
 	err := C.rtdbs_cancel_subscribe_snapshots_warp(C.rtdb_int32(handle))
-	return RtdbError(err).GoError()
+	return RtdbError(err)
 }
 
 // RawRtdbsGetNamedTypeSnapshot64Warp 获取自定义类型测点的单个快照
@@ -9459,7 +9436,7 @@ func RawRtdbsCancelSubscribeSnapshotsWarp(handle ConnectHandle) error {
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbs_get_named_type_snapshot64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type* datetime, rtdb_subtime_type* subtime, void* object, rtdb_length_type* length, rtdb_int16* quality)
-func RawRtdbsGetNamedTypeSnapshot64Warp(handle ConnectHandle, id PointID, cacheLen int32) (TimestampType, SubtimeType, []byte, Quality, error) {
+func RawRtdbsGetNamedTypeSnapshot64Warp(handle ConnectHandle, id PointID, cacheLen int32) (TimestampType, SubtimeType, []byte, Quality, RtdbError) {
 	datetime := TimestampType(0)
 	subtime := SubtimeType(0)
 	buf := make([]byte, cacheLen)
@@ -9467,7 +9444,7 @@ func RawRtdbsGetNamedTypeSnapshot64Warp(handle ConnectHandle, id PointID, cacheL
 	cLen := C.rtdb_length_type(cacheLen)
 	quality := Quality(0)
 	err := C.rtdbs_get_named_type_snapshot64_warp(C.rtdb_int32(handle), C.rtdb_int32(id), (*C.rtdb_timestamp_type)(&datetime), (*C.rtdb_subtime_type)(&subtime), cObj, &cLen, (*C.rtdb_int16)(&quality))
-	return datetime, subtime, buf[:cLen], quality, RtdbError(err).GoError()
+	return datetime, subtime, buf[:cLen], quality, RtdbError(err)
 }
 
 // RawRtdbsGetNamedTypeSnapshots64Warp 批量获取自定义类型测点的快照
@@ -9486,7 +9463,7 @@ func RawRtdbsGetNamedTypeSnapshot64Warp(handle ConnectHandle, id PointID, cacheL
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbs_get_named_type_snapshots64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, void* const* objects, rtdb_length_type* lengths, rtdb_int16* qualities, rtdb_error* errors)
-func RawRtdbsGetNamedTypeSnapshots64Warp(handle ConnectHandle, ids []PointID, lens []int32) ([]TimestampType, []SubtimeType, [][]byte, []Quality, []error, error) {
+func RawRtdbsGetNamedTypeSnapshots64Warp(handle ConnectHandle, ids []PointID, lens []int32) ([]TimestampType, []SubtimeType, [][]byte, []Quality, []RtdbError, RtdbError) {
 	cHandle := C.rtdb_int32(handle)
 	cCount := C.rtdb_int32(len(ids))
 	cIds := (*C.rtdb_int32)(unsafe.Pointer(&ids[0]))
@@ -9516,8 +9493,7 @@ func RawRtdbsGetNamedTypeSnapshots64Warp(handle ConnectHandle, ids []PointID, le
 	for i := 0; i < len(ids); i++ {
 		rtnObj = append(rtnObj, C.GoBytes(objects[i], C.int(lens[i])))
 	}
-	rtnErrs := RtdbErrorListToErrorList(errs[:cCount])
-	return datetimes[:cCount], subtimes[:cCount], rtnObj[:cCount], qualitys[:cCount], rtnErrs[:cCount], RtdbError(err).GoError()
+	return datetimes[:cCount], subtimes[:cCount], rtnObj[:cCount], qualitys[:cCount], errs[:cCount], RtdbError(err)
 }
 
 // RawRtdbsPutNamedTypeSnapshot64Warp 写入单个自定义类型标签点的快照
@@ -9532,9 +9508,9 @@ func RawRtdbsGetNamedTypeSnapshots64Warp(handle ConnectHandle, ids []PointID, le
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbs_put_named_type_snapshot64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime, rtdb_subtime_type subtime, const void* object, rtdb_length_type length, rtdb_int16 quality)
-func RawRtdbsPutNamedTypeSnapshot64Warp(handle ConnectHandle, id PointID, datetime TimestampType, subtime SubtimeType, object []byte, quality Quality) error {
+func RawRtdbsPutNamedTypeSnapshot64Warp(handle ConnectHandle, id PointID, datetime TimestampType, subtime SubtimeType, object []byte, quality Quality) RtdbError {
 	err := C.rtdbs_put_named_type_snapshot64_warp(C.rtdb_int32(handle), C.rtdb_int32(id), C.rtdb_timestamp_type(datetime), C.rtdb_subtime_type(subtime), unsafe.Pointer(&object[0]), C.rtdb_length_type(len(object)), C.rtdb_int16(quality))
-	return RtdbError(err).GoError()
+	return RtdbError(err)
 }
 
 // RawRtdbsPutNamedTypeSnapshots64Warp 批量写入自定义类型标签点的快照
@@ -9552,7 +9528,7 @@ func RawRtdbsPutNamedTypeSnapshot64Warp(handle ConnectHandle, id PointID, dateti
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbs_put_named_type_snapshots64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, const void* const* objects, const rtdb_length_type* lengths, const rtdb_int16* qualities, rtdb_error* errors)
-func RawRtdbsPutNamedTypeSnapshots64Warp(handle ConnectHandle, ids []PointID, datetimes []TimestampType, subtimes []SubtimeType, objects [][]byte, qualities []Quality) ([]error, error) {
+func RawRtdbsPutNamedTypeSnapshots64Warp(handle ConnectHandle, ids []PointID, datetimes []TimestampType, subtimes []SubtimeType, objects [][]byte, qualities []Quality) ([]RtdbError, RtdbError) {
 	cHandle := C.rtdb_int32(handle)
 	cCount := C.rtdb_int32(len(objects))
 	cIds := (*C.rtdb_int32)(unsafe.Pointer(&ids[0]))
@@ -9578,8 +9554,7 @@ func RawRtdbsPutNamedTypeSnapshots64Warp(handle ConnectHandle, ids []PointID, da
 	errs := make([]RtdbError, len(objects))
 	cErrs := (*C.rtdb_error)(unsafe.Pointer(&errs[0]))
 	err := C.rtdbs_put_named_type_snapshots64_warp(cHandle, &cCount, cIds, cDatetimes, cSubtimes, &ptrs[0], cLens, cQualities, cErrs)
-	rtnErr := RtdbErrorListToErrorList(errs)
-	return rtnErr, RtdbError(err).GoError()
+	return errs[:len(objects)], RtdbError(err)
 }
 
 // RawRtdbaGetArchivesCountWarp 获取存档文件数量
@@ -9592,10 +9567,10 @@ func RawRtdbsPutNamedTypeSnapshots64Warp(handle ConnectHandle, ids []PointID, da
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdba_get_archives_count_warp(rtdb_int32 handle, rtdb_int32 *count)
-func RawRtdbaGetArchivesCountWarp(handle ConnectHandle) (int32, error) {
+func RawRtdbaGetArchivesCountWarp(handle ConnectHandle) (int32, RtdbError) {
 	count := C.rtdb_int32(0)
 	err := C.rtdba_get_archives_count_warp(C.rtdb_int32(handle), &count)
-	return int32(count), RtdbError(err).GoError()
+	return int32(count), RtdbError(err)
 }
 
 // RawRtdbaCreateRangedArchive64Warp 新建指定时间范围的历史存档文件并插入到历史数据库
@@ -9610,14 +9585,14 @@ func RawRtdbaGetArchivesCountWarp(handle ConnectHandle) (int32, error) {
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdba_create_ranged_archive64_warp(rtdb_int32 handle, const char* path, const char* file, rtdb_timestamp_type begin, rtdb_timestamp_type end, rtdb_int32 mb_size)
-func RawRtdbaCreateRangedArchive64Warp(handle ConnectHandle, path string, file string, begin TimestampType, end TimestampType, mbSize int32) error {
+func RawRtdbaCreateRangedArchive64Warp(handle ConnectHandle, path string, file string, begin TimestampType, end TimestampType, mbSize int32) RtdbError {
 	cHandle := C.rtdb_int32(handle)
 	cPath := C.CString(path)
 	defer C.free(unsafe.Pointer(cPath))
 	cFile := C.CString(file)
 	defer C.free(unsafe.Pointer(cFile))
 	err := C.rtdba_create_ranged_archive64_warp(cHandle, cPath, cFile, C.rtdb_timestamp_type(begin), C.rtdb_timestamp_type(end), C.rtdb_int32(mbSize))
-	return RtdbError(err).GoError()
+	return RtdbError(err)
 }
 
 // RawRtdbaAppendArchiveWarp 追加磁盘上的历史存档文件到历史数据库。
@@ -9630,14 +9605,14 @@ func RawRtdbaCreateRangedArchive64Warp(handle ConnectHandle, path string, file s
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdba_append_archive_warp(rtdb_int32 handle, const char *path, const char *file, rtdb_int32 state)
-func RawRtdbaAppendArchiveWarp(handle ConnectHandle, path string, file string, state RtdbArchiveState) error {
+func RawRtdbaAppendArchiveWarp(handle ConnectHandle, path string, file string, state RtdbArchiveState) RtdbError {
 	cHandle := C.rtdb_int32(handle)
 	cPath := C.CString(path)
 	defer C.free(unsafe.Pointer(cPath))
 	cFile := C.CString(file)
 	defer C.free(unsafe.Pointer(cFile))
 	err := C.rtdba_append_archive_warp(cHandle, cPath, cFile, C.rtdb_int32(state))
-	return RtdbError(err).GoError()
+	return RtdbError(err)
 }
 
 // RawRtdbaRemoveArchiveWarp 从历史数据库中移出历史存档文件。
@@ -9649,14 +9624,14 @@ func RawRtdbaAppendArchiveWarp(handle ConnectHandle, path string, file string, s
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdba_remove_archive_warp(rtdb_int32 handle, const char *path, const char *file)
-func RawRtdbaRemoveArchiveWarp(handle ConnectHandle, path string, file string) error {
+func RawRtdbaRemoveArchiveWarp(handle ConnectHandle, path string, file string) RtdbError {
 	cHandle := C.rtdb_int32(handle)
 	cPath := C.CString(path)
 	defer C.free(unsafe.Pointer(cPath))
 	cFile := C.CString(file)
 	defer C.free(unsafe.Pointer(cFile))
 	err := C.rtdba_remove_archive_warp(cHandle, cPath, cFile)
-	return RtdbError(err).GoError()
+	return RtdbError(err)
 }
 
 // RawRtdbaShiftActivedWarp 切换活动文件
@@ -9675,9 +9650,9 @@ func RawRtdbaRemoveArchiveWarp(handle ConnectHandle, path string, file string) e
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdba_shift_actived_warp(rtdb_int32 handle)
-func RawRtdbaShiftActivedWarp(handle ConnectHandle) error {
+func RawRtdbaShiftActivedWarp(handle ConnectHandle) RtdbError {
 	err := C.rtdba_shift_actived_warp(C.rtdb_int32(handle))
-	return RtdbError(err).GoError()
+	return RtdbError(err)
 }
 
 // RawRtdbaGetArchivesWarp 获取存档文件的路径、名称、状态和最早允许写入时间。
@@ -9692,10 +9667,10 @@ func RawRtdbaShiftActivedWarp(handle ConnectHandle) error {
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdba_get_archives_warp(rtdb_int32 handle, rtdb_int32* count, rtdb_path_string* paths, rtdb_filename_string* files, rtdb_int32 *states)
-func RawRtdbaGetArchivesWarp(handle ConnectHandle) ([]string, []string, []RtdbArchiveState, error) {
+func RawRtdbaGetArchivesWarp(handle ConnectHandle) ([]string, []string, []RtdbArchiveState, RtdbError) {
 	count, err := RawRtdbaGetArchivesCountWarp(handle)
-	if err != nil {
-		return nil, nil, nil, err
+	if err.IsOk() {
+		return nil, nil, nil, RtdbError(RteOk)
 	}
 	cCount := C.rtdb_int32(count)
 	paths := make([]C.rtdb_path_string, count)
@@ -9712,7 +9687,7 @@ func RawRtdbaGetArchivesWarp(handle ConnectHandle) ([]string, []string, []RtdbAr
 		str := C.GoString((*C.char)(unsafe.Pointer(&files[i][0])))
 		goFiles = append(goFiles, str)
 	}
-	return goPaths[:cCount], goFiles[:cCount], states[:cCount], RtdbError(e).GoError()
+	return goPaths[:cCount], goFiles[:cCount], states[:cCount], RtdbError(e)
 }
 
 // RawRtdbaGetArchivesInfoWarp 获取存档信息
@@ -9729,7 +9704,7 @@ func RawRtdbaGetArchivesWarp(handle ConnectHandle) ([]string, []string, []RtdbAr
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdba_get_archives_info_warp( rtdb_int32 handle, rtdb_int32* count, const rtdb_path_string* const paths, const rtdb_filename_string* const files, RTDB_HEADER_PAGE *infos, rtdb_error* errors)
-func RawRtdbaGetArchivesInfoWarp(handle ConnectHandle, count int32) ([]string, []string, []RtdbHeaderPage, []error, error) {
+func RawRtdbaGetArchivesInfoWarp(handle ConnectHandle, count int32) ([]string, []string, []RtdbHeaderPage, []RtdbError, RtdbError) {
 	cHandle := C.rtdb_int32(handle)
 	cCount := C.rtdb_int32(count)
 	paths := make([]C.rtdb_path_string, count)
@@ -9755,8 +9730,7 @@ func RawRtdbaGetArchivesInfoWarp(handle ConnectHandle, count int32) ([]string, [
 	for i := int32(0); i < int32(cCount); i++ {
 		goPages = append(goPages, *cToGoRtdbHeaderPage(&infos[i]))
 	}
-	goErr := RtdbErrorListToErrorList(errs[:cCount])
-	return goPaths, goFiles, goPages, goErr, RtdbError(err).GoError()
+	return goPaths, goFiles, goPages, errs[:cCount], RtdbError(err)
 }
 
 // RawRtdbaGetArchivesPerfDataWarp 获取存档的实时信息(可用于分析存档处理的性能, 存档性能监控数据)
@@ -9774,7 +9748,7 @@ func RawRtdbaGetArchivesInfoWarp(handle ConnectHandle, count int32) ([]string, [
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdba_get_archives_perf_data_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_path_string* const paths, const rtdb_filename_string* const files, RTDB_ARCHIVE_PERF_DATA* real_time_datas, RTDB_ARCHIVE_PERF_DATA* total_datas, rtdb_error* errors)
-func RawRtdbaGetArchivesPerfDataWarp(handle ConnectHandle, count int32) ([]string, []string, []RtdbArchivePerfData, []RtdbArchivePerfData, []error, error) {
+func RawRtdbaGetArchivesPerfDataWarp(handle ConnectHandle, count int32) ([]string, []string, []RtdbArchivePerfData, []RtdbArchivePerfData, []RtdbError, RtdbError) {
 	cHandle := C.rtdb_int32(handle)
 	cCount := C.rtdb_int32(count)
 	paths := make([]C.rtdb_path_string, count)
@@ -9806,8 +9780,7 @@ func RawRtdbaGetArchivesPerfDataWarp(handle ConnectHandle, count int32) ([]strin
 	for i := int32(0); i < int32(cCount); i++ {
 		goTotalDatas = append(goTotalDatas, *cToGoRtdbArchivePerfData(&readTimeDatas[i]))
 	}
-	goErr := RtdbErrorListToErrorList(errs[:cCount])
-	return goPaths, goFiles, goReadTimeDatas, goTotalDatas, goErr, RtdbError(err).GoError()
+	return goPaths, goFiles, goReadTimeDatas, goTotalDatas, errs[:cCount], RtdbError(err)
 }
 
 // RawRtdbaGetArchivesStatusWarp 获取存档状态
@@ -9820,10 +9793,10 @@ func RawRtdbaGetArchivesPerfDataWarp(handle ConnectHandle, count int32) ([]strin
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdba_get_archives_status_warp(rtdb_int32 handle, rtdb_error* status)
-func RawRtdbaGetArchivesStatusWarp(handle ConnectHandle) (RtdbArchiveState, error) {
+func RawRtdbaGetArchivesStatusWarp(handle ConnectHandle) (RtdbArchiveState, RtdbError) {
 	state := RtdbArchiveState(0)
 	err := C.rtdba_get_archives_status_warp(C.rtdb_int32(handle), (*C.rtdb_error)(&state))
-	return state, RtdbError(err).GoError()
+	return state, RtdbError(err)
 }
 
 // RawRtdbaGetArchiveInfoWarp 获取存档文件及其附属文件的详细信息。
@@ -9839,7 +9812,7 @@ func RawRtdbaGetArchivesStatusWarp(handle ConnectHandle) (RtdbArchiveState, erro
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdba_get_archive_info_warp(rtdb_int32 handle, const char *path, const char *file, rtdb_int32 file_id, RTDB_HEADER_PAGE *info)
-func RawRtdbaGetArchiveInfoWarp(handle ConnectHandle, path string, file string, fileId int32) (*RtdbHeaderPage, error) {
+func RawRtdbaGetArchiveInfoWarp(handle ConnectHandle, path string, file string, fileId int32) (*RtdbHeaderPage, RtdbError) {
 	cHandle := C.rtdb_int32(handle)
 	cPath := C.CString(path)
 	defer C.free(unsafe.Pointer(cPath))
@@ -9849,7 +9822,7 @@ func RawRtdbaGetArchiveInfoWarp(handle ConnectHandle, path string, file string, 
 	cPage := C.RTDB_HEADER_PAGE{}
 	err := C.rtdba_get_archive_info_warp(cHandle, cPath, cFile, cFileId, &cPage)
 	goPage := cToGoRtdbHeaderPage(&cPage)
-	return goPage, RtdbError(err).GoError()
+	return goPage, RtdbError(err)
 }
 
 // RawRtdbaUpdateArchiveWarp 修改存档文件的可配置项。
@@ -9866,7 +9839,7 @@ func RawRtdbaGetArchiveInfoWarp(handle ConnectHandle, path string, file string, 
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdba_update_archive_warp(rtdb_int32 handle, const char *path, const char *file, rtdb_int32 rated_capacity, rtdb_int32 ex_capacity, rtdb_int16 auto_merge, rtdb_int16 auto_arrange)
-func RawRtdbaUpdateArchiveWarp(handle ConnectHandle, path string, file string, ratedCapacity int32, exCapacity int32, autoMerge int16, autoArrange int16) error {
+func RawRtdbaUpdateArchiveWarp(handle ConnectHandle, path string, file string, ratedCapacity int32, exCapacity int32, autoMerge int16, autoArrange int16) RtdbError {
 	cHandle := C.rtdb_int32(handle)
 	cPath := C.CString(path)
 	defer C.free(unsafe.Pointer(cPath))
@@ -9877,7 +9850,7 @@ func RawRtdbaUpdateArchiveWarp(handle ConnectHandle, path string, file string, r
 	cAutoMerge := C.rtdb_int16(autoMerge)
 	cAutoArrange := C.rtdb_int16(autoArrange)
 	err := C.rtdba_update_archive_warp(cHandle, cPath, cFile, cRatedCapacity, cExCapacity, cAutoMerge, cAutoArrange)
-	return RtdbError(err).GoError()
+	return RtdbError(err)
 }
 
 // RawRtdbaArrangeArchiveWarp 整理存档文件，将同一标签点的数据块存放在一起以提高查询效率。
@@ -9889,14 +9862,14 @@ func RawRtdbaUpdateArchiveWarp(handle ConnectHandle, path string, file string, r
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdba_arrange_archive_warp(rtdb_int32 handle, const char *path, const char *file)
-func RawRtdbaArrangeArchiveWarp(handle ConnectHandle, path string, file string) error {
+func RawRtdbaArrangeArchiveWarp(handle ConnectHandle, path string, file string) RtdbError {
 	cHandle := C.rtdb_int32(handle)
 	cPath := C.CString(path)
 	defer C.free(unsafe.Pointer(cPath))
 	cFile := C.CString(file)
 	defer C.free(unsafe.Pointer(cFile))
 	err := C.rtdba_arrange_archive_warp(cHandle, cPath, cFile)
-	return RtdbError(err).GoError()
+	return RtdbError(err)
 }
 
 // RawRtdbaReindexArchiveWarp 为存档文件重新生成索引，用于恢复数据。
@@ -9908,14 +9881,14 @@ func RawRtdbaArrangeArchiveWarp(handle ConnectHandle, path string, file string) 
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdba_reindex_archive_warp(rtdb_int32 handle, const char *path, const char *file)
-func RawRtdbaReindexArchiveWarp(handle ConnectHandle, path string, file string) error {
+func RawRtdbaReindexArchiveWarp(handle ConnectHandle, path string, file string) RtdbError {
 	cHandle := C.rtdb_int32(handle)
 	cPath := C.CString(path)
 	defer C.free(unsafe.Pointer(cPath))
 	cFile := C.CString(file)
 	defer C.free(unsafe.Pointer(cFile))
 	err := C.rtdba_reindex_archive_warp(cHandle, cPath, cFile)
-	return RtdbError(err).GoError()
+	return RtdbError(err)
 }
 
 // RawRtdbaBackupArchiveWarp 备份主存档文件及其附属文件到指定路径
@@ -9928,7 +9901,7 @@ func RawRtdbaReindexArchiveWarp(handle ConnectHandle, path string, file string) 
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdba_backup_archive_warp(rtdb_int32 handle, const char *path, const char *file, const char *dest)
-func RawRtdbaBackupArchiveWarp(handle ConnectHandle, path string, file string, dest string) error {
+func RawRtdbaBackupArchiveWarp(handle ConnectHandle, path string, file string, dest string) RtdbError {
 	cHandle := C.rtdb_int32(handle)
 	cPath := C.CString(path)
 	defer C.free(unsafe.Pointer(cPath))
@@ -9937,7 +9910,7 @@ func RawRtdbaBackupArchiveWarp(handle ConnectHandle, path string, file string, d
 	cDest := C.CString(dest)
 	defer C.free(unsafe.Pointer(cDest))
 	err := C.rtdba_backup_archive_warp(cHandle, cPath, cFile, cDest)
-	return RtdbError(err).GoError()
+	return RtdbError(err)
 }
 
 // RawRtdbaMoveArchiveWarp 将存档文件移动到指定目录
@@ -9950,7 +9923,7 @@ func RawRtdbaBackupArchiveWarp(handle ConnectHandle, path string, file string, d
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdba_move_archive_warp(rtdb_int32 handle, const char *path, const char *file, const char *dest)
-func RawRtdbaMoveArchiveWarp(handle ConnectHandle, path string, file string, dest string) error {
+func RawRtdbaMoveArchiveWarp(handle ConnectHandle, path string, file string, dest string) RtdbError {
 	cHandle := C.rtdb_int32(handle)
 	cPath := C.CString(path)
 	defer C.free(unsafe.Pointer(cPath))
@@ -9959,7 +9932,7 @@ func RawRtdbaMoveArchiveWarp(handle ConnectHandle, path string, file string, des
 	cDest := C.CString(dest)
 	defer C.free(unsafe.Pointer(cDest))
 	err := C.rtdba_move_archive_warp(cHandle, cPath, cFile, cDest)
-	return RtdbError(err).GoError()
+	return RtdbError(err)
 }
 
 // RawRtdbaConvertIndexWarp 为存档文件转换索引格式。
@@ -9971,14 +9944,14 @@ func RawRtdbaMoveArchiveWarp(handle ConnectHandle, path string, file string, des
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdba_convert_index_warp(rtdb_int32 handle, const char *path, const char *file)
-func RawRtdbaConvertIndexWarp(handle ConnectHandle, path string, file string) error {
+func RawRtdbaConvertIndexWarp(handle ConnectHandle, path string, file string) RtdbError {
 	cHandle := C.rtdb_int32(handle)
 	cPath := C.CString(path)
 	defer C.free(unsafe.Pointer(cPath))
 	cFile := C.CString(file)
 	defer C.free(unsafe.Pointer(cFile))
 	err := C.rtdba_convert_index_warp(cHandle, cPath, cFile)
-	return RtdbError(err).GoError()
+	return RtdbError(err)
 }
 
 // RawRtdbaQueryBigJob64Warp 查询进程正在执行的后台任务类型、状态和进度
@@ -10017,7 +9990,7 @@ func RawRtdbaConvertIndexWarp(handle ConnectHandle, path string, file string) er
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdba_query_big_job64_warp(rtdb_int32 handle, rtdb_int32 process, char* path, char* file, rtdb_int16* job, rtdb_int32* state, rtdb_timestamp_type* end_time, rtdb_float32* progress)
-func RawRtdbaQueryBigJob64Warp(handle ConnectHandle, processName RtdbProcess) (string, string, BigJobName, RtdbError, TimestampType, float32, error) {
+func RawRtdbaQueryBigJob64Warp(handle ConnectHandle, processName RtdbProcess) (string, string, BigJobName, RtdbError, TimestampType, float32, RtdbError) {
 	cHandle := C.rtdb_int32(handle)
 	cProcessName := C.rtdb_int32(processName)
 	cPath := C.rtdb_path_string{}
@@ -10029,7 +10002,7 @@ func RawRtdbaQueryBigJob64Warp(handle ConnectHandle, processName RtdbProcess) (s
 	err := C.rtdba_query_big_job64_warp(cHandle, cProcessName, &cPath[0], &cName[0], (*C.rtdb_int16)(&jobID), (*C.rtdb_int32)(&state), (*C.rtdb_timestamp_type)(&endTime), (*C.rtdb_float32)(&process))
 	goPath := C.GoString(&cPath[0])
 	goName := C.GoString(&cName[0])
-	return goPath, goName, jobID, RtdbError(state), endTime, process, RtdbError(err).GoError()
+	return goPath, goName, jobID, RtdbError(state), endTime, process, RtdbError(err)
 }
 
 // RawRtdbaCancelBigJobWarp 取消进程正在执行的后台任务
@@ -10040,9 +10013,9 @@ func RawRtdbaQueryBigJob64Warp(handle ConnectHandle, processName RtdbProcess) (s
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdba_cancel_big_job_warp(rtdb_int32 handle, rtdb_int32 process)
-func RawRtdbaCancelBigJobWarp(handle ConnectHandle, process RtdbProcess) error {
+func RawRtdbaCancelBigJobWarp(handle ConnectHandle, process RtdbProcess) RtdbError {
 	err := C.rtdba_cancel_big_job_warp(C.rtdb_int32(handle), C.rtdb_int32(process))
-	return RtdbError(err).GoError()
+	return RtdbError(err)
 }
 
 // RawRtdbhArchivedValuesCount64Warp 获取单个标签点在一段时间范围内的存储值数量. (这个比较快，只需要读取索引，用于估算，无法处理标记删除)
@@ -10062,7 +10035,7 @@ func RawRtdbaCancelBigJobWarp(handle ConnectHandle, process RtdbProcess) error {
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbh_archived_values_count64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime1, rtdb_subtime_type subtime1, rtdb_timestamp_type datetime2, rtdb_subtime_type subtime2, rtdb_int32* count)
-func RawRtdbhArchivedValuesCount64Warp(handle ConnectHandle, id PointID, datetime1 TimestampType, subtime1 SubtimeType, datetime2 TimestampType, subtime2 SubtimeType) (int32, error) {
+func RawRtdbhArchivedValuesCount64Warp(handle ConnectHandle, id PointID, datetime1 TimestampType, subtime1 SubtimeType, datetime2 TimestampType, subtime2 SubtimeType) (int32, RtdbError) {
 	cHandle := C.rtdb_int32(handle)
 	cId := C.rtdb_int32(id)
 	cDatetime1 := C.rtdb_timestamp_type(datetime1)
@@ -10071,7 +10044,7 @@ func RawRtdbhArchivedValuesCount64Warp(handle ConnectHandle, id PointID, datetim
 	cSubtime2 := C.rtdb_subtime_type(subtime2)
 	cCount := C.rtdb_int32(0)
 	err := C.rtdbh_archived_values_count64_warp(cHandle, cId, cDatetime1, cSubtime1, cDatetime2, cSubtime2, &cCount)
-	return int32(cCount), RtdbError(err).GoError()
+	return int32(cCount), RtdbError(err)
 }
 
 // RawRtdbhArchivedValuesRealCount64Warp 获取单个标签点在一段时间范围内的真实的存储值数量. (这个比较慢，需要全量读取)
@@ -10091,7 +10064,7 @@ func RawRtdbhArchivedValuesCount64Warp(handle ConnectHandle, id PointID, datetim
 //
 // raw_fn:
 // rtdb_error RTDBAPI_CALLRULE rtdbh_archived_values_real_count64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime1, rtdb_subtime_type subtime1, rtdb_timestamp_type datetime2, rtdb_subtime_type subtime2, rtdb_int32* count)
-func RawRtdbhArchivedValuesRealCount64Warp(handle ConnectHandle, id PointID, datetime1 TimestampType, subtime1 SubtimeType, datetime2 TimestampType, subtime2 SubtimeType) (int32, error) {
+func RawRtdbhArchivedValuesRealCount64Warp(handle ConnectHandle, id PointID, datetime1 TimestampType, subtime1 SubtimeType, datetime2 TimestampType, subtime2 SubtimeType) (int32, RtdbError) {
 	cHandle := C.rtdb_int32(handle)
 	cId := C.rtdb_int32(id)
 	cDatetime1 := C.rtdb_timestamp_type(datetime1)
@@ -10100,7 +10073,7 @@ func RawRtdbhArchivedValuesRealCount64Warp(handle ConnectHandle, id PointID, dat
 	cSubtime2 := C.rtdb_subtime_type(subtime2)
 	cCount := C.rtdb_int32(0)
 	err := C.rtdbh_archived_values_real_count64_warp(cHandle, cId, cDatetime1, cSubtime1, cDatetime2, cSubtime2, &cCount)
-	return int32(cCount), RtdbError(err).GoError()
+	return int32(cCount), RtdbError(err)
 }
 
 // RawRtdbhGetArchivedValues64Warp 读取单个标签点一段时间内的储存数据
@@ -10123,7 +10096,7 @@ func RawRtdbhArchivedValuesRealCount64Warp(handle ConnectHandle, id PointID, dat
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbh_get_archived_values64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32* count, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float64* values, rtdb_int64* states, rtdb_int16* qualities)
-func RawRtdbhGetArchivedValues64Warp(handle ConnectHandle, id PointID, count int32, datetime1 TimestampType, subtime1 SubtimeType, datetime2 TimestampType, subtime2 SubtimeType) ([]TimestampType, []SubtimeType, []float64, []int64, []Quality, error) {
+func RawRtdbhGetArchivedValues64Warp(handle ConnectHandle, id PointID, count int32, datetime1 TimestampType, subtime1 SubtimeType, datetime2 TimestampType, subtime2 SubtimeType) ([]TimestampType, []SubtimeType, []float64, []int64, []Quality, RtdbError) {
 	cHandle := C.rtdb_int32(handle)
 	cId := C.rtdb_int32(id)
 	cCount := C.rtdb_int32(count)
@@ -10142,7 +10115,7 @@ func RawRtdbhGetArchivedValues64Warp(handle ConnectHandle, id PointID, count int
 	qualities := make([]Quality, count)
 	cQualities := (*C.rtdb_int16)(unsafe.Pointer(&qualities[0]))
 	err := C.rtdbh_get_archived_values64_warp(cHandle, cId, &cCount, cDatetimes, cSubtimes, cValues, cStates, cQualities)
-	return datetimes[:cCount], subtimes[:cCount], values[:cCount], states[:cCount], qualities[:cCount], RtdbError(err).GoError()
+	return datetimes[:cCount], subtimes[:cCount], values[:cCount], states[:cCount], qualities[:cCount], RtdbError(err)
 }
 
 // RawRtdbhGetArchivedValuesBackward64Warp 逆向读取单个标签点一段时间内的储存数据
@@ -10165,7 +10138,7 @@ func RawRtdbhGetArchivedValues64Warp(handle ConnectHandle, id PointID, count int
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbh_get_archived_values_backward64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32* count, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float64* values, rtdb_int64* states, rtdb_int16* qualities)
-func RawRtdbhGetArchivedValuesBackward64Warp(handle ConnectHandle, id PointID, count int32, datetime1 TimestampType, subtime1 SubtimeType, datetime2 TimestampType, subtime2 SubtimeType) ([]TimestampType, []SubtimeType, []float64, []int64, []Quality, error) {
+func RawRtdbhGetArchivedValuesBackward64Warp(handle ConnectHandle, id PointID, count int32, datetime1 TimestampType, subtime1 SubtimeType, datetime2 TimestampType, subtime2 SubtimeType) ([]TimestampType, []SubtimeType, []float64, []int64, []Quality, RtdbError) {
 	cHandle := C.rtdb_int32(handle)
 	cId := C.rtdb_int32(id)
 	cCount := C.rtdb_int32(count)
@@ -10184,7 +10157,7 @@ func RawRtdbhGetArchivedValuesBackward64Warp(handle ConnectHandle, id PointID, c
 	qualities := make([]Quality, count)
 	cQualities := (*C.rtdb_int16)(unsafe.Pointer(&qualities[0]))
 	err := C.rtdbh_get_archived_values_backward64_warp(cHandle, cId, &cCount, cDatetimes, cSubtimes, cValues, cStates, cQualities)
-	return datetimes[:cCount], subtimes[:cCount], values[:cCount], states[:cCount], qualities[:cCount], RtdbError(err).GoError()
+	return datetimes[:cCount], subtimes[:cCount], values[:cCount], states[:cCount], qualities[:cCount], RtdbError(err)
 }
 
 // RawRtdbhGetArchivedCoorValues64Warp 读取单个标签点一段时间内的坐标型储存数据
@@ -10207,7 +10180,7 @@ func RawRtdbhGetArchivedValuesBackward64Warp(handle ConnectHandle, id PointID, c
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbh_get_archived_coor_values64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32* count, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float32* x, rtdb_float32* y, rtdb_int16* qualities)
-func RawRtdbhGetArchivedCoorValues64Warp(handle ConnectHandle, id PointID, count int32, datetime1 TimestampType, subtime1 SubtimeType, datetime2 TimestampType, subtime2 SubtimeType) ([]TimestampType, []SubtimeType, []float32, []float32, []Quality, error) {
+func RawRtdbhGetArchivedCoorValues64Warp(handle ConnectHandle, id PointID, count int32, datetime1 TimestampType, subtime1 SubtimeType, datetime2 TimestampType, subtime2 SubtimeType) ([]TimestampType, []SubtimeType, []float32, []float32, []Quality, RtdbError) {
 	cHandle := C.rtdb_int32(handle)
 	cId := C.rtdb_int32(id)
 	cCount := C.rtdb_int32(count)
@@ -10226,7 +10199,7 @@ func RawRtdbhGetArchivedCoorValues64Warp(handle ConnectHandle, id PointID, count
 	qualities := make([]Quality, count)
 	cQualities := (*C.rtdb_int16)(unsafe.Pointer(&qualities[0]))
 	err := C.rtdbh_get_archived_coor_values64_warp(cHandle, cId, &cCount, cDatetimes, cSubtimes, cXs, cYs, cQualities)
-	return datetimes[:cCount], subtimes[:cCount], xs[:cCount], ys[:cCount], qualities[:cCount], RtdbError(err).GoError()
+	return datetimes[:cCount], subtimes[:cCount], xs[:cCount], ys[:cCount], qualities[:cCount], RtdbError(err)
 }
 
 // RawRtdbhGetArchivedCoorValuesBackward64Warp 逆向读取单个标签点一段时间内的坐标型储存数据
@@ -10249,7 +10222,7 @@ func RawRtdbhGetArchivedCoorValues64Warp(handle ConnectHandle, id PointID, count
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbh_get_archived_coor_values_backward64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32* count, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float32* x, rtdb_float32* y, rtdb_int16* qualities)
-func RawRtdbhGetArchivedCoorValuesBackward64Warp(handle ConnectHandle, id PointID, count int32, datetime1 TimestampType, subtime1 SubtimeType, datetime2 TimestampType, subtime2 SubtimeType) ([]TimestampType, []SubtimeType, []float32, []float32, []Quality, error) {
+func RawRtdbhGetArchivedCoorValuesBackward64Warp(handle ConnectHandle, id PointID, count int32, datetime1 TimestampType, subtime1 SubtimeType, datetime2 TimestampType, subtime2 SubtimeType) ([]TimestampType, []SubtimeType, []float32, []float32, []Quality, RtdbError) {
 	cHandle := C.rtdb_int32(handle)
 	cId := C.rtdb_int32(id)
 	cCount := C.rtdb_int32(count)
@@ -10268,7 +10241,7 @@ func RawRtdbhGetArchivedCoorValuesBackward64Warp(handle ConnectHandle, id PointI
 	qualities := make([]Quality, count)
 	cQualities := (*C.rtdb_int16)(unsafe.Pointer(&qualities[0]))
 	err := C.rtdbh_get_archived_coor_values_backward64_warp(cHandle, cId, &cCount, cDatetimes, cSubtimes, cXs, cYs, cQualities)
-	return datetimes[:cCount], subtimes[:cCount], xs[:cCount], ys[:cCount], qualities[:cCount], RtdbError(err).GoError()
+	return datetimes[:cCount], subtimes[:cCount], xs[:cCount], ys[:cCount], qualities[:cCount], RtdbError(err)
 }
 
 // RawRtdbhGetArchivedValuesInBatches64Warp 开始以分段返回方式读取一段时间内的储存数据
@@ -10288,7 +10261,7 @@ func RawRtdbhGetArchivedCoorValuesBackward64Warp(handle ConnectHandle, id PointI
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbh_get_archived_values_in_batches64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime1, rtdb_subtime_type subtime1, rtdb_timestamp_type datetime2, rtdb_subtime_type subtime2, rtdb_int32* count, rtdb_int32* batch_count)
-func RawRtdbhGetArchivedValuesInBatches64Warp(handle ConnectHandle, id PointID, datetime1 TimestampType, subtime1 SubtimeType, datetime2 TimestampType, subtime2 SubtimeType) (int32, int32, error) {
+func RawRtdbhGetArchivedValuesInBatches64Warp(handle ConnectHandle, id PointID, datetime1 TimestampType, subtime1 SubtimeType, datetime2 TimestampType, subtime2 SubtimeType) (int32, int32, RtdbError) {
 	cHandle := C.rtdb_int32(handle)
 	cId := C.rtdb_int32(id)
 	cDatetime1 := C.rtdb_timestamp_type(datetime1)
@@ -10298,7 +10271,7 @@ func RawRtdbhGetArchivedValuesInBatches64Warp(handle ConnectHandle, id PointID, 
 	count := C.rtdb_int32(0)
 	batchCount := C.rtdb_int32(0)
 	err := C.rtdbh_get_archived_values_in_batches64_warp(cHandle, cId, cDatetime1, cSubtime1, cDatetime2, cSubtime2, &count, &batchCount)
-	return int32(count), int32(batchCount), RtdbError(err).GoError()
+	return int32(count), int32(batchCount), RtdbError(err)
 }
 
 // RawRtdbhGetNextArchivedValues64Warp 分段读取一段时间内的储存数据
@@ -10319,7 +10292,7 @@ func RawRtdbhGetArchivedValuesInBatches64Warp(handle ConnectHandle, id PointID, 
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbh_get_next_archived_values64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32* count, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float64* values, rtdb_int64* states, rtdb_int16* qualities)
-func RawRtdbhGetNextArchivedValues64Warp(handle ConnectHandle, id PointID, count int32) ([]TimestampType, []SubtimeType, []float64, []int64, []Quality, error) {
+func RawRtdbhGetNextArchivedValues64Warp(handle ConnectHandle, id PointID, count int32) ([]TimestampType, []SubtimeType, []float64, []int64, []Quality, RtdbError) {
 	cHandle := C.rtdb_int32(handle)
 	cId := C.rtdb_int32(id)
 	cCount := C.rtdb_int32(count)
@@ -10334,7 +10307,7 @@ func RawRtdbhGetNextArchivedValues64Warp(handle ConnectHandle, id PointID, count
 	qualities := make([]Quality, count)
 	cQualities := (*C.rtdb_int16)(unsafe.Pointer(&qualities[0]))
 	err := C.rtdbh_get_next_archived_values64_warp(cHandle, cId, &cCount, cDatetimes, cSubtimes, cValues, cStates, cQualities)
-	return datetimes[:cCount], subtimes[:cCount], values[:cCount], states[:cCount], qualities[:cCount], RtdbError(err).GoError()
+	return datetimes[:cCount], subtimes[:cCount], values[:cCount], states[:cCount], qualities[:cCount], RtdbError(err)
 }
 
 // RawRtdbhGetTimedValues64Warp 获取单个标签点的单调递增时间序列历史插值。
@@ -10353,7 +10326,7 @@ func RawRtdbhGetNextArchivedValues64Warp(handle ConnectHandle, id PointID, count
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbh_get_timed_values64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32 count, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, rtdb_float64* values, rtdb_int64* states, rtdb_int16* qualities)
-func RawRtdbhGetTimedValues64Warp(handle ConnectHandle, id PointID, datetimes []TimestampType, subtimes []SubtimeType) ([]float64, []int64, []Quality, error) {
+func RawRtdbhGetTimedValues64Warp(handle ConnectHandle, id PointID, datetimes []TimestampType, subtimes []SubtimeType) ([]float64, []int64, []Quality, RtdbError) {
 	cHandle := C.rtdb_int32(handle)
 	cId := C.rtdb_int32(id)
 	cCount := C.rtdb_int32(len(datetimes))
@@ -10366,7 +10339,7 @@ func RawRtdbhGetTimedValues64Warp(handle ConnectHandle, id PointID, datetimes []
 	qualities := make([]Quality, cCount)
 	cQualities := (*C.rtdb_int16)(unsafe.Pointer(&qualities[0]))
 	err := C.rtdbh_get_timed_values64_warp(cHandle, cId, cCount, cDatetimes, cSubtimes, cValues, cStates, cQualities)
-	return values, states, qualities, RtdbError(err).GoError()
+	return values, states, qualities, RtdbError(err)
 }
 
 // RawRtdbhGetTimedCoorValues64Warp 获取单个坐标标签点的单调递增时间序列历史插值。
@@ -10385,7 +10358,7 @@ func RawRtdbhGetTimedValues64Warp(handle ConnectHandle, id PointID, datetimes []
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbh_get_timed_coor_values64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32 count, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, rtdb_float32* x, rtdb_float32* y, rtdb_int16* qualities)
-func RawRtdbhGetTimedCoorValues64Warp(handle ConnectHandle, id PointID, datetimes []TimestampType, subtimes []SubtimeType) ([]float32, []float32, []Quality, error) {
+func RawRtdbhGetTimedCoorValues64Warp(handle ConnectHandle, id PointID, datetimes []TimestampType, subtimes []SubtimeType) ([]float32, []float32, []Quality, RtdbError) {
 	cHandle := C.rtdb_int32(handle)
 	cId := C.rtdb_int32(id)
 	cCount := C.rtdb_int32(len(datetimes))
@@ -10398,7 +10371,7 @@ func RawRtdbhGetTimedCoorValues64Warp(handle ConnectHandle, id PointID, datetime
 	qualities := make([]Quality, cCount)
 	cQualities := (*C.rtdb_int16)(unsafe.Pointer(&qualities[0]))
 	err := C.rtdbh_get_timed_coor_values64_warp(cHandle, cId, cCount, cDatetimes, cSubtimes, cXs, cYs, cQualities)
-	return xs, ys, qualities, RtdbError(err).GoError()
+	return xs, ys, qualities, RtdbError(err)
 }
 
 //	RawRtdbhGetInterpoValues64Warp 获取单个标签点一段时间内等间隔历史插值
@@ -10425,7 +10398,7 @@ func RawRtdbhGetTimedCoorValues64Warp(handle ConnectHandle, id PointID, datetime
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbh_get_interpo_values64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32* count, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float64* values, rtdb_int64* states, rtdb_int16* qualities)
-func RawRtdbhGetInterpoValues64Warp(handle ConnectHandle, id PointID, count int32, datetime1 TimestampType, subtime1 SubtimeType, datetime2 TimestampType, subtime2 SubtimeType) ([]TimestampType, []SubtimeType, []float64, []int64, []Quality, error) {
+func RawRtdbhGetInterpoValues64Warp(handle ConnectHandle, id PointID, count int32, datetime1 TimestampType, subtime1 SubtimeType, datetime2 TimestampType, subtime2 SubtimeType) ([]TimestampType, []SubtimeType, []float64, []int64, []Quality, RtdbError) {
 	cHandle := C.rtdb_int32(handle)
 	cId := C.rtdb_int32(id)
 	cCount := C.rtdb_int32(count)
@@ -10444,7 +10417,7 @@ func RawRtdbhGetInterpoValues64Warp(handle ConnectHandle, id PointID, count int3
 	qualities := make([]Quality, count)
 	cQualities := (*C.rtdb_int16)(unsafe.Pointer(&qualities[0]))
 	err := C.rtdbh_get_interpo_values64_warp(cHandle, cId, &cCount, cDatetimes, cSubtimes, cValues, cStates, cQualities)
-	return datetimes[:cCount], subtimes[:cCount], values[:cCount], states[:cCount], qualities[:cCount], RtdbError(err).GoError()
+	return datetimes[:cCount], subtimes[:cCount], values[:cCount], states[:cCount], qualities[:cCount], RtdbError(err)
 }
 
 // RawRtdbhGetIntervalValues64Warp 读取单个标签点某个时刻之后一定数量的等间隔内插值替换的历史数值
@@ -10466,7 +10439,7 @@ func RawRtdbhGetInterpoValues64Warp(handle ConnectHandle, id PointID, count int3
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbh_get_interval_values64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int64 interval, rtdb_int32 count, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float64* values, rtdb_int64* states, rtdb_int16* qualities)
-func RawRtdbhGetIntervalValues64Warp(handle ConnectHandle, id PointID, interval time.Duration, count int32, datetime1 TimestampType, subtime1 SubtimeType) ([]TimestampType, []SubtimeType, []float64, []int64, []Quality, error) {
+func RawRtdbhGetIntervalValues64Warp(handle ConnectHandle, id PointID, interval time.Duration, count int32, datetime1 TimestampType, subtime1 SubtimeType) ([]TimestampType, []SubtimeType, []float64, []int64, []Quality, RtdbError) {
 	cHandle := C.rtdb_int32(handle)
 	cId := C.rtdb_int32(id)
 	cInterval := C.rtdb_int64(interval.Nanoseconds())
@@ -10484,7 +10457,7 @@ func RawRtdbhGetIntervalValues64Warp(handle ConnectHandle, id PointID, interval 
 	qualities := make([]Quality, count)
 	cQualities := (*C.rtdb_int16)(unsafe.Pointer(&qualities[0]))
 	err := C.rtdbh_get_interval_values64_warp(cHandle, cId, cInterval, cCount, cDatetimes, cSubtimes, cValues, cStates, cQualities)
-	return datetimes, subtimes, values, states, qualities, RtdbError(err).GoError()
+	return datetimes, subtimes, values, states, qualities, RtdbError(err)
 }
 
 // RawRtdbhGetSingleValue64Warp 读取单个标签点某个时间的历史数据
@@ -10505,7 +10478,7 @@ func RawRtdbhGetIntervalValues64Warp(handle ConnectHandle, id PointID, interval 
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbh_get_single_value64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32 mode, rtdb_timestamp_type* datetime, rtdb_subtime_type* subtime, rtdb_float64* value, rtdb_int64* state, rtdb_int16* quality)
-func RawRtdbhGetSingleValue64Warp(handle ConnectHandle, id PointID, mode RtdbHisMode, datetime TimestampType, subtime SubtimeType) (TimestampType, SubtimeType, float64, int64, Quality, error) {
+func RawRtdbhGetSingleValue64Warp(handle ConnectHandle, id PointID, mode RtdbHisMode, datetime TimestampType, subtime SubtimeType) (TimestampType, SubtimeType, float64, int64, Quality, RtdbError) {
 	cHandle := C.rtdb_int32(handle)
 	cId := C.rtdb_int32(id)
 	cMode := C.rtdb_int32(mode)
@@ -10515,7 +10488,7 @@ func RawRtdbhGetSingleValue64Warp(handle ConnectHandle, id PointID, mode RtdbHis
 	cState := C.rtdb_int64(0)
 	cQuality := C.rtdb_int16(0)
 	err := C.rtdbh_get_single_value64_warp(cHandle, cId, cMode, &cDatetime, &cSubtime, &cValue, &cState, &cQuality)
-	return TimestampType(cDatetime), SubtimeType(cSubtime), float64(cValue), int64(cState), Quality(cQuality), RtdbError(err).GoError()
+	return TimestampType(cDatetime), SubtimeType(cSubtime), float64(cValue), int64(cState), Quality(cQuality), RtdbError(err)
 }
 
 // RawRtdbhGetSingleCoorValue64Warp 读取单个标签点某个时间的坐标型历史数据
@@ -10536,7 +10509,7 @@ func RawRtdbhGetSingleValue64Warp(handle ConnectHandle, id PointID, mode RtdbHis
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbh_get_single_coor_value64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32 mode, rtdb_timestamp_type* datetime, rtdb_subtime_type* subtime, rtdb_float32* x, rtdb_float32* y, rtdb_int16* quality)
-func RawRtdbhGetSingleCoorValue64Warp(handle ConnectHandle, id PointID, mode RtdbHisMode, datetime TimestampType, subtime SubtimeType) (TimestampType, SubtimeType, float32, float32, Quality, error) {
+func RawRtdbhGetSingleCoorValue64Warp(handle ConnectHandle, id PointID, mode RtdbHisMode, datetime TimestampType, subtime SubtimeType) (TimestampType, SubtimeType, float32, float32, Quality, RtdbError) {
 	cHandle := C.rtdb_int32(handle)
 	cId := C.rtdb_int32(id)
 	cMode := C.rtdb_int32(mode)
@@ -10546,7 +10519,7 @@ func RawRtdbhGetSingleCoorValue64Warp(handle ConnectHandle, id PointID, mode Rtd
 	cY := C.rtdb_float32(0)
 	cQuality := C.rtdb_int16(0)
 	err := C.rtdbh_get_single_coor_value64_warp(cHandle, cId, cMode, &cDatetime, &cSubtime, &cX, &cY, &cQuality)
-	return TimestampType(cDatetime), SubtimeType(cSubtime), float32(cX), float32(cY), Quality(cQuality), RtdbError(err).GoError()
+	return TimestampType(cDatetime), SubtimeType(cSubtime), float32(cX), float32(cY), Quality(cQuality), RtdbError(err)
 }
 
 // RawRtdbhGetSingleBlobValue64Warp 读取单个标签点某个时间的二进制/字符串型历史数据
@@ -10567,7 +10540,7 @@ func RawRtdbhGetSingleCoorValue64Warp(handle ConnectHandle, id PointID, mode Rtd
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbh_get_single_blob_value64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32 mode, rtdb_timestamp_type* datetime, rtdb_subtime_type* subtime, rtdb_byte* blob, rtdb_length_type* len, rtdb_int16* quality)
-func RawRtdbhGetSingleBlobValue64Warp(handle ConnectHandle, id PointID, mode RtdbHisMode, datetime TimestampType, subtime SubtimeType, maxLen int32) (TimestampType, SubtimeType, []byte, Quality, error) {
+func RawRtdbhGetSingleBlobValue64Warp(handle ConnectHandle, id PointID, mode RtdbHisMode, datetime TimestampType, subtime SubtimeType, maxLen int32) (TimestampType, SubtimeType, []byte, Quality, RtdbError) {
 	cHandle := C.rtdb_int32(handle)
 	cId := C.rtdb_int32(id)
 	cMode := C.rtdb_int32(mode)
@@ -10578,7 +10551,7 @@ func RawRtdbhGetSingleBlobValue64Warp(handle ConnectHandle, id PointID, mode Rtd
 	cLen := C.rtdb_length_type(maxLen)
 	cQuality := C.rtdb_int16(0)
 	err := C.rtdbh_get_single_blob_value64_warp(cHandle, cId, cMode, &cDatetime, &cSubtime, cBlob, &cLen, &cQuality)
-	return TimestampType(cDatetime), SubtimeType(cSubtime), blob[:cLen], Quality(cQuality), RtdbError(err).GoError()
+	return TimestampType(cDatetime), SubtimeType(cSubtime), blob[:cLen], Quality(cQuality), RtdbError(err)
 }
 
 // RawRtdbhGetArchivedBlobValues64Warp 读取单个标签点一段时间的二进制/字符串型历史数据
@@ -10601,7 +10574,7 @@ func RawRtdbhGetSingleBlobValue64Warp(handle ConnectHandle, id PointID, mode Rtd
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbh_get_archived_blob_values64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32* count, rtdb_timestamp_type datetime1, rtdb_subtime_type subtime1, rtdb_timestamp_type datetime2, rtdb_subtime_type subtime2, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_length_type* lens, rtdb_byte* const* blobs, rtdb_int16* qualities)
-func RawRtdbhGetArchivedBlobValues64Warp(handle ConnectHandle, id PointID, maxLen int32, maxCount int32, datetime1 TimestampType, subtime1 SubtimeType, datetime2 TimestampType, subtime2 SubtimeType) ([]TimestampType, []SubtimeType, [][]byte, []Quality, error) {
+func RawRtdbhGetArchivedBlobValues64Warp(handle ConnectHandle, id PointID, maxLen int32, maxCount int32, datetime1 TimestampType, subtime1 SubtimeType, datetime2 TimestampType, subtime2 SubtimeType) ([]TimestampType, []SubtimeType, [][]byte, []Quality, RtdbError) {
 	cHandle := C.rtdb_int32(handle)
 	cId := C.rtdb_int32(id)
 	cCount := C.rtdb_int32(maxCount)
@@ -10636,7 +10609,7 @@ func RawRtdbhGetArchivedBlobValues64Warp(handle ConnectHandle, id PointID, maxLe
 		b := C.GoBytes(unsafe.Pointer(blobs[i]), C.int(lens[i]))
 		rtnBlobs = append(rtnBlobs, b)
 	}
-	return datetimes[:cCount], subtimes[:cCount], rtnBlobs, qualities[:cCount], RtdbError(err).GoError()
+	return datetimes[:cCount], subtimes[:cCount], rtnBlobs, qualities[:cCount], RtdbError(err)
 }
 
 // RawRtdbhGetArchivedBlobValuesFilt64Warp 读取并模糊搜索单个标签点一段时间的二进制/字符串型历史数据
@@ -10660,7 +10633,7 @@ func RawRtdbhGetArchivedBlobValues64Warp(handle ConnectHandle, id PointID, maxLe
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbh_get_archived_blob_values_filt64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32* count, rtdb_timestamp_type datetime1, rtdb_subtime_type subtime1, rtdb_timestamp_type datetime2, rtdb_subtime_type subtime2, const char* filter, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_length_type* lens, rtdb_byte* const* blobs, rtdb_int16* qualities)
-func RawRtdbhGetArchivedBlobValuesFilt64Warp(handle ConnectHandle, id PointID, maxLen int32, maxCount int32, filter string, datetime1 TimestampType, subtime1 SubtimeType, datetime2 TimestampType, subtime2 SubtimeType) ([]TimestampType, []SubtimeType, [][]byte, []Quality, error) {
+func RawRtdbhGetArchivedBlobValuesFilt64Warp(handle ConnectHandle, id PointID, maxLen int32, maxCount int32, filter string, datetime1 TimestampType, subtime1 SubtimeType, datetime2 TimestampType, subtime2 SubtimeType) ([]TimestampType, []SubtimeType, [][]byte, []Quality, RtdbError) {
 	cHandle := C.rtdb_int32(handle)
 	cId := C.rtdb_int32(id)
 	cCount := C.rtdb_int32(maxCount)
@@ -10697,7 +10670,7 @@ func RawRtdbhGetArchivedBlobValuesFilt64Warp(handle ConnectHandle, id PointID, m
 		b := C.GoBytes(unsafe.Pointer(blobs[i]), C.int(lens[i]))
 		rtnBlobs = append(rtnBlobs, b)
 	}
-	return datetimes[:cCount], subtimes[:cCount], rtnBlobs, qualities[:cCount], RtdbError(err).GoError()
+	return datetimes[:cCount], subtimes[:cCount], rtnBlobs, qualities[:cCount], RtdbError(err)
 }
 
 // RawRtdbhGetSingleDatetimeValue64Warp 读取单个标签点某个时间的datetime历史数据
@@ -10718,7 +10691,7 @@ func RawRtdbhGetArchivedBlobValuesFilt64Warp(handle ConnectHandle, id PointID, m
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbh_get_single_datetime_value64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32 mode, rtdb_timestamp_type* datetime, rtdb_subtime_type* subtime, rtdb_byte* dtblob, rtdb_length_type* dtlen, rtdb_int16* quality, rtdb_int16 type)
-func RawRtdbhGetSingleDatetimeValue64Warp(handle ConnectHandle, id PointID, mode RtdbHisMode, datetime TimestampType, subtime SubtimeType, dtType int16) (TimestampType, SubtimeType, []byte, Quality, error) {
+func RawRtdbhGetSingleDatetimeValue64Warp(handle ConnectHandle, id PointID, mode RtdbHisMode, datetime TimestampType, subtime SubtimeType, dtType int16) (TimestampType, SubtimeType, []byte, Quality, RtdbError) {
 	cHandle := C.rtdb_int32(handle)
 	cId := C.rtdb_int32(id)
 	cMode := C.rtdb_int32(mode)
@@ -10731,7 +10704,7 @@ func RawRtdbhGetSingleDatetimeValue64Warp(handle ConnectHandle, id PointID, mode
 	quality := Quality(0)
 	cQuality := (*C.rtdb_int16)(unsafe.Pointer(&quality))
 	err := C.rtdbh_get_single_datetime_value64_warp(cHandle, cId, cMode, &cDatetime, &cSubtime, cBlob, &cLen, cQuality, cDtType)
-	return TimestampType(cDatetime), SubtimeType(cSubtime), blob[:cLen], quality, RtdbError(err).GoError()
+	return TimestampType(cDatetime), SubtimeType(cSubtime), blob[:cLen], quality, RtdbError(err)
 }
 
 // RawRtdbhGetArchivedDatetimeValues64Warp 读取单个标签点一段时间的时间类型历史数据
@@ -10757,7 +10730,7 @@ func RawRtdbhGetSingleDatetimeValue64Warp(handle ConnectHandle, id PointID, mode
 // raw_fn:
 //
 //	-rtdb_error RTDBAPI_CALLRULE rtdbh_get_archived_datetime_values64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32* count, rtdb_timestamp_type datetime1, rtdb_subtime_type subtime1, rtdb_timestamp_type datetime2, rtdb_subtime_type subtime2, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_length_type* lens, rtdb_byte* const* blobs, rtdb_int16* qualities, rtdb_int16 type)
-func RawRtdbhGetArchivedDatetimeValues64Warp(handle ConnectHandle, id PointID, maxCount int32, datetime1 TimestampType, subtime1 SubtimeType, datetime2 TimestampType, subtime2 SubtimeType, dtType int16) ([]TimestampType, []SubtimeType, [][]byte, []Quality, error) {
+func RawRtdbhGetArchivedDatetimeValues64Warp(handle ConnectHandle, id PointID, maxCount int32, datetime1 TimestampType, subtime1 SubtimeType, datetime2 TimestampType, subtime2 SubtimeType, dtType int16) ([]TimestampType, []SubtimeType, [][]byte, []Quality, RtdbError) {
 	cHandle := C.rtdb_int32(handle)
 	cId := C.rtdb_int32(id)
 	cCount := C.rtdb_int32(maxCount)
@@ -10793,7 +10766,7 @@ func RawRtdbhGetArchivedDatetimeValues64Warp(handle ConnectHandle, id PointID, m
 		b := C.GoBytes(unsafe.Pointer(blobs[i]), C.int(lens[i]))
 		rtnBlobs = append(rtnBlobs, b)
 	}
-	return datetimes[:cCount], subtimes[:cCount], rtnBlobs, qualities[:cCount], RtdbError(err).GoError()
+	return datetimes[:cCount], subtimes[:cCount], rtnBlobs, qualities[:cCount], RtdbError(err)
 }
 
 // RawRtdbhPutArchivedDatetimeValues64Warp 写入批量标签点批量时间型历史存储数据
@@ -10811,7 +10784,7 @@ func RawRtdbhGetArchivedDatetimeValues64Warp(handle ConnectHandle, id PointID, m
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbh_put_archived_datetime_values64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, const rtdb_byte* const* dtvalues, const rtdb_length_type* dtlens, const rtdb_int16* qualities, rtdb_error* errors)
-func RawRtdbhPutArchivedDatetimeValues64Warp(handle ConnectHandle, ids []PointID, datetimes []TimestampType, subtimes []SubtimeType, dtValues [][]byte, qualities []Quality) ([]error, error) {
+func RawRtdbhPutArchivedDatetimeValues64Warp(handle ConnectHandle, ids []PointID, datetimes []TimestampType, subtimes []SubtimeType, dtValues [][]byte, qualities []Quality) ([]RtdbError, RtdbError) {
 	cHandle := C.rtdb_int32(handle)
 	cCount := C.rtdb_int32(len(ids))
 	cIds := (*C.rtdb_int32)(unsafe.Pointer(&ids[0]))
@@ -10836,8 +10809,7 @@ func RawRtdbhPutArchivedDatetimeValues64Warp(handle ConnectHandle, ids []PointID
 	errs := make([]RtdbError, len(ids))
 	cErrs := (*C.rtdb_error)(unsafe.Pointer(&errs[0]))
 	err := C.rtdbh_put_archived_datetime_values64_warp(cHandle, &cCount, cIds, cDatetimes, cSubtimes, ccDtValues, cLens, cQualities, cErrs)
-	goErrs := RtdbErrorListToErrorList(errs)
-	return goErrs, RtdbError(err).GoError()
+	return errs, RtdbError(err)
 }
 
 // RawRtdbhSummaryDataWarp 获取单个标签点一段时间内的统计值。
@@ -10855,7 +10827,7 @@ func RawRtdbhPutArchivedDatetimeValues64Warp(handle ConnectHandle, ids []PointID
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbh_summary_data_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime1, rtdb_subtime_type subtime1, rtdb_timestamp_type datetime2, rtdb_subtime_type subtime2, RTDB_SUMMARY_DATA* summary_data)
-func RawRtdbhSummaryDataWarp(handle ConnectHandle, id PointID, datetime1 TimestampType, subtime1 SubtimeType, datetime2 TimestampType, subtime2 SubtimeType) (*RtdbSummaryData, error) {
+func RawRtdbhSummaryDataWarp(handle ConnectHandle, id PointID, datetime1 TimestampType, subtime1 SubtimeType, datetime2 TimestampType, subtime2 SubtimeType) (*RtdbSummaryData, RtdbError) {
 	cHandle := C.rtdb_int32(handle)
 	cId := C.rtdb_int32(id)
 	cDatetime1 := C.rtdb_timestamp_type(datetime1)
@@ -10865,7 +10837,7 @@ func RawRtdbhSummaryDataWarp(handle ConnectHandle, id PointID, datetime1 Timesta
 	cData := C.RTDB_SUMMARY_DATA{}
 	err := C.rtdbh_summary_data_warp(cHandle, cId, cDatetime1, cSubtime1, cDatetime2, cSubtime2, &cData)
 	goData := cToGoRtdbSummaryData(&cData)
-	return goData, RtdbError(err).GoError()
+	return goData, RtdbError(err)
 }
 
 // RawRtdbhSummaryDataInBatchesWarp 分批获取单一标签点一段时间内的统计值
@@ -10887,7 +10859,7 @@ func RawRtdbhSummaryDataWarp(handle ConnectHandle, id PointID, datetime1 Timesta
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbh_summary_data_in_batches_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32* count, rtdb_int64 interval, rtdb_timestamp_type datetime1, rtdb_subtime_type subtime1, rtdb_timestamp_type datetime2, rtdb_subtime_type subtime2, RTDB_SUMMARY_DATA* summary_datas, rtdb_error* errors)
-func RawRtdbhSummaryDataInBatchesWarp(handle ConnectHandle, id PointID, maxCount int32, interval time.Duration, datetime1 TimestampType, subtime1 SubtimeType, datetime2 TimestampType, subtime2 SubtimeType) ([]RtdbSummaryData, []error, error) {
+func RawRtdbhSummaryDataInBatchesWarp(handle ConnectHandle, id PointID, maxCount int32, interval time.Duration, datetime1 TimestampType, subtime1 SubtimeType, datetime2 TimestampType, subtime2 SubtimeType) ([]RtdbSummaryData, []RtdbError, RtdbError) {
 	cHandle := C.rtdb_int32(handle)
 	cId := C.rtdb_int32(id)
 	cMaxCount := C.rtdb_int32(maxCount)
@@ -10904,8 +10876,7 @@ func RawRtdbhSummaryDataInBatchesWarp(handle ConnectHandle, id PointID, maxCount
 	for i := 0; i < int(cMaxCount); i++ {
 		goDatas = append(goDatas, *cToGoRtdbSummaryData(&cDatas[i]))
 	}
-	goErrs := RtdbErrorListToErrorList(errs[:cMaxCount])
-	return goDatas, goErrs, RtdbError(err).GoError()
+	return goDatas, errs[:cMaxCount], RtdbError(err)
 }
 
 //	RawRtdbhGetPlotValues64Warp 获取单个标签点一段时间内用于绘图的历史数据
@@ -10929,7 +10900,7 @@ func RawRtdbhSummaryDataInBatchesWarp(handle ConnectHandle, id PointID, maxCount
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbh_get_plot_values64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32 interval, rtdb_int32* count, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float64* values, rtdb_int64* states, rtdb_int16* qualities)
-func RawRtdbhGetPlotValues64Warp(handle ConnectHandle, id PointID, interval int32, datetime1 TimestampType, subtime1 SubtimeType, datetime2 TimestampType, subtime2 SubtimeType) ([]TimestampType, []SubtimeType, []float64, []int64, []Quality, error) {
+func RawRtdbhGetPlotValues64Warp(handle ConnectHandle, id PointID, interval int32, datetime1 TimestampType, subtime1 SubtimeType, datetime2 TimestampType, subtime2 SubtimeType) ([]TimestampType, []SubtimeType, []float64, []int64, []Quality, RtdbError) {
 	maxCount := interval * 5
 	cHandle := C.rtdb_int32(handle)
 	cId := C.rtdb_int32(id)
@@ -10950,7 +10921,7 @@ func RawRtdbhGetPlotValues64Warp(handle ConnectHandle, id PointID, interval int3
 	qualities := make([]Quality, maxCount)
 	cQualities := (*C.rtdb_int16)(unsafe.Pointer(&qualities[0]))
 	err := C.rtdbh_get_plot_values64_warp(cHandle, cId, cInterval, &cMaxCount, cDatetimes, cSubtimes, cValues, cStates, cQualities)
-	return datetimes[:cMaxCount], subtimes[:cMaxCount], values[:cMaxCount], states[:cMaxCount], qualities[:cMaxCount], RtdbError(err).GoError()
+	return datetimes[:cMaxCount], subtimes[:cMaxCount], values[:cMaxCount], states[:cMaxCount], qualities[:cMaxCount], RtdbError(err)
 }
 
 // RawRtdbhGetCrossSectionValues64Warp 获取批量标签点在某一时间的历史断面数据
@@ -10972,7 +10943,7 @@ func RawRtdbhGetPlotValues64Warp(handle ConnectHandle, id PointID, interval int3
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbh_get_cross_section_values64_warp(rtdb_int32 handle, const rtdb_int32* ids, rtdb_int32 mode, rtdb_int32 count, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float64* values, rtdb_int64* states, rtdb_int16* qualities, rtdb_error* errors)
-func RawRtdbhGetCrossSectionValues64Warp(handle ConnectHandle, ids []PointID, mode RtdbHisMode, datetime TimestampType, subtime SubtimeType) ([]TimestampType, []SubtimeType, []float64, []int64, []Quality, []RtdbError, error) {
+func RawRtdbhGetCrossSectionValues64Warp(handle ConnectHandle, ids []PointID, mode RtdbHisMode, datetime TimestampType, subtime SubtimeType) ([]TimestampType, []SubtimeType, []float64, []int64, []Quality, []RtdbError, RtdbError) {
 	cHandle := C.rtdb_int32(handle)
 	cIds := (*C.rtdb_int32)(unsafe.Pointer(&ids[0]))
 	cCount := C.rtdb_int32(len(ids))
@@ -10996,7 +10967,7 @@ func RawRtdbhGetCrossSectionValues64Warp(handle ConnectHandle, ids []PointID, mo
 	errs := make([]RtdbError, len(ids))
 	cErrs := (*C.rtdb_error)(unsafe.Pointer(&errs[0]))
 	err := C.rtdbh_get_cross_section_values64_warp(cHandle, cIds, cModel, cCount, cDatetimes, cSubtimes, cValues, cStates, cQualities, cErrs)
-	return datetimes[:cCount], subtimes[:cCount], values[:cCount], states[:cCount], qualities[:cCount], errs[:cCount], RtdbError(err).GoError()
+	return datetimes[:cCount], subtimes[:cCount], values[:cCount], states[:cCount], qualities[:cCount], errs[:cCount], RtdbError(err)
 }
 
 // RawRtdbhGetArchivedValuesFilt64Warp 读取单个标签点在一段时间内经复杂条件筛选后的历史储存值
@@ -11020,7 +10991,7 @@ func RawRtdbhGetCrossSectionValues64Warp(handle ConnectHandle, ids []PointID, mo
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbh_get_archived_values_filt64_warp(rtdb_int32 handle, rtdb_int32 id, const char* filter, rtdb_int32* count, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float64* values, rtdb_int64* states, rtdb_int16* qualities)
-func RawRtdbhGetArchivedValuesFilt64Warp(handle ConnectHandle, id PointID, count int32, filter string, datetime1 TimestampType, subtime1 SubtimeType, datetime2 TimestampType, subtime2 SubtimeType) ([]TimestampType, []SubtimeType, []float64, []int64, []Quality, error) {
+func RawRtdbhGetArchivedValuesFilt64Warp(handle ConnectHandle, id PointID, count int32, filter string, datetime1 TimestampType, subtime1 SubtimeType, datetime2 TimestampType, subtime2 SubtimeType) ([]TimestampType, []SubtimeType, []float64, []int64, []Quality, RtdbError) {
 	cHandle := C.rtdb_int32(handle)
 	cId := C.rtdb_int32(id)
 	cFilter := C.CString(filter)
@@ -11041,7 +11012,7 @@ func RawRtdbhGetArchivedValuesFilt64Warp(handle ConnectHandle, id PointID, count
 	qualities := make([]Quality, count)
 	cQualities := (*C.rtdb_int16)(unsafe.Pointer(&qualities[0]))
 	err := C.rtdbh_get_archived_values_filt64_warp(cHandle, cId, cFilter, &cCount, cDatetimes, cSubtimes, cValues, cStates, cQualities)
-	return datetimes[:cCount], subtimes[:cCount], values[:cCount], states[:cCount], qualities[:cCount], RtdbError(err).GoError()
+	return datetimes[:cCount], subtimes[:cCount], values[:cCount], states[:cCount], qualities[:cCount], RtdbError(err)
 }
 
 // RawRtdbhGetIntervalValuesFilt64Warp 读取单个标签点某个时刻之后经复杂条件筛选后一定数量的等间隔内插值替换的历史数值
@@ -11064,7 +11035,7 @@ func RawRtdbhGetArchivedValuesFilt64Warp(handle ConnectHandle, id PointID, count
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbh_get_interval_values_filt64_warp(rtdb_int32 handle, rtdb_int32 id, const char* filter, rtdb_int64 interval, rtdb_int32 count, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float64* values, rtdb_int64* states, rtdb_int16* qualities)
-func RawRtdbhGetIntervalValuesFilt64Warp(handle ConnectHandle, id PointID, filter string, interval time.Duration, count int32, datetime1 TimestampType, subtime1 SubtimeType) ([]TimestampType, []SubtimeType, []float64, []int64, []Quality, error) {
+func RawRtdbhGetIntervalValuesFilt64Warp(handle ConnectHandle, id PointID, filter string, interval time.Duration, count int32, datetime1 TimestampType, subtime1 SubtimeType) ([]TimestampType, []SubtimeType, []float64, []int64, []Quality, RtdbError) {
 	cHandle := C.rtdb_int32(handle)
 	cId := C.rtdb_int32(id)
 	cFilter := C.CString(filter)
@@ -11084,7 +11055,7 @@ func RawRtdbhGetIntervalValuesFilt64Warp(handle ConnectHandle, id PointID, filte
 	qualities := make([]Quality, count)
 	cQualities := (*C.rtdb_int16)(unsafe.Pointer(&qualities[0]))
 	err := C.rtdbh_get_interval_values_filt64_warp(cHandle, cId, cFilter, cInterval, cCount, cDatetimes, cSubtimes, cValues, cStates, cQualities)
-	return datetimes, subtimes, values, states, qualities, RtdbError(err).GoError()
+	return datetimes, subtimes, values, states, qualities, RtdbError(err)
 }
 
 // RawRtdbhGetInterpoValuesFilt64Warp 获取单个标签点一段时间内经复杂条件筛选后的等间隔插值
@@ -11112,7 +11083,7 @@ func RawRtdbhGetIntervalValuesFilt64Warp(handle ConnectHandle, id PointID, filte
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbh_get_interpo_values_filt64_warp(rtdb_int32 handle, rtdb_int32 id, const char* filter, rtdb_int32* count, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float64* values, rtdb_int64* states, rtdb_int16* qualities)
-func RawRtdbhGetInterpoValuesFilt64Warp(handle ConnectHandle, id PointID, filter string, count int32, datetime1 TimestampType, subtime1 SubtimeType, datetime2 TimestampType, subtime2 SubtimeType) ([]TimestampType, []SubtimeType, []float64, []int64, []Quality, error) {
+func RawRtdbhGetInterpoValuesFilt64Warp(handle ConnectHandle, id PointID, filter string, count int32, datetime1 TimestampType, subtime1 SubtimeType, datetime2 TimestampType, subtime2 SubtimeType) ([]TimestampType, []SubtimeType, []float64, []int64, []Quality, RtdbError) {
 	cHandle := C.rtdb_int32(handle)
 	cId := C.rtdb_int32(id)
 	cCount := C.rtdb_int32(count)
@@ -11133,7 +11104,7 @@ func RawRtdbhGetInterpoValuesFilt64Warp(handle ConnectHandle, id PointID, filter
 	qualities := make([]Quality, count)
 	cQualities := (*C.rtdb_int16)(unsafe.Pointer(&qualities[0]))
 	err := C.rtdbh_get_interpo_values_filt64_warp(cHandle, cId, cFilter, &cCount, cDatetimes, cSubtimes, cValues, cStates, cQualities)
-	return datetimes[:cCount], subtimes[:cCount], values[:cCount], states[:cCount], qualities[:cCount], RtdbError(err).GoError()
+	return datetimes[:cCount], subtimes[:cCount], values[:cCount], states[:cCount], qualities[:cCount], RtdbError(err)
 }
 
 // RawRtdbhSummaryDataFiltWarp 获取单个标签点一段时间内经复杂条件筛选后的统计值
@@ -11152,7 +11123,7 @@ func RawRtdbhGetInterpoValuesFilt64Warp(handle ConnectHandle, id PointID, filter
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbh_summary_data_filt_warp(rtdb_int32 handle, rtdb_int32 id, const char* filter, rtdb_timestamp_type datetime1, rtdb_subtime_type subtime1, rtdb_timestamp_type datetime2, rtdb_subtime_type subtime2, RTDB_SUMMARY_DATA* summary_data)
-func RawRtdbhSummaryDataFiltWarp(handle ConnectHandle, id PointID, filter string, datetime1 TimestampType, subtime1 SubtimeType, datetime2 TimestampType, subtime2 SubtimeType) (*RtdbSummaryData, error) {
+func RawRtdbhSummaryDataFiltWarp(handle ConnectHandle, id PointID, filter string, datetime1 TimestampType, subtime1 SubtimeType, datetime2 TimestampType, subtime2 SubtimeType) (*RtdbSummaryData, RtdbError) {
 	cHandle := C.rtdb_int32(handle)
 	cId := C.rtdb_int32(id)
 	cFilter := C.CString(filter)
@@ -11164,7 +11135,7 @@ func RawRtdbhSummaryDataFiltWarp(handle ConnectHandle, id PointID, filter string
 	cData := C.RTDB_SUMMARY_DATA{}
 	err := C.rtdbh_summary_data_filt_warp(cHandle, cId, cFilter, cDatetime1, cSubtime1, cDatetime2, cSubtime2, &cData)
 	goData := cToGoRtdbSummaryData(&cData)
-	return goData, RtdbError(err).GoError()
+	return goData, RtdbError(err)
 }
 
 // RawRtdbhSummaryDataFiltInBatchesWarp 分批获取单一标签点一段时间内经复杂条件筛选后的统计值
@@ -11187,7 +11158,7 @@ func RawRtdbhSummaryDataFiltWarp(handle ConnectHandle, id PointID, filter string
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbh_summary_data_filt_in_batches_warp(rtdb_int32 handle, rtdb_int32 id, const char* filter, rtdb_int32* count, rtdb_int64 interval, rtdb_timestamp_type datetime1, rtdb_subtime_type subtime1, rtdb_timestamp_type datetime2, rtdb_subtime_type subtime2, RTDB_SUMMARY_DATA* summary_datas, rtdb_error* errors)
-func RawRtdbhSummaryDataFiltInBatchesWarp(handle ConnectHandle, id PointID, filter string, maxCount int32, interval time.Duration, datetime1 TimestampType, subtime1 SubtimeType, datetime2 TimestampType, subtime2 SubtimeType) ([]RtdbSummaryData, []error, error) {
+func RawRtdbhSummaryDataFiltInBatchesWarp(handle ConnectHandle, id PointID, filter string, maxCount int32, interval time.Duration, datetime1 TimestampType, subtime1 SubtimeType, datetime2 TimestampType, subtime2 SubtimeType) ([]RtdbSummaryData, []RtdbError, RtdbError) {
 	cHandle := C.rtdb_int32(handle)
 	cId := C.rtdb_int32(id)
 	cMaxCount := C.rtdb_int32(maxCount)
@@ -11206,8 +11177,7 @@ func RawRtdbhSummaryDataFiltInBatchesWarp(handle ConnectHandle, id PointID, filt
 	for i := 0; i < int(cMaxCount); i++ {
 		goDatas = append(goDatas, *cToGoRtdbSummaryData(&cDatas[i]))
 	}
-	goErrs := RtdbErrorListToErrorList(errs[:cMaxCount])
-	return goDatas, goErrs, RtdbError(err).GoError()
+	return goDatas, errs[:cMaxCount], RtdbError(err)
 }
 
 // RawRtdbhUpdateValue64Warp 修改单个标签点某一时间的历史存储值.
@@ -11223,7 +11193,7 @@ func RawRtdbhSummaryDataFiltInBatchesWarp(handle ConnectHandle, id PointID, filt
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbh_update_value64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime, rtdb_subtime_type subtime, rtdb_float64 value, rtdb_int64 state, rtdb_int16 quality)
-func RawRtdbhUpdateValue64Warp(handle ConnectHandle, id PointID, datetime TimestampType, subtime SubtimeType, value float64, state int64, quality Quality) error {
+func RawRtdbhUpdateValue64Warp(handle ConnectHandle, id PointID, datetime TimestampType, subtime SubtimeType, value float64, state int64, quality Quality) RtdbError {
 	cHandle := C.rtdb_int32(handle)
 	cId := C.rtdb_int32(id)
 	cDatetime := C.rtdb_timestamp_type(datetime)
@@ -11232,7 +11202,7 @@ func RawRtdbhUpdateValue64Warp(handle ConnectHandle, id PointID, datetime Timest
 	cState := C.rtdb_int64(state)
 	cQuality := C.rtdb_int16(quality)
 	err := C.rtdbh_update_value64_warp(cHandle, cId, cDatetime, cSubtime, cValue, cState, cQuality)
-	return RtdbError(err).GoError()
+	return RtdbError(err)
 }
 
 // RawRtdbhUpdateCoorValue64Warp 修改单个标签点某一时间的历史存储值(坐标类型)
@@ -11248,7 +11218,7 @@ func RawRtdbhUpdateValue64Warp(handle ConnectHandle, id PointID, datetime Timest
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbh_update_coor_value64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime, rtdb_subtime_type subtime, rtdb_float32 x, rtdb_float32 y, rtdb_int16 quality)
-func RawRtdbhUpdateCoorValue64Warp(handle ConnectHandle, id PointID, datetime TimestampType, subtime SubtimeType, x float32, y float32, quality Quality) error {
+func RawRtdbhUpdateCoorValue64Warp(handle ConnectHandle, id PointID, datetime TimestampType, subtime SubtimeType, x float32, y float32, quality Quality) RtdbError {
 	cHandle := C.rtdb_int32(handle)
 	cId := C.rtdb_int32(id)
 	cDatetime := C.rtdb_timestamp_type(datetime)
@@ -11257,7 +11227,7 @@ func RawRtdbhUpdateCoorValue64Warp(handle ConnectHandle, id PointID, datetime Ti
 	cY := C.rtdb_float32(y)
 	cQuality := C.rtdb_int16(quality)
 	err := C.rtdbh_update_coor_value64_warp(cHandle, cId, cDatetime, cSubtime, cX, cY, cQuality)
-	return RtdbError(err).GoError()
+	return RtdbError(err)
 }
 
 // RawRtdbhRemoveValue64Warp 删除单个标签点某个时间的历史存储值
@@ -11270,9 +11240,9 @@ func RawRtdbhUpdateCoorValue64Warp(handle ConnectHandle, id PointID, datetime Ti
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbh_remove_value64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime, rtdb_subtime_type subtime)
-func RawRtdbhRemoveValue64Warp(handle ConnectHandle, id PointID, datetime TimestampType, subtime SubtimeType) error {
+func RawRtdbhRemoveValue64Warp(handle ConnectHandle, id PointID, datetime TimestampType, subtime SubtimeType) RtdbError {
 	err := C.rtdbh_remove_value64_warp(C.rtdb_int32(handle), C.rtdb_int32(id), C.rtdb_timestamp_type(datetime), C.rtdb_subtime_type(subtime))
-	return RtdbError(err).GoError()
+	return RtdbError(err)
 }
 
 // RawRtdbhRemoveValues64Warp 删除单个标签点一段时间内的历史存储值
@@ -11290,7 +11260,7 @@ func RawRtdbhRemoveValue64Warp(handle ConnectHandle, id PointID, datetime Timest
 //
 // raw_fn:
 // rtdb_error RTDBAPI_CALLRULE rtdbh_remove_values64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime1, rtdb_subtime_type subtime1, rtdb_timestamp_type datetime2, rtdb_subtime_type subtime2, rtdb_int32* count)
-func RawRtdbhRemoveValues64Warp(handle ConnectHandle, id PointID, datetime1 TimestampType, subtime1 SubtimeType, datetime2 TimestampType, subtime2 SubtimeType) (int32, error) {
+func RawRtdbhRemoveValues64Warp(handle ConnectHandle, id PointID, datetime1 TimestampType, subtime1 SubtimeType, datetime2 TimestampType, subtime2 SubtimeType) (int32, RtdbError) {
 	cHandle := C.rtdb_int32(handle)
 	cId := C.rtdb_int32(id)
 	cDatetime1 := C.rtdb_timestamp_type(datetime1)
@@ -11299,7 +11269,7 @@ func RawRtdbhRemoveValues64Warp(handle ConnectHandle, id PointID, datetime1 Time
 	cSubtime2 := C.rtdb_subtime_type(subtime2)
 	cCount := C.rtdb_int32(0)
 	err := C.rtdbh_remove_values64_warp(cHandle, cId, cDatetime1, cSubtime1, cDatetime2, cSubtime2, &cCount)
-	return int32(cCount), RtdbError(err).GoError()
+	return int32(cCount), RtdbError(err)
 }
 
 // RawRtdbhPutSingleValue64Warp 写入单个标签点在某一时间的历史数据。
@@ -11315,7 +11285,7 @@ func RawRtdbhRemoveValues64Warp(handle ConnectHandle, id PointID, datetime1 Time
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbh_put_single_value64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime, rtdb_subtime_type subtime, rtdb_float64 value, rtdb_int64 state, rtdb_int16 quality)
-func RawRtdbhPutSingleValue64Warp(handle ConnectHandle, id PointID, datetime TimestampType, subtime SubtimeType, value float64, state int64, quality Quality) error {
+func RawRtdbhPutSingleValue64Warp(handle ConnectHandle, id PointID, datetime TimestampType, subtime SubtimeType, value float64, state int64, quality Quality) RtdbError {
 	cHandle := C.rtdb_int32(handle)
 	cId := C.rtdb_int32(id)
 	cDatetime := C.rtdb_timestamp_type(datetime)
@@ -11324,7 +11294,7 @@ func RawRtdbhPutSingleValue64Warp(handle ConnectHandle, id PointID, datetime Tim
 	cState := C.rtdb_int64(state)
 	cQuality := C.rtdb_int16(quality)
 	err := C.rtdbh_put_single_value64_warp(cHandle, cId, cDatetime, cSubtime, cValue, cState, cQuality)
-	return RtdbError(err).GoError()
+	return RtdbError(err)
 }
 
 // RawRtdbhPutSingleCoorValue64Warp 写入单个标签点在某一时间的坐标型历史数据。
@@ -11340,7 +11310,7 @@ func RawRtdbhPutSingleValue64Warp(handle ConnectHandle, id PointID, datetime Tim
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbh_put_single_coor_value64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime, rtdb_subtime_type subtime, rtdb_float32 x, rtdb_float32 y, rtdb_int16 quality)
-func RawRtdbhPutSingleCoorValue64Warp(handle ConnectHandle, id PointID, datetime TimestampType, subtime SubtimeType, x float32, y float32, quality Quality) error {
+func RawRtdbhPutSingleCoorValue64Warp(handle ConnectHandle, id PointID, datetime TimestampType, subtime SubtimeType, x float32, y float32, quality Quality) RtdbError {
 	cHandle := C.rtdb_int32(handle)
 	cId := C.rtdb_int32(id)
 	cDatetime := C.rtdb_timestamp_type(datetime)
@@ -11349,7 +11319,7 @@ func RawRtdbhPutSingleCoorValue64Warp(handle ConnectHandle, id PointID, datetime
 	cY := C.rtdb_float32(y)
 	cQuality := C.rtdb_int16(quality)
 	err := C.rtdbh_put_single_coor_value64_warp(cHandle, cId, cDatetime, cSubtime, cX, cY, cQuality)
-	return RtdbError(err).GoError()
+	return RtdbError(err)
 }
 
 // RawRtdbhPutSingleBlobValue64Warp 写入单个二进制/字符串标签点在某一时间的历史数据
@@ -11365,7 +11335,7 @@ func RawRtdbhPutSingleCoorValue64Warp(handle ConnectHandle, id PointID, datetime
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbh_put_single_blob_value64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime, rtdb_subtime_type subtime, const rtdb_byte* blob, rtdb_length_type len, rtdb_int16 quality)
-func RawRtdbhPutSingleBlobValue64Warp(handle ConnectHandle, id PointID, datetime TimestampType, subtime SubtimeType, blob []byte, quality Quality) error {
+func RawRtdbhPutSingleBlobValue64Warp(handle ConnectHandle, id PointID, datetime TimestampType, subtime SubtimeType, blob []byte, quality Quality) RtdbError {
 	cHandle := C.rtdb_int32(handle)
 	cId := C.rtdb_int32(id)
 	cDatetime := C.rtdb_timestamp_type(datetime)
@@ -11374,7 +11344,7 @@ func RawRtdbhPutSingleBlobValue64Warp(handle ConnectHandle, id PointID, datetime
 	cLen := C.rtdb_length_type(len(blob))
 	cQuality := C.rtdb_int16(quality)
 	err := C.rtdbh_put_single_blob_value64_warp(cHandle, cId, cDatetime, cSubtime, cBlob, cLen, cQuality)
-	return RtdbError(err).GoError()
+	return RtdbError(err)
 }
 
 // RawRtdbhPutArchivedValues64Warp 写入批量标签点批量历史存储数据
@@ -11394,7 +11364,7 @@ func RawRtdbhPutSingleBlobValue64Warp(handle ConnectHandle, id PointID, datetime
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbh_put_archived_values64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, const rtdb_float64* values, const rtdb_int64* states, const rtdb_int16* qualities, rtdb_error* errors)
-func RawRtdbhPutArchivedValues64Warp(handle ConnectHandle, ids []PointID, datetimes []TimestampType, subtimes []SubtimeType, values []float64, states []int64, qualities []Quality) ([]error, error) {
+func RawRtdbhPutArchivedValues64Warp(handle ConnectHandle, ids []PointID, datetimes []TimestampType, subtimes []SubtimeType, values []float64, states []int64, qualities []Quality) ([]RtdbError, RtdbError) {
 	cHandle := C.rtdb_int32(handle)
 	cCount := C.rtdb_int32(len(ids))
 	cIds := (*C.rtdb_int32)(unsafe.Pointer(&ids[0]))
@@ -11406,8 +11376,7 @@ func RawRtdbhPutArchivedValues64Warp(handle ConnectHandle, ids []PointID, dateti
 	errs := make([]RtdbError, len(ids))
 	cErrs := (*C.rtdb_error)(unsafe.Pointer(&errs[0]))
 	err := C.rtdbh_put_archived_values64_warp(cHandle, &cCount, cIds, cDatetimes, cSubtimes, cValues, cStates, cQualities, cErrs)
-	goErrs := RtdbErrorListToErrorList(errs)
-	return goErrs, RtdbError(err).GoError()
+	return errs, RtdbError(err)
 }
 
 // RawRtdbhPutArchivedCoorValues64Warp 写入批量标签点批量坐标型历史存储数据
@@ -11427,7 +11396,7 @@ func RawRtdbhPutArchivedValues64Warp(handle ConnectHandle, ids []PointID, dateti
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbh_put_archived_coor_values64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, const rtdb_float32* x, const rtdb_float32* y, const rtdb_int16* qualities, rtdb_error* errors)
-func RawRtdbhPutArchivedCoorValues64Warp(handle ConnectHandle, ids []PointID, datetimes []TimestampType, subtimes []SubtimeType, xs []float32, ys []float32, qualities []Quality) ([]error, error) {
+func RawRtdbhPutArchivedCoorValues64Warp(handle ConnectHandle, ids []PointID, datetimes []TimestampType, subtimes []SubtimeType, xs []float32, ys []float32, qualities []Quality) ([]RtdbError, RtdbError) {
 	cHandle := C.rtdb_int32(handle)
 	cCount := C.rtdb_int32(len(ids))
 	cIds := (*C.rtdb_int32)(unsafe.Pointer(&ids[0]))
@@ -11439,8 +11408,7 @@ func RawRtdbhPutArchivedCoorValues64Warp(handle ConnectHandle, ids []PointID, da
 	errs := make([]RtdbError, len(ids))
 	cErrs := (*C.rtdb_error)(unsafe.Pointer(&errs[0]))
 	err := C.rtdbh_put_archived_coor_values64_warp(cHandle, &cCount, cIds, cDatetimes, cSubtimes, cXs, cYs, cQualities, cErrs)
-	goErrs := RtdbErrorListToErrorList(errs)
-	return goErrs, RtdbError(err).GoError()
+	return errs, RtdbError(err)
 }
 
 // RawRtdbhPutSingleDatetimeValue64Warp 写入单个datetime标签点在某一时间的历史数据
@@ -11455,7 +11423,7 @@ func RawRtdbhPutArchivedCoorValues64Warp(handle ConnectHandle, ids []PointID, da
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbh_put_single_datetime_value64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime, rtdb_subtime_type subtime, const rtdb_byte* blob, rtdb_length_type len, rtdb_int16 quality)
-func RawRtdbhPutSingleDatetimeValue64Warp(handle ConnectHandle, id PointID, datetime TimestampType, subtime SubtimeType, blob []byte, quality Quality) error {
+func RawRtdbhPutSingleDatetimeValue64Warp(handle ConnectHandle, id PointID, datetime TimestampType, subtime SubtimeType, blob []byte, quality Quality) RtdbError {
 	cHandle := C.rtdb_int32(handle)
 	cId := C.rtdb_int32(id)
 	cDatetime := C.rtdb_timestamp_type(datetime)
@@ -11464,7 +11432,7 @@ func RawRtdbhPutSingleDatetimeValue64Warp(handle ConnectHandle, id PointID, date
 	cLen := C.rtdb_length_type(len(blob))
 	cQuality := C.rtdb_int16(quality)
 	err := C.rtdbh_put_single_datetime_value64_warp(cHandle, cId, cDatetime, cSubtime, cBlob, cLen, cQuality)
-	return RtdbError(err).GoError()
+	return RtdbError(err)
 }
 
 // RawRtdbhPutArchivedBlobValues64Warp 写入批量标签点批量字符串型历史存储数据
@@ -11483,7 +11451,7 @@ func RawRtdbhPutSingleDatetimeValue64Warp(handle ConnectHandle, id PointID, date
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbh_put_archived_blob_values64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, const rtdb_byte* const* blobs, const rtdb_length_type* lens, const rtdb_int16* qualities, rtdb_error* errors)
-func RawRtdbhPutArchivedBlobValues64Warp(handle ConnectHandle, ids []PointID, datetimes []TimestampType, subtimes []SubtimeType, blobs [][]byte, qualities []Quality) ([]error, error) {
+func RawRtdbhPutArchivedBlobValues64Warp(handle ConnectHandle, ids []PointID, datetimes []TimestampType, subtimes []SubtimeType, blobs [][]byte, qualities []Quality) ([]RtdbError, RtdbError) {
 	cHandle := C.rtdb_int32(handle)
 	cCount := C.rtdb_int32(len(ids))
 	cIds := (*C.rtdb_int32)(unsafe.Pointer(&ids[0]))
@@ -11508,8 +11476,7 @@ func RawRtdbhPutArchivedBlobValues64Warp(handle ConnectHandle, ids []PointID, da
 	errs := make([]RtdbError, len(ids))
 	cErrs := (*C.rtdb_error)(unsafe.Pointer(&errs[0]))
 	err := C.rtdbh_put_archived_blob_values64_warp(cHandle, &cCount, cIds, cDatetimes, cSubtimes, ccBlobs, cLens, cQualities, cErrs)
-	goErrs := RtdbErrorListToErrorList(errs)
-	return goErrs, RtdbError(err).GoError()
+	return errs, RtdbError(err)
 }
 
 // RawRtdbhFlushArchivedValuesWarp 将标签点未写满的补历史缓存页写入存档文件中。
@@ -11523,10 +11490,10 @@ func RawRtdbhPutArchivedBlobValues64Warp(handle ConnectHandle, ids []PointID, da
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbh_flush_archived_values_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32 *count)
-func RawRtdbhFlushArchivedValuesWarp(handle ConnectHandle, id PointID) (int32, error) {
+func RawRtdbhFlushArchivedValuesWarp(handle ConnectHandle, id PointID) (int32, RtdbError) {
 	count := C.rtdb_int32(0)
 	err := C.rtdbh_flush_archived_values_warp(C.rtdb_int32(handle), C.rtdb_int32(id), &count)
-	return int32(count), RtdbError(err).GoError()
+	return int32(count), RtdbError(err)
 }
 
 // RawRtdbhGetSingleNamedTypeValue64Warp 读取单个自定义类型标签点某个时间的历史数据
@@ -11546,7 +11513,7 @@ func RawRtdbhFlushArchivedValuesWarp(handle ConnectHandle, id PointID) (int32, e
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbh_get_single_named_type_value64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32 mode, rtdb_timestamp_type* datetime, rtdb_subtime_type* subtime, void* object, rtdb_length_type* length, rtdb_int16* quality)
-func RawRtdbhGetSingleNamedTypeValue64Warp(handle ConnectHandle, id PointID, mode RtdbHisMode, datetime TimestampType, subtime SubtimeType, length int32) (TimestampType, SubtimeType, []byte, Quality, error) {
+func RawRtdbhGetSingleNamedTypeValue64Warp(handle ConnectHandle, id PointID, mode RtdbHisMode, datetime TimestampType, subtime SubtimeType, length int32) (TimestampType, SubtimeType, []byte, Quality, RtdbError) {
 	cHandle := C.rtdb_int32(handle)
 	cId := C.rtdb_int32(id)
 	cMode := C.rtdb_int32(mode)
@@ -11557,7 +11524,7 @@ func RawRtdbhGetSingleNamedTypeValue64Warp(handle ConnectHandle, id PointID, mod
 	cLength := C.rtdb_length_type(length)
 	cQuality := C.rtdb_int16(0)
 	err := C.rtdbh_get_single_named_type_value64_warp(cHandle, cId, cMode, &cDatetime, &cSubtime, cObject, &cLength, &cQuality)
-	return TimestampType(cDatetime), SubtimeType(cSubtime), object[:cLength], Quality(cQuality), RtdbError(err).GoError()
+	return TimestampType(cDatetime), SubtimeType(cSubtime), object[:cLength], Quality(cQuality), RtdbError(err)
 }
 
 // RawRtdbhGetArchivedNamedTypeValues64Warp 连续读取自定义类型标签点的历史数据
@@ -11580,7 +11547,7 @@ func RawRtdbhGetSingleNamedTypeValue64Warp(handle ConnectHandle, id PointID, mod
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbh_get_archived_named_type_values64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime1, rtdb_subtime_type subtime1, rtdb_timestamp_type datetime2, rtdb_subtime_type subtime2, rtdb_length_type length, rtdb_int32* count, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, void* const* objects, rtdb_int16* qualities)
-func RawRtdbhGetArchivedNamedTypeValues64Warp(handle ConnectHandle, id PointID, datetime1 TimestampType, subtime1 SubtimeType, datetime2 TimestampType, subtime2 SubtimeType, length int32, maxCount int32) ([]TimestampType, []SubtimeType, [][]byte, []Quality, error) {
+func RawRtdbhGetArchivedNamedTypeValues64Warp(handle ConnectHandle, id PointID, datetime1 TimestampType, subtime1 SubtimeType, datetime2 TimestampType, subtime2 SubtimeType, length int32, maxCount int32) ([]TimestampType, []SubtimeType, [][]byte, []Quality, RtdbError) {
 	cHandle := C.rtdb_int32(handle)
 	cId := C.rtdb_int32(id)
 	cLength := C.rtdb_length_type(length)
@@ -11610,7 +11577,7 @@ func RawRtdbhGetArchivedNamedTypeValues64Warp(handle ConnectHandle, id PointID, 
 	for i := 0; i < int(cCount); i++ {
 		goObjects = append(goObjects, C.GoBytes(cObjects[i], C.int(length)))
 	}
-	return datetimes[:cCount], subtimes[:cCount], goObjects, qualities[:cCount], RtdbError(err).GoError()
+	return datetimes[:cCount], subtimes[:cCount], goObjects, qualities[:cCount], RtdbError(err)
 }
 
 // RawRtdbhPutSingleNamedTypeValue64Warp 写入自定义类型标签点的单个历史事件
@@ -11625,7 +11592,7 @@ func RawRtdbhGetArchivedNamedTypeValues64Warp(handle ConnectHandle, id PointID, 
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbh_put_single_named_type_value64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime, rtdb_subtime_type subtime, const void* object, rtdb_length_type length, rtdb_int16 quality)
-func RawRtdbhPutSingleNamedTypeValue64Warp(handle ConnectHandle, id PointID, datetime TimestampType, subtime SubtimeType, object []byte, quality Quality) error {
+func RawRtdbhPutSingleNamedTypeValue64Warp(handle ConnectHandle, id PointID, datetime TimestampType, subtime SubtimeType, object []byte, quality Quality) RtdbError {
 	cHandle := C.rtdb_int32(handle)
 	cId := C.rtdb_int32(id)
 	cDatetime := C.rtdb_timestamp_type(datetime)
@@ -11634,7 +11601,7 @@ func RawRtdbhPutSingleNamedTypeValue64Warp(handle ConnectHandle, id PointID, dat
 	cLength := C.rtdb_length_type(len(object))
 	cQuality := C.rtdb_int16(quality)
 	err := C.rtdbh_put_single_named_type_value64_warp(cHandle, cId, cDatetime, cSubimte, cObject, cLength, cQuality)
-	return RtdbError(err).GoError()
+	return RtdbError(err)
 }
 
 // RawRtdbhPutArchivedNamedTypeValues64Warp 批量补写自定义类型标签点的历史事件
@@ -11652,7 +11619,7 @@ func RawRtdbhPutSingleNamedTypeValue64Warp(handle ConnectHandle, id PointID, dat
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbh_put_archived_named_type_values64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, const void* const* objects, const rtdb_length_type* lengths, const rtdb_int16* qualities, rtdb_error* errors)
-func RawRtdbhPutArchivedNamedTypeValues64Warp(handle ConnectHandle, ids []PointID, datetimes []TimestampType, subtimes []SubtimeType, objects [][]byte, qualities []Quality) ([]error, error) {
+func RawRtdbhPutArchivedNamedTypeValues64Warp(handle ConnectHandle, ids []PointID, datetimes []TimestampType, subtimes []SubtimeType, objects [][]byte, qualities []Quality) ([]RtdbError, RtdbError) {
 	cHandle := C.rtdb_int32(handle)
 	cCount := C.rtdb_int32(len(ids))
 	cIds := (*C.rtdb_int32)(unsafe.Pointer(&ids[0]))
@@ -11677,8 +11644,7 @@ func RawRtdbhPutArchivedNamedTypeValues64Warp(handle ConnectHandle, ids []PointI
 	errs := make([]RtdbError, len(ids))
 	cErrs := (*C.rtdb_error)(unsafe.Pointer(&errs[0]))
 	err := C.rtdbh_put_archived_named_type_values64_warp(cHandle, &cCount, cIds, cDatetimes, cSubtimes, ccObjects, cLens, cQualities, cErrs)
-	goErrs := RtdbErrorListToErrorList(errs)
-	return goErrs, RtdbError(err).GoError()
+	return errs, RtdbError(err)
 }
 
 // RawRtdbeComputeHistory64Warp 重算或补算批量计算标签点历史数据
@@ -11697,7 +11663,7 @@ func RawRtdbhPutArchivedNamedTypeValues64Warp(handle ConnectHandle, ids []PointI
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbe_compute_history64_warp(rtdb_int32 handle, rtdb_int32* count, rtdb_int16 flag, rtdb_timestamp_type datetime1, rtdb_subtime_type subtime1, rtdb_timestamp_type datetime2, rtdb_subtime_type subtime2, const rtdb_int32* ids, rtdb_error* errors)
-func RawRtdbeComputeHistory64Warp(handle ConnectHandle, ids []PointID, flag int16, datetime1 TimestampType, subtime1 SubtimeType, datetime2 TimestampType, subtime2 SubtimeType) ([]error, error) {
+func RawRtdbeComputeHistory64Warp(handle ConnectHandle, ids []PointID, flag int16, datetime1 TimestampType, subtime1 SubtimeType, datetime2 TimestampType, subtime2 SubtimeType) ([]RtdbError, RtdbError) {
 	cHandle := C.rtdb_int32(handle)
 	cCount := C.rtdb_int32(len(ids))
 	cFlag := C.rtdb_int16(flag)
@@ -11709,8 +11675,7 @@ func RawRtdbeComputeHistory64Warp(handle ConnectHandle, ids []PointID, flag int1
 	errs := make([]RtdbError, len(ids))
 	cErrs := (*C.rtdb_error)(unsafe.Pointer(&errs[0]))
 	err := C.rtdbe_compute_history64_warp(cHandle, &cCount, cFlag, cDatetime1, cSubtime1, cDatetime2, cSubtime2, cIds, cErrs)
-	goErrs := RtdbErrorListToErrorList(errs)
-	return goErrs, RtdbError(err).GoError()
+	return errs, RtdbError(err)
 }
 
 // RawRtdbbGetEquationByFileNameWarp 根据文件名获取方程式
@@ -11724,13 +11689,13 @@ func RawRtdbeComputeHistory64Warp(handle ConnectHandle, ids []PointID, flag int1
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_get_equation_by_file_name_warp(rtdb_int32 handle, const char* file_name, char equation[RTDB_MAX_EQUATION_SIZE])
-func RawRtdbbGetEquationByFileNameWarp(handle ConnectHandle, name string) ([]byte, error) {
+func RawRtdbbGetEquationByFileNameWarp(handle ConnectHandle, name string) ([]byte, RtdbError) {
 	cHandle := C.rtdb_int32(handle)
 	cName := C.CString(name)
 	defer C.free(unsafe.Pointer(cName))
 	equation := make([]byte, int(C.RTDB_MAX_EQUATION_SIZE))
 	err := C.rtdbb_get_equation_by_file_name_warp(cHandle, cName, (*C.char)(unsafe.Pointer(&equation[0])))
-	return equation, RtdbError(err).GoError()
+	return equation, RtdbError(err)
 }
 
 // RawRtdbbGetEquationByIdWarp 根ID径获取方程式
@@ -11744,12 +11709,12 @@ func RawRtdbbGetEquationByFileNameWarp(handle ConnectHandle, name string) ([]byt
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_get_equation_by_id_warp(rtdb_int32 handle, rtdb_int32 id, char equation[RTDB_MAX_EQUATION_SIZE])
-func RawRtdbbGetEquationByIdWarp(handle ConnectHandle, id PointID) ([]byte, error) {
+func RawRtdbbGetEquationByIdWarp(handle ConnectHandle, id PointID) ([]byte, RtdbError) {
 	cHandle := C.rtdb_int32(handle)
 	cId := C.rtdb_int32(id)
 	cEquation := make([]byte, int(C.RTDB_MAX_EQUATION_SIZE))
 	err := C.rtdbb_get_equation_by_id_warp(cHandle, cId, (*C.char)(unsafe.Pointer(&cEquation[0])))
-	return cEquation, RtdbError(err).GoError()
+	return cEquation, RtdbError(err)
 }
 
 // RawRtdbeGetEquationGraphCountWarp 根据标签点 id 获取相关联方程式键值对数量
@@ -11764,13 +11729,13 @@ func RawRtdbbGetEquationByIdWarp(handle ConnectHandle, id PointID) ([]byte, erro
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbe_get_equation_graph_count_warp(rtdb_int32 handle, rtdb_int32 id, RTDB_GRAPH_FLAG flag, rtdb_int32 *count)
-func RawRtdbeGetEquationGraphCountWarp(handle ConnectHandle, id PointID, flag RtdbGraphFlag) (int32, error) {
+func RawRtdbeGetEquationGraphCountWarp(handle ConnectHandle, id PointID, flag RtdbGraphFlag) (int32, RtdbError) {
 	cHandle := C.rtdb_int32(handle)
 	cId := C.rtdb_int32(id)
 	cFlag := C.RTDB_GRAPH_FLAG(flag)
 	cCount := C.rtdb_int32(0)
 	err := C.rtdbe_get_equation_graph_count_warp(cHandle, cId, cFlag, &cCount)
-	return int32(cCount), RtdbError(err).GoError()
+	return int32(cCount), RtdbError(err)
 
 }
 
@@ -11787,7 +11752,7 @@ func RawRtdbeGetEquationGraphCountWarp(handle ConnectHandle, id PointID, flag Rt
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbe_get_equation_graph_datas_warp(rtdb_int32 handle, rtdb_int32 id, RTDB_GRAPH_FLAG flag, rtdb_int32 *count, RTDB_GRAPH *graph)
-func RawRtdbeGetEquationGraphDatasWarp(handle ConnectHandle, id PointID, flag RtdbGraphFlag, count int32) ([]RtdbGraph, error) {
+func RawRtdbeGetEquationGraphDatasWarp(handle ConnectHandle, id PointID, flag RtdbGraphFlag, count int32) ([]RtdbGraph, RtdbError) {
 	cHandle := C.rtdb_int32(handle)
 	cId := C.rtdb_int32(id)
 	cFlag := C.RTDB_GRAPH_FLAG(flag)
@@ -11798,7 +11763,7 @@ func RawRtdbeGetEquationGraphDatasWarp(handle ConnectHandle, id PointID, flag Rt
 	for _, g := range graph[:cCount] {
 		goGraph = append(goGraph, *goToCRtdbGraph(&g))
 	}
-	return goGraph[:cCount], RtdbError(err).GoError()
+	return goGraph[:cCount], RtdbError(err)
 }
 
 // RawRtdbpGetPerfTagsCountWarp 获取Perf服务中支持的性能计数点的数量
@@ -11812,10 +11777,10 @@ func RawRtdbeGetEquationGraphDatasWarp(handle ConnectHandle, id PointID, flag Rt
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbp_get_perf_tags_count_warp(rtdb_int32 handle, int* count)
-func RawRtdbpGetPerfTagsCountWarp(handle ConnectHandle) (int32, error) {
+func RawRtdbpGetPerfTagsCountWarp(handle ConnectHandle) (int32, RtdbError) {
 	count := C.int(0)
 	err := C.rtdbp_get_perf_tags_count_warp(C.rtdb_int32(handle), &count)
-	return int32(count), RtdbError(err).GoError()
+	return int32(count), RtdbError(err)
 }
 
 // RawRtdbpGetPerfTagsInfoWarp 根据性能计数点ID获取相关的性能计数点信息
@@ -11830,7 +11795,7 @@ func RawRtdbpGetPerfTagsCountWarp(handle ConnectHandle) (int32, error) {
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbp_get_perf_tags_info_warp(rtdb_int32 handle, rtdb_int32* count, RTDB_PERF_TAG_INFO* tags_info, rtdb_error* errors)
-func RawRtdbpGetPerfTagsInfoWarp(handle ConnectHandle, ids []RtdbPerfTagID) ([]RtdbPerfTagInfo, []error, error) {
+func RawRtdbpGetPerfTagsInfoWarp(handle ConnectHandle, ids []RtdbPerfTagID) ([]RtdbPerfTagInfo, []RtdbError, RtdbError) {
 	cHandle := C.rtdb_int32(handle)
 	cCount := C.rtdb_int32(len(ids))
 	cInfos := make([]C.RTDB_PERF_TAG_INFO, cCount)
@@ -11844,8 +11809,7 @@ func RawRtdbpGetPerfTagsInfoWarp(handle ConnectHandle, ids []RtdbPerfTagID) ([]R
 	for _, cInfo := range cInfos {
 		goInfos = append(goInfos, *cToGoRtdbPerfTagInfo(&cInfo))
 	}
-	goErrs := RtdbErrorListToErrorList(errs)
-	return goInfos, goErrs, RtdbError(err).GoError()
+	return goInfos, errs, RtdbError(err)
 }
 
 // RawRtdbpGetPerfValues64Warp 批量读取性能计数点的当前快照数值
@@ -11864,7 +11828,7 @@ func RawRtdbpGetPerfTagsInfoWarp(handle ConnectHandle, ids []RtdbPerfTagID) ([]R
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbp_get_perf_values64_warp(rtdb_int32 handle, rtdb_int32* count, int* perf_ids, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float64* values, rtdb_int64* states, rtdb_int16* qualities, rtdb_error* errors)
-func RawRtdbpGetPerfValues64Warp(handle ConnectHandle, ids []RtdbPerfTagID) ([]TimestampType, []SubtimeType, []float64, []int64, []Quality, []error, error) {
+func RawRtdbpGetPerfValues64Warp(handle ConnectHandle, ids []RtdbPerfTagID) ([]TimestampType, []SubtimeType, []float64, []int64, []Quality, []RtdbError, RtdbError) {
 	cHandle := C.rtdb_int32(handle)
 	cCount := C.rtdb_int32(len(ids))
 	cIds := (*C.int)(unsafe.Pointer(&ids[0]))
@@ -11881,6 +11845,5 @@ func RawRtdbpGetPerfValues64Warp(handle ConnectHandle, ids []RtdbPerfTagID) ([]T
 	errs := make([]RtdbError, cCount)
 	cErrs := (*C.rtdb_error)(unsafe.Pointer(&errs[0]))
 	err := C.rtdbp_get_perf_values64_warp(cHandle, &cCount, cIds, cDatetimes, cSubtimes, cValues, cStates, cQualities, cErrs)
-	goErrs := RtdbErrorListToErrorList(errs)
-	return datetimes, subtimes, values, states, qualities, goErrs, RtdbError(err).GoError()
+	return datetimes, subtimes, values, states, qualities, errs, RtdbError(err)
 }

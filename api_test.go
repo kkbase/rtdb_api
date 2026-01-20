@@ -15,7 +15,7 @@ func TestNULL(t *testing.T) {}
 // 获取 API库 版本
 func TestRawRtdbGetApiVersion(t *testing.T) {
 	apiVersion, err := RawRtdbGetApiVersionWarp()
-	if err != nil {
+	if err.GoError() != nil {
 		t.Error("获取版本号失败:", err)
 	}
 	fmt.Println("库版本号:", apiVersion)
