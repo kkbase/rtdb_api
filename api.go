@@ -7108,11 +7108,11 @@ func RawRtdbHostTime64Warp(handle ConnectHandle) (TimestampType, RtdbError) {
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_format_timespan_warp(char *str, rtdb_int32 timespan)
 func RawRtdbFormatTimespanWarp(timespan int32) (string, RtdbError) {
-	cgoStr := (*C.char)(C.CBytes(make([]byte, 512)))
-	defer C.free(unsafe.Pointer(cgoStr))
-	cgoDatetime := C.rtdb_int32(timespan)
-	err := C.rtdb_format_timespan_warp(cgoStr, cgoDatetime)
-	tStr := C.GoString(cgoStr)
+	cStr := (*C.char)(C.CBytes(make([]byte, 512)))
+	defer C.free(unsafe.Pointer(cStr))
+	cDatetime := C.rtdb_int32(timespan)
+	err := C.rtdb_format_timespan_warp(cStr, cDatetime)
+	tStr := C.GoString(cStr)
 	return tStr, RtdbError(err)
 }
 
@@ -7202,14 +7202,14 @@ func RawRtdbParseTimeWarp(tStr string) (TimestampType, SubtimeType, RtdbError) {
 // raw_fn:
 //   - void RTDBAPI_CALLRULE rtdb_format_message_warp(rtdb_error ecode, char *message, char *name, rtdb_int32 size)
 func RawRtdbFormatMessageWarp(err RtdbError) (string, string) {
-	cgoErr := C.rtdb_error(err)
-	cgoMessage := (*C.char)(C.CBytes(make([]byte, 10240)))
-	defer C.free(unsafe.Pointer(cgoMessage))
-	cgoName := (*C.char)(C.CBytes(make([]byte, 10240)))
-	defer C.free(unsafe.Pointer(cgoName))
-	cgoSize := C.rtdb_int32(10240)
-	C.rtdb_format_message_warp(cgoErr, cgoMessage, cgoName, cgoSize)
-	return C.GoString(cgoName), C.GoString(cgoMessage)
+	cErr := C.rtdb_error(err)
+	cMessage := (*C.char)(C.CBytes(make([]byte, 10240)))
+	defer C.free(unsafe.Pointer(cMessage))
+	cName := (*C.char)(C.CBytes(make([]byte, 10240)))
+	defer C.free(unsafe.Pointer(cName))
+	cSize := C.rtdb_int32(10240)
+	C.rtdb_format_message_warp(cErr, cMessage, cName, cSize)
+	return C.GoString(cName), C.GoString(cMessage)
 }
 
 // RawRtdbJobMessageWarp 获取任务的简短描述
