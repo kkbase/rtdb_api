@@ -6508,8 +6508,10 @@ func RawRtdbGetDbInfo1Warp(handle ConnectHandle, param RtdbParam) (ParamString, 
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_get_db_info2_warp(rtdb_int32 handle, rtdb_int32 index, rtdb_uint32 *value)
 func RawRtdbGetDbInfo2Warp(handle ConnectHandle, param RtdbParam) (ParamInt, RtdbError) {
+	cHandle := C.rtdb_int32(handle)
+	cParam := C.rtdb_int32(param)
 	value := C.rtdb_uint32(0)
-	err := C.rtdb_get_db_info2_warp(C.rtdb_int32(handle), C.rtdb_int32(param), &value)
+	err := C.rtdb_get_db_info2_warp(cHandle, cParam, &value)
 	return ParamInt(value), RtdbError(err)
 }
 
@@ -6523,9 +6525,11 @@ func RawRtdbGetDbInfo2Warp(handle ConnectHandle, param RtdbParam) (ParamInt, Rtd
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_set_db_info1_warp(rtdb_int32 handle, rtdb_int32 index, const char *str)
 func RawRtdbSetDbInfo1Warp(handle ConnectHandle, param RtdbParam, value ParamString) RtdbError {
+	cHandle := C.rtdb_int32(handle)
+	cParam := C.rtdb_int32(param)
 	cValue := C.CString(string(value))
 	defer C.free(unsafe.Pointer(cValue))
-	err := C.rtdb_set_db_info1_warp(C.rtdb_int32(handle), C.rtdb_int32(param), cValue)
+	err := C.rtdb_set_db_info1_warp(cHandle, cParam, cValue)
 	return RtdbError(err)
 }
 
@@ -6539,7 +6543,10 @@ func RawRtdbSetDbInfo1Warp(handle ConnectHandle, param RtdbParam, value ParamStr
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_set_db_info2_warp(rtdb_int32 handle, rtdb_int32 index, rtdb_uint32 value)
 func RawRtdbSetDbInfo2Warp(handle ConnectHandle, param RtdbParam, value ParamInt) RtdbError {
-	err := C.rtdb_set_db_info2_warp(C.rtdb_int32(handle), C.rtdb_int32(param), C.rtdb_uint32(value))
+	cHandle := C.rtdb_int32(handle)
+	cParam := C.rtdb_int32(param)
+	cValue := C.rtdb_uint32(value)
+	err := C.rtdb_set_db_info2_warp(cHandle, cParam, cValue)
 	return RtdbError(err)
 }
 
@@ -6555,6 +6562,8 @@ func RawRtdbSetDbInfo2Warp(handle ConnectHandle, param RtdbParam, value ParamInt
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_get_connections_warp(rtdb_int32 handle, rtdb_int32 node_number, rtdb_int32 *sockets, rtdb_int32 *count)
 func RawRtdbGetConnectionsWarp(handle ConnectHandle, nodeNumber int32) ([]SocketHandle, RtdbError) {
+	cHandle := C.rtdb_int32(handle)
+	cNodeNumber := C.rtdb_int32(nodeNumber)
 	connectionCount, err := RawRtdbGetDbInfo2Warp(handle, RtdbParamServerConnectionCount)
 	if !err.IsOk() {
 		return nil, err
@@ -6562,7 +6571,7 @@ func RawRtdbGetConnectionsWarp(handle ConnectHandle, nodeNumber int32) ([]Socket
 	cCount := C.rtdb_int32(connectionCount)
 	sockets := make([]SocketHandle, int32(cCount))
 	cSockets := (*C.rtdb_int32)(unsafe.Pointer(&sockets[0]))
-	err2 := C.rtdb_get_connections_warp(C.rtdb_int32(handle), C.rtdb_int32(nodeNumber), cSockets, &cCount)
+	err2 := C.rtdb_get_connections_warp(cHandle, cNodeNumber, cSockets, &cCount)
 	return sockets[0:cCount], RtdbError(err2)
 }
 
@@ -6578,8 +6587,10 @@ func RawRtdbGetConnectionsWarp(handle ConnectHandle, nodeNumber int32) ([]Socket
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_get_own_connection_warp(rtdb_int32 handle, rtdb_int32 node_number, rtdb_int32* socket)
 func RawRtdbGetOwnConnectionWarp(handle ConnectHandle, nodeNumber int32) (SocketHandle, RtdbError) {
+	cHandle := C.rtdb_int32(handle)
+	cNodeNumber := C.rtdb_int32(nodeNumber)
 	socket := C.rtdb_int32(0)
-	err := C.rtdb_get_own_connection_warp(C.rtdb_int32(handle), C.rtdb_int32(nodeNumber), &socket)
+	err := C.rtdb_get_own_connection_warp(cHandle, cNodeNumber, &socket)
 	return SocketHandle(socket), RtdbError(err)
 }
 
@@ -6616,8 +6627,11 @@ func RawRtdbGetOwnConnectionWarp(handle ConnectHandle, nodeNumber int32) (Socket
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_get_connection_info_ipv6_warp(rtdb_int32 handle, rtdb_int32 node_number, rtdb_int32 socket, RTDB_HOST_CONNECT_INFO_IPV6* info)
 func RawRtdbGetConnectionInfoIpv6Warp(handle ConnectHandle, nodeNumber int32, socket SocketHandle) (RtdbHostConnectInfoIpv6, RtdbError) {
+	cHandle := C.rtdb_int32(handle)
+	cNodeNumber := C.rtdb_int32(nodeNumber)
+	cSocket := C.rtdb_int32(socket)
 	cInfo := C.RTDB_HOST_CONNECT_INFO_IPV6{}
-	err := C.rtdb_get_connection_info_ipv6_warp(C.rtdb_int32(handle), C.rtdb_int32(nodeNumber), C.rtdb_int32(socket), &cInfo)
+	err := C.rtdb_get_connection_info_ipv6_warp(cHandle, cNodeNumber, cSocket, &cInfo)
 	goInfo := cToRtdbHostConnectInfoIpv6(&cInfo)
 	return goInfo, RtdbError(err)
 }
@@ -6633,8 +6647,9 @@ func RawRtdbGetConnectionInfoIpv6Warp(handle ConnectHandle, nodeNumber int32, so
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_get_linked_ostype_warp(rtdb_int32 handle, RTDB_OS_TYPE* ostype)
 func RawRtdbOsType(handle ConnectHandle) (RtdbOsType, RtdbError) {
+	cHandle := C.rtdb_int32(handle)
 	osType := C.RTDB_OS_TYPE(C.RTDB_OS_INVALID)
-	err := C.rtdb_get_linked_ostype_warp(C.rtdb_int32(handle), &osType)
+	err := C.rtdb_get_linked_ostype_warp(cHandle, &osType)
 	return RtdbOsType(osType), RtdbError(err)
 }
 
@@ -6648,11 +6663,12 @@ func RawRtdbOsType(handle ConnectHandle) (RtdbOsType, RtdbError) {
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_change_password_warp(rtdb_int32 handle, const char *user, const char *password)
 func RawRtdbChangePasswordWarp(handle ConnectHandle, user string, password string) RtdbError {
+	cHandle := C.rtdb_int32(handle)
 	cUser := C.CString(user)
 	defer C.free(unsafe.Pointer(cUser))
 	cPassword := C.CString(password)
 	defer C.free(unsafe.Pointer(cPassword))
-	err := C.rtdb_change_password_warp(C.rtdb_int32(handle), cUser, cPassword)
+	err := C.rtdb_change_password_warp(cHandle, cUser, cPassword)
 	return RtdbError(err)
 }
 
@@ -6666,11 +6682,12 @@ func RawRtdbChangePasswordWarp(handle ConnectHandle, user string, password strin
 // raw_fn
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_change_my_password_warp(rtdb_int32 handle, const char *old_pwd, const char *new_pwd)
 func RawRtdbChangeMyPasswordWarp(handle ConnectHandle, oldPwd string, newPwd string) RtdbError {
+	cHandle := C.rtdb_int32(handle)
 	cOldPwd := C.CString(oldPwd)
 	defer C.free(unsafe.Pointer(cOldPwd))
 	cNewPwd := C.CString(newPwd)
 	defer C.free(unsafe.Pointer(cNewPwd))
-	err := C.rtdb_change_my_password_warp(C.rtdb_int32(handle), cOldPwd, cNewPwd)
+	err := C.rtdb_change_my_password_warp(cHandle, cOldPwd, cNewPwd)
 	return RtdbError(err)
 }
 
@@ -6700,9 +6717,10 @@ func RawRtdbGetPrivWarp(handle ConnectHandle) (PrivGroup, RtdbError) {
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_change_priv_warp(rtdb_int32 handle, const char *user, rtdb_int32 priv)
 func RawRtdbChangePrivWarp(handle ConnectHandle, user string, priv PrivGroup) RtdbError {
+	cHandle := C.rtdb_int32(handle)
 	cUser := C.CString(user)
 	defer C.free(unsafe.Pointer(cUser))
-	err := C.rtdb_change_priv_warp(C.rtdb_int32(handle), cUser, C.rtdb_int32(priv))
+	err := C.rtdb_change_priv_warp(cHandle, cUser, C.rtdb_int32(priv))
 	return RtdbError(err)
 }
 
@@ -6717,11 +6735,12 @@ func RawRtdbChangePrivWarp(handle ConnectHandle, user string, priv PrivGroup) Rt
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_add_user_warp(rtdb_int32 handle, const char *user, const char *password, rtdb_int32 priv)
 func RawRtdbAddUserWarp(handle ConnectHandle, user string, password string, priv PrivGroup) RtdbError {
+	cHandle := C.rtdb_int32(handle)
 	cUser := C.CString(user)
 	defer C.free(unsafe.Pointer(cUser))
 	cPassword := C.CString(password)
 	defer C.free(unsafe.Pointer(cPassword))
-	err := C.rtdb_add_user_warp(C.rtdb_int32(handle), cUser, cPassword, C.rtdb_int32(priv))
+	err := C.rtdb_add_user_warp(cHandle, cUser, cPassword, C.rtdb_int32(priv))
 	return RtdbError(err)
 }
 
@@ -6734,9 +6753,10 @@ func RawRtdbAddUserWarp(handle ConnectHandle, user string, password string, priv
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_remove_user_warp(rtdb_int32 handle, const char *user)
 func RawRtdbRemoveUserWarp(handle ConnectHandle, user string) RtdbError {
+	cHandle := C.rtdb_int32(handle)
 	cUser := C.CString(user)
 	defer C.free(unsafe.Pointer(cUser))
-	err := C.rtdb_remove_user_warp(C.rtdb_int32(handle), cUser)
+	err := C.rtdb_remove_user_warp(cHandle, cUser)
 	return RtdbError(err)
 }
 
@@ -6750,9 +6770,10 @@ func RawRtdbRemoveUserWarp(handle ConnectHandle, user string) RtdbError {
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_lock_user_warp(rtdb_int32 handle, const char *user, rtdb_int8 lock)
 func RawRtdbLockUserWarp(handle ConnectHandle, user string, lock Switch) RtdbError {
+	cHandle := C.rtdb_int32(handle)
 	cUser := C.CString(user)
 	defer C.free(unsafe.Pointer(cUser))
-	err := C.rtdb_lock_user_warp(C.rtdb_int32(handle), cUser, C.rtdb_int8(lock))
+	err := C.rtdb_lock_user_warp(cHandle, cUser, C.rtdb_int8(lock))
 	return RtdbError(err)
 }
 
@@ -6767,9 +6788,10 @@ func RawRtdbLockUserWarp(handle ConnectHandle, user string, lock Switch) RtdbErr
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_get_users_warp(rtdb_int32 handle, rtdb_int32 *count, RTDB_USER_INFO *infos)
 func RawRtdbGetUsersWarp(handle ConnectHandle) ([]RtdbUserInfo, RtdbError) {
+	cHandle := C.rtdb_int32(handle)
 	cCount := C.rtdb_int32(RtdbConstMaxUserCount)
 	cInfos := make([]C.RTDB_USER_INFO, RtdbConstMaxUserCount)
-	err := C.rtdb_get_users_warp(C.rtdb_int32(handle), &cCount, &cInfos[0])
+	err := C.rtdb_get_users_warp(cHandle, &cCount, &cInfos[0])
 	goInfos := make([]RtdbUserInfo, 0)
 	for i := 0; i < int(cCount); i++ {
 		goInfos = append(goInfos, cToRtdbUserInfo(&cInfos[i]))
@@ -6788,13 +6810,14 @@ func RawRtdbGetUsersWarp(handle ConnectHandle) ([]RtdbUserInfo, RtdbError) {
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_add_blacklist_warp(rtdb_int32 handle, const char *addr, const char *mask, const char *desc)
 func RawRtdbAddBlacklistWarp(handle ConnectHandle, addr string, mask string, desc string) RtdbError {
+	cHandle := C.rtdb_int32(handle)
 	cAddr := C.CString(addr)
 	defer C.free(unsafe.Pointer(cAddr))
 	cMask := C.CString(mask)
 	defer C.free(unsafe.Pointer(cMask))
 	cDesc := C.CString(desc)
 	defer C.free(unsafe.Pointer(cDesc))
-	err := C.rtdb_add_blacklist_warp(C.rtdb_int32(handle), cAddr, cMask, cDesc)
+	err := C.rtdb_add_blacklist_warp(cHandle, cAddr, cMask, cDesc)
 	return RtdbError(err)
 }
 
@@ -6811,6 +6834,7 @@ func RawRtdbAddBlacklistWarp(handle ConnectHandle, addr string, mask string, des
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_update_blacklist_warp(rtdb_int32 handle, const char *addr, const char *mask, const char *addr_new, const char *mask_new, const char *desc)
 func RawRtdbUpdateBlacklistWarp(handle ConnectHandle, oldAddr string, oldMask string, newAddr string, newMask string, newDesc string) RtdbError {
+	cHandle := C.rtdb_int32(handle)
 	cOldAddr := C.CString(oldAddr)
 	defer C.free(unsafe.Pointer(cOldAddr))
 	cOldMask := C.CString(oldMask)
@@ -6821,7 +6845,7 @@ func RawRtdbUpdateBlacklistWarp(handle ConnectHandle, oldAddr string, oldMask st
 	defer C.free(unsafe.Pointer(cNewMask))
 	cNewDesc := C.CString(newDesc)
 	defer C.free(unsafe.Pointer(cNewDesc))
-	err := C.rtdb_update_blacklist_warp(C.rtdb_int32(handle), cOldAddr, cOldMask, cNewAddr, cNewMask, cNewDesc)
+	err := C.rtdb_update_blacklist_warp(cHandle, cOldAddr, cOldMask, cNewAddr, cNewMask, cNewDesc)
 	return RtdbError(err)
 }
 
@@ -6835,11 +6859,12 @@ func RawRtdbUpdateBlacklistWarp(handle ConnectHandle, oldAddr string, oldMask st
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_remove_blacklist_warp(rtdb_int32 handle, const char *addr, const char *mask)
 func RawRtdbRemoveBlacklistWarp(handle ConnectHandle, addr string, mask string) RtdbError {
+	cHandle := C.rtdb_int32(handle)
 	cAddr := C.CString(addr)
 	defer C.free(unsafe.Pointer(cAddr))
 	cMask := C.CString(mask)
 	defer C.free(unsafe.Pointer(cMask))
-	err := C.rtdb_remove_blacklist_warp(C.rtdb_int32(handle), cAddr, cMask)
+	err := C.rtdb_remove_blacklist_warp(cHandle, cAddr, cMask)
 	return RtdbError(err)
 }
 
