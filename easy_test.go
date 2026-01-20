@@ -3,5 +3,9 @@ package rtdb_api
 import "testing"
 
 func TestLogin(t *testing.T) {
-	Login(Hostname, Port, Username, Password)
+	conn, err := Login(Hostname, Port, Username, Password)
+	if err != nil {
+		t.Fatal("登录用户失败", err)
+	}
+	defer func() { _ = conn.Logout() }()
 }

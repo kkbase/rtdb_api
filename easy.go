@@ -2,7 +2,7 @@ package rtdb_api
 
 type RtdbConnect struct {
 	HostName         string        // 服务端名称
-	Port             int16         // 服务端端口
+	Port             int32         // 服务端端口
 	UserName         string        // 用户名
 	Password         string        // 密码
 	ConnectHandle    ConnectHandle // 连接句柄
@@ -13,9 +13,23 @@ type RtdbConnect struct {
 }
 
 // Login 登录数据库
-func Login(hostName string, Port int16, userName string, password string) *RtdbConnect {
-	return &RtdbConnect{}
+func Login(hostName string, port int32, userName string, password string) (*RtdbConnect, error) {
+	rtn := RtdbConnect{
+		HostName: hostName,
+		Port:     port,
+		UserName: userName,
+		Password: password,
+	}
+	cHandle, err := RawRtdbConnectWarp(rtn.UserName, rtn.Port)
+	if err != nil {
+		return nil, err
+	}
+	rtn.ConnectHandle = cHandle
+	return &rtn, nil
 }
 
 // Logout 登出数据库
-func (c *RtdbConnect) Logout() {}
+func (c *RtdbConnect) Logout() error {
+	err := RawRtdbDisconnectWarp(c.ConnectHandle)
+	return err
+}
