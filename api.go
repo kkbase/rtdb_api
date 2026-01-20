@@ -8303,7 +8303,12 @@ func RawRtdbbFindPointsExWarp(handle ConnectHandle, tableDotTags []string) ([]Po
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_sort_points_warp(rtdb_int32 handle, rtdb_int32 count, rtdb_int32 *ids, rtdb_int32 index, rtdb_int32 flag)
 func RawRtdbbSortPointsWarp(handle ConnectHandle, ids []PointID, index RtdbTagIndex, flag RtdbSortFlag) ([]PointID, RtdbError) {
-	err := C.rtdbb_sort_points_warp(C.rtdb_int32(handle), C.rtdb_int32(len(ids)), (*C.rtdb_int32)(unsafe.Pointer(&ids[0])), C.rtdb_int32(index), C.rtdb_int32(flag))
+	cHandle := C.rtdb_int32(handle)
+	cCount := C.rtdb_int32(len(ids))
+	cIds := (*C.rtdb_int32)(unsafe.Pointer(&ids[0]))
+	cIndex := C.rtdb_int32(index)
+	cFlag := C.rtdb_int32(flag)
+	err := C.rtdbb_sort_points_warp(cHandle, cCount, cIds, cIndex, cFlag)
 	return ids, RtdbError(err)
 }
 
