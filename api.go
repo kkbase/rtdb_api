@@ -9931,7 +9931,7 @@ func RawRtdbaGetArchivesPerfDataWarp(handle ConnectHandle, count int32) ([]strin
 //   - handle 句柄
 //
 // output:
-//   - status 存档状态
+//   - RtdbArchiveState(status) 存档状态
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdba_get_archives_status_warp(rtdb_int32 handle, rtdb_error* status)
