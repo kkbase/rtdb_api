@@ -6572,8 +6572,8 @@ func RawRtdbGetConnectionsWarp(handle ConnectHandle, nodeNumber int32) ([]Socket
 	cCount := C.rtdb_int32(connectionCount)
 	sockets := make([]SocketHandle, int32(cCount))
 	cSockets := (*C.rtdb_int32)(unsafe.Pointer(&sockets[0]))
-	err = C.rtdb_get_connections_warp(cHandle, cNodeNumber, cSockets, &cCount)
-	return sockets[cCount], RtdbError(err)
+	err2 = C.rtdb_get_connections_warp(cHandle, cNodeNumber, cSockets, &cCount)
+	return sockets[:cCount], RtdbError(err2)
 }
 
 // RawRtdbGetOwnConnectionWarp 获取当前连接的socket句柄
@@ -6583,7 +6583,7 @@ func RawRtdbGetConnectionsWarp(handle ConnectHandle, nodeNumber int32) ([]Socket
 //   - nodeNumber 双活模式下，指定节点编号，1为rtdb_connect中第1个IP，2为rtdb_connect中第2个IP, 单机模式下写0
 //
 // output:
-//   - SocketHandle socket连接
+//   - SocketHandle(socket) socket连接
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_get_own_connection_warp(rtdb_int32 handle, rtdb_int32 node_number, rtdb_int32* socket)
@@ -6623,7 +6623,7 @@ func RawRtdbGetOwnConnectionWarp(handle ConnectHandle, nodeNumber int32) (Socket
 //   - socket socket连接句柄
 //
 // output:
-//   - RtdbHostConnectInfoIpv6 连接信息
+//   - RtdbHostConnectInfoIpv6(info) 连接信息
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_get_connection_info_ipv6_warp(rtdb_int32 handle, rtdb_int32 node_number, rtdb_int32 socket, RTDB_HOST_CONNECT_INFO_IPV6* info)
