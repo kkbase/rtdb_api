@@ -9082,22 +9082,23 @@ func RawRtdbsGetCoorSnapshots64Warp(handle ConnectHandle, ids []PointID) ([]Time
 //   - qualities 实时数值品质列表，数据库预定义的品质参见枚举 RTDB_QUALITY
 //
 // output:
-//   - []error 输出错误列表
+//   - []RtdbError(errs) 输出错误列表
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbs_put_coor_snapshots64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, const rtdb_float32* x, const rtdb_float32* y, const rtdb_int16* qualities, rtdb_error* errors)
 func RawRtdbsPutCoorSnapshots64Warp(handle ConnectHandle, ids []PointID, datetimes []TimestampType, ms []SubtimeType, xs []float32, ys []float32, qualities []Quality) ([]RtdbError, RtdbError) {
-	count := C.rtdb_int32(len(ids))
+	cHandle := C.rtdb_int32(handle)
+	cCount := C.rtdb_int32(len(ids))
 	cIds := (*C.rtdb_int32)(unsafe.Pointer(&ids[0]))
 	cDatetimes := (*C.rtdb_timestamp_type)(unsafe.Pointer(&datetimes[0]))
 	cMs := (*C.rtdb_subtime_type)(unsafe.Pointer(&ms[0]))
 	cXs := (*C.rtdb_float32)(unsafe.Pointer(&xs[0]))
 	cYs := (*C.rtdb_float32)(unsafe.Pointer(&ys[0]))
 	cQualities := (*C.rtdb_int16)(unsafe.Pointer(&qualities[0]))
-	errs := make([]RtdbError, count)
+	errs := make([]RtdbError, len(ids))
 	cErrs := (*C.rtdb_error)(unsafe.Pointer(&errs[0]))
-	err := C.rtdbs_put_coor_snapshots64_warp(C.rtdb_int32(handle), &count, cIds, cDatetimes, cMs, cXs, cYs, cQualities, cErrs)
-	return errs[:count], RtdbError(err)
+	err := C.rtdbs_put_coor_snapshots64_warp(cHandle, &cCount, cIds, cDatetimes, cMs, cXs, cYs, cQualities, cErrs)
+	return errs, RtdbError(err)
 }
 
 // RawRtdbsFixCoorSnapshots64Warp 批量写入坐标实时数据(修复写入)
