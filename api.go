@@ -9952,7 +9952,7 @@ func RawRtdbaGetArchivesStatusWarp(handle ConnectHandle) (RtdbArchiveState, Rtdb
 //   - file_id 附属文件标识，0 表示获取主文件信息。
 //
 // output:
-//   - RtdbHanderPage 存档文件信息
+//   - RtdbHanderPage(page) 存档文件信息
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdba_get_archive_info_warp(rtdb_int32 handle, const char *path, const char *file, rtdb_int32 file_id, RTDB_HEADER_PAGE *info)
