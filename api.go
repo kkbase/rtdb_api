@@ -6948,7 +6948,8 @@ func RawRtdbAddAuthorizationWarp(handle ConnectHandle, addr string, mask string,
 	defer C.free(unsafe.Pointer(cMask))
 	cDesc := C.CString(desc)
 	defer C.free(unsafe.Pointer(cDesc))
-	err := C.rtdb_add_authorization_warp(cHandle, cAddr, cMask, C.rtdb_int32(priv), cDesc)
+	cPriv := C.rtdb_int32(priv)
+	err := C.rtdb_add_authorization_warp(cHandle, cAddr, cMask, cPriv, cDesc)
 	return RtdbError(err)
 }
 
