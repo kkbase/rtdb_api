@@ -9476,42 +9476,39 @@ func RawRtdbsSubscribeSnapshotsEx64Warp(handle ConnectHandle, ids []PointID, opt
 //   - event_type为其它值时，errors值为NULL
 //
 // output:
-//   - []error 输出，写入实时数据的返回值列表，参考rtdb_error.h
+//   - []RtdbError(errs) 输出，写入实时数据的返回值列表，参考rtdb_error.h
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbs_subscribe_delta_snapshots64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_float64* delta_values, const rtdb_int64* delta_states, rtdb_uint32 options, void* param, rtdbs_snaps_event_ex64 callback, rtdb_error* errors)
 func RawRtdbsSubscribeDeltaSnapshots64Warp(handle ConnectHandle, ids []PointID, deltaValues []float64, deltaStates []int64, options RtdbSubscribeOption, param unsafe.Pointer) ([]RtdbError, RtdbError) {
+	cHandle := C.rtdb_int32(handle)
 	cCount := C.rtdb_int32(len(ids))
 	cIds := (*C.rtdb_int32)(unsafe.Pointer(&ids[0]))
 	cDeltaValues := (*C.rtdb_float64)(unsafe.Pointer(&deltaValues[0]))
 	cDeltaStates := (*C.rtdb_int64)(unsafe.Pointer(&deltaStates[0]))
 	errs := make([]RtdbError, len(ids))
 	cErrs := (*C.rtdb_error)(unsafe.Pointer(&errs[0]))
-	err := C.rtdbs_subscribe_delta_snapshots64_warp(C.rtdb_int32(handle), &cCount, cIds, cDeltaValues, cDeltaStates, C.rtdb_uint32(options), param, (C.rtdbs_snaps_event_ex64)(unsafe.Pointer(C.goSnapsEventEx)), cErrs)
-	return errs[:cCount], RtdbError(err)
+	err := C.rtdbs_subscribe_delta_snapshots64_warp(cHandle, &cCount, cIds, cDeltaValues, cDeltaStates, C.rtdb_uint32(options), param, (C.rtdbs_snaps_event_ex64)(unsafe.Pointer(C.goSnapsEventEx)), cErrs)
+	return errs, RtdbError(err)
 }
 
 // RawRtdbsChangeSubscribeSnapshotsWarp 批量修改订阅标签点信息
-//   - \param handle         连接句柄
-//   - \param count          整型，输入/输出，标签点个数，输入时表示 ids、errors 的长度，
-//   - 输出时表示成功订阅的标签点个数，不得超过 RTDB_MAX_SUBSCRIBE_SNAPSHOTS。
-//   - \param ids            整型数组，输入，标签点标识列表。
-//   - \param delta_values   double型数组，输入，订阅浮点类型标签点的容差值，变化超过设置的容差值才会推送
-//   - \param delta_values   整型数组，输入，订阅整型标签点的容差值，变化超过设置的容差值才会推送
-//   - \param changed_types  整型数组，输入，修改类型，参考RTDB_SUBSCRIBE_CHANGE_TYPE
-//   - \param errors         异步调用，保留参数，暂时不启用
-//   - \remark   用户须保证 ids、delta_values、delta_states、errors 的长度与 count 一致。
-//   - 可以同时添加、修改、删除订阅的标签点信息，
-//   - delta_values和delta_states，可以为空指针，为空，则表示不设置容差值，即写入新数据即推送
-//   - 只有delta_values和delta_states都不为空时，设置的容差值才有效。
-//   - 用于订阅快照的连接句柄必需是独立的，不能再用来调用其它 api，
-//   - 否则返回 RtE_OTHER_SDK_DOING 错误。
-//   - 此方法是异步方法，当网络中断等异常情况时，会通过方法的返回值返回错误，参考rtdb_error.h。
-//   - 当方法返回值为RtE_OK时，表示已经成功发送给数据库，但是并没有等待修改结果。
-//   - 数据库的修改结果，会异步通知给api的回调函数，通过rtdbs_snaps_event_ex的RTDB_E_CHANGED事件通知修改结果
 //
-// rtdb_error RTDBAPI_CALLRULE rtdbs_change_subscribe_snapshots_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_float64* delta_values, const rtdb_int64* delta_states, const rtdb_int32* changed_types, rtdb_error* errors)
+// input:
+//   - handle 连接句柄
+//   - count 标签点个数，输入时表示 ids、errors 的长度，输出时表示成功订阅的标签点个数，不得超过 RTDB_MAX_SUBSCRIBE_SNAPSHOTS。
+//   - ids 标签点标识列表。
+//   - delta_values 订阅浮点类型标签点的容差值，变化超过设置的容差值才会推送
+//   - delta_values 订阅整型标签点的容差值，变化超过设置的容差值才会推送
+//   - changed_types 修改类型，参考RTDB_SUBSCRIBE_CHANGE_TYPE
+//
+// output:
+//   - []RtdbError(errs) 异步调用，保留参数，暂时不启用
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdbs_change_subscribe_snapshots_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_float64* delta_values, const rtdb_int64* delta_states, const rtdb_int32* changed_types, rtdb_error* errors)
 func RawRtdbsChangeSubscribeSnapshotsWarp(handle ConnectHandle, ids []PointID, deltaValues []float64, deltaStates []int64, changedTypes []RtdbSubscribeChangeType) ([]RtdbError, RtdbError) {
+	cHandle := C.rtdb_int32(handle)
 	cCount := C.rtdb_int32(len(ids))
 	cIds := (*C.rtdb_int32)(unsafe.Pointer(&ids[0]))
 	cDeltaValues := (*C.rtdb_float64)(unsafe.Pointer(&deltaValues[0]))
@@ -9519,8 +9516,8 @@ func RawRtdbsChangeSubscribeSnapshotsWarp(handle ConnectHandle, ids []PointID, d
 	cChangedTypes := (*C.rtdb_int32)(unsafe.Pointer(&changedTypes[0]))
 	errs := make([]RtdbError, len(ids))
 	cErrs := (*C.rtdb_error)(unsafe.Pointer(&errs[0]))
-	err := C.rtdbs_change_subscribe_snapshots_warp(C.rtdb_int32(handle), &cCount, cIds, cDeltaValues, cDeltaStates, cChangedTypes, cErrs)
-	return errs[:cCount], RtdbError(err)
+	err := C.rtdbs_change_subscribe_snapshots_warp(cHandle, &cCount, cIds, cDeltaValues, cDeltaStates, cChangedTypes, cErrs)
+	return errs, RtdbError(err)
 }
 
 // RawRtdbsCancelSubscribeSnapshotsWarp 取消标签点快照更改通知订阅
@@ -9531,7 +9528,8 @@ func RawRtdbsChangeSubscribeSnapshotsWarp(handle ConnectHandle, ids []PointID, d
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbs_cancel_subscribe_snapshots_warp(rtdb_int32 handle)
 func RawRtdbsCancelSubscribeSnapshotsWarp(handle ConnectHandle) RtdbError {
-	err := C.rtdbs_cancel_subscribe_snapshots_warp(C.rtdb_int32(handle))
+	cHandle := C.rtdb_int32(handle)
+	err := C.rtdbs_cancel_subscribe_snapshots_warp(cHandle)
 	return RtdbError(err)
 }
 
