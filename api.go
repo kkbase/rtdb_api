@@ -6643,7 +6643,7 @@ func RawRtdbGetConnectionInfoIpv6Warp(handle ConnectHandle, nodeNumber int32, so
 //   - handle 连接句柄
 //
 // output:
-//   - RtdbOsType 操作系统类型
+//   - RtdbOsType(os_type) 操作系统类型
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_get_linked_ostype_warp(rtdb_int32 handle, RTDB_OS_TYPE* ostype)
@@ -6698,7 +6698,7 @@ func RawRtdbChangeMyPasswordWarp(handle ConnectHandle, oldPwd string, newPwd str
 //   - handle 连接句柄
 //
 // output:
-//   - PrivGroup 用户权限
+//   - PrivGroup(priv) 用户权限
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_get_priv_warp(rtdb_int32 handle, rtdb_int32 *priv)
@@ -6741,7 +6741,8 @@ func RawRtdbAddUserWarp(handle ConnectHandle, user string, password string, priv
 	defer C.free(unsafe.Pointer(cUser))
 	cPassword := C.CString(password)
 	defer C.free(unsafe.Pointer(cPassword))
-	err := C.rtdb_add_user_warp(cHandle, cUser, cPassword, C.rtdb_int32(priv))
+	cPriv := C.rtdb_int32(priv)
+	err := C.rtdb_add_user_warp(cHandle, cUser, cPassword, cPriv)
 	return RtdbError(err)
 }
 
@@ -6774,7 +6775,8 @@ func RawRtdbLockUserWarp(handle ConnectHandle, user string, lock Switch) RtdbErr
 	cHandle := C.rtdb_int32(handle)
 	cUser := C.CString(user)
 	defer C.free(unsafe.Pointer(cUser))
-	err := C.rtdb_lock_user_warp(cHandle, cUser, C.rtdb_int8(lock))
+	cLock := C.rtdb_int8(lock)
+	err := C.rtdb_lock_user_warp(cHandle, cUser, cLock)
 	return RtdbError(err)
 }
 
@@ -6784,7 +6786,7 @@ func RawRtdbLockUserWarp(handle ConnectHandle, user string, lock Switch) RtdbErr
 //   - handle 连接句柄
 //
 // output:
-//   - []RtdbUserInfo 用户列表
+//   - []RtdbUserInfo(infos) 用户列表
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_get_users_warp(rtdb_int32 handle, rtdb_int32 *count, RTDB_USER_INFO *infos)
@@ -6875,7 +6877,7 @@ func RawRtdbRemoveBlacklistWarp(handle ConnectHandle, addr string, mask string) 
 //   - handle 连接句柄
 //
 // output:
-//   - []BlackList 黑名单列表
+//   - []BlackList(black_list) 黑名单列表
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_get_blacklist_warp(rtdb_int32 handle, char* const* addrs, char* const* masks, char* const* descs, rtdb_int32 *count)
@@ -6890,7 +6892,7 @@ func RawRtdbGetBlacklistWarp(handle ConnectHandle) ([]BlackList, RtdbError) {
 			C.free(unsafe.Pointer(cAddrs[i]))
 		}
 	}()
-	cgoAddrs := &cAddrs[0]
+	ccAddrs := &cAddrs[0]
 
 	cMakes := make([]*C.char, RtdbConstMaxBlacklistLen)
 	for i := int32(0); i < int32(RtdbConstMaxBlacklistLen); i++ {
@@ -6901,7 +6903,7 @@ func RawRtdbGetBlacklistWarp(handle ConnectHandle) ([]BlackList, RtdbError) {
 			C.free(unsafe.Pointer(cMakes[i]))
 		}
 	}()
-	cgoMasks := &cMakes[0]
+	ccMasks := &cMakes[0]
 
 	cDescs := make([]*C.char, RtdbConstMaxBlacklistLen)
 	for i := int32(0); i < int32(RtdbConstMaxBlacklistLen); i++ {
@@ -6912,13 +6914,13 @@ func RawRtdbGetBlacklistWarp(handle ConnectHandle) ([]BlackList, RtdbError) {
 			C.free(unsafe.Pointer(cDescs[i]))
 		}
 	}()
-	cgoDescs := &cDescs[0]
+	ccDescs := &cDescs[0]
 
-	cgoCount := C.rtdb_int32(RtdbConstMaxBlacklistLen)
-	err := C.rtdb_get_blacklist_warp(cHandle, cgoAddrs, cgoMasks, cgoDescs, &cgoCount)
+	cCount := C.rtdb_int32(RtdbConstMaxBlacklistLen)
+	err := C.rtdb_get_blacklist_warp(cHandle, ccAddrs, ccMasks, ccDescs, &cCount)
 
 	rtn := make([]BlackList, 0)
-	for i := int32(0); i < int32(cgoCount); i++ {
+	for i := int32(0); i < int32(cCount); i++ {
 		rtn = append(rtn, BlackList{
 			Addr: CCharArrayToString(cAddrs[i], 32),
 			Mask: CCharArrayToString(cMakes[i], 32),
