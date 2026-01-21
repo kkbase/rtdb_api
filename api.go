@@ -8938,7 +8938,7 @@ func RawRtdbsGetSnapshots64Warp(handle ConnectHandle, ids []PointID) ([]Timestam
 	errs := make([]RtdbError, cCount)
 	cErrs := (*C.rtdb_error)(unsafe.Pointer(&errs[0]))
 	err := C.rtdbs_get_snapshots64_warp(cHandle, &cCount, cIds, cDatetimes, cSubtimes, cValues, cStates, cQualities, cErrs)
-	return datetimes[:cCount], subtimes[:cCount], values[:cCount], subtimes[:cCount], qualities[:cCount], errs[:cCount], RtdbError(err)
+	return datetimes[:cCount], subtimes[:cCount], values[:cCount], states[:cCount], qualities[:cCount], errs[:cCount], RtdbError(err)
 }
 
 // RawRtdbsPutSnapshots64Warp 批量写入开关量、模拟量快照数值
