@@ -1,6 +1,17 @@
 package rtdb_api
 
-type RtdbConnect struct {
+// ParamType 服务端参数
+type ParamType interface {
+	ParamString | ParamInt
+}
+
+////////////////////////////////////////////////
+//////////////////上面是一些结构//////////////////
+////////////////////摆烂的分隔线/////////////////
+/////////////////下面是RtdbConnect函数///////////
+////////////////////////////////////////////////
+
+type RtdbConnect[PT ParamType] struct {
 	HostName         string         // 服务端名称
 	Port             int32          // 服务端端口
 	UserName         string         // 用户名
@@ -75,13 +86,13 @@ func Login(hostName string, port int32, userName string, password string) (*Rtdb
 }
 
 // Logout 登出数据库
-func (c *RtdbConnect) Logout() error {
+func (c *RtdbConnect[PT]) Logout() error {
 	rte := RawRtdbDisconnectWarp(c.ConnectHandle)
 	return rte.GoError()
 }
 
 // GetClientVersion 获取客户端版本
-func (c *RtdbConnect) GetClientVersion() (*ApiVersion, error) {
+func (c *RtdbConnect[PT]) GetClientVersion() (*ApiVersion, error) {
 	version, rte := RawRtdbGetApiVersionWarp()
 	if !RteIsOk(rte) {
 		return nil, rte.GoError()
@@ -90,7 +101,16 @@ func (c *RtdbConnect) GetClientVersion() (*ApiVersion, error) {
 }
 
 // SetClientOption 设置客户端参数
-func (c *RtdbConnect) SetClientOption(option RtdbApiOption, value int32) error {
+func (c *RtdbConnect[PT]) SetClientOption(option RtdbApiOption, value int32) error {
 	rte := RawRtdbSetOptionWarp(option, value)
 	return rte.GoError()
+}
+
+// GetServerOption 获取服务端选项
+func (c *RtdbConnect[PT]) GetServerOption(option RtdbParam) (PT, error) {
+	param, rte := RawRtdbGetDbInfo1Warp(c.ConnectHandle, option)
+	if !RteIsOk(rte) {
+		return *new(PT), rte.GoError()
+	}
+	return any(param), rte.GoError()
 }
