@@ -9415,16 +9415,19 @@ func RawRtdbsPutDatetimeSnapshots64Warp(handle ConnectHandle, ids []PointID, dat
 //   - event_type为其它值时，errors值为NULL
 //
 // output:
-//   - []error 无符号整型数组，写入实时数据的返回值列表，参考rtdb_error.h
+//   - []RtdbError(errs) 无符号整型数组，写入实时数据的返回值列表，参考rtdb_error.h
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbs_subscribe_snapshots_ex64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, rtdb_uint32 options, void* param, rtdbs_snaps_event_ex64 callback, rtdb_error* errors)
 func RawRtdbsSubscribeSnapshotsEx64Warp(handle ConnectHandle, ids []PointID, options RtdbSubscribeOption, param unsafe.Pointer) ([]RtdbError, RtdbError) {
+	cHandle := C.rtdb_int32(handle)
 	cCount := C.rtdb_int32(len(ids))
 	cIds := (*C.rtdb_int32)(unsafe.Pointer(&ids[0]))
+	cOptions := C.rtdb_uint32(options)
 	errs := make([]RtdbError, len(ids))
-	err := C.rtdbs_subscribe_snapshots_ex64_warp(C.rtdb_int32(handle), &cCount, cIds, C.rtdb_uint32(options), param, (C.rtdbs_snaps_event_ex64)(unsafe.Pointer(C.goSnapsEventEx)), (*C.rtdb_error)(unsafe.Pointer(&errs[0])))
-	return errs[:cCount], RtdbError(err)
+	cErrs := (*C.rtdb_error)(unsafe.Pointer(&errs[0]))
+	err := C.rtdbs_subscribe_snapshots_ex64_warp(cHandle, &cCount, cIds, cOptions, param, (C.rtdbs_snaps_event_ex64)(unsafe.Pointer(C.goSnapsEventEx)), cErrs)
+	return errs, RtdbError(err)
 }
 
 // RawRtdbsSubscribeDeltaSnapshots64Warp 批量标签点快照改变的通知订阅 (增量订阅，指的是数值超出一定变化后才会触发，可减少网络流量占用)
