@@ -7671,7 +7671,7 @@ func RawRtdbbTablesCountWarp(handle ConnectHandle) (int32, RtdbError) {
 func RawRtdbbGetTablesWarp(handle ConnectHandle) ([]TableID, RtdbError) {
 	cHandle := C.rtdb_int32(handle)
 	count, err := RawRtdbbTablesCountWarp(handle)
-	if !err.IsOk() {
+	if !errors.Is(err, RteOk) {
 		return nil, err
 	}
 	ids := make([]TableID, count)
@@ -9831,8 +9831,8 @@ func RawRtdbaShiftActivedWarp(handle ConnectHandle) RtdbError {
 func RawRtdbaGetArchivesWarp(handle ConnectHandle) ([]string, []string, []RtdbArchiveState, RtdbError) {
 	cHandle := C.rtdb_int32(handle)
 	count, err := RawRtdbaGetArchivesCountWarp(handle)
-	if err.IsOk() {
-		return nil, nil, nil, RteOk
+	if !errors.Is(err, RteOk) {
+		return nil, nil, nil, err
 	}
 	cCount := C.rtdb_int32(count)
 	paths := make([]C.rtdb_path_string, count)
@@ -9958,10 +9958,9 @@ func RawRtdbaGetArchivesPerfDataWarp(handle ConnectHandle, count int32) ([]strin
 //   - rtdb_error RTDBAPI_CALLRULE rtdba_get_archives_status_warp(rtdb_int32 handle, rtdb_error* status)
 func RawRtdbaGetArchivesStatusWarp(handle ConnectHandle) (RtdbArchiveState, RtdbError) {
 	cHandle := C.rtdb_int32(handle)
-	state := RtdbArchiveState(0)
-	cState := (*C.rtdb_error)(&state)
-	err := C.rtdba_get_archives_status_warp(cHandle, cState)
-	return state, RtdbError(err)
+	cState := C.rtdb_error(0)
+	err := C.rtdba_get_archives_status_warp(cHandle, &cState)
+	return RtdbArchiveState(cState), RtdbError(err)
 }
 
 // RawRtdbaGetArchiveInfoWarp 获取存档文件及其附属文件的详细信息。
