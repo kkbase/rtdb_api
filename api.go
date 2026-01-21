@@ -9701,7 +9701,7 @@ func RawRtdbsPutNamedTypeSnapshots64Warp(handle ConnectHandle, ids []PointID, da
 //   - handle 连接句柄
 //
 // output:
-//   - int32 存档文件数量
+//   - int32(count) 存档文件数量
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdba_get_archives_count_warp(rtdb_int32 handle, rtdb_int32 *count)
