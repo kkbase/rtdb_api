@@ -8984,22 +8984,23 @@ func RawRtdbsPutSnapshots64Warp(handle ConnectHandle, ids []PointID, datetimes [
 //   - qualities 实时数值品质列表，数据库预定义的品质参见枚举 RTDB_QUALITY
 //
 // output:
-//   - []error 写入实时数据的返回值列表，参考rtdb_error.h
+//   - []RtdbError(errs) 写入实时数据的返回值列表，参考rtdb_error.h
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbs_fix_snapshots64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, const rtdb_float64* values, const rtdb_int64* states, const rtdb_int16* qualities, rtdb_error* errors)
 func RawRtdbsFixSnapshots64Warp(handle ConnectHandle, ids []PointID, datetimes []TimestampType, ms []SubtimeType, values []float64, states []int64, qualities []Quality) ([]RtdbError, RtdbError) {
-	count := C.rtdb_int32(len(ids))
+	cHandle := C.rtdb_int32(handle)
+	cCount := C.rtdb_int32(len(ids))
 	cIds := (*C.rtdb_int32)(unsafe.Pointer(&ids[0]))
 	cDatetimes := (*C.rtdb_timestamp_type)(unsafe.Pointer(&datetimes[0]))
 	cMs := (*C.rtdb_subtime_type)(unsafe.Pointer(&ms[0]))
 	cValues := (*C.rtdb_float64)(unsafe.Pointer(&values[0]))
 	cStates := (*C.rtdb_int64)(unsafe.Pointer(&states[0]))
 	cQualities := (*C.rtdb_int16)(unsafe.Pointer(&qualities[0]))
-	errs := make([]RtdbError, count)
+	errs := make([]RtdbError, len(ids))
 	cErrs := (*C.rtdb_error)(unsafe.Pointer(&errs[0]))
-	err := C.rtdbs_fix_snapshots64_warp(C.rtdb_int32(handle), &count, cIds, cDatetimes, cMs, cValues, cStates, cQualities, cErrs)
-	return errs[:count], RtdbError(err)
+	err := C.rtdbs_fix_snapshots64_warp(cHandle, &cCount, cIds, cDatetimes, cMs, cValues, cStates, cQualities, cErrs)
+	return errs, RtdbError(err)
 }
 
 // RawRtdbsBackSnapshots64Warp 批量回溯快照, 批量将标签点的快照值vtmq改成传入的vtmq，如果传入的时间戳早于当前快照，会删除传入时间戳到当前快照的历史存储值。如果传入的时间戳等于或者晚于当前快照，什么也不做。
