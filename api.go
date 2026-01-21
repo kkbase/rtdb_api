@@ -6504,7 +6504,7 @@ func RawRtdbGetDbInfo1Warp(handle ConnectHandle, param RtdbParam) (ParamString, 
 //   - param 要取得的参数索引
 //
 // output:
-//   - ParamInt 参数索引对应的数值
+//   - ParamInt(param) 参数索引对应的数值
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_get_db_info2_warp(rtdb_int32 handle, rtdb_int32 index, rtdb_uint32 *value)
@@ -6558,7 +6558,7 @@ func RawRtdbSetDbInfo2Warp(handle ConnectHandle, param RtdbParam, value ParamInt
 //   - nodeNumber 双活模式下，指定节点编号，1为rtdb_connect中第1个IP，2为rtdb_connect中第2个IP, 单机模式下写0
 //
 // output:
-//   - []SocketHandle socket连接数组
+//   - []SocketHandle(sockets) socket连接数组
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_get_connections_warp(rtdb_int32 handle, rtdb_int32 node_number, rtdb_int32 *sockets, rtdb_int32 *count)
@@ -6572,8 +6572,8 @@ func RawRtdbGetConnectionsWarp(handle ConnectHandle, nodeNumber int32) ([]Socket
 	cCount := C.rtdb_int32(connectionCount)
 	sockets := make([]SocketHandle, int32(cCount))
 	cSockets := (*C.rtdb_int32)(unsafe.Pointer(&sockets[0]))
-	err2 := C.rtdb_get_connections_warp(cHandle, cNodeNumber, cSockets, &cCount)
-	return sockets[0:cCount], RtdbError(err2)
+	err = C.rtdb_get_connections_warp(cHandle, cNodeNumber, cSockets, &cCount)
+	return sockets[cCount], RtdbError(err)
 }
 
 // RawRtdbGetOwnConnectionWarp 获取当前连接的socket句柄
