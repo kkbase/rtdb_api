@@ -6572,7 +6572,7 @@ func RawRtdbGetConnectionsWarp(handle ConnectHandle, nodeNumber int32) ([]Socket
 	cCount := C.rtdb_int32(connectionCount)
 	sockets := make([]SocketHandle, int32(cCount))
 	cSockets := (*C.rtdb_int32)(unsafe.Pointer(&sockets[0]))
-	err2 = C.rtdb_get_connections_warp(cHandle, cNodeNumber, cSockets, &cCount)
+	err2 := C.rtdb_get_connections_warp(cHandle, cNodeNumber, cSockets, &cCount)
 	return sockets[:cCount], RtdbError(err2)
 }
 
