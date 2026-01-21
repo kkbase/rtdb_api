@@ -10177,7 +10177,6 @@ func RawRtdbaCancelBigJobWarp(handle ConnectHandle, process RtdbProcess) RtdbErr
 //
 // output:
 //   - int32(count) 返回上述时间范围内的存储值数量
-//   - 此时前者表示结束时间，后者表示起始时间。
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbh_archived_values_count64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime1, rtdb_subtime_type subtime1, rtdb_timestamp_type datetime2, rtdb_subtime_type subtime2, rtdb_int32* count)
@@ -10206,10 +10205,9 @@ func RawRtdbhArchivedValuesCount64Warp(handle ConnectHandle, id PointID, datetim
 //
 // output:
 //   - int32(count) 返回上述时间范围内的存储值数量
-//   - 此时前者表示结束时间，后者表示起始时间。
 //
 // raw_fn:
-// rtdb_error RTDBAPI_CALLRULE rtdbh_archived_values_real_count64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime1, rtdb_subtime_type subtime1, rtdb_timestamp_type datetime2, rtdb_subtime_type subtime2, rtdb_int32* count)
+//   - rtdb_error RTDBAPI_CALLRULE rtdbh_archived_values_real_count64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime1, rtdb_subtime_type subtime1, rtdb_timestamp_type datetime2, rtdb_subtime_type subtime2, rtdb_int32* count)
 func RawRtdbhArchivedValuesRealCount64Warp(handle ConnectHandle, id PointID, datetime1 TimestampType, subtime1 SubtimeType, datetime2 TimestampType, subtime2 SubtimeType) (int32, RtdbError) {
 	cHandle := C.rtdb_int32(handle)
 	cId := C.rtdb_int32(id)
@@ -10234,11 +10232,11 @@ func RawRtdbhArchivedValuesRealCount64Warp(handle ConnectHandle, id PointID, dat
 //   - subtime2 最后一个元素表示起始时间纳秒
 //
 // output:
-//   - []TimestampType 秒数时间戳数组
-//   - []SubtimeType 纳秒数时间戳数组
-//   - []float64 浮点数数组, 对于数据类型为 RTDB_REAL16、RTDB_REAL32、RTDB_REAL64 的标签点，存放相应的历史存储值；否则为 0
-//   - []int64 整数数组, 对于数据类型为 RTDB_BOOL、RTDB_UINT8、RTDB_INT8、RTDB_CHAR、RTDB_UINT16、RTDB_INT16、RTDB_UINT32、RTDB_INT32、RTDB_INT64 的标签点，存放相应的历史存储值；否则为 0
-//   - []Quality 质量数组
+//   - []TimestampType(datetimes) 秒数时间戳数组
+//   - []SubtimeType(subtimes) 纳秒数时间戳数组
+//   - []float64(values) 浮点数数组, 对于数据类型为 RTDB_REAL16、RTDB_REAL32、RTDB_REAL64 的标签点，存放相应的历史存储值；否则为 0
+//   - []int64(states) 整数数组, 对于数据类型为 RTDB_BOOL、RTDB_UINT8、RTDB_INT8、RTDB_CHAR、RTDB_UINT16、RTDB_INT16、RTDB_UINT32、RTDB_INT32、RTDB_INT64 的标签点，存放相应的历史存储值；否则为 0
+//   - []Quality(qualities) 质量数组
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbh_get_archived_values64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32* count, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float64* values, rtdb_int64* states, rtdb_int16* qualities)
