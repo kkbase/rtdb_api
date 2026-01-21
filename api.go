@@ -9165,24 +9165,24 @@ func RawRtdbsGetBlobSnapshot64Warp(handle ConnectHandle, id PointID, maxLen int3
 //   - ids 标签点标识
 //
 // output:
-//   - []TimestampType 实时数值时间列表,表示距离1970年1月1日08:00:00的秒数
-//   - []SubtimeType 实时数值时间列表，对于时间精度为纳秒的标签点，返回相应的纳秒值；否则为 0
-//   - [][]byte 实时二进制/字符串数值
-//   - []Quality 实时数值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
-//   - []error 读取实时数据的返回值列表，参考rtdb_error.h
+//   - []TimestampType(datetimes) 实时数值时间列表,表示距离1970年1月1日08:00:00的秒数
+//   - []SubtimeType(subtimes) 实时数值时间列表，对于时间精度为纳秒的标签点，返回相应的纳秒值；否则为 0
+//   - [][]byte(objects) 实时二进制/字符串数值
+//   - []Quality(qualities) 实时数值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
+//   - []RtdbError(errs) 读取实时数据的返回值列表，参考rtdb_error.h
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbs_get_blob_snapshots64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_byte* const* blobs, rtdb_length_type* lens, rtdb_int16* qualities, rtdb_error* errors)
 func RawRtdbsGetBlobSnapshots64Warp(handle ConnectHandle, ids []PointID, maxLen int32) ([]TimestampType, []SubtimeType, [][]byte, []Quality, []RtdbError, RtdbError) {
-	cgoHandle := C.rtdb_int32(handle)
-	cgoCount := C.rtdb_int32(len(ids))
-	cgoIds := (*C.rtdb_int32)(unsafe.Pointer(&ids[0]))
-	datetimes := make([]TimestampType, cgoCount)
-	cgoDatetimes := (*C.rtdb_timestamp_type)(unsafe.Pointer(&datetimes[0]))
-	ms := make([]SubtimeType, cgoCount)
-	cgoMs := (*C.rtdb_subtime_type)(unsafe.Pointer(&ms[0]))
-	blobs := make([]*C.char, cgoCount)
-	for i := 0; i < int(cgoCount); i++ {
+	cHandle := C.rtdb_int32(handle)
+	cCount := C.rtdb_int32(len(ids))
+	cIds := (*C.rtdb_int32)(unsafe.Pointer(&ids[0]))
+	datetimes := make([]TimestampType, len(ids))
+	cDatetimes := (*C.rtdb_timestamp_type)(unsafe.Pointer(&datetimes[0]))
+	subtimes := make([]SubtimeType, len(ids))
+	cSubtimes := (*C.rtdb_subtime_type)(unsafe.Pointer(&subtimes[0]))
+	blobs := make([]*C.char, len(ids))
+	for i := 0; i < len(ids); i++ {
 		blobs[i] = (*C.char)(C.CBytes(make([]byte, maxLen)))
 	}
 	defer func() {
@@ -9190,22 +9190,22 @@ func RawRtdbsGetBlobSnapshots64Warp(handle ConnectHandle, ids []PointID, maxLen 
 			C.free(unsafe.Pointer(blobs[i]))
 		}
 	}()
-	cgoBlobs := (**C.uchar)(unsafe.Pointer(&blobs[0]))
-	lens := make([]C.rtdb_length_type, cgoCount)
+	cBlobs := (**C.uchar)(unsafe.Pointer(&blobs[0]))
+	lens := make([]C.rtdb_length_type, len(ids))
 	for i := 0; i < len(ids); i++ {
 		lens[i] = C.rtdb_length_type(maxLen)
 	}
-	cgoLens := (*C.rtdb_length_type)(unsafe.Pointer(&lens[0]))
-	qualities := make([]Quality, cgoCount)
-	cgoQualities := (*C.rtdb_int16)(unsafe.Pointer(&qualities[0]))
-	errs := make([]RtdbError, cgoCount)
-	cgoErrors := (*C.rtdb_error)(unsafe.Pointer(&errs[0]))
-	e := C.rtdbs_get_blob_snapshots64_warp(cgoHandle, &cgoCount, cgoIds, cgoDatetimes, cgoMs, cgoBlobs, cgoLens, cgoQualities, cgoErrors)
+	cLens := (*C.rtdb_length_type)(unsafe.Pointer(&lens[0]))
+	qualities := make([]Quality, len(ids))
+	cQualities := (*C.rtdb_int16)(unsafe.Pointer(&qualities[0]))
+	errs := make([]RtdbError, len(ids))
+	cErrs := (*C.rtdb_error)(unsafe.Pointer(&errs[0]))
+	err := C.rtdbs_get_blob_snapshots64_warp(cHandle, &cCount, cIds, cDatetimes, cSubtimes, cBlobs, cLens, cQualities, cErrs)
 	goBlobs := make([][]byte, 0)
-	for i := 0; i < int(cgoCount); i++ {
+	for i := 0; i < len(ids); i++ {
 		goBlobs = append(goBlobs, C.GoBytes(unsafe.Pointer(blobs[i]), C.int(lens[i])))
 	}
-	return datetimes[:cgoCount], ms[:cgoCount], goBlobs[:cgoCount], qualities[:cgoCount], errs[:cgoCount], RtdbError(e)
+	return datetimes, subtimes, goBlobs, qualities, errs, RtdbError(err)
 }
 
 // RawRtdbsPutBlobSnapshot64Warp 写入二进制/字符串实时数据
