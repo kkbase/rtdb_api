@@ -8438,7 +8438,7 @@ func RawRtdbbGetRecycledPointsCountWarp(handle ConnectHandle) (int32, RtdbError)
 //   - count 最大返回标签点个数
 //
 // output:
-//   - []RtdbPoint 标签点列表
+//   - []RtdbPoint(points) 标签点列表
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_get_recycled_points_warp(rtdb_int32 handle, rtdb_int32 *ids, rtdb_int32 *count)
@@ -8493,7 +8493,7 @@ func RawRtdbbGetRecycledPointsWarp(handle ConnectHandle, count int32) ([]RtdbPoi
 //   - mode 搜索结果排序模式
 //
 // output:
-//   - []PointID 标签点ID列表
+//   - []PointID(ids) 标签点ID列表
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_search_recycled_points_in_batches_warp(rtdb_int32 handle, rtdb_int32 start, const char *tagmask, const char *fullmask, const char *source, const char *unit, const char *desc, const char *instrument, rtdb_int32 mode, rtdb_int32 *ids, rtdb_int32 *count)
@@ -8539,9 +8539,9 @@ func RawRtdbbSearchRecycledPointsInBatchesWarp(handle ConnectHandle, start int32
 //   - id 标签点ID
 //
 // output:
-//   - RtdbPoint 标签点基本属性
-//   - RtdbScan 标签点采集属性
-//   - RtdbCalc 标签点计算属性
+//   - RtdbPoint(base) 标签点基本属性
+//   - RtdbScan(scan) 标签点采集属性
+//   - RtdbCalc(calc) 标签点计算属性
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_get_recycled_max_point_property_warp(rtdb_int32 handle, RTDB_POINT* base, RTDB_SCAN_POINT* scan, RTDB_MAX_CALC_POINT* calc)
@@ -8641,6 +8641,9 @@ func RawRtdbbCreateNamedTypeWarp(handle ConnectHandle, name string, fields []Rtd
 // input:
 //   - handle 连接句柄
 //
+// output:
+//   - int32(count) 自定义类型总数
+//
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_get_named_types_count_warp(rtdb_int32 handle, rtdb_int32* count)
 func RawRtdbbGetNamedTypesCountWarp(handle ConnectHandle) (int32, RtdbError) {
@@ -8657,8 +8660,8 @@ func RawRtdbbGetNamedTypesCountWarp(handle ConnectHandle) (int32, RtdbError) {
 //   - count 返回所有的自定义类型的总数
 //
 // output:
-//   - []string 自定义类型名称数组
-//   - []int32 自定义类型中子字段个数数组
+//   - []string(names) 自定义类型名称数组
+//   - []int32(field_counts) 自定义类型中子字段个数数组
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_get_all_named_types_warp(rtdb_int32 handle, rtdb_int32* count, char* name[RTDB_TYPE_NAME_SIZE], rtdb_int32* field_counts)
@@ -8693,9 +8696,9 @@ func RawRtdbbGetAllNamedTypesWarp(handle ConnectHandle, count int32) ([]string, 
 //   - field_count 返回name指定的自定义类型的字段个数，输入/输出参数
 //
 // output:
-//   - []RtdbDataTypeField 自定义类型内部字段数组
-//   - int32 自定义类型长度
-//   - string 自定义类型描述
+//   - []RtdbDataTypeField(fields) 自定义类型内部字段数组
+//   - int32(named_type_len) 自定义类型长度
+//   - string(desc) 自定义类型描述
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_get_named_type_warp(rtdb_int32 handle, const char* name, rtdb_int32* field_count, RTDB_DATA_TYPE_FIELD* fields, rtdb_int32* type_size, char desc[RTDB_DESC_SIZE])
@@ -8738,9 +8741,9 @@ func RawRtdbbRemoveNamedTypeWarp(handle int32, name string) RtdbError {
 //   - ids 标签点ID数组
 //
 // output:
-//   - []string 自定义类型名称数组
-//   - []int32 自定义类型中字段数量数组
-//   - []RtdbError 错误数组
+//   - []string(names) 自定义类型名称数组
+//   - []int32(field_counts) 自定义类型中字段数量数组
+//   - []RtdbError(errs) 错误数组
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_get_named_type_names_property_warp(rtdb_int32 handle, rtdb_int32 *count, rtdb_int32 *ids, char* const *named_type_names, rtdb_int32 *field_counts, rtdb_error *errors)
@@ -8778,9 +8781,9 @@ func RawRtdbbGetNamedTypeNamesPropertyWarp(handle ConnectHandle, ids []PointID) 
 //   - ids 标签点ID数组
 //
 // output:
-//   - []string 自定义类型名称数组
-//   - []int32 自定义类型中字段数量数组
-//   - []RtdbError 错误数组
+//   - []string(names) 自定义类型名称数组
+//   - []int32(field_counts) 自定义类型中字段数量数组
+//   - []RtdbError(errs) 错误数组
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_get_recycled_named_type_names_property_warp(rtdb_int32 handle, rtdb_int32 *count, rtdb_int32 *ids, char* const *named_type_names, rtdb_int32 *field_counts, rtdb_error *errors)
@@ -8818,7 +8821,7 @@ func RawRtdbbGetRecycledNamedTypeNamesPropertyWarp(handle ConnectHandle, ids []P
 //   - name 自定义类型的名称
 //
 // output:
-//   - int32 自定义类型标签点个数
+//   - int32(count) 自定义类型标签点个数
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_get_named_type_points_count_warp(rtdb_int32 handle, const char* name, rtdb_int32 *points_count)
@@ -8838,7 +8841,7 @@ func RawRtdbbGetNamedTypePointsCountWarp(handle ConnectHandle, name string) (int
 //   - rtdbType 数值类型
 //
 // output:
-//   - int32 自定义类型标签点个数
+//   - int32(count) 自定义类型标签点个数
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_get_base_type_points_count_warp(rtdb_int32 handle, rtdb_int32 type, rtdb_int32 *points_count)
@@ -8902,8 +8905,8 @@ func RawRtdbbModifyNamedTypeWarp(handle ConnectHandle, name string, modifyName s
 //   - node_number 双活节点id，1表示第一个节点，2表示第二个节点。0表示所有节点
 //
 // output:
-//   - []RtdbSyncInfo 元数据信息
-//   - []error 错误数组
+//   - []RtdbSyncInfo(infos) 元数据信息
+//   - []RtdbError(errs) 错误数组
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_get_meta_sync_info_warp(rtdb_int32 handle, rtdb_int32 node_number, rtdb_int32* count, RTDB_SYNC_INFO* sync_infos, rtdb_error* errors)
@@ -8955,7 +8958,7 @@ func RawRtdbsGetSnapshots64Warp(handle ConnectHandle, ids []PointID) ([]Timestam
 	errs := make([]RtdbError, cCount)
 	cErrs := (*C.rtdb_error)(unsafe.Pointer(&errs[0]))
 	err := C.rtdbs_get_snapshots64_warp(cHandle, &cCount, cIds, cDatetimes, cSubtimes, cValues, cStates, cQualities, cErrs)
-	return datetimes[:cCount], subtimes[:cCount], values[:cCount], states[:cCount], qualities[:cCount], errs[:cCount], RtdbError(err)
+	return datetimes, subtimes, values, states, qualities, errs, RtdbError(err)
 }
 
 // RawRtdbsPutSnapshots64Warp 批量写入开关量、模拟量快照数值
