@@ -9625,7 +9625,9 @@ func RawRtdbsGetNamedTypeSnapshots64Warp(handle ConnectHandle, ids []PointID, le
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbs_put_named_type_snapshot64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime, rtdb_subtime_type subtime, const void* object, rtdb_length_type length, rtdb_int16 quality)
 func RawRtdbsPutNamedTypeSnapshot64Warp(handle ConnectHandle, id PointID, datetime TimestampType, subtime SubtimeType, object []byte, quality Quality) RtdbError {
-	err := C.rtdbs_put_named_type_snapshot64_warp(C.rtdb_int32(handle), C.rtdb_int32(id), C.rtdb_timestamp_type(datetime), C.rtdb_subtime_type(subtime), unsafe.Pointer(&object[0]), C.rtdb_length_type(len(object)), C.rtdb_int16(quality))
+	cHandle := C.rtdb_int32(handle)
+	cId := C.rtdb_int32(id)
+	err := C.rtdbs_put_named_type_snapshot64_warp(cHandle, cId, C.rtdb_timestamp_type(datetime), C.rtdb_subtime_type(subtime), unsafe.Pointer(&object[0]), C.rtdb_length_type(len(object)), C.rtdb_int16(quality))
 	return RtdbError(err)
 }
 
@@ -9640,7 +9642,7 @@ func RawRtdbsPutNamedTypeSnapshot64Warp(handle ConnectHandle, id PointID, dateti
 //   - qualities 实时数值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
 //
 // output:
-//   - errors 读取实时数据的返回值列表，参考rtdb_error.h
+//   - []RtdbError(errs) 读取实时数据的返回值列表，参考rtdb_error.h
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbs_put_named_type_snapshots64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, const void* const* objects, const rtdb_length_type* lengths, const rtdb_int16* qualities, rtdb_error* errors)
@@ -9684,9 +9686,10 @@ func RawRtdbsPutNamedTypeSnapshots64Warp(handle ConnectHandle, ids []PointID, da
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdba_get_archives_count_warp(rtdb_int32 handle, rtdb_int32 *count)
 func RawRtdbaGetArchivesCountWarp(handle ConnectHandle) (int32, RtdbError) {
-	count := C.rtdb_int32(0)
-	err := C.rtdba_get_archives_count_warp(C.rtdb_int32(handle), &count)
-	return int32(count), RtdbError(err)
+	cHandle := C.rtdb_int32(handle)
+	cCount := C.rtdb_int32(0)
+	err := C.rtdba_get_archives_count_warp(cHandle, &cCount)
+	return int32(cCount), RtdbError(err)
 }
 
 // RawRtdbaCreateRangedArchive64Warp 新建指定时间范围的历史存档文件并插入到历史数据库
@@ -9727,7 +9730,8 @@ func RawRtdbaAppendArchiveWarp(handle ConnectHandle, path string, file string, s
 	defer C.free(unsafe.Pointer(cPath))
 	cFile := C.CString(file)
 	defer C.free(unsafe.Pointer(cFile))
-	err := C.rtdba_append_archive_warp(cHandle, cPath, cFile, C.rtdb_int32(state))
+	cState := C.rtdb_int32(state)
+	err := C.rtdba_append_archive_warp(cHandle, cPath, cFile, cState)
 	return RtdbError(err)
 }
 
