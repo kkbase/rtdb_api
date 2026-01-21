@@ -8768,30 +8768,30 @@ func RawRtdbbGetNamedTypeNamesPropertyWarp(handle ConnectHandle, ids []PointID) 
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_get_recycled_named_type_names_property_warp(rtdb_int32 handle, rtdb_int32 *count, rtdb_int32 *ids, char* const *named_type_names, rtdb_int32 *field_counts, rtdb_error *errors)
 func RawRtdbbGetRecycledNamedTypeNamesPropertyWarp(handle ConnectHandle, ids []PointID) ([]string, []int32, []RtdbError, RtdbError) {
-	cgoHandle := C.rtdb_int32(handle)
+	cHandle := C.rtdb_int32(handle)
 	count := len(ids)
-	cgoCount := C.rtdb_int32(count)
-	cgoIds := (*C.rtdb_int32)(unsafe.Pointer(&ids[0]))
+	cCount := C.rtdb_int32(count)
+	cIds := (*C.rtdb_int32)(unsafe.Pointer(&ids[0]))
 	namedTypeNames := make([]*C.char, count)
-	for i := 0; i < int(count); i++ {
+	for i := 0; i < count; i++ {
 		namedTypeNames[i] = (*C.char)(C.CBytes(make([]byte, 4096)))
 	}
 	defer func() {
-		for i := 0; i < int(count); i++ {
+		for i := 0; i < count; i++ {
 			C.free(unsafe.Pointer(namedTypeNames[i]))
 		}
 	}()
-	cgoNamedTypeNames := (**C.char)(unsafe.Pointer(&namedTypeNames[0]))
+	cNamedTypeNames := (**C.char)(unsafe.Pointer(&namedTypeNames[0]))
 	fieldCounts := make([]int32, count)
-	cgoCounts := (*C.rtdb_int32)(unsafe.Pointer(&fieldCounts[0]))
+	cCounts := (*C.rtdb_int32)(unsafe.Pointer(&fieldCounts[0]))
 	errs := make([]RtdbError, count)
-	cgoErrs := (*C.rtdb_error)(unsafe.Pointer(&errs[0]))
-	err := C.rtdbb_get_recycled_named_type_names_property_warp(cgoHandle, &cgoCount, cgoIds, cgoNamedTypeNames, cgoCounts, cgoErrs)
+	cErrs := (*C.rtdb_error)(unsafe.Pointer(&errs[0]))
+	err := C.rtdbb_get_recycled_named_type_names_property_warp(cHandle, &cCount, cIds, cNamedTypeNames, cCounts, cErrs)
 	names := make([]string, 0)
 	for i := 0; i < int(cgoCount); i++ {
 		names = append(names, C.GoString(namedTypeNames[i]))
 	}
-	return names[:cgoCount], fieldCounts[:cgoCount], errs[:cgoCount], RtdbError(err)
+	return names, fieldCounts, errs, RtdbError(err)
 }
 
 // RawRtdbbGetNamedTypePointsCountWarp 获取该自定义类型的所有标签点个数
