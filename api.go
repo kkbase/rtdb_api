@@ -6978,7 +6978,8 @@ func RawRtdbUpdateAuthorizationWarp(handle ConnectHandle, oldAddr string, oldMas
 	defer C.free(unsafe.Pointer(cNewMask))
 	cNewDesc := C.CString(newDesc)
 	defer C.free(unsafe.Pointer(cNewDesc))
-	err := C.rtdb_update_authorization_warp(cHandle, cOldAddr, cOldMask, cNewAddr, cNewMask, C.rtdb_int32(priv), cNewDesc)
+	cPriv := C.rtdb_int32(priv)
+	err := C.rtdb_update_authorization_warp(cHandle, cOldAddr, cOldMask, cNewAddr, cNewMask, cPriv, cNewDesc)
 	return RtdbError(err)
 }
 
@@ -7007,7 +7008,7 @@ func RawRtdbRemoveAuthorizationWarp(handle ConnectHandle, addr string, mask stri
 //   - handle 连接句柄
 //
 // output:
-//   - []AuthorizationsList 白名单列表
+//   - []AuthorizationsList(auth_list) 白名单列表
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_get_authorizations_warp(rtdb_int32 handle, char* const* addrs, char* const* masks, rtdb_int32 *privs, char* const* descs, rtdb_int32 *count)
@@ -7022,7 +7023,7 @@ func RawRtdbGetAuthorizationsWarp(handle ConnectHandle) ([]AuthorizationsList, R
 			C.free(unsafe.Pointer(cAddrs[i]))
 		}
 	}()
-	cgoAddrs := &cAddrs[0]
+	ccAddrs := &cAddrs[0]
 
 	cMakes := make([]*C.char, RtdbConstMaxAuthCount)
 	for i := int32(0); i < int32(RtdbConstMaxAuthCount); i++ {
@@ -7033,7 +7034,7 @@ func RawRtdbGetAuthorizationsWarp(handle ConnectHandle) ([]AuthorizationsList, R
 			C.free(unsafe.Pointer(cMakes[i]))
 		}
 	}()
-	cgoMasks := &cMakes[0]
+	ccMasks := &cMakes[0]
 
 	cDescs := make([]*C.char, RtdbConstMaxAuthCount)
 	for i := int32(0); i < int32(RtdbConstMaxAuthCount); i++ {
@@ -7044,15 +7045,15 @@ func RawRtdbGetAuthorizationsWarp(handle ConnectHandle) ([]AuthorizationsList, R
 			C.free(unsafe.Pointer(cDescs[i]))
 		}
 	}()
-	cgoDescs := &cDescs[0]
-	cgoCount := C.rtdb_int32(RtdbConstMaxAuthCount)
+	ccDescs := &cDescs[0]
+	cCount := C.rtdb_int32(RtdbConstMaxAuthCount)
 
 	privs := make([]PrivGroup, int32(RtdbConstMaxAuthCount))
-	cgoPrivs := (*C.rtdb_int32)(unsafe.Pointer(&privs[0]))
-	err := C.rtdb_get_authorizations_warp(cHandle, cgoAddrs, cgoMasks, cgoPrivs, cgoDescs, &cgoCount)
+	cPrivs := (*C.rtdb_int32)(unsafe.Pointer(&privs[0]))
+	err := C.rtdb_get_authorizations_warp(cHandle, ccAddrs, ccMasks, cPrivs, ccDescs, &cCount)
 
 	rtn := make([]AuthorizationsList, 0)
-	for i := int32(0); i < int32(cgoCount); i++ {
+	for i := int32(0); i < int32(cCount); i++ {
 		rtn = append(rtn, AuthorizationsList{
 			Addr: CCharArrayToString(cAddrs[i], 32),
 			Mask: CCharArrayToString(cMakes[i], 32),
@@ -7083,15 +7084,15 @@ func RawRtdbGetAuthorizationsWarp(handle ConnectHandle) ([]AuthorizationsList, R
 //   - handle       连接句柄
 //
 // output:
-//   - TimestampType 服务器当前UDC时间, 单位秒
+//   - TimestampType(datetime) 服务器当前UDC时间, 单位秒
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_host_time64_warp(rtdb_int32 handle, rtdb_timestamp_type* hosttime)
 func RawRtdbHostTime64Warp(handle ConnectHandle) (TimestampType, RtdbError) {
 	cHandle := C.rtdb_int32(handle)
-	ts := C.rtdb_timestamp_type(0)
-	err := C.rtdb_host_time64_warp(cHandle, &ts)
-	return TimestampType(ts), RtdbError(err)
+	datetime := C.rtdb_timestamp_type(0)
+	err := C.rtdb_host_time64_warp(cHandle, &datetime)
+	return TimestampType(datetime), RtdbError(err)
 }
 
 // RawRtdbFormatTimespanWarp 根据时间跨度值生成时间格式字符串, 如：输入10， 输出10s, 输入60，输出1n
