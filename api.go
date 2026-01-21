@@ -7451,7 +7451,7 @@ func RawRtdbMkdirWarp(handle ConnectHandle, dirName string) RtdbError {
 //   - file 文件名
 //
 // output:
-//   - int64 文件大小
+//   - int64(file_size) 文件大小
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_get_file_size_warp(rtdb_int32 handle, const char *file, rtdb_int64 *size)
@@ -7472,7 +7472,7 @@ func RawRtdbGetFileSizeWarp(handle ConnectHandle, filePath string) (int64, RtdbE
 //   - pos 读取文件的起始位置
 //
 // output:
-//   - []byte 读取出来的数据
+//   - []byte(data) 读取出来的数据
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_read_file_warp(rtdb_int32 handle, const char *file, char *content, rtdb_int64 pos, rtdb_int64 *size)
@@ -7517,7 +7517,7 @@ func RawRtdbGetMaxBlobLenWarp(handle ConnectHandle) (int32, RtdbError) {
 //     三个域之间用逗号隔开，输出到definitions参数中，前面有有RTDB，OPC或者USER标识，说明标签点类别
 //
 // output:
-//   - []string 质量码对应的说明
+//   - []string(quality_definitions) 质量码对应的说明
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_format_quality_warp(rtdb_int32 handle, rtdb_int32 *count, rtdb_int16 *qualities, rtdb_byte **definitions, rtdb_int32 *lens)
@@ -7573,7 +7573,7 @@ func RawRtdbJudgeConnectStatusWarp(handle ConnectHandle) RtdbError {
 //   - ip 整数类型IP(IPv4)
 //
 // output:
-//   - string 字符串型IP(IPv4)
+//   - string(ip_str) 字符串型IP(IPv4)
 //
 // raw_fn:
 //   - void RTDBAPI_CALLRULE rtdb_format_ipaddr_warp(rtdb_uint32 ip, char* ip_addr, rtdb_int32 size)
@@ -7592,7 +7592,7 @@ func RawRtdbJudgeConnectStatusWarp(handle ConnectHandle) RtdbError {
 //   - tableDesc 表描述
 //
 // output:
-//   - RtdbTable 返回表
+//   - RtdbTable(table) 返回表
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_append_table_warp(rtdb_int32 handle, RTDB_TABLE *field)
@@ -7642,7 +7642,7 @@ func RawRtdbbRemoveTableByNameWarp(handle ConnectHandle, name string) RtdbError 
 //   - handle 连接句柄
 //
 // output:
-//   - in32 标签点表总数
+//   - in32(table_count) 标签点表总数
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_tables_count_warp(rtdb_int32 handle, rtdb_int32 *count)
@@ -7659,7 +7659,7 @@ func RawRtdbbTablesCountWarp(handle ConnectHandle) (int32, RtdbError) {
 //   - handle 连接句柄
 //
 // output:
-//   - []TableID 获取表ID列表
+//   - []TableID(table_ids) 获取表ID列表
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_get_tables_warp(rtdb_int32 handle, rtdb_int32 *ids, rtdb_int32 *count)
@@ -7683,7 +7683,7 @@ func RawRtdbbGetTablesWarp(handle ConnectHandle) ([]TableID, RtdbError) {
 //   - tableID 表ID
 //
 // output:
-//   - int32 表中标签点的数量
+//   - int32(table_count) 表中标签点的数量
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_get_table_size_by_id_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32 *size)
@@ -7701,7 +7701,7 @@ func RawRtdbbGetTableSizeByIdWarp(handle ConnectHandle, tableID TableID) (int32,
 //   - tableName 表名
 //
 // output:
-//   - int32 表中标签点的数量
+//   - int32(point_count) 表中标签点的数量
 //
 // raw_fn:
 // rtdb_error RTDBAPI_CALLRULE rtdbb_get_table_size_by_name_warp(rtdb_int32 handle, const char *name, rtdb_int32 *size)
@@ -7721,7 +7721,7 @@ func RawRtdbbGetTableSizeByNameWarp(handle ConnectHandle, tableName string) (int
 //   - tableID 表ID
 //
 // output:
-//   - int32 表中标签点的实际数量
+//   - int32(point_count) 表中标签点的实际数量
 //
 // raw_fn:
 // rtdb_error RTDBAPI_CALLRULE rtdbb_get_table_real_size_by_id_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32 *size)
@@ -7738,7 +7738,7 @@ func RawRtdbbGetTableRealSizeByIdWarp(handle ConnectHandle, tableID TableID) (in
 //   - handle 连接句柄
 //
 // output:
-//   - RtdbTable 表属性
+//   - RtdbTable(table_info) 表属性
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_get_table_property_by_id_warp(rtdb_int32 handle, RTDB_TABLE *field)
@@ -7757,7 +7757,7 @@ func RawRtdbbGetTablePropertyByIdWarp(handle ConnectHandle, tableID TableID) (Rt
 //   - tableName 表名
 //
 // output:
-//   - RtdbTable 表结构
+//   - RtdbTable(table_info) 表结构
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_get_table_property_by_name_warp(rtdb_int32 handle, RTDB_TABLE *field)
@@ -7792,9 +7792,9 @@ func RawRtdbbGetTablePropertyByNameWarp(handle ConnectHandle, tableName string) 
 //   - 备注：如果新建的标签点没有对应的扩展属性集，可置为空指针。
 //
 // output:
-//   - RtdbPoint 基本点信息
-//   - RtdbScan 采集点信息
-//   - RtdbCalc 计算点信息
+//   - RtdbPoint(base) 基本点信息
+//   - RtdbScan(scan) 采集点信息
+//   - RtdbCalc(calc) 计算点信息
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_insert_max_point_warp(rtdb_int32 handle, RTDB_POINT *base, RTDB_SCAN_POINT *scan, RTDB_MAX_CALC_POINT *calc)
@@ -7876,8 +7876,8 @@ func RawRtdbbRemovePointByNameWarp(handle ConnectHandle, tableDotTag string) Rtd
 //   - name 自定义类型名称
 //
 // output:
-//   - RtdbPoint 基本点信息
-//   - RtdbScan 采集点信息
+//   - RtdbPoint(base) 基本点信息
+//   - RtdbScan(scan) 采集点信息
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_insert_named_type_point_warp(rtdb_int32 handle, RTDB_POINT *base, RTDB_SCAN_POINT *scan, const char* name)
@@ -7929,6 +7929,12 @@ func RawRtdbbMovePointByIdWarp(handle ConnectHandle, id PointID, tableName strin
 // input:
 //   - handle 连接句柄
 //   - pointIDs 标签点ID列表
+//
+// output:
+//   - []RtdbPoint(bases) 基本属性列表
+//   - []RtdbScan(scans) 采集属性列表
+//   - []RtdbCalc(calcs) 计算属性列表
+//   - []RtdbError(errs) 错误列表
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_get_max_points_property_warp(rtdb_int32 handle, rtdb_int32 count, RTDB_POINT *base, RTDB_SCAN_POINT *scan, RTDB_MAX_CALC_POINT *calc, rtdb_error *errors)
@@ -8018,7 +8024,7 @@ func RawRtdbbGetMaxPointsPropertyWarp(handle ConnectHandle, ids []PointID) ([]Rt
 //   - 备注2: 多个搜索条件可以通过空格分隔，比如"demo_*1 demo_*2"，会将满足demo_*1或者demo_*2条件的标签点搜索出来。
 //
 // output:
-//   - []PointID 返回ID列表
+//   - []PointID(point_ids) 返回ID列表
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_search_in_batches_warp(rtdb_int32 handle, rtdb_int32 start, const char *tagmask, const char *tablemask, const char *source, const char *unit, const char *desc, const char *instrument, rtdb_int32 mode, rtdb_int32 *ids, rtdb_int32 *count)
@@ -8130,10 +8136,10 @@ func RawRtdbbSearchExWarp(handle ConnectHandle, maxCount int32, tagMask, tableMa
 //   - 备注：多个搜索条件可以通过空格分隔，比如"demo_*1 demo_*2"，会将满足demo_*1或者demo_*2条件的标签点搜索出来。
 //
 // output:
-//   - []PointID 标签点列表
+//   - int32(count) 标签点数量
 //
 // raw_fn:
-// rtdb_error RTDBAPI_CALLRULE rtdbb_search_points_count_warp(rtdb_int32 handle, const char *tagmask, const char *tablemask, const char *source, const char *unit, const char *desc, const char *instrument, const char *typemask, rtdb_int32 classofmask, rtdb_int32 timeunitmask, rtdb_int32 othertypemask, const char *othertypemaskvalue, rtdb_int32 *count)
+//   - rtdb_error RTDBAPI_CALLRULE rtdbb_search_points_count_warp(rtdb_int32 handle, const char *tagmask, const char *tablemask, const char *source, const char *unit, const char *desc, const char *instrument, const char *typemask, rtdb_int32 classofmask, rtdb_int32 timeunitmask, rtdb_int32 othertypemask, const char *othertypemaskvalue, rtdb_int32 *count)
 func RawRtdbbSearchPointsCountWarp(handle ConnectHandle, tagMask, tableMask, source, unit, desc, instrument, typeMask string, classOfMask RtdbType, timeUnitMask RtdbPrecision, otherTypeMask RtdbSearch, otherTypeMaskValue string) (int32, RtdbError) {
 	cHandle := C.rtdb_int32(handle)
 	if strings.TrimSpace(tagMask) == "" {
@@ -8256,11 +8262,11 @@ func RawRtdbbUpdateMaxPointPropertyWarp(handle ConnectHandle, base *RtdbPoint, s
 //   - table_dot_tags 输入，"表名.标签点名" 列表
 //
 // output:
-//   - []PointID 标签点标识列表, 返回 0 表示未找到
-//   - []RtdbType 标签点数据类型
-//   - []RtdbClass 标签点类别
-//   - []PrecisionType 时间戳精度，
-//   - []RtdbError 表示每个标签点的查询结果的错误码
+//   - []PointID(ids) 标签点标识列表, 返回 0 表示未找到
+//   - []RtdbType(types) 标签点数据类型
+//   - []RtdbClass(classes) 标签点类别
+//   - []PrecisionType(precisions) 时间戳精度
+//   - []RtdbError(errs) 表示每个标签点的查询结果的错误码
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_find_points_ex_warp(rtdb_int32 handle, rtdb_int32* count, const char* const* table_dot_tags, rtdb_int32* ids, rtdb_int32* types, rtdb_int32* classof, rtdb_precision_type* precisions, rtdb_error* errors)
@@ -8306,7 +8312,7 @@ func RawRtdbbFindPointsExWarp(handle ConnectHandle, tableDotTags []string) ([]Po
 //   - 备注：当对可回收标签排序时，以下字段索引不可使用：RTDB_TAG_INDEX_TIMESTAMP、RTDB_TAG_INDEX_VALUE、RTDB_TAG_INDEX_QUALITY
 //
 // output:
-//   - []PointID 标签点ID列表
+//   - []PointID(ids) 标签点ID列表
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_sort_points_warp(rtdb_int32 handle, rtdb_int32 count, rtdb_int32 *ids, rtdb_int32 index, rtdb_int32 flag)
@@ -8413,13 +8419,16 @@ func RawRtdbbPurgePointWarp(handle ConnectHandle, id PointID) RtdbError {
 //   - handle 连接句柄
 //   - count 可回收标签点的数量
 //
+// output:
+//   - int32(count) 可回收标签点数量
+//
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_get_recycled_points_count_warp(rtdb_int32 handle, rtdb_int32 *count)
 func RawRtdbbGetRecycledPointsCountWarp(handle ConnectHandle) (int32, RtdbError) {
 	cHandle := C.rtdb_int32(handle)
-	count := C.rtdb_int32(0)
-	err := C.rtdbb_get_recycled_points_count_warp(cHandle, &count)
-	return int32(count), RtdbError(err)
+	cCount := C.rtdb_int32(0)
+	err := C.rtdbb_get_recycled_points_count_warp(cHandle, &cCount)
+	return int32(cCount), RtdbError(err)
 }
 
 // RawRtdbbGetRecycledPointsWarp 获取可回收标签点 id 列表
