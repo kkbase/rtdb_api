@@ -9113,22 +9113,23 @@ func RawRtdbsPutCoorSnapshots64Warp(handle ConnectHandle, ids []PointID, datetim
 //   - qualities 实时数值品质列表，数据库预定义的品质参见枚举 RTDB_QUALITY
 //
 // output:
-//   - []error 输出错误列表
+//   - []RtdbError(errs) 输出错误列表
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbs_fix_coor_snapshots64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, const rtdb_float32* x, const rtdb_float32* y, const rtdb_int16* qualities, rtdb_error* errors)
 func RawRtdbsFixCoorSnapshots64Warp(handle ConnectHandle, ids []PointID, datetimes []TimestampType, ms []SubtimeType, xs []float32, ys []float32, qualities []Quality) ([]RtdbError, RtdbError) {
-	count := C.rtdb_int32(len(ids))
+	cHandle := C.rtdb_int32(handle)
+	cCount := C.rtdb_int32(len(ids))
 	cIds := (*C.rtdb_int32)(unsafe.Pointer(&ids[0]))
 	cDatetimes := (*C.rtdb_timestamp_type)(unsafe.Pointer(&datetimes[0]))
 	cMs := (*C.rtdb_subtime_type)(unsafe.Pointer(&ms[0]))
 	cXs := (*C.rtdb_float32)(unsafe.Pointer(&xs[0]))
 	cYs := (*C.rtdb_float32)(unsafe.Pointer(&ys[0]))
 	cQualities := (*C.rtdb_int16)(unsafe.Pointer(&qualities[0]))
-	errs := make([]RtdbError, count)
+	errs := make([]RtdbError, cCount)
 	cErrs := (*C.rtdb_error)(unsafe.Pointer(&errs[0]))
-	err := C.rtdbs_fix_coor_snapshots64_warp(C.rtdb_int32(handle), &count, cIds, cDatetimes, cMs, cXs, cYs, cQualities, cErrs)
-	return errs[:count], RtdbError(err)
+	err := C.rtdbs_fix_coor_snapshots64_warp(cHandle, &cCount, cIds, cDatetimes, cMs, cXs, cYs, cQualities, cErrs)
+	return errs, RtdbError(err)
 }
 
 // RawRtdbsGetBlobSnapshot64Warp 读取二进制/字符串实时数据
@@ -9146,13 +9147,14 @@ func RawRtdbsFixCoorSnapshots64Warp(handle ConnectHandle, ids []PointID, datetim
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbs_get_blob_snapshot64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type* datetime, rtdb_subtime_type* subtime, rtdb_byte* blob, rtdb_length_type* len, rtdb_int16* quality)
 func RawRtdbsGetBlobSnapshot64Warp(handle ConnectHandle, id PointID, maxLen int32) (TimestampType, SubtimeType, []byte, Quality, RtdbError) {
+	cHandle := C.rtdb_int32(handle)
 	datetime := C.rtdb_timestamp_type(0)
 	subtime := C.rtdb_subtime_type(0)
 	blob := make([]byte, maxLen)
 	cBlob := (*C.rtdb_byte)(unsafe.Pointer(&blob[0]))
 	quality := C.rtdb_int16(0)
 	length := C.rtdb_length_type(len(blob))
-	e := C.rtdbs_get_blob_snapshot64_warp(C.rtdb_int32(handle), C.rtdb_int32(id), &datetime, &subtime, cBlob, &length, &quality)
+	e := C.rtdbs_get_blob_snapshot64_warp(cHandle, C.rtdb_int32(id), &datetime, &subtime, cBlob, &length, &quality)
 	return TimestampType(datetime), SubtimeType(subtime), blob[:length], Quality(quality), RtdbError(e)
 }
 
