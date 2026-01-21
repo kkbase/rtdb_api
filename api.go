@@ -9571,11 +9571,11 @@ func RawRtdbsGetNamedTypeSnapshot64Warp(handle ConnectHandle, id PointID, cacheL
 //   - lengths 自定义类型标签点数值长度
 //
 // output:
-//   - datetimes 实时数值时间列表, 表示距离1970年1月1日08:00:00的秒数
-//   - subtime 实时数值时间列表，对于时间精度为纳秒的标签点，返回相应的纳秒值；否则为 0
-//   - objects 自定义类型标签点数值
-//   - qualities 实时数值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
-//   - [errors] 读取实时数据的返回值列表，参考rtdb_error.h
+//   - []TimestampType(datetimes) 实时数值时间列表, 表示距离1970年1月1日08:00:00的秒数
+//   - []SubtimeType(subtime) 实时数值时间列表，对于时间精度为纳秒的标签点，返回相应的纳秒值；否则为 0
+//   - [][]byte(objects) 自定义类型标签点数值
+//   - []Quality(qualities) 实时数值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
+//   - []RtdbError(errs) 读取实时数据的返回值列表，参考rtdb_error.h
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbs_get_named_type_snapshots64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, void* const* objects, rtdb_length_type* lengths, rtdb_int16* qualities, rtdb_error* errors)
@@ -9609,7 +9609,7 @@ func RawRtdbsGetNamedTypeSnapshots64Warp(handle ConnectHandle, ids []PointID, le
 	for i := 0; i < len(ids); i++ {
 		rtnObj = append(rtnObj, C.GoBytes(objects[i], C.int(lens[i])))
 	}
-	return datetimes[:cCount], subtimes[:cCount], rtnObj[:cCount], qualitys[:cCount], errs[:cCount], RtdbError(err)
+	return datetimes, subtimes, rtnObj, qualitys, errs, RtdbError(err)
 }
 
 // RawRtdbsPutNamedTypeSnapshot64Warp 写入单个自定义类型标签点的快照
