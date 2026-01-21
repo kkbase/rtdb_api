@@ -1,7 +1,5 @@
 package rtdb_api
 
-import "errors"
-
 type RtdbConnect struct {
 	HostName         string         // 服务端名称
 	Port             int32          // 服务端端口
@@ -26,25 +24,25 @@ func Login(hostName string, port int32, userName string, password string) (*Rtdb
 
 	// 连接数据库
 	cHandle, rte := RawRtdbConnectWarp(rtn.HostName, rtn.Port)
-	if !errors.Is(rte, RteOk) {
+	if !RteIsOk(rte) {
 		return nil, rte.GoError()
 	}
 	rtn.ConnectHandle = cHandle
 
 	// 登录数据库
 	priv, rte := RawRtdbLoginWarp(rtn.ConnectHandle, rtn.UserName, rtn.Password)
-	if !errors.Is(rte, RteOk) {
+	if !RteIsOk(rte) {
 		return nil, rte.GoError()
 	}
 	rtn.Priv = priv
 
 	// 获取元信息
 	infos, errs, rte := RawRtdbbGetMetaSyncInfoWarp(rtn.ConnectHandle, 0)
-	if !errors.Is(rte, RteOk) {
+	if !RteIsOk(rte) {
 		return nil, rte.GoError()
 	}
 	for _, rte := range errs {
-		if !errors.Is(rte, RteOk) {
+		if !RteIsOk(rte) {
 			return nil, rte.GoError()
 		}
 	}
@@ -53,7 +51,7 @@ func Login(hostName string, port int32, userName string, password string) (*Rtdb
 	// 获取套接字句柄
 	for i := range infos {
 		sHandle, rte := RawRtdbGetOwnConnectionWarp(rtn.ConnectHandle, int32(i+1))
-		if !errors.Is(rte, RteOk) {
+		if !RteIsOk(rte) {
 			return nil, rte.GoError()
 		}
 		rtn.SocketHandles = append(rtn.SocketHandles, sHandle)
@@ -61,14 +59,14 @@ func Login(hostName string, port int32, userName string, password string) (*Rtdb
 
 	// 获取服务器操作系统类型
 	osType, rte := RawRtdbOsType(rtn.ConnectHandle)
-	if !errors.Is(rte, RteOk) {
+	if !RteIsOk(rte) {
 		return nil, rte.GoError()
 	}
 	rtn.ServerOsType = osType
 
 	// 获取String/Blob最大长度
 	maxLen, rte := RawRtdbGetMaxBlobLenWarp(rtn.ConnectHandle)
-	if !errors.Is(rte, RteOk) {
+	if !RteIsOk(rte) {
 		return nil, rte.GoError()
 	}
 	rtn.StringBlobMaxLen = maxLen
@@ -85,7 +83,7 @@ func (c *RtdbConnect) Logout() error {
 // GetClientVersion 获取客户端版本
 func (c *RtdbConnect) GetClientVersion() (*ApiVersion, error) {
 	version, rte := RawRtdbGetApiVersionWarp()
-	if !errors.Is(rte, RteOk) {
+	if !RteIsOk(rte) {
 		return nil, rte.GoError()
 	}
 	return &version, rte.GoError()

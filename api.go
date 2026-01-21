@@ -1309,6 +1309,10 @@ func (re RtdbError) GoError() error {
 	}
 }
 
+func RteIsOk(rte RtdbError) bool {
+	return errors.Is(rte, RteOk)
+}
+
 const (
 	// RteUnknownError  未知错误
 	RteUnknownError = RtdbError(C.RtE_UNKNOWN_ERROR)
