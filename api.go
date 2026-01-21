@@ -8788,7 +8788,7 @@ func RawRtdbbGetRecycledNamedTypeNamesPropertyWarp(handle ConnectHandle, ids []P
 	cErrs := (*C.rtdb_error)(unsafe.Pointer(&errs[0]))
 	err := C.rtdbb_get_recycled_named_type_names_property_warp(cHandle, &cCount, cIds, cNamedTypeNames, cCounts, cErrs)
 	names := make([]string, 0)
-	for i := 0; i < int(cgoCount); i++ {
+	for i := 0; i < int(count); i++ {
 		names = append(names, C.GoString(namedTypeNames[i]))
 	}
 	return names, fieldCounts, errs, RtdbError(err)
@@ -8806,12 +8806,12 @@ func RawRtdbbGetRecycledNamedTypeNamesPropertyWarp(handle ConnectHandle, ids []P
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_get_named_type_points_count_warp(rtdb_int32 handle, const char* name, rtdb_int32 *points_count)
 func RawRtdbbGetNamedTypePointsCountWarp(handle ConnectHandle, name string) (int32, RtdbError) {
-	cgoHandle := C.rtdb_int32(handle)
-	cgoName := C.CString(name)
-	defer C.free(unsafe.Pointer(cgoName))
-	cgoCount := C.rtdb_int32(0)
-	err := C.rtdbb_get_named_type_points_count_warp(cgoHandle, cgoName, &cgoCount)
-	return int32(cgoCount), RtdbError(err)
+	cHandle := C.rtdb_int32(handle)
+	cName := C.CString(name)
+	defer C.free(unsafe.Pointer(cName))
+	cCount := C.rtdb_int32(0)
+	err := C.rtdbb_get_named_type_points_count_warp(cHandle, cName, &cCount)
+	return int32(cCount), RtdbError(err)
 }
 
 // RawRtdbbGetBaseTypePointsCountWarp 获取该内置的基本类型的所有标签点个数
@@ -8826,11 +8826,11 @@ func RawRtdbbGetNamedTypePointsCountWarp(handle ConnectHandle, name string) (int
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_get_base_type_points_count_warp(rtdb_int32 handle, rtdb_int32 type, rtdb_int32 *points_count)
 func RawRtdbbGetBaseTypePointsCountWarp(handle ConnectHandle, rtdbType RtdbType) (int32, RtdbError) {
-	cgoHandle := C.rtdb_int32(handle)
-	cgoType := C.rtdb_int32(rtdbType)
-	cgoCount := C.rtdb_int32(0)
-	err := C.rtdbb_get_base_type_points_count_warp(cgoHandle, cgoType, &cgoCount)
-	return int32(cgoCount), RtdbError(err)
+	cHandle := C.rtdb_int32(handle)
+	cType := C.rtdb_int32(rtdbType)
+	cCount := C.rtdb_int32(0)
+	err := C.rtdbb_get_base_type_points_count_warp(cHandle, cType, &cCount)
+	return int32(cCount), RtdbError(err)
 }
 
 // RawRtdbbModifyNamedTypeWarp 修改自定义类型名称,描述,字段名称,字段描述
@@ -8846,14 +8846,14 @@ func RawRtdbbGetBaseTypePointsCountWarp(handle ConnectHandle, rtdbType RtdbType)
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_modify_named_type_warp(rtdb_int32 handle, const char* name, const char* modify_name, const char* modify_desc, const char* modify_field_name[RTDB_TYPE_NAME_SIZE], const char* modify_field_desc[RTDB_DESC_SIZE], rtdb_int32 field_count)
 func RawRtdbbModifyNamedTypeWarp(handle ConnectHandle, name string, modifyName string, modifyDesc string, fieldNames []string, fieldDescs []string) RtdbError {
-	cgoHandle := C.rtdb_int32(handle)
-	cgoName := C.CString(name)
-	defer C.free(unsafe.Pointer(cgoName))
-	cgoModifyName := C.CString(modifyName)
-	defer C.free(unsafe.Pointer(cgoModifyName))
-	cgoModifyDesc := C.CString(modifyDesc)
-	defer C.free(unsafe.Pointer(cgoModifyDesc))
-	cgoFieldLen := C.rtdb_int32(len(fieldNames))
+	cHandle := C.rtdb_int32(handle)
+	cName := C.CString(name)
+	defer C.free(unsafe.Pointer(cName))
+	cModifyName := C.CString(modifyName)
+	defer C.free(unsafe.Pointer(cModifyName))
+	cModifyDesc := C.CString(modifyDesc)
+	defer C.free(unsafe.Pointer(cModifyDesc))
+	cFieldLen := C.rtdb_int32(len(fieldNames))
 	names := make([]*C.char, len(fieldNames))
 	for i, n := range fieldNames {
 		names[i] = C.CString(n)
@@ -8863,7 +8863,7 @@ func RawRtdbbModifyNamedTypeWarp(handle ConnectHandle, name string, modifyName s
 			C.free(unsafe.Pointer(n))
 		}
 	}()
-	cgoNames := (**C.char)(unsafe.Pointer(&names[0]))
+	cNames := (**C.char)(unsafe.Pointer(&names[0]))
 	descs := make([]*C.char, len(fieldDescs))
 	for i, d := range fieldDescs {
 		descs[i] = C.CString(d)
@@ -8873,8 +8873,8 @@ func RawRtdbbModifyNamedTypeWarp(handle ConnectHandle, name string, modifyName s
 			C.free(unsafe.Pointer(d))
 		}
 	}()
-	cgoDescs := (**C.char)(unsafe.Pointer(&descs[0]))
-	err := C.rtdbb_modify_named_type_warp(cgoHandle, cgoName, cgoModifyName, cgoModifyDesc, cgoNames, cgoDescs, cgoFieldLen)
+	cDescs := (**C.char)(unsafe.Pointer(&descs[0]))
+	err := C.rtdbb_modify_named_type_warp(cHandle, cName, cModifyName, cModifyDesc, cNames, cDescs, cFieldLen)
 	return RtdbError(err)
 }
 
@@ -8891,15 +8891,18 @@ func RawRtdbbModifyNamedTypeWarp(handle ConnectHandle, name string, modifyName s
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_get_meta_sync_info_warp(rtdb_int32 handle, rtdb_int32 node_number, rtdb_int32* count, RTDB_SYNC_INFO* sync_infos, rtdb_error* errors)
 func RawRtdbbGetMetaSyncInfoWarp(handle ConnectHandle, nodeNumber int32) ([]RtdbSyncInfo, []RtdbError, RtdbError) {
+	cHandle := C.rtdb_int32(handle)
+	cNodeNumber := C.rtdb_int32(nodeNumber)
 	infos := make([]C.RTDB_SYNC_INFO, 2)
-	count := C.rtdb_int32(2)
+	cCount := C.rtdb_int32(2)
 	errs := make([]RtdbError, 2)
-	err := C.rtdbb_get_meta_sync_info_warp(C.rtdb_int32(handle), C.rtdb_int32(nodeNumber), &count, &infos[0], (*C.rtdb_error)(unsafe.Pointer(&errs[0])))
+	cErrs := (*C.rtdb_error)(unsafe.Pointer(&errs[0]))
+	err := C.rtdbb_get_meta_sync_info_warp(cHandle, cNodeNumber, &cCount, &infos[0], cErrs)
 	rtnInfo := make([]RtdbSyncInfo, 0)
-	for i := 0; i < int(count); i++ {
+	for i := 0; i < int(cCount); i++ {
 		rtnInfo = append(rtnInfo, *cToGoRtdbSyncInfo(&infos[i]))
 	}
-	return rtnInfo, errs[:count], RtdbError(err)
+	return rtnInfo, errs[:cCount], RtdbError(err)
 }
 
 // RawRtdbsGetSnapshots64Warp 批量读取开关量、模拟量快照数值
