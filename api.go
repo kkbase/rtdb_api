@@ -9692,7 +9692,7 @@ func RawRtdbsPutNamedTypeSnapshots64Warp(handle ConnectHandle, ids []PointID, da
 	errs := make([]RtdbError, len(objects))
 	cErrs := (*C.rtdb_error)(unsafe.Pointer(&errs[0]))
 	err := C.rtdbs_put_named_type_snapshots64_warp(cHandle, &cCount, cIds, cDatetimes, cSubtimes, &ptrs[0], cLens, cQualities, cErrs)
-	return errs[:len(objects)], RtdbError(err)
+	return errs, RtdbError(err)
 }
 
 // RawRtdbaGetArchivesCountWarp 获取存档文件数量
