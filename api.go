@@ -8912,32 +8912,33 @@ func RawRtdbbGetMetaSyncInfoWarp(handle ConnectHandle, nodeNumber int32) ([]Rtdb
 //   - ids 标签点标识列表
 //
 // output:
-//   - []TimestampType 实时数值时间列表, 表示距离1970年1月1日08:00:00的秒数
-//   - []SubtimeType 实时数值时间列表，对于时间精度为纳秒的标签点，返回相应的纳秒值；否则为 0
-//   - []float64 实时浮点型数值列表，对于数据类型为 RTDB_REAL16、RTDB_REAL32、RTDB_REAL64 的标签点，返回相应的快照值；否则为 0
-//   - []int64 实时整型数值列表，对于数据类型为 RTDB_BOOL、RTDB_UINT8、RTDB_INT8、RTDB_CHAR、RTDB_UINT16、RTDB_INT16、RTDB_UINT32、RTDB_INT32、RTDB_INT64 的标签点，返回相应的快照值；否则为 0
-//   - []Quality 实时数值品质列表，数据库预定义的品质参见枚举 RTDB_QUALITY
-//   - []error 无符号整型数组，输出，读取实时数据的返回值列表，参考rtdb_error.h
+//   - []TimestampType(datetimes) 实时数值时间列表, 表示距离1970年1月1日08:00:00的秒数
+//   - []SubtimeType(subtimes) 实时数值时间列表，对于时间精度为纳秒的标签点，返回相应的纳秒值；否则为 0
+//   - []float64(values) 实时浮点型数值列表，对于数据类型为 RTDB_REAL16、RTDB_REAL32、RTDB_REAL64 的标签点，返回相应的快照值；否则为 0
+//   - []int64(states) 实时整型数值列表，对于数据类型为 RTDB_BOOL、RTDB_UINT8、RTDB_INT8、RTDB_CHAR、RTDB_UINT16、RTDB_INT16、RTDB_UINT32、RTDB_INT32、RTDB_INT64 的标签点，返回相应的快照值；否则为 0
+//   - []Quality(qualities) 实时数值品质列表，数据库预定义的品质参见枚举 RTDB_QUALITY
+//   - []RtdbError(errs) 无符号整型数组，输出，读取实时数据的返回值列表，参考rtdb_error.h
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbs_get_snapshots64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float64* values, rtdb_int64* states, rtdb_int16* qualities, rtdb_error* errors)
 func RawRtdbsGetSnapshots64Warp(handle ConnectHandle, ids []PointID) ([]TimestampType, []SubtimeType, []float64, []int64, []Quality, []RtdbError, RtdbError) {
-	count := C.rtdb_int32(len(ids))
+	cHandle := C.rtdb_int32(handle)
+	cCount := C.rtdb_int32(len(ids))
 	cIds := (*C.rtdb_int32)(unsafe.Pointer(&ids[0]))
-	ts := make([]TimestampType, count)
-	cTs := (*C.rtdb_timestamp_type)(unsafe.Pointer(&ts[0]))
-	ms := make([]SubtimeType, count)
-	cMs := (*C.rtdb_subtime_type)(unsafe.Pointer(&ms[0]))
-	fvs := make([]float64, count)
-	cFvs := (*C.rtdb_float64)(unsafe.Pointer(&fvs[0]))
-	ivs := make([]int64, count)
-	cIvs := (*C.rtdb_int64)(unsafe.Pointer(&ivs[0]))
-	qs := make([]Quality, count)
-	cQs := (*C.rtdb_int16)(unsafe.Pointer(&qs[0]))
-	es := make([]RtdbError, count)
-	cEs := (*C.rtdb_error)(unsafe.Pointer(&es[0]))
-	err := C.rtdbs_get_snapshots64_warp(C.rtdb_int32(handle), &count, cIds, cTs, cMs, cFvs, cIvs, cQs, cEs)
-	return ts[:count], ms[:count], fvs[:count], ivs[:count], qs[:count], es[:count], RtdbError(err)
+	datetimes := make([]TimestampType, cCount)
+	cDatetimes := (*C.rtdb_timestamp_type)(unsafe.Pointer(&datetimes[0]))
+	subtimes := make([]SubtimeType, cCount)
+	cSubtimes := (*C.rtdb_subtime_type)(unsafe.Pointer(&subtimes[0]))
+	values := make([]float64, cCount)
+	cValues := (*C.rtdb_float64)(unsafe.Pointer(&values[0]))
+	states := make([]int64, cCount)
+	cStates := (*C.rtdb_int64)(unsafe.Pointer(&states[0]))
+	qualities := make([]Quality, cCount)
+	cQualities := (*C.rtdb_int16)(unsafe.Pointer(&qualities[0]))
+	errs := make([]RtdbError, cCount)
+	cErrs := (*C.rtdb_error)(unsafe.Pointer(&errs[0]))
+	err := C.rtdbs_get_snapshots64_warp(cHandle, &cCount, cIds, cDatetimes, cSubtimes, cValues, cStates, cQualities, cErrs)
+	return datetimes[:cCount], subtimes[:cCount], values[:cCount], subtimes[:cCount], qualities[:cCount], errs[:cCount], RtdbError(err)
 }
 
 // RawRtdbsPutSnapshots64Warp 批量写入开关量、模拟量快照数值
