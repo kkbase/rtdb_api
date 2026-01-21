@@ -9771,7 +9771,8 @@ func RawRtdbaRemoveArchiveWarp(handle ConnectHandle, path string, file string) R
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdba_shift_actived_warp(rtdb_int32 handle)
 func RawRtdbaShiftActivedWarp(handle ConnectHandle) RtdbError {
-	err := C.rtdba_shift_actived_warp(C.rtdb_int32(handle))
+	cHandle := C.rtdb_int32(handle)
+	err := C.rtdba_shift_actived_warp(cHandle)
 	return RtdbError(err)
 }
 
@@ -9788,15 +9789,16 @@ func RawRtdbaShiftActivedWarp(handle ConnectHandle) RtdbError {
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdba_get_archives_warp(rtdb_int32 handle, rtdb_int32* count, rtdb_path_string* paths, rtdb_filename_string* files, rtdb_int32 *states)
 func RawRtdbaGetArchivesWarp(handle ConnectHandle) ([]string, []string, []RtdbArchiveState, RtdbError) {
+	cHandle := C.rtdb_int32(handle)
 	count, err := RawRtdbaGetArchivesCountWarp(handle)
 	if err.IsOk() {
-		return nil, nil, nil, RtdbError(RteOk)
+		return nil, nil, nil, RteOk
 	}
 	cCount := C.rtdb_int32(count)
 	paths := make([]C.rtdb_path_string, count)
 	files := make([]C.rtdb_filename_string, count)
 	states := make([]RtdbArchiveState, count)
-	e := C.rtdba_get_archives_warp(C.rtdb_int32(handle), &cCount, &paths[0], &files[0], (*C.rtdb_int32)(unsafe.Pointer(&states[0])))
+	e := C.rtdba_get_archives_warp(cHandle, &cCount, &paths[0], &files[0], (*C.rtdb_int32)(unsafe.Pointer(&states[0])))
 	goPaths := make([]string, 0)
 	for i := int32(0); i < count; i++ {
 		str := C.GoString((*C.char)(unsafe.Pointer(&paths[i][0])))
