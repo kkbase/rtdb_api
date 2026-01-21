@@ -9175,13 +9175,14 @@ func RawRtdbsFixCoorSnapshots64Warp(handle ConnectHandle, ids []PointID, datetim
 //   - rtdb_error RTDBAPI_CALLRULE rtdbs_get_blob_snapshot64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type* datetime, rtdb_subtime_type* subtime, rtdb_byte* blob, rtdb_length_type* len, rtdb_int16* quality)
 func RawRtdbsGetBlobSnapshot64Warp(handle ConnectHandle, id PointID, maxLen int32) (TimestampType, SubtimeType, []byte, Quality, RtdbError) {
 	cHandle := C.rtdb_int32(handle)
+	cId := C.rtdb_int32(id)
 	datetime := C.rtdb_timestamp_type(0)
 	subtime := C.rtdb_subtime_type(0)
 	blob := make([]byte, maxLen)
 	cBlob := (*C.rtdb_byte)(unsafe.Pointer(&blob[0]))
 	quality := C.rtdb_int16(0)
 	length := C.rtdb_length_type(len(blob))
-	e := C.rtdbs_get_blob_snapshot64_warp(cHandle, C.rtdb_int32(id), &datetime, &subtime, cBlob, &length, &quality)
+	e := C.rtdbs_get_blob_snapshot64_warp(cHandle, cId, &datetime, &subtime, cBlob, &length, &quality)
 	return TimestampType(datetime), SubtimeType(subtime), blob[:length], Quality(quality), RtdbError(e)
 }
 
@@ -9250,8 +9251,11 @@ func RawRtdbsGetBlobSnapshots64Warp(handle ConnectHandle, ids []PointID, maxLen 
 func RawRtdbsPutBlobSnapshot64Warp(handle ConnectHandle, id PointID, datetime TimestampType, subtime SubtimeType, blob []byte, quality Quality) RtdbError {
 	cHandle := C.rtdb_int32(handle)
 	cId := C.rtdb_int32(id)
+	cDatetime := C.rtdb_timestamp_type(datetime)
+	cSubtime := C.rtdb_subtime_type(subtime)
+	cLen := C.rtdb_length_type(len(blob))
 	cBlob := (*C.rtdb_byte)(unsafe.Pointer(&blob[0]))
-	err := C.rtdbs_put_blob_snapshot64_warp(cHandle, cId, C.rtdb_timestamp_type(datetime), C.rtdb_subtime_type(subtime), cBlob, C.rtdb_length_type(len(blob)), C.rtdb_int16(quality))
+	err := C.rtdbs_put_blob_snapshot64_warp(cHandle, cId, cDatetime, cSubtime, cBlob, cLen, C.rtdb_int16(quality))
 	return RtdbError(err)
 }
 
@@ -9513,9 +9517,10 @@ func RawRtdbsSubscribeDeltaSnapshots64Warp(handle ConnectHandle, ids []PointID, 
 	cIds := (*C.rtdb_int32)(unsafe.Pointer(&ids[0]))
 	cDeltaValues := (*C.rtdb_float64)(unsafe.Pointer(&deltaValues[0]))
 	cDeltaStates := (*C.rtdb_int64)(unsafe.Pointer(&deltaStates[0]))
+	cOptions := C.rtdb_uint32(options)
 	errs := make([]RtdbError, len(ids))
 	cErrs := (*C.rtdb_error)(unsafe.Pointer(&errs[0]))
-	err := C.rtdbs_subscribe_delta_snapshots64_warp(cHandle, &cCount, cIds, cDeltaValues, cDeltaStates, C.rtdb_uint32(options), param, (C.rtdbs_snaps_event_ex64)(unsafe.Pointer(C.goSnapsEventEx)), cErrs)
+	err := C.rtdbs_subscribe_delta_snapshots64_warp(cHandle, &cCount, cIds, cDeltaValues, cDeltaStates, cOptions, param, (C.rtdbs_snaps_event_ex64)(unsafe.Pointer(C.goSnapsEventEx)), cErrs)
 	return errs, RtdbError(err)
 }
 
@@ -9654,7 +9659,12 @@ func RawRtdbsGetNamedTypeSnapshots64Warp(handle ConnectHandle, ids []PointID, le
 func RawRtdbsPutNamedTypeSnapshot64Warp(handle ConnectHandle, id PointID, datetime TimestampType, subtime SubtimeType, object []byte, quality Quality) RtdbError {
 	cHandle := C.rtdb_int32(handle)
 	cId := C.rtdb_int32(id)
-	err := C.rtdbs_put_named_type_snapshot64_warp(cHandle, cId, C.rtdb_timestamp_type(datetime), C.rtdb_subtime_type(subtime), unsafe.Pointer(&object[0]), C.rtdb_length_type(len(object)), C.rtdb_int16(quality))
+	cDatetime := C.rtdb_timestamp_type(datetime)
+	cSubtime := C.rtdb_subtime_type(subtime)
+	cObject := unsafe.Pointer(&object[0])
+	cLen := C.rtdb_length_type(len(object))
+	cQuality := C.rtdb_int16(quality)
+	err := C.rtdbs_put_named_type_snapshot64_warp(cHandle, cId, cDatetime, cSubtime, cObject, cLen, cQuality)
 	return RtdbError(err)
 }
 
@@ -9737,7 +9747,10 @@ func RawRtdbaCreateRangedArchive64Warp(handle ConnectHandle, path string, file s
 	defer C.free(unsafe.Pointer(cPath))
 	cFile := C.CString(file)
 	defer C.free(unsafe.Pointer(cFile))
-	err := C.rtdba_create_ranged_archive64_warp(cHandle, cPath, cFile, C.rtdb_timestamp_type(begin), C.rtdb_timestamp_type(end), C.rtdb_int32(mbSize))
+	cBegin := C.rtdb_timestamp_type(begin)
+	cEnd := C.rtdb_timestamp_type(end)
+	cSize := C.rtdb_int32(mbSize)
+	err := C.rtdba_create_ranged_archive64_warp(cHandle, cPath, cFile, cBegin, cEnd, cSize)
 	return RtdbError(err)
 }
 
@@ -9825,7 +9838,8 @@ func RawRtdbaGetArchivesWarp(handle ConnectHandle) ([]string, []string, []RtdbAr
 	paths := make([]C.rtdb_path_string, count)
 	files := make([]C.rtdb_filename_string, count)
 	states := make([]RtdbArchiveState, count)
-	e := C.rtdba_get_archives_warp(cHandle, &cCount, &paths[0], &files[0], (*C.rtdb_int32)(unsafe.Pointer(&states[0])))
+	cStates := (*C.rtdb_int32)(unsafe.Pointer(&states[0]))
+	e := C.rtdba_get_archives_warp(cHandle, &cCount, &paths[0], &files[0], cStates)
 	goPaths := make([]string, 0)
 	for i := int32(0); i < count; i++ {
 		str := C.GoString((*C.char)(unsafe.Pointer(&paths[i][0])))
@@ -10146,14 +10160,14 @@ func RawRtdbaQueryBigJob64Warp(handle ConnectHandle, processName RtdbProcess) (s
 	cProcessName := C.rtdb_int32(processName)
 	cPath := C.rtdb_path_string{}
 	cName := C.rtdb_filename_string{}
-	jobID := BigJobName(0)
-	state := int32(0)
-	endTime := TimestampType(0)
-	process := float32(0)
-	err := C.rtdba_query_big_job64_warp(cHandle, cProcessName, &cPath[0], &cName[0], (*C.rtdb_int16)(&jobID), (*C.rtdb_int32)(&state), (*C.rtdb_timestamp_type)(&endTime), (*C.rtdb_float32)(&process))
+	cJobId := C.rtdb_int16(0)
+	cState := C.rtdb_int32(0)
+	cEndTime := C.rtdb_timestamp_type(0)
+	cProcess := C.rtdb_float32(0)
+	err := C.rtdba_query_big_job64_warp(cHandle, cProcessName, &cPath[0], &cName[0], &cJobId, &cState, &cEndTime, &cProcess)
 	goPath := C.GoString(&cPath[0])
 	goName := C.GoString(&cName[0])
-	return goPath, goName, jobID, RtdbError(state), endTime, process, RtdbError(err)
+	return goPath, goName, BigJobName(cJobId), RtdbError(cState), TimestampType(cEndTime), float32(cProcess), RtdbError(err)
 }
 
 // RawRtdbaCancelBigJobWarp 取消进程正在执行的后台任务
@@ -11847,7 +11861,8 @@ func RawRtdbbGetEquationByFileNameWarp(handle ConnectHandle, name string) ([]byt
 	cName := C.CString(name)
 	defer C.free(unsafe.Pointer(cName))
 	equation := make([]byte, int(C.RTDB_MAX_EQUATION_SIZE))
-	err := C.rtdbb_get_equation_by_file_name_warp(cHandle, cName, (*C.char)(unsafe.Pointer(&equation[0])))
+	cEquation := (*C.char)(unsafe.Pointer(&equation[0]))
+	err := C.rtdbb_get_equation_by_file_name_warp(cHandle, cName, cEquation)
 	return equation, RtdbError(err)
 }
 
@@ -11865,8 +11880,9 @@ func RawRtdbbGetEquationByFileNameWarp(handle ConnectHandle, name string) ([]byt
 func RawRtdbbGetEquationByIdWarp(handle ConnectHandle, id PointID) ([]byte, RtdbError) {
 	cHandle := C.rtdb_int32(handle)
 	cId := C.rtdb_int32(id)
-	cEquation := make([]byte, int(C.RTDB_MAX_EQUATION_SIZE))
-	err := C.rtdbb_get_equation_by_id_warp(cHandle, cId, (*C.char)(unsafe.Pointer(&cEquation[0])))
+	equation := make([]byte, int(C.RTDB_MAX_EQUATION_SIZE))
+	cEquation := (*C.char)(unsafe.Pointer(&equation[0]))
+	err := C.rtdbb_get_equation_by_id_warp(cHandle, cId)
 	return cEquation, RtdbError(err)
 }
 
