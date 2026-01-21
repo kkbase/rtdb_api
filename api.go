@@ -10408,11 +10408,11 @@ func RawRtdbhGetArchivedValuesInBatches64Warp(handle ConnectHandle, id PointID, 
 //   - count 缓存长度
 //
 // output:
-//   - []TimestampType 历史数值时间列表，表示距离1970年1月1日08:00:00的秒数
-//   - []SubtimeType 历史数值时间列表，对于时间精度为纳秒的标签点，返回相应的纳秒值；否则为 0
-//   - []float64 历史浮点型数值列表，对于数据类型为 RTDB_REAL16、RTDB_REAL32、RTDB_REAL64 的标签点，返回相应的历史存储值；否则为 0
-//   - []int64 历史整型数值列表，对于数据类型为 RTDB_BOOL、RTDB_UINT8、RTDB_INT8、RTDB_CHAR、RTDB_UINT16、RTDB_INT16、RTDB_UINT32、RTDB_INT32、RTDB_INT64 的标签点，返回相应的历史存储值；否则为 0
-//   - []Quality ，历史数值品质列表，数据库预定义的品质参见枚举 RTDB_QUALITY
+//   - []TimestampType(datetimes) 历史数值时间列表，表示距离1970年1月1日08:00:00的秒数
+//   - []SubtimeType(subtimes) 历史数值时间列表，对于时间精度为纳秒的标签点，返回相应的纳秒值；否则为 0
+//   - []float64(values) 历史浮点型数值列表，对于数据类型为 RTDB_REAL16、RTDB_REAL32、RTDB_REAL64 的标签点，返回相应的历史存储值；否则为 0
+//   - []int64(states) 历史整型数值列表，对于数据类型为 RTDB_BOOL、RTDB_UINT8、RTDB_INT8、RTDB_CHAR、RTDB_UINT16、RTDB_INT16、RTDB_UINT32、RTDB_INT32、RTDB_INT64 的标签点，返回相应的历史存储值；否则为 0
+//   - []Quality(qualities) 历史数值品质列表，数据库预定义的品质参见枚举 RTDB_QUALITY
 //   - 备注：当返回 RtE_BATCH_END 表示全部数据获取完毕。
 //   - 备注：本接口对数据类型为 RTDB_COOR、RTDB_BLOB、RTDB_STRING 的标签点无效。
 //
@@ -10557,11 +10557,11 @@ func RawRtdbhGetInterpoValues64Warp(handle ConnectHandle, id PointID, count int3
 //   - subtime1  第一个元素表示起始时间纳秒；
 //
 // output:
-//   - datetimes 秒数组
-//   - subtimes 纳秒数组
-//   - values 浮点型历史插值数值列表 对于数据类型为 RTDB_REAL16、RTDB_REAL32、RTDB_REAL64 的标签点，存放相应的历史插值；否则为 0
-//   - states 整型历史插值数值列表， 对于数据类型为 RTDB_BOOL、RTDB_UINT8、RTDB_INT8、RTDB_CHAR、RTDB_UINT16、RTDB_INT16、RTDB_UINT32、RTDB_INT32、RTDB_INT64 的标签点，存放相应的历史插值；否则为 0
-//   - qualities 历史插值品质列表，数据库预定义的品质参见枚举 RTDB_QUALITY
+//   - []TimestampType(datetimes) 秒数组
+//   - []SubtimeType(subtimes) 纳秒数组
+//   - []float64(values) 浮点型历史插值数值列表 对于数据类型为 RTDB_REAL16、RTDB_REAL32、RTDB_REAL64 的标签点，存放相应的历史插值；否则为 0
+//   - []int64(states) 整型历史插值数值列表， 对于数据类型为 RTDB_BOOL、RTDB_UINT8、RTDB_INT8、RTDB_CHAR、RTDB_UINT16、RTDB_INT16、RTDB_UINT32、RTDB_INT32、RTDB_INT64 的标签点，存放相应的历史插值；否则为 0
+//   - []Quality(qualities) 历史插值品质列表，数据库预定义的品质参见枚举 RTDB_QUALITY
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbh_get_interval_values64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int64 interval, rtdb_int32 count, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float64* values, rtdb_int64* states, rtdb_int16* qualities)
@@ -11093,7 +11093,7 @@ func RawRtdbhGetCrossSectionValues64Warp(handle ConnectHandle, ids []PointID, mo
 	errs := make([]RtdbError, len(ids))
 	cErrs := (*C.rtdb_error)(unsafe.Pointer(&errs[0]))
 	err := C.rtdbh_get_cross_section_values64_warp(cHandle, cIds, cModel, cCount, cDatetimes, cSubtimes, cValues, cStates, cQualities, cErrs)
-	return datetimes[:cCount], subtimes[:cCount], values[:cCount], states[:cCount], qualities[:cCount], errs[:cCount], RtdbError(err)
+	return datetimes, subtimes, values, states, qualities, errs, RtdbError(err)
 }
 
 // RawRtdbhGetArchivedValuesFilt64Warp 读取单个标签点在一段时间内经复杂条件筛选后的历史储存值
@@ -11197,8 +11197,8 @@ func RawRtdbhGetIntervalValuesFilt64Warp(handle ConnectHandle, id PointID, filte
 //   - subtime2 结束时间，纳秒部分
 //
 // output:
-//   - []TimestampType 时间戳数组，秒部分
-//   - []SubtimeType 时间戳数组，纳秒部分
+//   - []TimestampType(datetimes) 时间戳数组，秒部分
+//   - []SubtimeType(subtimes) 时间戳数组，纳秒部分
 //   - []float64(values) 浮点型历史插值数值列表,对于数据类型为 RTDB_REAL16、RTDB_REAL32、RTDB_REAL64 的标签点，存放相应的历史插值；否则为 0
 //   - []int64(states) 整型历史插值数值列表，对于数据类型为 RTDB_BOOL、RTDB_UINT8、RTDB_INT8、RTDB_CHAR、RTDB_UINT16、RTDB_INT16、RTDB_UINT32、RTDB_INT32、RTDB_INT64 的标签点，存放相应的历史插值；否则为 0
 //   - []Quality(qualities) 历史插值品质列表，数据库预定义的品质参见枚举 RTDB_QUALITY
@@ -11367,14 +11367,18 @@ func RawRtdbhUpdateCoorValue64Warp(handle ConnectHandle, id PointID, datetime Ti
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbh_remove_value64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type datetime, rtdb_subtime_type subtime)
 func RawRtdbhRemoveValue64Warp(handle ConnectHandle, id PointID, datetime TimestampType, subtime SubtimeType) RtdbError {
-	err := C.rtdbh_remove_value64_warp(C.rtdb_int32(handle), C.rtdb_int32(id), C.rtdb_timestamp_type(datetime), C.rtdb_subtime_type(subtime))
+	cHandle := C.rtdb_int32(handle)
+	cId := C.rtdb_int32(id)
+	cDatetime := C.rtdb_timestamp_type(datetime)
+	cSubtime := C.rtdb_subtime_type(subtime)
+	err := C.rtdbh_remove_value64_warp(cHandle, cId, cDatetime, cSubtime)
 	return RtdbError(err)
 }
 
 // RawRtdbhRemoveValues64Warp 删除单个标签点一段时间内的历史存储值
 //
 // input:
-//   - handle        连接句柄
+//   - handle 连接句柄
 //   - id 标签点标识
 //   - datetime1 表示起始时间秒数。如果为 0，表示从存档中最早时间的数据开始读取
 //   - ms1 如果 id 指定的标签点时间精度为纳秒，表示起始时间对应的纳秒；否则忽略
@@ -11486,7 +11490,7 @@ func RawRtdbhPutSingleBlobValue64Warp(handle ConnectHandle, id PointID, datetime
 //   - errors 写入历史数据的返回值列表，参考rtdb_error.h
 //
 // output:
-//   - []error(error) 错误数组
+//   - []RtdbError(error) 错误数组
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbh_put_archived_values64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, const rtdb_float64* values, const rtdb_int64* states, const rtdb_int16* qualities, rtdb_error* errors)
@@ -11573,7 +11577,7 @@ func RawRtdbhPutSingleDatetimeValue64Warp(handle ConnectHandle, id PointID, date
 //   - errors 写入历史数据的返回值列表，参考rtdb_error.h
 //
 // output:
-//   - []error(error) 返回错误列表
+//   - []RtdbError(error) 返回错误列表
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbh_put_archived_blob_values64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, const rtdb_byte* const* blobs, const rtdb_length_type* lens, const rtdb_int16* qualities, rtdb_error* errors)
@@ -11617,9 +11621,11 @@ func RawRtdbhPutArchivedBlobValues64Warp(handle ConnectHandle, ids []PointID, da
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbh_flush_archived_values_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32 *count)
 func RawRtdbhFlushArchivedValuesWarp(handle ConnectHandle, id PointID) (int32, RtdbError) {
-	count := C.rtdb_int32(0)
-	err := C.rtdbh_flush_archived_values_warp(C.rtdb_int32(handle), C.rtdb_int32(id), &count)
-	return int32(count), RtdbError(err)
+	cHandle := C.rtdb_int32(handle)
+	cId := C.rtdb_int32(id)
+	cCount := C.rtdb_int32(0)
+	err := C.rtdbh_flush_archived_values_warp(cHandle, cId, &cCount)
+	return int32(cCount), RtdbError(err)
 }
 
 // RawRtdbhGetSingleNamedTypeValue64Warp 读取单个自定义类型标签点某个时间的历史数据
@@ -11851,7 +11857,7 @@ func RawRtdbbGetEquationByIdWarp(handle ConnectHandle, id PointID) ([]byte, Rtdb
 //   - flag 获取的拓扑图的关系
 //
 // output:
-//   - count 拓扑图键值对数量
+//   - int32(cCount) 拓扑图键值对数量
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbe_get_equation_graph_count_warp(rtdb_int32 handle, rtdb_int32 id, RTDB_GRAPH_FLAG flag, rtdb_int32 *count)
@@ -11899,13 +11905,14 @@ func RawRtdbeGetEquationGraphDatasWarp(handle ConnectHandle, id PointID, flag Rt
 //   - count 表示实际获取到的Perf服务中支持的性能计数点的数量
 //
 // output:
-//   - int32 性能计数点的数量
+//   - int32(count) 性能计数点的数量
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbp_get_perf_tags_count_warp(rtdb_int32 handle, int* count)
 func RawRtdbpGetPerfTagsCountWarp(handle ConnectHandle) (int32, RtdbError) {
+	cHandle := C.rtdb_int32(handle)
 	count := C.int(0)
-	err := C.rtdbp_get_perf_tags_count_warp(C.rtdb_int32(handle), &count)
+	err := C.rtdbp_get_perf_tags_count_warp(cHandle, &count)
 	return int32(count), RtdbError(err)
 }
 
@@ -11945,12 +11952,12 @@ func RawRtdbpGetPerfTagsInfoWarp(handle ConnectHandle, ids []RtdbPerfTagID) ([]R
 //   - ids 性能计数点标识列表，参考RTDB_PERF_TAG_ID
 //
 // output:
-//   - datetimes 实时数值时间列表,表示距离1970年1月1日08:00:00的秒数
-//   - subtimes 实时数值时间列表，对于时间精度为纳秒的标签点，返回相应的纳秒值；否则为 0
-//   - values 实时浮点型数值列表，对于数据类型为 RTDB_REAL16、RTDB_REAL32、RTDB_REAL64 的标签点，返回相应的快照值；否则为 0
-//   - states 实时整型数值列表，对于数据类型为 RTDB_BOOL、RTDB_UINT8、RTDB_INT8、RTDB_CHAR、RTDB_UINT16、RTDB_INT16、RTDB_UINT32、RTDB_INT32、RTDB_INT64 的标签点，返回相应的快照值；否则为 0
-//   - qualities 实时数值品质列表，数据库预定义的品质参见枚举 RTDB_QUALITY
-//   - errors 读取实时数据的返回值列表，参考rtdb_error.h
+//   - []TimestampType(datetimes) 实时数值时间列表,表示距离1970年1月1日08:00:00的秒数
+//   - []SubtimeType(subtimes) 实时数值时间列表，对于时间精度为纳秒的标签点，返回相应的纳秒值；否则为 0
+//   - []float64(values) 实时浮点型数值列表，对于数据类型为 RTDB_REAL16、RTDB_REAL32、RTDB_REAL64 的标签点，返回相应的快照值；否则为 0
+//   - []int64(states) 实时整型数值列表，对于数据类型为 RTDB_BOOL、RTDB_UINT8、RTDB_INT8、RTDB_CHAR、RTDB_UINT16、RTDB_INT16、RTDB_UINT32、RTDB_INT32、RTDB_INT64 的标签点，返回相应的快照值；否则为 0
+//   - []Quality(qualities) 实时数值品质列表，数据库预定义的品质参见枚举 RTDB_QUALITY
+//   - []RtdbError(errs) 读取实时数据的返回值列表，参考rtdb_error.h
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbp_get_perf_values64_warp(rtdb_int32 handle, rtdb_int32* count, int* perf_ids, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float64* values, rtdb_int64* states, rtdb_int16* qualities, rtdb_error* errors)
