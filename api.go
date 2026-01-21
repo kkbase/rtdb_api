@@ -9882,11 +9882,11 @@ func RawRtdbaGetArchivesInfoWarp(handle ConnectHandle, count int32) ([]string, [
 //   - count 最大存档信息数量
 //
 // output:
-//   - []string 存档路径数组
-//   - []string 存档文件名数组
-//   - []RtdbArchivePerfData 存档实时数据
-//   - []RtdbArchivePerfData 存档实时数据总数
-//   - []error 错误列表
+//   - []string(paths) 存档路径数组
+//   - []string(files) 存档文件名数组
+//   - []RtdbArchivePerfData(archives) 存档实时数据
+//   - []RtdbArchivePerfData(sub_archives) 存档实时数据总数
+//   - []RtdbError(errs) 错误列表
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdba_get_archives_perf_data_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_path_string* const paths, const rtdb_filename_string* const files, RTDB_ARCHIVE_PERF_DATA* real_time_datas, RTDB_ARCHIVE_PERF_DATA* total_datas, rtdb_error* errors)
