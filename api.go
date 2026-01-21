@@ -6318,7 +6318,7 @@ func goToCRtdbSummaryData(data *RtdbSummaryData) *C.RTDB_SUMMARY_DATA {
 // RawRtdbGetApiVersionWarp 返回 ApiVersion 版本号
 //
 // output:
-//   - ApiVersion 指的是 API库 的版本号
+//   - ApiVersion(version) 指的是 API库 的版本号
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_get_api_version_warp(rtdb_int32 *major, rtdb_int32 *minor, rtdb_int32 *beta)
@@ -6355,7 +6355,7 @@ func RawRtdbSetOptionWarp(optionType RtdbApiOption, value int32) RtdbError {
 //   - remoteHost 对端IP地址
 //
 // output:
-//   - DatagramHandle 数据流句柄
+//   - DatagramHandle(handle) 数据流句柄
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_create_datagram_handle_warp(rtdb_int32 port, const char* remotehost, rtdb_datagram_handle* handle)
@@ -6389,17 +6389,18 @@ func RawRtdbRemoveDatagramHandleWarp(handle DatagramHandle) RtdbError {
 //   - timeout 超时时间(单位秒)
 //
 // output:
-//   - []byte 返回数据流
+//   - []byte(message) 返回数据流
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_recv_datagram_warp(char* message, rtdb_int32* message_len, rtdb_datagram_handle handle, char* remote_addr, rtdb_int32 timeout)
 func RawRtdbRecvDatagramWarp(handle DatagramHandle, cacheLen int32, remoteAddr string, timeout int32) ([]byte, RtdbError) {
 	message := make([]byte, cacheLen)
+	cMessage := (*C.char)(unsafe.Pointer(&message[0]))
 	messageLen := C.rtdb_int32(cacheLen)
 	cRemoteAddr := C.CString(remoteAddr)
 	defer C.free(unsafe.Pointer(cRemoteAddr))
-	err := C.rtdb_recv_datagram_warp((*C.char)(unsafe.Pointer(&message[0])), &messageLen, handle.handle, cRemoteAddr, C.rtdb_int32(timeout))
-	return message[0:messageLen], RtdbError(err)
+	err := C.rtdb_recv_datagram_warp(cMessage, &messageLen, handle.handle, cRemoteAddr, C.rtdb_int32(timeout))
+	return message[:messageLen], RtdbError(err)
 }
 
 // RawRtdbConnectWarp 建立同 RTDB 数据库的网络连接, 注意这里只是创建连接，并没有进行用户登陆
