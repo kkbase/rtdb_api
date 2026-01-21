@@ -9317,7 +9317,7 @@ func RawRtdbsGetDatetimeSnapshots64Warp(handle ConnectHandle, ids []PointID, typ
 	cErrs := (*C.rtdb_error)(unsafe.Pointer(&errs[0]))
 	cType := C.rtdb_int16(typ)
 
-	err := C.rtdbs_get_datetime_snapshots64_warp(cHandle, &cCount, cIds, cDatetimes, cMs, cDtValues, cDtLens, cQualities, cErrs, cType)
+	err := C.rtdbs_get_datetime_snapshots64_warp(cHandle, &cCount, cIds, cDatetimes, cSubtimes, cDtValues, cDtLens, cQualities, cErrs, cType)
 	goValues := make([]string, 0)
 	for i, v := range dtValues {
 		vv := C.GoBytes(unsafe.Pointer(v), 128)
@@ -9337,16 +9337,16 @@ func RawRtdbsGetDatetimeSnapshots64Warp(handle ConnectHandle, ids []PointID, typ
 //   - qualities 实时数值品质，数据库预定义的品质参见枚举 RTDB_QUALITY
 //
 // output:
-//   - []error 读取实时数据的返回值列表，参考rtdb_error.h
+//   - []RtdbError(errs) 读取实时数据的返回值列表，参考rtdb_error.h
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbs_put_datetime_snapshots64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, const rtdb_byte* const* dtvalues, const rtdb_length_type* dtlens, const rtdb_int16* qualities, rtdb_error* errors)
 func RawRtdbsPutDatetimeSnapshots64Warp(handle ConnectHandle, ids []PointID, datetimes []TimestampType, subtimes []SubtimeType, dtValues []string, qualities []Quality) ([]RtdbError, RtdbError) {
-	cgoHandle := C.rtdb_int32(handle)
-	cgoCount := C.rtdb_int32(len(ids))
-	cgoIds := (*C.rtdb_int32)(unsafe.Pointer(&ids[0]))
-	cgoDatetimes := (*C.rtdb_timestamp_type)(unsafe.Pointer(&datetimes[0]))
-	cgoSubtimes := (*C.rtdb_subtime_type)(unsafe.Pointer(&subtimes[0]))
+	cHandle := C.rtdb_int32(handle)
+	cCount := C.rtdb_int32(len(ids))
+	cIds := (*C.rtdb_int32)(unsafe.Pointer(&ids[0]))
+	cDatetimes := (*C.rtdb_timestamp_type)(unsafe.Pointer(&datetimes[0]))
+	cSubtimes := (*C.rtdb_subtime_type)(unsafe.Pointer(&subtimes[0]))
 	values := make([]*C.char, len(dtValues))
 	for i, v := range dtValues {
 		values[i] = C.CString(v)
@@ -9356,17 +9356,17 @@ func RawRtdbsPutDatetimeSnapshots64Warp(handle ConnectHandle, ids []PointID, dat
 			C.free(unsafe.Pointer(values[i]))
 		}
 	}()
-	cgoValues := (**C.uchar)(unsafe.Pointer(&values[0]))
-	cgoQualities := (*C.rtdb_int16)(unsafe.Pointer(&qualities[0]))
+	cValues := (**C.uchar)(unsafe.Pointer(&values[0]))
+	cQualities := (*C.rtdb_int16)(unsafe.Pointer(&qualities[0]))
 	lens := make([]C.rtdb_length_type, 0)
 	for _, s := range dtValues {
 		lens = append(lens, C.rtdb_length_type(len(s)))
 	}
-	cgoLens := (*C.rtdb_length_type)(unsafe.Pointer(&lens[0]))
+	cLens := (*C.rtdb_length_type)(unsafe.Pointer(&lens[0]))
 	errs := make([]RtdbError, len(ids))
-	cgoErrors := (*C.rtdb_error)(unsafe.Pointer(&errs[0]))
-	err := C.rtdbs_put_datetime_snapshots64_warp(cgoHandle, &cgoCount, cgoIds, cgoDatetimes, cgoSubtimes, cgoValues, cgoLens, cgoQualities, cgoErrors)
-	return errs[:cgoCount], RtdbError(err)
+	cErrs := (*C.rtdb_error)(unsafe.Pointer(&errs[0]))
+	err := C.rtdbs_put_datetime_snapshots64_warp(cHandle, &cCount, cIds, cDatetimes, cSubtimes, cValues, cLens, cQualities, cErrs)
+	return errs, RtdbError(err)
 
 }
 
