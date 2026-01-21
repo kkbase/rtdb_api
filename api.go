@@ -6472,8 +6472,10 @@ func RawRtdbDisconnectWarp(handle ConnectHandle) RtdbError {
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_connection_count_warp(rtdb_int32 handle, rtdb_int32 node_number, rtdb_int32 *count)
 func RawRtdbConnectionCountWarp(handle ConnectHandle, nodeNumber int32) (int32, RtdbError) {
+	cHandle := C.rtdb_int32(handle)
+	cNodeNumber := C.rtdb_int32(nodeNumber)
 	cCount := C.rtdb_int32(0)
-	err := C.rtdb_connection_count_warp(C.rtdb_int32(handle), C.rtdb_int32(nodeNumber), &cCount)
+	err := C.rtdb_connection_count_warp(cHandle, cNodeNumber, &cCount)
 	return int32(cCount), RtdbError(err)
 }
 
@@ -6493,7 +6495,8 @@ func RawRtdbGetDbInfo1Warp(handle ConnectHandle, param RtdbParam) (ParamString, 
 	cParam := C.rtdb_int32(param)
 	goStr := make([]byte, RtdbConstApiServerDescriptionLen)
 	cStr := (*C.char)(unsafe.Pointer(&goStr[0]))
-	err := C.rtdb_get_db_info1_warp(cHandle, cParam, cStr, C.rtdb_int32(RtdbConstApiServerDescriptionLen))
+	cSize := C.rtdb_int32(RtdbConstApiServerDescriptionLen)
+	err := C.rtdb_get_db_info1_warp(cHandle, cParam, cStr, cSize)
 	rtn := C.GoString((*C.char)(unsafe.Pointer(&goStr[0])))
 	return ParamString(rtn), RtdbError(err)
 }
@@ -6722,7 +6725,8 @@ func RawRtdbChangePrivWarp(handle ConnectHandle, user string, priv PrivGroup) Rt
 	cHandle := C.rtdb_int32(handle)
 	cUser := C.CString(user)
 	defer C.free(unsafe.Pointer(cUser))
-	err := C.rtdb_change_priv_warp(cHandle, cUser, C.rtdb_int32(priv))
+	cPriv := C.rtdb_int32(priv)
+	err := C.rtdb_change_priv_warp(cHandle, cUser, cPriv)
 	return RtdbError(err)
 }
 
@@ -7690,8 +7694,9 @@ func RawRtdbbGetTablesWarp(handle ConnectHandle) ([]TableID, RtdbError) {
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_get_table_size_by_id_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32 *size)
 func RawRtdbbGetTableSizeByIdWarp(handle ConnectHandle, tableID TableID) (int32, RtdbError) {
 	cHandle := C.rtdb_int32(handle)
+	cTableId := C.rtdb_int32(tableID)
 	cSize := C.rtdb_int32(0)
-	err := C.rtdbb_get_table_size_by_id_warp(cHandle, C.rtdb_int32(tableID), &cSize)
+	err := C.rtdbb_get_table_size_by_id_warp(cHandle, cTableId, &cSize)
 	return int32(cSize), RtdbError(err)
 }
 
@@ -7728,8 +7733,9 @@ func RawRtdbbGetTableSizeByNameWarp(handle ConnectHandle, tableName string) (int
 // rtdb_error RTDBAPI_CALLRULE rtdbb_get_table_real_size_by_id_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32 *size)
 func RawRtdbbGetTableRealSizeByIdWarp(handle ConnectHandle, tableID TableID) (int32, RtdbError) {
 	cHandle := C.rtdb_int32(handle)
+	cTableId := C.rtdb_int32(tableID)
 	cSize := C.rtdb_int32(0)
-	err := C.rtdbb_get_table_real_size_by_id_warp(cHandle, C.rtdb_int32(tableID), &cSize)
+	err := C.rtdbb_get_table_real_size_by_id_warp(cHandle, cTableId, &cSize)
 	return int32(cSize), RtdbError(err)
 }
 
