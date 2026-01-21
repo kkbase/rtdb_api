@@ -7108,7 +7108,7 @@ func RawRtdbHostTime64Warp(handle ConnectHandle) (TimestampType, RtdbError) {
 //     ?s    ?秒
 //
 // output:
-//   - string 时间格式字符串
+//   - string(dt) 时间格式字符串
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_format_timespan_warp(char *str, rtdb_int32 timespan)
@@ -7137,16 +7137,16 @@ func RawRtdbFormatTimespanWarp(timespan int32) (string, RtdbError) {
 //     例如："1d" 表示时间跨度为24小时。
 //
 // output:
-//   - DateTimeType 时间跨度值
+//   - DateTimeType(duration) 时间跨度值
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_parse_timespan_warp(const char *str, rtdb_int32 *timespan)
 func RawRtdbParseTimespanWarp(tStr string) (DateTimeType, RtdbError) {
 	cStr := C.CString(tStr)
 	defer C.free(unsafe.Pointer(cStr))
-	ts := C.rtdb_int32(0)
-	err := C.rtdb_parse_timespan_warp(cStr, &ts)
-	return DateTimeType(ts), RtdbError(err)
+	duration := C.rtdb_int32(0)
+	err := C.rtdb_parse_timespan_warp(cStr, &duration)
+	return DateTimeType(duration), RtdbError(err)
 }
 
 // RawRtdbParseTimeWarp 根据时间格式字符串解析时间值
@@ -7181,18 +7181,18 @@ func RawRtdbParseTimespanWarp(tStr string) (DateTimeType, RtdbError) {
 //     例如："*-1d" 表示当前时刻减去24小时。
 //
 // output:
-//   - TimestampType 时间戳，秒级
-//   - SubtimeType 时间戳，亚秒级(亚秒指的是 毫秒、微妙、纳秒 之一， 需要根据当前标签点的时间戳精度来确定单位)
+//   - TimestampType(datetime) 时间戳，秒级
+//   - SubtimeType(subtime) 时间戳，亚秒级(亚秒指的是 毫秒、微妙、纳秒 之一， 需要根据当前标签点的时间戳精度来确定单位)
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_parse_time_warp(const char *str, rtdb_int64 *datetime, rtdb_int16 *ms)
 func RawRtdbParseTimeWarp(tStr string) (TimestampType, SubtimeType, RtdbError) {
 	cStr := C.CString(tStr)
 	defer C.free(unsafe.Pointer(cStr))
-	ts := C.rtdb_int64(0)
-	ms := C.rtdb_int16(0)
-	err := C.rtdb_parse_time_warp(cStr, &ts, &ms)
-	return TimestampType(ts), SubtimeType(ms), RtdbError(err)
+	datetime := C.rtdb_int64(0)
+	subtime := C.rtdb_int16(0)
+	err := C.rtdb_parse_time_warp(cStr, &datetime, &subtime)
+	return TimestampType(datetime), SubtimeType(subtime), RtdbError(err)
 }
 
 // RawRtdbFormatMessageWarp 获取 Rtdb API 调用返回值的简短描述(错误码对应的Desc)
@@ -7201,8 +7201,8 @@ func RawRtdbParseTimeWarp(tStr string) (TimestampType, SubtimeType, RtdbError) {
 //   - err 错误码
 //
 // output:
-//   - name 函数名
-//   - message 函数描述
+//   - string(name) 函数名
+//   - string(message) 函数描述
 //
 // raw_fn:
 //   - void RTDBAPI_CALLRULE rtdb_format_message_warp(rtdb_error ecode, char *message, char *name, rtdb_int32 size)
@@ -7223,8 +7223,8 @@ func RawRtdbFormatMessageWarp(err RtdbError) (string, string) {
 //   - jobID RTDB_HOST_CONNECT_INFO::job 字段所表示的最近任务的描述
 //
 // output:
-//   - name Job名称
-//   - desc Job描述
+//   - string(name) Job名称
+//   - string(desc) Job描述
 //
 // raw_fn:
 //   - void RTDBAPI_CALLRULE rtdb_job_message_warp(rtdb_int32 job_id, char *desc, char *name, rtdb_int32 size)
@@ -7249,7 +7249,10 @@ func RawRtdbJobMessageWarp(jobID int32) (string, string) {
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_set_timeout_warp(rtdb_int32 handle, rtdb_int32 socket, rtdb_int32 timeout)
 func RawRtdbSetTimeoutWarp(handle ConnectHandle, socket SocketHandle, timeout DateTimeType) RtdbError {
-	err := C.rtdb_set_timeout_warp(C.rtdb_int32(handle), C.rtdb_int32(socket), C.rtdb_int32(timeout))
+	cHandle := C.rtdb_int32(handle)
+	cSocket := C.rtdb_int32(socket)
+	cTimeout := C.rtdb_int32(timeout)
+	err := C.rtdb_set_timeout_warp(cHandle, cSocket, cTimeout)
 	return RtdbError(err)
 }
 
@@ -7257,10 +7260,10 @@ func RawRtdbSetTimeoutWarp(handle ConnectHandle, socket SocketHandle, timeout Da
 //
 // input:
 //   - handle 连接句柄
-//   - sockt 要获取超时时间的连接
+//   - socket 要获取超时时间的连接
 //
 // output:
-//   - DateTimeType 连接超时时间，单位秒
+//   - DateTimeType(timeout) 连接超时时间，单位秒
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_get_timeout_warp(rtdb_int32 handle, rtdb_int32 socket, rtdb_int32 *timeout)
@@ -7293,7 +7296,7 @@ func RawRtdbKillConnectionWarp(handle ConnectHandle, socket SocketHandle) RtdbEr
 //   - handle 连接句柄
 //
 // output:
-//   - []string 盘符数组
+//   - []string(disks) 盘符数组
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_get_logical_drivers_warp(rtdb_int32 handle, char *drivers)
@@ -7376,7 +7379,7 @@ func RawRtdbOpenPathWarp(handle ConnectHandle, dir string) RtdbError {
 //   - handle 连接句柄
 //
 // output:
-//   - DirItem 目录项
+//   - DirItem(dir_item) 目录项
 //
 // err_code:
 //   - 当返回值为 RteBatchEnd 时表示目录下所有子目录和文件已经遍历完毕。
