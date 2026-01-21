@@ -9819,10 +9819,10 @@ func RawRtdbaGetArchivesWarp(handle ConnectHandle) ([]string, []string, []RtdbAr
 //   - count 存档数量
 //
 // output:
-//   - []string 路径列表
-//   - []string 文件名称列表
-//   - []RtdbHeaderPage 存档信息列表
-//   - []error 错误列表
+//   - []string(paths) 路径列表
+//   - []string(files) 文件名称列表
+//   - []RtdbHeaderPage(pages) 存档信息列表
+//   - []RtdbError(errs) 错误列表
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdba_get_archives_info_warp( rtdb_int32 handle, rtdb_int32* count, const rtdb_path_string* const paths, const rtdb_filename_string* const files, RTDB_HEADER_PAGE *infos, rtdb_error* errors)
@@ -9916,8 +9916,10 @@ func RawRtdbaGetArchivesPerfDataWarp(handle ConnectHandle, count int32) ([]strin
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdba_get_archives_status_warp(rtdb_int32 handle, rtdb_error* status)
 func RawRtdbaGetArchivesStatusWarp(handle ConnectHandle) (RtdbArchiveState, RtdbError) {
+	cHandle := C.rtdb_int32(handle)
 	state := RtdbArchiveState(0)
-	err := C.rtdba_get_archives_status_warp(C.rtdb_int32(handle), (*C.rtdb_error)(&state))
+	cState := (*C.rtdb_error)(&state)
+	err := C.rtdba_get_archives_status_warp(cHandle, cState)
 	return state, RtdbError(err)
 }
 
@@ -10136,7 +10138,9 @@ func RawRtdbaQueryBigJob64Warp(handle ConnectHandle, processName RtdbProcess) (s
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdba_cancel_big_job_warp(rtdb_int32 handle, rtdb_int32 process)
 func RawRtdbaCancelBigJobWarp(handle ConnectHandle, process RtdbProcess) RtdbError {
-	err := C.rtdba_cancel_big_job_warp(C.rtdb_int32(handle), C.rtdb_int32(process))
+	cHandle := C.rtdb_int32(handle)
+	cProcess := C.rtdb_int32(process)
+	err := C.rtdba_cancel_big_job_warp(cHandle, cProcess)
 	return RtdbError(err)
 }
 
@@ -10252,11 +10256,11 @@ func RawRtdbhGetArchivedValues64Warp(handle ConnectHandle, id PointID, count int
 //   - subtime2 最后一个元素表示起始时间纳秒
 //
 // output:
-//   - []TimestampType 秒数时间戳数组
-//   - []SubtimeType 纳秒数时间戳数组
-//   - []float64 浮点数数组, 对于数据类型为 RTDB_REAL16、RTDB_REAL32、RTDB_REAL64 的标签点，存放相应的历史存储值；否则为 0
-//   - []int64 整数数组, 对于数据类型为 RTDB_BOOL、RTDB_UINT8、RTDB_INT8、RTDB_CHAR、RTDB_UINT16、RTDB_INT16、RTDB_UINT32、RTDB_INT32、RTDB_INT64 的标签点，存放相应的历史存储值；否则为 0
-//   - []Quality 质量数组
+//   - []TimestampType(datetimes) 秒数时间戳数组
+//   - []SubtimeType(subtimes) 纳秒数时间戳数组
+//   - []float64(values) 浮点数数组, 对于数据类型为 RTDB_REAL16、RTDB_REAL32、RTDB_REAL64 的标签点，存放相应的历史存储值；否则为 0
+//   - []int64(states) 整数数组, 对于数据类型为 RTDB_BOOL、RTDB_UINT8、RTDB_INT8、RTDB_CHAR、RTDB_UINT16、RTDB_INT16、RTDB_UINT32、RTDB_INT32、RTDB_INT64 的标签点，存放相应的历史存储值；否则为 0
+//   - []Quality(qualities) 质量数组
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbh_get_archived_values_backward64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32* count, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float64* values, rtdb_int64* states, rtdb_int16* qualities)
@@ -10294,11 +10298,11 @@ func RawRtdbhGetArchivedValuesBackward64Warp(handle ConnectHandle, id PointID, c
 //   - subtime2 最后一个元素表示起始时间纳秒
 //
 // output:
-//   - []TimestampType 秒数时间戳数组
-//   - []SubtimeType 纳秒数时间戳数组
-//   - []float32 x轴坐标数组
-//   - []float32 y轴坐标数组
-//   - []Quality 质量数组
+//   - []TimestampType(datetimes) 秒数时间戳数组
+//   - []SubtimeType(subtimes) 纳秒数时间戳数组
+//   - []float32(xs) x轴坐标数组
+//   - []float32(ys) y轴坐标数组
+//   - []Quality(qualities) 质量数组
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbh_get_archived_coor_values64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32* count, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float32* x, rtdb_float32* y, rtdb_int16* qualities)
@@ -10336,11 +10340,11 @@ func RawRtdbhGetArchivedCoorValues64Warp(handle ConnectHandle, id PointID, count
 //   - subtime2 最后一个元素表示起始时间纳秒
 //
 // output:
-//   - []TimestampType 秒数时间戳数组
-//   - []SubtimeType 纳秒数时间戳数组
-//   - []float32 x轴坐标数组
-//   - []float32 y轴坐标数组
-//   - []Quality 质量数组
+//   - []TimestampType(datetimes) 秒数时间戳数组
+//   - []SubtimeType(subtimes) 纳秒数时间戳数组
+//   - []float32(xs) x轴坐标数组
+//   - []float32(ys) y轴坐标数组
+//   - []Quality(qualities) 质量数组
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbh_get_archived_coor_values_backward64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_int32* count, rtdb_timestamp_type* datetimes, rtdb_subtime_type* subtimes, rtdb_float32* x, rtdb_float32* y, rtdb_int16* qualities)
