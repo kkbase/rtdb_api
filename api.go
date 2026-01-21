@@ -6410,7 +6410,7 @@ func RawRtdbRecvDatagramWarp(handle DatagramHandle, cacheLen int32, remoteAddr s
 //   - port 数据库端口号
 //
 // output:
-//   - ConnectHandle 返回连接句柄
+//   - ConnectHandle(handle) 返回连接句柄
 //
 // raw_fn:
 // - rtdb_error RTDBAPI_CALLRULE rtdb_connect_warp(const char *hostname, rtdb_int32 port, rtdb_int32 *handle)
@@ -6431,7 +6431,7 @@ func RawRtdbConnectWarp(hostname string, port int32) (ConnectHandle, RtdbError) 
 //   - password 密码
 //
 // output:
-//   - PrivGroup 用户权限
+//   - PrivGroup(priv) 用户权限
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_login_warp(rtdb_int32 handle, const char *user, const char *password, rtdb_int32 *priv)
@@ -6466,14 +6466,14 @@ func RawRtdbDisconnectWarp(handle ConnectHandle) RtdbError {
 //   - nodeNumber 单机模式下写0, 双活模式下，指定节点编号，1为rtdb_connect中第1个IP，2为rtdb_connect中第2个IP
 //
 // output:
-//   - int32 返回连接个数
+//   - int32(count) 返回连接个数
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_connection_count_warp(rtdb_int32 handle, rtdb_int32 node_number, rtdb_int32 *count)
 func RawRtdbConnectionCountWarp(handle ConnectHandle, nodeNumber int32) (int32, RtdbError) {
-	count := C.rtdb_int32(0)
-	err := C.rtdb_connection_count_warp(C.rtdb_int32(handle), C.rtdb_int32(nodeNumber), &count)
-	return int32(count), RtdbError(err)
+	cCount := C.rtdb_int32(0)
+	err := C.rtdb_connection_count_warp(C.rtdb_int32(handle), C.rtdb_int32(nodeNumber), &cCount)
+	return int32(cCount), RtdbError(err)
 }
 
 // RawRtdbGetDbInfo1Warp 获得字符串型数据库系统参数
@@ -6483,7 +6483,7 @@ func RawRtdbConnectionCountWarp(handle ConnectHandle, nodeNumber int32) (int32, 
 //   - param 要取得的参数索引
 //
 // output:
-//   - ParamString 参数索引对应的字符串
+//   - ParamString(param) 参数索引对应的字符串
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_get_db_info1_warp(rtdb_int32 handle, rtdb_int32 index, char *str, rtdb_int32 size)
