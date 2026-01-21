@@ -83,9 +83,12 @@ func (c *RtdbConnect) Logout() error {
 }
 
 // GetClientVersion 获取客户端版本
-func (c *RtdbConnect) GetClientVersion() (ApiVersion, error) {
+func (c *RtdbConnect) GetClientVersion() (*ApiVersion, error) {
 	version, rte := RawRtdbGetApiVersionWarp()
-	return version, rte.GoError()
+	if !errors.Is(rte, RteOk) {
+		return nil, rte.GoError()
+	}
+	return &version, rte.GoError()
 }
 
 // SetClientOption 设置客户端参数
