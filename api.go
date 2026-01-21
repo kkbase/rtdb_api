@@ -9548,13 +9548,18 @@ func RawRtdbsCancelSubscribeSnapshotsWarp(handle ConnectHandle) RtdbError {
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbs_get_named_type_snapshot64_warp(rtdb_int32 handle, rtdb_int32 id, rtdb_timestamp_type* datetime, rtdb_subtime_type* subtime, void* object, rtdb_length_type* length, rtdb_int16* quality)
 func RawRtdbsGetNamedTypeSnapshot64Warp(handle ConnectHandle, id PointID, cacheLen int32) (TimestampType, SubtimeType, []byte, Quality, RtdbError) {
+	cHandle := C.rtdb_int32(handle)
+	cId := C.rtdb_int32(id)
 	datetime := TimestampType(0)
+	cDatetime := (*C.rtdb_timestamp_type)(&datetime)
 	subtime := SubtimeType(0)
+	cSubtime := (*C.rtdb_subtime_type)(&subtime)
 	buf := make([]byte, cacheLen)
 	cObj := unsafe.Pointer(&buf[0])
 	cLen := C.rtdb_length_type(cacheLen)
 	quality := Quality(0)
-	err := C.rtdbs_get_named_type_snapshot64_warp(C.rtdb_int32(handle), C.rtdb_int32(id), (*C.rtdb_timestamp_type)(&datetime), (*C.rtdb_subtime_type)(&subtime), cObj, &cLen, (*C.rtdb_int16)(&quality))
+	cQuality := (*C.rtdb_int16)(&quality)
+	err := C.rtdbs_get_named_type_snapshot64_warp(cHandle, cId, cDatetime, cSubtime, cObj, &cLen, cQuality)
 	return datetime, subtime, buf[:cLen], quality, RtdbError(err)
 }
 
