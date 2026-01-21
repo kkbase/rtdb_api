@@ -6399,7 +6399,8 @@ func RawRtdbRecvDatagramWarp(handle DatagramHandle, cacheLen int32, remoteAddr s
 	messageLen := C.rtdb_int32(cacheLen)
 	cRemoteAddr := C.CString(remoteAddr)
 	defer C.free(unsafe.Pointer(cRemoteAddr))
-	err := C.rtdb_recv_datagram_warp(cMessage, &messageLen, handle.handle, cRemoteAddr, C.rtdb_int32(timeout))
+	cTimeout := C.rtdb_int32(timeout)
+	err := C.rtdb_recv_datagram_warp(cMessage, &messageLen, handle.handle, cRemoteAddr, cTimeout)
 	return message[:messageLen], RtdbError(err)
 }
 
