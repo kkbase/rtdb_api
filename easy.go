@@ -103,6 +103,14 @@ func getSocketInfo(handle ConnectHandle, nodeNumber int32, socket SocketHandle) 
 	return &info, nil
 }
 
+// NamedType 自定义类型
+type NamedType struct {
+	Name   string              // 自定义类型名称
+	Fields []RtdbDataTypeField // 字段列表
+	Desc   string              // 自定义类型描述
+	Length int32               // 自定义类型长度(所有字段长度的累加和)
+}
+
 ////////////////////////////////////////////////
 //////////////////上面是一些结构//////////////////
 ////////////////////摆烂的分隔线/////////////////
@@ -583,4 +591,33 @@ func (c *RtdbConnect) AddNamedType(name string, fields []RtdbDataTypeField, desc
 func (c *RtdbConnect) DeleteNamedType(name string) error {
 	rte := RawRtdbbRemoveNamedTypeWarp(c.ConnectHandle, name)
 	return rte.GoError()
+}
+
+// GetNamedTypes 获取自定义类型列表
+//
+// output:
+func (c *RtdbConnect) GetNamedTypes() ([]NamedType, error) {
+	count, rte := RawRtdbbGetNamedTypesCountWarp(c.ConnectHandle)
+	if !RteIsOk(rte) {
+		return nil, rte.GoError()
+	}
+	names, fieldCounts, rte := RawRtdbbGetAllNamedTypesWarp(c.ConnectHandle, count)
+	if !RteIsOk(rte) {
+		return nil, rte.GoError()
+	}
+
+	types := make([]NamedType, count)
+	for i := 0; i < len(names); i++ {
+		fields, length, desc, rte := RawRtdbbGetNamedTypeWarp(c.ConnectHandle, names[i], fieldCounts[i])
+		if !RteIsOk(rte) {
+			return nil, rte.GoError()
+		}
+		types = append(types, NamedType{
+			Name:   names[i],
+			Fields: fields,
+			Length: length,
+			Desc:   desc,
+		})
+	}
+	return types, nil
 }
