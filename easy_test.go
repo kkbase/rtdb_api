@@ -162,4 +162,41 @@ func TestRtdbConnect_WhiteList(t *testing.T) {
 	}
 	defer func() { _ = conn.Logout() }()
 
+	// 添加白名单
+	err = conn.AddIpWhiteList("192.168.123.120", "255.255.255.0", "add 120", PrivGroupRtdbSA)
+	if err != nil {
+		t.Error("添加白名单失败：", err)
+		return
+	}
+
+	// 修改白名单
+	err = conn.UpdateIpWhiteList("192.168.123.120", "255.255.255.0", "192.168.123.120", "255.255.255.0", "update 120", PrivGroupRtdbSA)
+	if err != nil {
+		t.Error("修改白名单失败：", err)
+		return
+	}
+
+	// 获取白名单
+	wLists, err := conn.GetIpWhiteLists()
+	if err != nil {
+		t.Error("获取白名单失败：", err)
+		return
+	}
+	wOk := false
+	for _, w := range wLists {
+		if w.Desc == "update 120" {
+			wOk = true
+			break
+		}
+	}
+	if !wOk {
+		t.Error("修改白名单失败")
+		return
+	}
+
+	err = conn.DeleteIpWhiteList("192.168.123.120", "255.255.255.0")
+	if err != nil {
+		t.Error("删除白名单失败：", err)
+		return
+	}
 }
