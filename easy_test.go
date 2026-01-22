@@ -3,6 +3,7 @@ package rtdb_api
 import (
 	"fmt"
 	"testing"
+	"time"
 )
 
 // 用户登录/登出
@@ -364,10 +365,21 @@ func TestRtdbConnect_Time(t *testing.T) {
 	}
 	defer func() { _ = conn.Logout() }()
 
+	// 获取服务端主机时间
 	hostTime, err := conn.ServerHostTime()
 	if err != nil {
 		t.Error("获取服务端时间失败：", err)
 		return
 	}
 	fmt.Println(hostTime)
+
+	// 时间段转字符串
+	dStr, err := conn.DurationToString(time.Second * 60)
+	if err != nil {
+		t.Error("时间段转换失败：", err)
+		return
+	}
+	if dStr != "1n" {
+		t.Error("不为1n")
+	}
 }

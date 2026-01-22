@@ -670,3 +670,19 @@ func (c *RtdbConnect) ServerHostTime() (*time.Time, error) {
 	hostTime := time.Unix(int64(datetime), 0)
 	return &hostTime, nil
 }
+
+// DurationToString 时间段转字符串, 这个是服务端的时间段字符串格式，和通用时间段字符串有区别, 具体如下：
+//
+//	?y    ?年, 1年 = 365日
+//	?m    ?月, 1月 = 30 日
+//	?d    ?日
+//	?h    ?小时
+//	?n    ?分钟
+//	?s    ?秒
+func (c *RtdbConnect) DurationToString(duration time.Duration) (string, error) {
+	durationStr, rte := RawRtdbFormatTimespanWarp(int32(duration.Seconds()))
+	if !RteIsOk(rte) {
+		return "", rte.GoError()
+	}
+	return durationStr, nil
+}
