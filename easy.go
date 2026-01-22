@@ -593,6 +593,25 @@ func (c *RtdbConnect) DeleteNamedType(name string) error {
 	return rte.GoError()
 }
 
+// GetNamedType 获取自定义类型
+//
+// output:
+//   - NamedType 自定义类型
+func (c *RtdbConnect) GetNamedType(name string) (*NamedType, error) {
+	types, err := c.GetNamedTypes()
+	if err != nil {
+		return nil, err
+	}
+
+	for _, typ := range types {
+		if typ.Name == name {
+			return &typ, nil
+		}
+	}
+
+	return nil, errors.New("未知自定义类型")
+}
+
 // GetNamedTypes 获取自定义类型列表
 //
 // output:
