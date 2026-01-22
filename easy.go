@@ -688,6 +688,12 @@ func (c *RtdbConnect) ServerHostTime() (*time.Time, error) {
 //	?h    ?小时
 //	?n    ?分钟
 //	?s    ?秒
+//
+// input:
+//   - duration 时间段
+//
+// output:
+//   - string(字符串格式时间段)
 func (c *RtdbConnect) DurationToString(duration time.Duration) (string, error) {
 	durationStr, rte := RawRtdbFormatTimespanWarp(int32(duration.Seconds()))
 	if !RteIsOk(rte) {
@@ -704,6 +710,12 @@ func (c *RtdbConnect) DurationToString(duration time.Duration) (string, error) {
 //	?h    ?小时
 //	?n    ?分钟
 //	?s    ?秒
+//
+// input:
+//   - strDuration 字符串类型时间段
+//
+// output:
+//   - time.Duration(duration) 时间段
 func (c *RtdbConnect) StringToDuration(strDuration string) (time.Duration, error) {
 	duration, rte := RawRtdbParseTimespanWarp(strDuration)
 	if !RteIsOk(rte) {
@@ -739,6 +751,12 @@ func (c *RtdbConnect) StringToDuration(strDuration string) (time.Duration, error
 //	[+|-] ?s            偏移?秒
 //	[+|-] ?ms           偏移?毫秒
 //	例如："*-1d" 表示当前时刻减去24小时。
+//
+// input:
+//   - strTime 字符串类型时间戳
+//
+// output:
+//   - time.Time(timestamp) 时间戳
 func (c *RtdbConnect) StringToTime(strTime string) (*time.Time, error) {
 	datetime, subtime, rte := RawRtdbParseTimeWarp(strTime)
 	if !RteIsOk(rte) {
@@ -828,4 +846,20 @@ func (c *RtdbConnect) ReadFile(path string) ([]byte, error) {
 		}
 	}
 	return buf.Bytes(), nil
+}
+
+// CreateTable 创建表
+//
+// input:
+//   - name 表名
+//   - desc 表描述
+//
+// output:
+//   - RtdbTable(table) 返回表
+func (c *RtdbConnect) CreateTable(name string, desc string) (*RtdbTable, error) {
+	table, rte := RawRtdbbAppendTableWarp(c.ConnectHandle, name, desc)
+	if !RteIsOk(rte) {
+		return nil, rte.GoError()
+	}
+	return &table, nil
 }
