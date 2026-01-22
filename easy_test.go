@@ -33,6 +33,7 @@ func TestRtdbConnect_GetClientVersion(t *testing.T) {
 	fmt.Println(version)
 }
 
+// 设置客户端选项
 func TestRtdbConnect_SetClientOption(t *testing.T) {
 	conn, err := Login(Hostname, Port, Username, Password)
 	if err != nil {
@@ -43,5 +44,27 @@ func TestRtdbConnect_SetClientOption(t *testing.T) {
 	err = conn.SetClientOption(RtdbApiOptionAutoReconn, 0)
 	if err != nil {
 		t.Error(err)
+	}
+}
+
+// 获取&设置服务端选项
+func TestRtdbConnect_GetSetServerOption(t *testing.T) {
+	conn, err := Login(Hostname, Port, Username, Password)
+	if err != nil {
+		t.Fatal("登录用户失败", err)
+	}
+	defer func() { _ = conn.Logout() }()
+
+	opt, err := conn.GetServerOption(RtdbParamLockedPagesMem)
+	if err != nil {
+		t.Error("获取服务端选项失败", err)
+		return
+	}
+	fmt.Println(opt.GetLiteralValue())
+
+	err = conn.SetServerOption(RtdbParamLockedPagesMem, *opt)
+	if err != nil {
+		t.Error("设置服务端选项失败", err)
+		return
 	}
 }
