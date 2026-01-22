@@ -348,10 +348,10 @@ func TestRtdbConnect_NamedType(t *testing.T) {
 	}
 
 	// 获取自定义类型
-	types, err = conn.GetNamedTypes()
+	typ, err := conn.GetNamedType("abc")
 	if err != nil {
 		t.Error("获取列表失败")
 		return
 	}
-	fmt.Println(types)
+	fmt.Println(typ)
 }
