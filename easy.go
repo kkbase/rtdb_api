@@ -575,3 +575,12 @@ func (c *RtdbConnect) AddNamedType(name string, fields []RtdbDataTypeField, desc
 	rte := RawRtdbbCreateNamedTypeWarp(c.ConnectHandle, name, fields, desc)
 	return rte.GoError()
 }
+
+// DeleteNamedType 删除自定义类型
+//
+// input:
+//   - name 自定义类型的名称
+func (c *RtdbConnect) DeleteNamedType(name string) error {
+	rte := RawRtdbbRemoveNamedTypeWarp(c.ConnectHandle, name)
+	return rte.GoError()
+}

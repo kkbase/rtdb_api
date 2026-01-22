@@ -8739,7 +8739,7 @@ func RawRtdbbGetNamedTypeWarp(handle ConnectHandle, name string, fieldCount int3
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_remove_named_type_warp(rtdb_int32 handle, const char* name, rtdb_int32 reserved GAPI_DEFAULT_VALUE(0))
-func RawRtdbbRemoveNamedTypeWarp(handle int32, name string) RtdbError {
+func RawRtdbbRemoveNamedTypeWarp(handle ConnectHandle, name string) RtdbError {
 	cHandle := C.rtdb_int32(handle)
 	cName := C.CString(name)
 	defer C.free(unsafe.Pointer(cName))
