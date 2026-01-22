@@ -355,3 +355,19 @@ func TestRtdbConnect_NamedType(t *testing.T) {
 	}
 	fmt.Println(typ)
 }
+
+// 时间
+func TestRtdbConnect_Time(t *testing.T) {
+	conn, err := Login(Hostname, Port, Username, Password)
+	if err != nil {
+		t.Fatal("登录用户失败", err)
+	}
+	defer func() { _ = conn.Logout() }()
+
+	hostTime, err := conn.ServerHostTime()
+	if err != nil {
+		t.Error("获取服务端时间失败：", err)
+		return
+	}
+	fmt.Println(hostTime)
+}

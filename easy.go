@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"strconv"
+	"time"
 )
 
 // ServerOption 服务端配置
@@ -658,4 +659,14 @@ func (c *RtdbConnect) UpdateNamedType(name string, modifyName *string, modifyDes
 	}
 	rte := RawRtdbbModifyNamedTypeWarp(c.ConnectHandle, name, modifyName, modifyDesc, fieldNames, fieldDescs)
 	return rte.GoError()
+}
+
+// ServerHostTime 服务端主机时间
+func (c *RtdbConnect) ServerHostTime() (*time.Time, error) {
+	datetime, rte := RawRtdbHostTime64Warp(c.ConnectHandle)
+	if !RteIsOk(rte) {
+		return nil, rte.GoError()
+	}
+	hostTime := time.Unix(int64(datetime), 0)
+	return &hostTime, nil
 }
