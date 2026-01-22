@@ -6946,6 +6946,7 @@ func RawRtdbGetBlacklistWarp(handle ConnectHandle) ([]BlackList, RtdbError) {
 //   - handle 连接句柄
 //   - addr 信任连接段地址
 //   - mask 信任连接段子网掩码。
+//   - desc 信任连接描述
 //   - priv 信任连接段拥有的用户权限。
 //
 // raw_fn:

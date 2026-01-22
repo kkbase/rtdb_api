@@ -421,63 +421,59 @@ func (c *RtdbConnect) DeleteIpBlackList(addr string, mask string) error {
 // GetIpBlackLists 获得连接黑名单列表
 //
 // output:
-//   - []BlackList(list) 连接黑名单列表
+//   - []BlackList(lists) 连接黑名单列表
 func (c *RtdbConnect) GetIpBlackLists() ([]BlackList, error) {
-	list, rte := RawRtdbGetBlacklistWarp(c.ConnectHandle)
+	lists, rte := RawRtdbGetBlacklistWarp(c.ConnectHandle)
 	if !RteIsOk(rte) {
 		return nil, rte.GoError()
 	}
-	return list, nil
+	return lists, nil
 }
 
-/*
-// RawRtdbAddAuthorizationWarp 添加信任连接段
+// AddIpWhiteList 添加连接白名单
 //
 // input:
-//   - handle 连接句柄
-//   - addr 信任连接段地址
-//   - mask 信任连接段子网掩码。
-//   - priv 信任连接段拥有的用户权限。
-//
-// raw_fn:
-//   - rtdb_error RTDBAPI_CALLRULE rtdb_add_authorization_warp(rtdb_int32 handle, const char *addr, const char *mask, rtdb_int32 priv, const char *desc)
-func RawRtdbAddAuthorizationWarp(handle ConnectHandle, addr string, mask string, desc string, priv PrivGroup) RtdbError {
+//   - addr 连接白名单地址
+//   - mask 连接白名单掩码
+//   - desc 连接白名单描述
+//   - priv 连接白名单权限
+func (c *RtdbConnect) AddIpWhiteList(addr string, mask string, desc string, priv PrivGroup) error {
+	rte := RawRtdbAddAuthorizationWarp(c.ConnectHandle, addr, mask, desc, priv)
+	return rte.GoError()
+}
 
-// RawRtdbUpdateAuthorizationWarp 更新信任连接段
+// UpdateIpWhiteList 更新连接白名单
 //
 // input:
-//   - handle 连接句柄
-//   - oldAddr 原信任连接段地址
-//   - oldMask 原信任连接段子网掩码
-//   - newAddr 新的信任连接段地址
-//   - newMask 新的信任连接段子网掩码
-//   - newDesc 新的信任连接段的说明，超过 511 字符将被截断
-//   - priv 新的信任连接段拥有的用户权限
-//
-// raw_fn:
-//   - rtdb_error RTDBAPI_CALLRULE rtdb_update_authorization_warp(rtdb_int32 handle, const char *addr, const char *mask, const char *addr_new, const char *mask_new, rtdb_int32 priv, const char *desc)
-func RawRtdbUpdateAuthorizationWarp(handle ConnectHandle, oldAddr string, oldMask string, newAddr string, newMask string, newDesc string, priv PrivGroup) RtdbError {
+//   - oldAddr 原连接白名单地址
+//   - oldMask 原连接白名单掩码
+//   - newAddr 新连接白名单地址
+//   - newMask 新连接白名单掩码
+//   - newDesc 新连接白名单描述
+//   - newPriv 新连接白名单权限
+func (c *RtdbConnect) UpdateIpWhiteList(oldAddr string, oldMask string, newAddr string, newMask string, newDesc string, newPriv PrivGroup) error {
+	rte := RawRtdbUpdateAuthorizationWarp(c.ConnectHandle, oldAddr, oldMask, newAddr, newMask, newDesc, newPriv)
+	return rte.GoError()
+}
 
-// RawRtdbRemoveAuthorizationWarp 删除信任连接段
+// DeleteIpWhiteList 删除白名单
 //
 // input:
-//   - handle 连接句柄
-//   - addr 信任连接段地址
-//   - mask 信任连接段子网掩码
-//
-// raw_fn:
-//   - rtdb_error RTDBAPI_CALLRULE rtdb_remove_authorization_warp(rtdb_int32 handle, const char *addr, const char *mask)
-func RawRtdbRemoveAuthorizationWarp(handle ConnectHandle, addr string, mask string) RtdbError {
+//   - addr 连接白名单地址
+//   - mask 连接白名单掩码
+func (c *RtdbConnect) DeleteIpWhiteList(addr string, mask string) error {
+	rte := RawRtdbRemoveAuthorizationWarp(c.ConnectHandle, addr, mask)
+	return rte.GoError()
+}
 
-// RawRtdbGetAuthorizationsWarp 获得所有信任连接段
-//
-// input:
-//   - handle 连接句柄
+// GetIpWhiteLists 获取连接白名单列表
 //
 // output:
-//   - []AuthorizationsList(auth_list) 白名单列表
-//
-// raw_fn:
-//   - rtdb_error RTDBAPI_CALLRULE rtdb_get_authorizations_warp(rtdb_int32 handle, char* const* addrs, char* const* masks, rtdb_int32 *privs, char* const* descs, rtdb_int32 *count)
-func RawRtdbGetAuthorizationsWarp(handle ConnectHandle) ([]AuthorizationsList, RtdbError) {
-*/
+//   - []AuthorizationsList(lists)
+func (c *RtdbConnect) GetIpWhiteLists() ([]AuthorizationsList, error) {
+	lists, rte := RawRtdbGetAuthorizationsWarp(c.ConnectHandle)
+	if !RteIsOk(rte) {
+		return nil, rte.GoError()
+	}
+	return lists, nil
+}

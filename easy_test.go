@@ -100,3 +100,7 @@ func TestRtdbConnect_GetSocketInfo(t *testing.T) {
 	}
 	fmt.Println(allInfos)
 }
+
+func TestRtdbConnect_BlackList(t *testing.T) {
+
+}
