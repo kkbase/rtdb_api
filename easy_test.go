@@ -77,6 +77,7 @@ func TestRtdbConnect_GetSocketInfo(t *testing.T) {
 	}
 	defer func() { _ = conn.Logout() }()
 
+	// 获取自己的Socket信息
 	ownInfo, err := conn.GetOwnSocketInfo()
 	if err != nil {
 		t.Error("获取自己的SocketInfo失败", err)
@@ -84,6 +85,14 @@ func TestRtdbConnect_GetSocketInfo(t *testing.T) {
 	}
 	fmt.Println(ownInfo)
 
+	// 设置Socket超时时间
+	err = conn.SetSocketTimeout(ownInfo[0], ownInfo[0].Timeout)
+	if err != nil {
+		t.Error("设置timeout失败", err)
+		return
+	}
+
+	// 获取全部Socket信息
 	allInfos, err := conn.GetSocketInfos()
 	if err != nil {
 		t.Error("获取所有SocketInfo失败", err)

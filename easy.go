@@ -69,19 +69,24 @@ type SocketInfo struct {
 	JobId        int32        // 连接最近处理的任务编号
 	JobTime      DateTimeType // 最近处理任务的时间
 	ConnectTime  DateTimeType // 客户端连接时间
+	Timeout      DateTimeType // 连接超时时间
 	Client       string       // 连接的客户端主机名称
 	Process      string       // 连接的客户端程序名
 	User         string       // 登录的用户
 }
 
 func getSocketInfo(handle ConnectHandle, nodeNumber int32, socket SocketHandle) (*SocketInfo, error) {
-	connInfo, rte := RawRtdbGetConnectionInfoIpv6Warp(handle, 0, socket)
+	connInfo, rte := RawRtdbGetConnectionInfoIpv6Warp(handle, nodeNumber, socket)
 	if !RteIsOk(rte) {
 		return nil, rte.GoError()
 	}
 	ipAddr := connInfo.IpAddr6
 	if ipAddr == "" {
 		ipAddr = fmt.Sprintf("%d.%d.%d.%d", byte(connInfo.IpAddr>>24), byte(connInfo.IpAddr>>16), byte(connInfo.IpAddr>>8), byte(connInfo.IpAddr))
+	}
+	timeout, rte := RawRtdbGetTimeoutWarp(handle, socket)
+	if !RteIsOk(rte) {
+		return nil, rte.GoError()
 	}
 	info := SocketInfo{
 		SocketHandle: socket,
@@ -90,6 +95,7 @@ func getSocketInfo(handle ConnectHandle, nodeNumber int32, socket SocketHandle) 
 		JobId:        connInfo.Job,
 		JobTime:      connInfo.JobTime,
 		ConnectTime:  connInfo.ConnectTime,
+		Timeout:      timeout,
 		Client:       connInfo.Client,
 		Process:      connInfo.Process,
 		User:         connInfo.User,
@@ -325,4 +331,16 @@ func (c *RtdbConnect) GetOwnSocketInfo() ([]SocketInfo, error) {
 		}
 		return []SocketInfo{*info1, *info2}, nil
 	}
+}
+
+// SetSocketTimeout 设置Socket超时时间
+func (c *RtdbConnect) SetSocketTimeout(info SocketInfo, timeout DateTimeType) error {
+	rte := RawRtdbSetTimeoutWarp(c.ConnectHandle, info.SocketHandle, timeout)
+	return rte.GoError()
+}
+
+// KillSocket 断开Socket
+func (c *RtdbConnect) KillSocket(info SocketInfo) error {
+	rte := RawRtdbKillConnectionWarp(c.ConnectHandle, info.SocketHandle)
+	return rte.GoError()
 }
