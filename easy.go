@@ -110,7 +110,7 @@ func getSocketInfo(handle ConnectHandle, nodeNumber int32, socket SocketHandle) 
 ////////////////////////////////////////////////
 
 type RtdbConnect struct {
-	HostName         string         // 服务端名称
+	HostIp           string         // 服务端名称
 	Port             int32          // 服务端端口
 	UserName         string         // 用户名
 	Password         string         // 密码
@@ -123,16 +123,25 @@ type RtdbConnect struct {
 }
 
 // Login 登录数据库
-func Login(hostName string, port int32, userName string, password string) (*RtdbConnect, error) {
+//
+// input:
+//   - hostIp 主机IP
+//   - port 端口
+//   - userName 用户名
+//   - password 密码
+//
+// output:
+//   - RtdbConnect(conn) 返回数据库连接
+func Login(hostIp string, port int32, userName string, password string) (*RtdbConnect, error) {
 	rtn := RtdbConnect{
-		HostName: hostName,
+		HostIp:   hostIp,
 		Port:     port,
 		UserName: userName,
 		Password: password,
 	}
 
 	// 连接数据库
-	cHandle, rte := RawRtdbConnectWarp(rtn.HostName, rtn.Port)
+	cHandle, rte := RawRtdbConnectWarp(rtn.HostIp, rtn.Port)
 	if !RteIsOk(rte) {
 		return nil, rte.GoError()
 	}
@@ -190,6 +199,9 @@ func (c *RtdbConnect) Logout() error {
 }
 
 // GetClientVersion 获取客户端版本
+//
+// output:
+//   - ApiVersion(version) 客户端版本
 func (c *RtdbConnect) GetClientVersion() (*ApiVersion, error) {
 	version, rte := RawRtdbGetApiVersionWarp()
 	if !RteIsOk(rte) {
@@ -199,12 +211,22 @@ func (c *RtdbConnect) GetClientVersion() (*ApiVersion, error) {
 }
 
 // SetClientOption 设置客户端参数
+//
+// input:
+//   - option: 客户端参数选项
+//   - value: 客户端参数值
 func (c *RtdbConnect) SetClientOption(option RtdbApiOption, value int32) error {
 	rte := RawRtdbSetOptionWarp(option, value)
 	return rte.GoError()
 }
 
 // GetServerOption 获取服务端参数
+//
+// input:
+//   - param 服务端参数选项
+//
+// output:
+//   - ServerOption(option) 服务端参数值
 func (c *RtdbConnect) GetServerOption(param RtdbParam) (*ServerOption, error) {
 	if param.IsStringParam() {
 		opt, rte := RawRtdbGetDbInfo1Warp(c.ConnectHandle, param)
@@ -222,6 +244,10 @@ func (c *RtdbConnect) GetServerOption(param RtdbParam) (*ServerOption, error) {
 }
 
 // SetServerOption 设置服务端参数
+//
+// input:
+//   - param 服务端参数选项
+//   - option 服务端参数值
 func (c *RtdbConnect) SetServerOption(param RtdbParam, option ServerOption) error {
 	if param.IsStringParam() {
 		strOpt, err := option.GetString()
@@ -241,6 +267,9 @@ func (c *RtdbConnect) SetServerOption(param RtdbParam, option ServerOption) erro
 }
 
 // GetSocketInfos 获取服务端SocketInfo列表，单机服务端返回一个SocketInfo列表，双活服务端返回两个SocketInfo列表
+//
+// output:
+//   - [][]SocketInfo(infos) Socket信息列表
 func (c *RtdbConnect) GetSocketInfos() ([][]SocketInfo, error) {
 	if len(c.SyncInfos) == 1 { /* 单机,返回一个Socket列表 */
 		count, rte := RawRtdbConnectionCountWarp(c.ConnectHandle, 0)
@@ -301,6 +330,9 @@ func (c *RtdbConnect) GetSocketInfos() ([][]SocketInfo, error) {
 }
 
 // GetOwnSocketInfo 获取当前连接的SocketInfo，单机服务端返回一个SocketInfo，双活服务端返回两个SocketInfo
+//
+// output:
+//   - []Socket Socket信息
 func (c *RtdbConnect) GetOwnSocketInfo() ([]SocketInfo, error) {
 	if len(c.SyncInfos) == 1 { /* 单机,返回一个Socket句柄 */
 		socket, rte := RawRtdbGetOwnConnectionWarp(c.ConnectHandle, 0)
@@ -334,13 +366,118 @@ func (c *RtdbConnect) GetOwnSocketInfo() ([]SocketInfo, error) {
 }
 
 // SetSocketTimeout 设置Socket超时时间
+//
+// input:
+//   - info Socket信息结构
+//   - timeout 超时时间
 func (c *RtdbConnect) SetSocketTimeout(info SocketInfo, timeout DateTimeType) error {
 	rte := RawRtdbSetTimeoutWarp(c.ConnectHandle, info.SocketHandle, timeout)
 	return rte.GoError()
 }
 
 // KillSocket 断开Socket
+//
+// input:
+//   - info Socket信息结构
 func (c *RtdbConnect) KillSocket(info SocketInfo) error {
 	rte := RawRtdbKillConnectionWarp(c.ConnectHandle, info.SocketHandle)
 	return rte.GoError()
 }
+
+// AddIpBlackList 添加IP黑名单项
+//
+// input:
+//   - address 阻止连接段地址
+//   - mask 阻止连接段子网掩码
+//   - desc 阻止连接段的说明
+func (c *RtdbConnect) AddIpBlackList(address string, mask string, desc string) error {
+	rte := RawRtdbAddBlacklistWarp(c.ConnectHandle, address, mask, desc)
+	return rte.GoError()
+}
+
+// UpdateIpBlackList 更新连接黑名单项
+//
+// input:
+//   - oldAddr 原黑名单地址
+//   - oldMask 原黑名单掩码
+//   - newAddr 新黑名单地址
+//   - newMask 新黑名单掩码
+//   - newDesc 新黑名单描述
+func (c *RtdbConnect) UpdateIpBlackList(oldAddr string, oldMask string, newAddr string, newMask string, newDesc string) error {
+	rte := RawRtdbUpdateBlacklistWarp(c.ConnectHandle, oldAddr, oldMask, newAddr, newMask, newDesc)
+	return rte.GoError()
+}
+
+// DeleteIpBlackList 删除连接黑名单项
+//
+// input:
+//   - addr 黑名单地址
+//   - mask 黑名单掩码
+func (c *RtdbConnect) DeleteIpBlackList(addr string, mask string) error {
+	rte := RawRtdbRemoveBlacklistWarp(c.ConnectHandle, addr, mask)
+	return rte.GoError()
+}
+
+// GetIpBlackLists 获得连接黑名单列表
+//
+// output:
+//   - []BlackList(list) 连接黑名单列表
+func (c *RtdbConnect) GetIpBlackLists() ([]BlackList, error) {
+	list, rte := RawRtdbGetBlacklistWarp(c.ConnectHandle)
+	if !RteIsOk(rte) {
+		return nil, rte.GoError()
+	}
+	return list, nil
+}
+
+/*
+// RawRtdbAddAuthorizationWarp 添加信任连接段
+//
+// input:
+//   - handle 连接句柄
+//   - addr 信任连接段地址
+//   - mask 信任连接段子网掩码。
+//   - priv 信任连接段拥有的用户权限。
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdb_add_authorization_warp(rtdb_int32 handle, const char *addr, const char *mask, rtdb_int32 priv, const char *desc)
+func RawRtdbAddAuthorizationWarp(handle ConnectHandle, addr string, mask string, desc string, priv PrivGroup) RtdbError {
+
+// RawRtdbUpdateAuthorizationWarp 更新信任连接段
+//
+// input:
+//   - handle 连接句柄
+//   - oldAddr 原信任连接段地址
+//   - oldMask 原信任连接段子网掩码
+//   - newAddr 新的信任连接段地址
+//   - newMask 新的信任连接段子网掩码
+//   - newDesc 新的信任连接段的说明，超过 511 字符将被截断
+//   - priv 新的信任连接段拥有的用户权限
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdb_update_authorization_warp(rtdb_int32 handle, const char *addr, const char *mask, const char *addr_new, const char *mask_new, rtdb_int32 priv, const char *desc)
+func RawRtdbUpdateAuthorizationWarp(handle ConnectHandle, oldAddr string, oldMask string, newAddr string, newMask string, newDesc string, priv PrivGroup) RtdbError {
+
+// RawRtdbRemoveAuthorizationWarp 删除信任连接段
+//
+// input:
+//   - handle 连接句柄
+//   - addr 信任连接段地址
+//   - mask 信任连接段子网掩码
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdb_remove_authorization_warp(rtdb_int32 handle, const char *addr, const char *mask)
+func RawRtdbRemoveAuthorizationWarp(handle ConnectHandle, addr string, mask string) RtdbError {
+
+// RawRtdbGetAuthorizationsWarp 获得所有信任连接段
+//
+// input:
+//   - handle 连接句柄
+//
+// output:
+//   - []AuthorizationsList(auth_list) 白名单列表
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdb_get_authorizations_warp(rtdb_int32 handle, char* const* addrs, char* const* masks, rtdb_int32 *privs, char* const* descs, rtdb_int32 *count)
+func RawRtdbGetAuthorizationsWarp(handle ConnectHandle) ([]AuthorizationsList, RtdbError) {
+*/
