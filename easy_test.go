@@ -297,6 +297,7 @@ func TestRtdbConnect_NamedType(t *testing.T) {
 	}
 	defer func() { _ = conn.Logout() }()
 
+	// 创建自定义类型
 	err = conn.AddNamedType(
 		"abc",
 		"abc desc",
@@ -320,6 +321,8 @@ func TestRtdbConnect_NamedType(t *testing.T) {
 		t.Error("添加自定义类型失败")
 		return
 	}
+
+	// 删除自定义类型
 	defer func() {
 		err := conn.DeleteNamedType("abc")
 		if err != nil {
@@ -328,6 +331,7 @@ func TestRtdbConnect_NamedType(t *testing.T) {
 		}
 	}()
 
+	// 获取自定义类型
 	types, err := conn.GetNamedTypes()
 	if err != nil {
 		t.Error("获取列表失败")
@@ -335,6 +339,7 @@ func TestRtdbConnect_NamedType(t *testing.T) {
 	}
 	fmt.Println(types)
 
+	// 更新自定义类型
 	desc := "up abc desc"
 	err = conn.UpdateNamedType("abc", nil, &desc, map[string]string{"A": "A up", "B": "B up", "C": "C up"})
 	if err != nil {
@@ -342,6 +347,7 @@ func TestRtdbConnect_NamedType(t *testing.T) {
 		return
 	}
 
+	// 获取自定义类型
 	types, err = conn.GetNamedTypes()
 	if err != nil {
 		t.Error("获取列表失败")
