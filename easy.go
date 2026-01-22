@@ -522,3 +522,45 @@ func (c *RtdbConnect) SetPriv(user string, priv PrivGroup) error {
 	}
 	return rte.GoError()
 }
+
+// AddUser 添加用户
+//
+// input:
+//   - user 用户名
+//   - password 用户密码
+//   - priv 用户权限
+func (c *RtdbConnect) AddUser(user string, password string, priv PrivGroup) error {
+	rte := RawRtdbAddUserWarp(c.ConnectHandle, user, password, priv)
+	return rte.GoError()
+}
+
+// DeleteUser 删除用户
+//
+// input:
+//   - user 用户名
+func (c *RtdbConnect) DeleteUser(user string) error {
+	rte := RawRtdbRemoveUserWarp(c.ConnectHandle, user)
+	return rte.GoError()
+}
+
+// LockUser 锁定用户
+//
+// input:
+//   - user 用户名
+//   - lock 是否锁定
+func (c *RtdbConnect) LockUser(user string, lock Switch) error {
+	rte := RawRtdbLockUserWarp(c.ConnectHandle, user, lock)
+	return rte.GoError()
+}
+
+// GetUsers 获取用户列表
+//
+// output:
+//   - []RtdbUserInfo(users) 用户列表
+func (c *RtdbConnect) GetUsers() ([]RtdbUserInfo, error) {
+	users, rte := RawRtdbGetUsersWarp(c.ConnectHandle)
+	if !RteIsOk(rte) {
+		return nil, rte.GoError()
+	}
+	return users, nil
+}
