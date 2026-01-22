@@ -738,3 +738,38 @@ func (c *RtdbConnect) StringToTime(strTime string) (*time.Time, error) {
 	goTime := time.Unix(int64(datetime), int64(subtime))
 	return &goTime, nil
 }
+
+// GetDriveLetterList 获取盘符列表
+// windows平台是C、D、E、F这些盘符，linux平台是 / 盘符
+func (c *RtdbConnect) GetDriveLetterList() ([]string, error) {
+	letters, rte := RawRtdbGetLogicalDriversWarp(c.ConnectHandle)
+	if !RteIsOk(rte) {
+		return nil, rte.GoError()
+	}
+	return letters, nil
+}
+
+// GetDirItemList 获取目录项列表
+func (c *RtdbConnect) GetDirItemList(dir string) ([]DirItem, error) {
+	rte := RawRtdbOpenPathWarp(c.ConnectHandle, dir)
+	if !RteIsOk(rte) {
+		return nil, rte.GoError()
+	}
+	defer func() {
+		_ = RawRtdbClosePathWarp(c.ConnectHandle)
+	}()
+
+	items := make([]DirItem, 0)
+	for {
+		item, rte := RawRtdbReadPath64Warp(c.ConnectHandle)
+		if !RteIsOk(rte) {
+			if errors.Is(rte, RteBatchEnd) {
+				break
+			} else {
+				return nil, rte.GoError()
+			}
+		}
+		items = append(items, item)
+	}
+	return items, nil
+}

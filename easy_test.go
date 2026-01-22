@@ -403,3 +403,28 @@ func TestRtdbConnect_Time(t *testing.T) {
 	}
 	fmt.Println(ts)
 }
+
+// 磁盘
+func TestRtdbConnect_Disk(t *testing.T) {
+	conn, err := Login(Hostname, Port, Username, Password)
+	if err != nil {
+		t.Fatal("登录用户失败", err)
+	}
+	defer func() { _ = conn.Logout() }()
+
+	// 获取盘符
+	letters, err := conn.GetDriveLetterList()
+	if err != nil {
+		t.Error("获取盘符列表失败")
+		return
+	}
+	fmt.Println(letters)
+
+	// 读取指定文件夹的所有目录项
+	items, err := conn.GetDirItemList(letters[0])
+	if err != nil {
+		t.Error("获取目录项失败:", err)
+		return
+	}
+	fmt.Println(items)
+}
