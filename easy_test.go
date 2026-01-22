@@ -444,3 +444,51 @@ func TestRtdbConnect_Disk(t *testing.T) {
 	}
 	fmt.Println(string(data))
 }
+
+// 表
+func TestRtdbConnect_Table(t *testing.T) {
+	conn, err := Login(Hostname, Port, Username, Password)
+	if err != nil {
+		t.Fatal("登录用户失败", err)
+	}
+	defer func() { _ = conn.Logout() }()
+
+	// 创建表
+	table, err := conn.CreateTable("ttt", "ttt desc")
+	if err != nil {
+		t.Error("创建表失败：", err)
+		return
+	}
+	// 删除表
+	defer func() { _ = conn.DeleteTable(table.ID) }()
+
+	// 更新表名
+	err = conn.UpdateTableName(table.ID, "ttt2")
+	if err != nil {
+		t.Error("更新表名失败：", err)
+		return
+	}
+
+	// 更新表描述
+	err = conn.UpdateTableDesc(table.ID, "ttt2 desc")
+	if err != nil {
+		t.Error("更新表描述失败：", err)
+		return
+	}
+
+	// 获取表列表
+	tables, err := conn.GetTables()
+	if err != nil {
+		t.Error("获取表列表失败：", err)
+		return
+	}
+	fmt.Println(tables)
+
+	// 获取表
+	table2, err := conn.GetTable(table.ID)
+	if err != nil {
+		t.Error("获取表失败：", err)
+		return
+	}
+	fmt.Println(table2)
+}
