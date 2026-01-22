@@ -468,6 +468,7 @@ func TestRtdbConnect_Table(t *testing.T) {
 		t.Error("更新表名失败：", err)
 		return
 	}
+	time.Sleep(time.Second)
 
 	// 更新表描述
 	err = conn.UpdateTableDesc(table.ID, "ttt2 desc")
@@ -475,6 +476,7 @@ func TestRtdbConnect_Table(t *testing.T) {
 		t.Error("更新表描述失败：", err)
 		return
 	}
+	time.Sleep(time.Second)
 
 	// 获取表列表
 	tables, err := conn.GetTables()
