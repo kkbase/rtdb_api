@@ -596,6 +596,7 @@ func (c *RtdbConnect) DeleteNamedType(name string) error {
 // GetNamedTypes 获取自定义类型列表
 //
 // output:
+//   - []NamedType(types) 自定义类型列表
 func (c *RtdbConnect) GetNamedTypes() ([]NamedType, error) {
 	count, rte := RawRtdbbGetNamedTypesCountWarp(c.ConnectHandle)
 	if !RteIsOk(rte) {
