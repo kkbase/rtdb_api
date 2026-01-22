@@ -68,3 +68,26 @@ func TestRtdbConnect_GetSetServerOption(t *testing.T) {
 		return
 	}
 }
+
+// 获取当前用户的SocketInfo，获取所有用户的SocketInfo
+func TestRtdbConnect_GetSocketInfo(t *testing.T) {
+	conn, err := Login(Hostname, Port, Username, Password)
+	if err != nil {
+		t.Fatal("登录用户失败", err)
+	}
+	defer func() { _ = conn.Logout() }()
+
+	ownInfo, err := conn.GetOwnSocketInfo()
+	if err != nil {
+		t.Error("获取自己的SocketInfo失败", err)
+		return
+	}
+	fmt.Println(ownInfo)
+
+	allInfos, err := conn.GetSocketInfos()
+	if err != nil {
+		t.Error("获取所有SocketInfo失败", err)
+		return
+	}
+	fmt.Println(allInfos)
+}

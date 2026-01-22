@@ -234,8 +234,8 @@ func (c *RtdbConnect) SetServerOption(param RtdbParam, option ServerOption) erro
 	}
 }
 
-// GetSocketHandles 获取服务端Socket列表，单机服务端返回一个SocketInfo列表，双活服务端返回两个SocketInfo列表
-func (c *RtdbConnect) GetSocketHandles() ([][]SocketInfo, error) {
+// GetSocketInfos 获取服务端SocketInfo列表，单机服务端返回一个SocketInfo列表，双活服务端返回两个SocketInfo列表
+func (c *RtdbConnect) GetSocketInfos() ([][]SocketInfo, error) {
 	if len(c.SyncInfos) == 1 { /* 单机,返回一个Socket列表 */
 		count, rte := RawRtdbConnectionCountWarp(c.ConnectHandle, 0)
 		if !RteIsOk(rte) {
@@ -294,8 +294,8 @@ func (c *RtdbConnect) GetSocketHandles() ([][]SocketInfo, error) {
 	}
 }
 
-// GetOwnSocketHandle 获取当前连接的socket，单机服务端返回一个SocketInfo，双活服务端返回两个SocketInfo
-func (c *RtdbConnect) GetOwnSocketHandle() ([]SocketInfo, error) {
+// GetOwnSocketInfo 获取当前连接的SocketInfo，单机服务端返回一个SocketInfo，双活服务端返回两个SocketInfo
+func (c *RtdbConnect) GetOwnSocketInfo() ([]SocketInfo, error) {
 	if len(c.SyncInfos) == 1 { /* 单机,返回一个Socket句柄 */
 		socket, rte := RawRtdbGetOwnConnectionWarp(c.ConnectHandle, 0)
 		if !RteIsOk(rte) {
