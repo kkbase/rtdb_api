@@ -497,3 +497,28 @@ func (c *RtdbConnect) UpdateOwnPassword(oldPwd string, newPwd string) error {
 	rte := RawRtdbChangeMyPasswordWarp(c.ConnectHandle, oldPwd, newPwd)
 	return rte.GoError()
 }
+
+// GetPriv 获取连接权限
+//
+// output:
+//   - PrivGroup(priv) 用户权限
+func (c *RtdbConnect) GetPriv() (*PrivGroup, error) {
+	priv, rte := RawRtdbGetPrivWarp(c.ConnectHandle)
+	if !RteIsOk(rte) {
+		return nil, rte.GoError()
+	}
+	return &priv, nil
+}
+
+// SetPriv 设置连接权限
+//
+// input:
+//   - user 用户名
+//   - priv 用户权限
+func (c *RtdbConnect) SetPriv(user string, priv PrivGroup) error {
+	rte := RawRtdbChangePrivWarp(c.ConnectHandle, user, priv)
+	if RteIsOk(rte) && c.UserName == user {
+		c.Priv = priv
+	}
+	return rte.GoError()
+}
