@@ -200,3 +200,91 @@ func TestRtdbConnect_WhiteList(t *testing.T) {
 		return
 	}
 }
+
+// 用户
+func TestRtdbConnect_User(t *testing.T) {
+	conn, err := Login(Hostname, Port, Username, Password)
+	if err != nil {
+		t.Fatal("登录用户失败", err)
+	}
+	defer func() { _ = conn.Logout() }()
+
+	// 添加用户
+	err = conn.AddUser("test111", "122333", PrivGroupRtdbSA)
+	if err != nil {
+		t.Error("添加用户失败: ", err)
+		return
+	}
+
+	// 修改用户密码
+	err = conn.UpdatePassword("test111", "123123")
+	if err != nil {
+		t.Error("修改密码失败: ", err)
+		return
+	}
+
+	// 验证密码是否修改成功
+	conn2, err := Login(Hostname, Port, "test111", "123123")
+	if err != nil {
+		t.Error("登录用户失败", err)
+		return
+	}
+	defer func() { _ = conn2.Logout() }()
+
+	// 修改自己的密码
+	err = conn2.UpdateOwnPassword("123123", "122333")
+	if err != nil {
+		t.Error("修改自己的密码失败：", err)
+		return
+	}
+
+	// 获取连接权限
+	priv, err := conn2.GetPriv()
+	if err != nil {
+		t.Error("获取权限失败：", err)
+		return
+	}
+	if *priv != PrivGroupRtdbSA {
+		t.Error("验证权限失败")
+		return
+	}
+
+	// 设置连接权限
+	err = conn2.SetPriv("test111", PrivGroupRtdbRO)
+	if err != nil {
+		t.Error("设置权限失败：", err)
+		return
+	}
+
+	// 锁定用户
+	err = conn.LockUser("test111", OFF)
+	if err != nil {
+		t.Error("锁定用户失败：", err)
+		return
+	}
+
+	// 用户列表
+	users, err := conn.GetUsers()
+	if err != nil {
+		t.Error("获取用户列表失败：", err)
+		return
+	}
+	uOk := false
+	// 验证
+	for _, u := range users {
+		if u.User == "test111" {
+			uOk = true
+			break
+		}
+	}
+	if !uOk {
+		t.Error("用户列表中不存在test111")
+		return
+	}
+
+	// 删除用户
+	err = conn.DeleteUser("test111")
+	if err != nil {
+		t.Error("删除用户失败：", err)
+	}
+}
