@@ -336,7 +336,7 @@ func TestRtdbConnect_NamedType(t *testing.T) {
 	fmt.Println(types)
 
 	desc := "up abc desc"
-	err = conn.UpdateNamedType("abc", nil, &desc, nil)
+	err = conn.UpdateNamedType("abc", nil, &desc, map[string]string{"A": "A up", "B": "B up", "C": "C up"})
 	if err != nil {
 		t.Error("更新列表失败")
 		return

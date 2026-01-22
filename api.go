@@ -8728,7 +8728,8 @@ func RawRtdbbGetNamedTypeWarp(handle ConnectHandle, name string, fieldCount int3
 	for _, field := range fields[:cFieldCount] {
 		rtn = append(rtn, *cToRtdbDataTypeField(&field))
 	}
-	return rtn, int32(typeSize), C.GoString(&desc[0]), RtdbError(err)
+	goDesc := CCharArrayToString(&desc[0], int(C.RTDB_DESC_SIZE))
+	return rtn, int32(typeSize), goDesc, RtdbError(err)
 }
 
 // RawRtdbbRemoveNamedTypeWarp 删除自定义类型
