@@ -2,10 +2,19 @@ package rtdb_api
 
 import "C"
 import (
+	"bytes"
 	"errors"
 	"fmt"
 	"strconv"
 	"time"
+)
+
+const (
+	// MaxBlockSize 单次读取文件最大大小
+	MaxBlockSize = 5 * 1024 * 1024
+
+	// MaxFileSize 允许读取文件最大大小
+	MaxFileSize = 512 * 1024 * 1024
 )
 
 // ServerOption 服务端配置
@@ -789,4 +798,34 @@ func (c *RtdbConnect) GetDirItemList(dir string) ([]DirItem, error) {
 func (c *RtdbConnect) CreateDir(path string) error {
 	rte := RawRtdbMkdirWarp(c.ConnectHandle, path)
 	return rte.GoError()
+}
+
+// ReadFile 读取文件
+//
+// input:
+//   - path 文件路径
+//
+// output:
+//   - []byte(data) 文件内容
+func (c *RtdbConnect) ReadFile(path string) ([]byte, error) {
+	size, rte := RawRtdbGetFileSizeWarp(c.ConnectHandle, path)
+	if !RteIsOk(rte) {
+		return nil, rte.GoError()
+	}
+	if size > MaxFileSize {
+		return nil, errors.New("当前文件大小超出允许读取长度")
+	}
+
+	buf := bytes.NewBuffer(nil)
+	for i := 0; i < int(size); i += MaxBlockSize {
+		data, rte := RawRtdbReadFileWarp(c.ConnectHandle, path, int64(i*MaxBlockSize), MaxBlockSize)
+		if !RteIsOk(rte) {
+			return nil, rte.GoError()
+		}
+		_, err := buf.Write(data)
+		if err != nil {
+			return nil, fmt.Errorf("写入缓存失败：%v", err)
+		}
+	}
+	return buf.Bytes(), nil
 }
