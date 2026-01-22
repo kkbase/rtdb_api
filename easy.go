@@ -564,3 +564,14 @@ func (c *RtdbConnect) GetUsers() ([]RtdbUserInfo, error) {
 	}
 	return users, nil
 }
+
+// AddNamedType 创建自定义类型
+//
+// input:
+//   - name 自定义类型名称
+//   - fields 自定义类型字段列表
+//   - desc 自定义类型描述
+func (c *RtdbConnect) AddNamedType(name string, fields []RtdbDataTypeField, desc string) error {
+	rte := RawRtdbbCreateNamedTypeWarp(c.ConnectHandle, name, fields, desc)
+	return rte.GoError()
+}

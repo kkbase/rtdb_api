@@ -5340,16 +5340,16 @@ const (
 
 // RtdbDataTypeField 自定义类型字段项
 type RtdbDataTypeField struct {
-	// 自定义类型的字段的名称，不要大于\b RTDB_TYPE_NAME_SIZE个字节
+	// 自定义类型的字段的名称
 	Name string
 
-	// 字段的类型,只支持 \b RTDB_TYPE 里的类型，不支持struct，union等组合类型。
+	// 字段的类型
 	Type RtdbType
 
-	// 字段类型的长度, \b RTDB_STRING、\b RTDB_BLOB等类型的具体的长度，基本类型本身的长度(基本类型可以忽略)，单位：字节。
+	// 字段类型的长度, 单位字节
 	Length int32
 
-	// 字段类型的描述，不要大于 \b RTDB_DESC_SIZE个字节
+	// 字段类型的描述
 	Desc string
 }
 
