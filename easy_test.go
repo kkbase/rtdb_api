@@ -2,6 +2,7 @@ package rtdb_api
 
 import (
 	"fmt"
+	"path"
 	"testing"
 	"time"
 )
@@ -427,4 +428,19 @@ func TestRtdbConnect_Disk(t *testing.T) {
 		return
 	}
 	fmt.Println(items)
+
+	// 创建目录
+	err = conn.CreateDir(path.Join(letters[0], "hello"))
+	if err != nil {
+		t.Error("创建目录失败：", err)
+		return
+	}
+
+	// 读取文件
+	data, err := conn.ReadFile("/etc/hosts")
+	if err != nil {
+		t.Error("读取文件失败：", err)
+		return
+	}
+	fmt.Println(string(data))
 }
