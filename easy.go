@@ -477,3 +477,23 @@ func (c *RtdbConnect) GetIpWhiteLists() ([]AuthorizationsList, error) {
 	}
 	return lists, nil
 }
+
+// UpdatePassword 修改用户密码
+//
+// input:
+//   - user 用户名
+//   - password 用户密码
+func (c *RtdbConnect) UpdatePassword(user string, password string) error {
+	rte := RawRtdbChangePasswordWarp(c.ConnectHandle, user, password)
+	return rte.GoError()
+}
+
+// UpdateOwnPassword 修改自己的密码
+//
+// input:
+//   - oldPwd 旧密码
+//   - newPwd 新密码
+func (c *RtdbConnect) UpdateOwnPassword(oldPwd string, newPwd string) error {
+	rte := RawRtdbChangeMyPasswordWarp(c.ConnectHandle, oldPwd, newPwd)
+	return rte.GoError()
+}
