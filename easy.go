@@ -739,8 +739,10 @@ func (c *RtdbConnect) StringToTime(strTime string) (*time.Time, error) {
 	return &goTime, nil
 }
 
-// GetDriveLetterList 获取盘符列表
-// windows平台是C、D、E、F这些盘符，linux平台是 / 盘符
+// GetDriveLetterList 获取盘符列表, windows平台是C、D、E、F这些盘符，linux平台是 / 盘符
+//
+// output:
+//   - []string(litters) 盘符列表
 func (c *RtdbConnect) GetDriveLetterList() ([]string, error) {
 	letters, rte := RawRtdbGetLogicalDriversWarp(c.ConnectHandle)
 	if !RteIsOk(rte) {
@@ -750,6 +752,12 @@ func (c *RtdbConnect) GetDriveLetterList() ([]string, error) {
 }
 
 // GetDirItemList 获取目录项列表
+//
+// input:
+//   - dir 目录路径
+//
+// output:
+//   - []DirItem(items) 目录项列表
 func (c *RtdbConnect) GetDirItemList(dir string) ([]DirItem, error) {
 	rte := RawRtdbOpenPathWarp(c.ConnectHandle, dir)
 	if !RteIsOk(rte) {
@@ -772,4 +780,13 @@ func (c *RtdbConnect) GetDirItemList(dir string) ([]DirItem, error) {
 		items = append(items, item)
 	}
 	return items, nil
+}
+
+// CreateDir 创建目录
+//
+// input:
+//   - path 目录路径
+func (c *RtdbConnect) CreateDir(path string) error {
+	rte := RawRtdbMkdirWarp(c.ConnectHandle, path)
+	return rte.GoError()
 }
