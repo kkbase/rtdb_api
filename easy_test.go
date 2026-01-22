@@ -7,10 +7,12 @@ import (
 
 // 用户登录/登出
 func TestLoginLogout(t *testing.T) {
+	// 登录
 	conn, err := Login(Hostname, Port, Username, Password)
 	if err != nil {
 		t.Fatal("登录用户失败", err)
 	}
+	// 登出
 	defer func() { _ = conn.Logout() }()
 
 	fmt.Println(conn.SyncInfos, conn.StringBlobMaxLen)
@@ -24,6 +26,7 @@ func TestRtdbConnect_GetClientVersion(t *testing.T) {
 	}
 	defer func() { _ = conn.Logout() }()
 
+	// 获取客户端版本
 	version, err := conn.GetClientVersion()
 	if err != nil {
 		t.Error(err)
@@ -41,13 +44,14 @@ func TestRtdbConnect_SetClientOption(t *testing.T) {
 	}
 	defer func() { _ = conn.Logout() }()
 
+	// 设置客户端选项
 	err = conn.SetClientOption(RtdbApiOptionAutoReconn, 0)
 	if err != nil {
 		t.Error(err)
 	}
 }
 
-// 获取&设置服务端选项
+// 服务端选项
 func TestRtdbConnect_GetSetServerOption(t *testing.T) {
 	conn, err := Login(Hostname, Port, Username, Password)
 	if err != nil {
@@ -55,6 +59,7 @@ func TestRtdbConnect_GetSetServerOption(t *testing.T) {
 	}
 	defer func() { _ = conn.Logout() }()
 
+	// 获取服务端选项
 	opt, err := conn.GetServerOption(RtdbParamLockedPagesMem)
 	if err != nil {
 		t.Error("获取服务端选项失败", err)
@@ -62,6 +67,7 @@ func TestRtdbConnect_GetSetServerOption(t *testing.T) {
 	}
 	fmt.Println(opt.GetLiteralValue())
 
+	// 设置服务端选项
 	err = conn.SetServerOption(RtdbParamLockedPagesMem, *opt)
 	if err != nil {
 		t.Error("设置服务端选项失败", err)
@@ -101,6 +107,59 @@ func TestRtdbConnect_GetSocketInfo(t *testing.T) {
 	fmt.Println(allInfos)
 }
 
+// IP黑名单
 func TestRtdbConnect_BlackList(t *testing.T) {
+	conn, err := Login(Hostname, Port, Username, Password)
+	if err != nil {
+		t.Fatal("登录用户失败", err)
+	}
+	defer func() { _ = conn.Logout() }()
+
+	// 添加黑名单
+	err = conn.AddIpBlackList("192.168.123.123", "255.255.255.0", "add 123")
+	if err != nil {
+		t.Error("添加黑名单失败：", err)
+		return
+	}
+
+	// 修改黑名单
+	err = conn.UpdateIpBlackList("192.168.123.123", "255.255.255.0", "192.168.123.123", "255.255.255.0", "update 123")
+	if err != nil {
+		t.Error("修改黑名单失败：", err)
+		return
+	}
+
+	// 获取黑名单
+	bLists, err := conn.GetIpBlackLists()
+	if err != nil {
+		t.Error("获取黑名单失败：", err)
+		return
+	}
+	bOk := false
+	for _, b := range bLists {
+		if b.Desc == "update 123" {
+			bOk = true
+			break
+		}
+	}
+	if !bOk {
+		t.Error("修改黑名单失败")
+		return
+	}
+
+	err = conn.DeleteIpBlackList("192.168.123.123", "255.255.255.0")
+	if err != nil {
+		t.Error("删除黑名单失败：", err)
+		return
+	}
+}
+
+// IP白名单
+func TestRtdbConnect_WhiteList(t *testing.T) {
+	conn, err := Login(Hostname, Port, Username, Password)
+	if err != nil {
+		t.Fatal("登录用户失败", err)
+	}
+	defer func() { _ = conn.Logout() }()
 
 }
