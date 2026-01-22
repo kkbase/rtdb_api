@@ -925,6 +925,25 @@ func (c *RtdbConnect) UpdateTableDesc(id TableID, desc string) error {
 }
 
 // CreatePoint 创建点
-func (c *RtdbConnect) CreatePoint(base *RtdbPoint, scan *RtdbScan, calc *RtdbCalc) error {
-	return nil
+func (c *RtdbConnect) CreatePoint(base *RtdbPoint, scan *RtdbScan, calc *RtdbCalc) (*RtdbPoint, *RtdbScan, *RtdbCalc, error) {
+	if base.Type == RtdbTypeNamedT {
+		if base.NamedTypeName == "" {
+			return nil, nil, nil, errors.New("点数值类型为RtdbTypeNamedT, 此时NamedTypeName不能为空")
+		}
+		_, err := c.GetNamedType(base.NamedTypeName)
+		if err != nil {
+			return nil, nil, nil, err
+		}
+		base, scan, rte := RawRtdbbInsertNamedTypePointWarp(c.ConnectHandle, base, scan, base.NamedTypeName)
+		if !RteIsOk(rte) {
+			return nil, nil, nil, rte.GoError()
+		}
+		return base, scan, nil, nil
+	} else {
+		base, scan, calc, rte := RawRtdbbInsertMaxPointWarp(c.ConnectHandle, base, scan, calc)
+		if !RteIsOk(rte) {
+			return nil, nil, nil, rte.GoError()
+		}
+		return base, scan, calc, nil
+	}
 }
