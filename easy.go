@@ -626,11 +626,11 @@ func (c *RtdbConnect) GetNamedTypes() ([]NamedType, error) {
 //
 // input:
 //   - name 自定义类型的名称
-//   - modifyName 要修改的自定义类型名称
-//   - modifyDesc 要修改的自定义类型的描述
-//   - modifyFieldName 要修改的自定义类型字段的名称
-//   - modifyFieldDesc 要修改的自定义类型字段的描述
-func (c *RtdbConnect) UpdateNamedType(name string, modifyName string, modifyDesc string, fieldNames []string, fieldDescs []string) error {
+//   - modifyName 要修改的自定义类型名称，不修改写nil
+//   - modifyDesc 要修改的自定义类型的描述, 不修改写nil
+//   - modifyFieldName 要修改的自定义类型字段的名称, 不修改写nil
+//   - modifyFieldDesc 要修改的自定义类型字段的描述, 不修改写nil
+func (c *RtdbConnect) UpdateNamedType(name string, modifyName *string, modifyDesc *string, fieldNames []string, fieldDescs []string) error {
 	rte := RawRtdbbModifyNamedTypeWarp(c.ConnectHandle, name, modifyName, modifyDesc, fieldNames, fieldDescs)
 	return rte.GoError()
 }

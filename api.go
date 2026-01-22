@@ -8878,14 +8878,23 @@ func RawRtdbbGetBaseTypePointsCountWarp(handle ConnectHandle, rtdbType RtdbType)
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_modify_named_type_warp(rtdb_int32 handle, const char* name, const char* modify_name, const char* modify_desc, const char* modify_field_name[RTDB_TYPE_NAME_SIZE], const char* modify_field_desc[RTDB_DESC_SIZE], rtdb_int32 field_count)
-func RawRtdbbModifyNamedTypeWarp(handle ConnectHandle, name string, modifyName string, modifyDesc string, fieldNames []string, fieldDescs []string) RtdbError {
+func RawRtdbbModifyNamedTypeWarp(handle ConnectHandle, name string, modifyName *string, modifyDesc *string, fieldNames []string, fieldDescs []string) RtdbError {
 	cHandle := C.rtdb_int32(handle)
 	cName := C.CString(name)
 	defer C.free(unsafe.Pointer(cName))
-	cModifyName := C.CString(modifyName)
-	defer C.free(unsafe.Pointer(cModifyName))
-	cModifyDesc := C.CString(modifyDesc)
-	defer C.free(unsafe.Pointer(cModifyDesc))
+
+	cModifyName := nil
+	if modifyName != nil {
+		cModifyName = C.CString(*modifyName)
+		defer C.free(unsafe.Pointer(cModifyName))
+	}
+
+	cModifyDesc := nil
+	if modifyDesc != nil {
+		cModifyDesc := C.CString(modifyDesc)
+		defer C.free(unsafe.Pointer(cModifyDesc))
+	}
+
 	cFieldLen := C.rtdb_int32(len(fieldNames))
 	names := make([]*C.char, len(fieldNames))
 	for i, n := range fieldNames {
