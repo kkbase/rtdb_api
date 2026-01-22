@@ -6575,15 +6575,10 @@ func RawRtdbConnectionCountWarp(handle ConnectHandle, nodeNumber int32) (int32, 
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_get_connections_warp(rtdb_int32 handle, rtdb_int32 node_number, rtdb_int32 *sockets, rtdb_int32 *count)
-func RawRtdbGetConnectionsWarp(handle ConnectHandle, nodeNumber int32) ([]SocketHandle, RtdbError) {
+func RawRtdbGetConnectionsWarp(handle ConnectHandle, nodeNumber int32, cCount int32) ([]SocketHandle, RtdbError) {
 	cHandle := C.rtdb_int32(handle)
 	cNodeNumber := C.rtdb_int32(nodeNumber)
-	connectionCount, err := RawRtdbGetDbInfo2Warp(handle, RtdbParamServerConnectionCount)
-	if !errors.Is(err, RteOk) {
-		return nil, err
-	}
-	cCount := C.rtdb_int32(connectionCount)
-	sockets := make([]SocketHandle, int32(cCount))
+	sockets := make([]SocketHandle, cCount)
 	cSockets := (*C.rtdb_int32)(unsafe.Pointer(&sockets[0]))
 	err2 := C.rtdb_get_connections_warp(cHandle, cNodeNumber, cSockets, &cCount)
 	return sockets[:cCount], RtdbError(err2)

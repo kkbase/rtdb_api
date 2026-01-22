@@ -196,3 +196,42 @@ func (c *RtdbConnect) SetServerOption(param RtdbParam, option ServerOption) erro
 		return rte.GoError()
 	}
 }
+
+// GetSocketHandles 获取服务端Socket列表，单机服务端返回一个Socket列表，双活服务端返回两个Socket列表
+func (c *RtdbConnect) GetSocketHandles() ([][]SocketHandle, error) {
+	if len(c.SyncInfos) == 1 { /* 单机,返回一个Socket列表 */
+		count, rte := RawRtdbConnectionCountWarp(c.ConnectHandle, 0)
+		if !RteIsOk(rte) {
+			return nil, rte.GoError()
+		}
+		sockets, rte := RawRtdbGetConnectionsWarp(c.ConnectHandle, 0, count)
+		if !RteIsOk(rte) {
+			return nil, rte.GoError()
+		}
+		return [][]SocketHandle{sockets}, nil
+	} else { /* 双活,返回两个Socket列表 */
+		count1, rte := RawRtdbConnectionCountWarp(c.ConnectHandle, 1)
+		if !RteIsOk(rte) {
+			return nil, rte.GoError()
+		}
+		sockets1, rte := RawRtdbGetConnectionsWarp(c.ConnectHandle, 1, count1)
+		if !RteIsOk(rte) {
+			return nil, rte.GoError()
+		}
+
+		count2, rte := RawRtdbConnectionCountWarp(c.ConnectHandle, 2)
+		if !RteIsOk(rte) {
+			return nil, rte.GoError()
+		}
+		sockets2, rte := RawRtdbGetConnectionsWarp(c.ConnectHandle, 2, count2)
+		if !RteIsOk(rte) {
+			return nil, rte.GoError()
+		}
+
+		return [][]SocketHandle{sockets1, sockets2}, nil
+	}
+}
+
+/*
+RawRtdbGetConnectionsWarp
+*/
