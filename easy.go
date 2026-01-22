@@ -1,5 +1,65 @@
 package rtdb_api
 
+import "C"
+import (
+	"errors"
+	"strconv"
+)
+
+// ServerOption 服务端配置
+type ServerOption struct {
+	IsString     bool
+	StringOption ParamString
+	IntOption    ParamInt
+}
+
+// NewServerOption 新建服务端类型（通过字面值新建服务端配置, 会自动推断配置类型是String或Int）
+func NewServerOption(option string) ServerOption {
+	intOption, err := strconv.Atoi(option)
+	if err != nil {
+		return ServerOption{StringOption: ParamString(option), IsString: true}
+	} else {
+		return ServerOption{IntOption: ParamInt(intOption), IsString: false}
+	}
+}
+
+// NewStringServerOption 新建String类型服务端配置
+func NewStringServerOption(option ParamString) ServerOption {
+	return ServerOption{StringOption: option, IsString: true}
+}
+
+// NewIntServerOption 新建Int类型服务端配置
+func NewIntServerOption(option ParamInt) ServerOption {
+	return ServerOption{IntOption: option, IsString: false}
+}
+
+// GetString 获取String类型配置，如果配置为Int类型则会报错
+func (o *ServerOption) GetString() (ParamString, error) {
+	if o.IsString {
+		return o.StringOption, nil
+	} else {
+		return "", errors.New("配置为Int类型")
+	}
+}
+
+// GetInt 获取Int类型配置，如果配置为String类型则会报错
+func (o *ServerOption) GetInt() (ParamInt, error) {
+	if o.IsString {
+		return 0, errors.New("配置为String类型")
+	} else {
+		return o.IntOption, nil
+	}
+}
+
+// GetLiteralValue 获取字面值，无论是String还是Int都会转换为字符串，方便前端显示
+func (o *ServerOption) GetLiteralValue() string {
+	if o.IsString {
+		return string(o.StringOption)
+	} else {
+		return strconv.Itoa(int(o.IntOption))
+	}
+}
+
 ////////////////////////////////////////////////
 //////////////////上面是一些结构//////////////////
 ////////////////////摆烂的分隔线/////////////////
@@ -99,4 +159,40 @@ func (c *RtdbConnect) GetClientVersion() (*ApiVersion, error) {
 func (c *RtdbConnect) SetClientOption(option RtdbApiOption, value int32) error {
 	rte := RawRtdbSetOptionWarp(option, value)
 	return rte.GoError()
+}
+
+// GetServerOption 获取服务端参数
+func (c *RtdbConnect) GetServerOption(param RtdbParam) (*ServerOption, error) {
+	if param.IsStringParam() {
+		opt, rte := RawRtdbGetDbInfo1Warp(c.ConnectHandle, param)
+		if !RteIsOk(rte) {
+			return nil, rte.GoError()
+		}
+		return &ServerOption{StringOption: opt, IsString: true}, nil
+	} else {
+		opt, rte := RawRtdbGetDbInfo2Warp(c.ConnectHandle, param)
+		if !RteIsOk(rte) {
+			return nil, rte.GoError()
+		}
+		return &ServerOption{IntOption: opt, IsString: false}, nil
+	}
+}
+
+// SetServerOption 设置服务端参数
+func (c *RtdbConnect) SetServerOption(param RtdbParam, option ServerOption) error {
+	if param.IsStringParam() {
+		strOpt, err := option.GetString()
+		if err != nil {
+			return err
+		}
+		rte := RawRtdbSetDbInfo1Warp(c.ConnectHandle, param, strOpt)
+		return rte.GoError()
+	} else {
+		intOpt, err := option.GetInt()
+		if err != nil {
+			return err
+		}
+		rte := RawRtdbSetDbInfo2Warp(c.ConnectHandle, param, intOpt)
+		return rte.GoError()
+	}
 }

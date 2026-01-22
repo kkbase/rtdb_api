@@ -3206,6 +3206,11 @@ type SocketHandle int32
 // RtdbParam 查询系统参数时对应的索引
 type RtdbParam int32
 
+// IsStringParam 判断系统参数是否为String类型，如果是则返回true，否则返回false
+func (p RtdbParam) IsStringParam() bool {
+	return p < RtdbParam(C.RTDB_PARAM_STR_LAST)
+}
+
 const (
 	// RtdbParamTableFile 标签点表文件全路径，字符串最大长度为 RTDB_MAX_PATH
 	RtdbParamTableFile = RtdbParam(C.RTDB_PARAM_TABLE_FILE)
