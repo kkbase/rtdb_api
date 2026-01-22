@@ -686,3 +686,55 @@ func (c *RtdbConnect) DurationToString(duration time.Duration) (string, error) {
 	}
 	return durationStr, nil
 }
+
+// StringToDuration 字符串转时间段, 这个是服务端的时间段字符串格式，和通用时间段字符串有区别, 具体如下：
+//
+//	?y    ?年, 1年 = 365日
+//	?m    ?月, 1月 = 30 日
+//	?d    ?日
+//	?h    ?小时
+//	?n    ?分钟
+//	?s    ?秒
+func (c *RtdbConnect) StringToDuration(strDuration string) (time.Duration, error) {
+	duration, rte := RawRtdbParseTimespanWarp(strDuration)
+	if !RteIsOk(rte) {
+		return 0, rte.GoError()
+	}
+	return time.Second * time.Duration(duration), nil
+}
+
+// StringToTime 字符串转时间戳
+//
+//	其中 base_time 表示基本时间，有三种形式：
+//	1. 时间字符串，如 "2010-1-1" 及 "2010-1-1 8:00:00"；
+//	2. 时间代码，表示客户端相对时间；
+//	可用的时间代码及含义如下：
+//	td             当天零点
+//	yd             昨天零点
+//	tm             明天零点
+//	mon            本周一零点
+//	tue            本周二零点
+//	wed            本周三零点
+//	thu            本周四零点
+//	fri            本周五零点
+//	sat            本周六零点
+//	sun            本周日零点
+//	3. 星号('*')，表示客户端当前时间。
+//	offset_time 是可选的，可以出现多次，
+//	可用的时间偏移代码及含义如下：
+//	[+|-] ?y            偏移?年, 1年 = 365日
+//	[+|-] ?m            偏移?月, 1月 = 30 日
+//	[+|-] ?d            偏移?日
+//	[+|-] ?h            偏移?小时
+//	[+|-] ?n            偏移?分钟
+//	[+|-] ?s            偏移?秒
+//	[+|-] ?ms           偏移?毫秒
+//	例如："*-1d" 表示当前时刻减去24小时。
+func (c *RtdbConnect) StringToTime(strTime string) (*time.Time, error) {
+	datetime, subtime, rte := RawRtdbParseTimeWarp(strTime)
+	if !RteIsOk(rte) {
+		return nil, rte.GoError()
+	}
+	goTime := time.Unix(int64(datetime), int64(subtime))
+	return &goTime, nil
+}

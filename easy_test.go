@@ -381,5 +381,25 @@ func TestRtdbConnect_Time(t *testing.T) {
 	}
 	if dStr != "1n" {
 		t.Error("不为1n")
+		return
 	}
+
+	// 字符串转时间段
+	duration, err := conn.StringToDuration("1n")
+	if err != nil {
+		t.Error("时间段转换失败：", err)
+		return
+	}
+	if duration != time.Minute {
+		t.Error("时间段失败")
+		return
+	}
+
+	// 字符串转时间戳
+	ts, err := conn.StringToTime("2010-1-1 8:00:00")
+	if err != nil {
+		t.Error("字符串转时间戳失败：", err)
+		return
+	}
+	fmt.Println(ts)
 }
