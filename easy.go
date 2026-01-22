@@ -923,3 +923,8 @@ func (c *RtdbConnect) UpdateTableDesc(id TableID, desc string) error {
 	rte := RawRtdbbUpdateTableDescByIdWarp(c.ConnectHandle, id, desc)
 	return rte.GoError()
 }
+
+// CreatePoint 创建点
+func (c *RtdbConnect) CreatePoint(base *RtdbPoint, scan *RtdbScan, calc *RtdbCalc) error {
+	return nil
+}
