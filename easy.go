@@ -579,8 +579,8 @@ func (c *RtdbConnect) GetUsers() ([]RtdbUserInfo, error) {
 //   - name 自定义类型名称
 //   - fields 自定义类型字段列表
 //   - desc 自定义类型描述
-func (c *RtdbConnect) AddNamedType(name string, fields []RtdbDataTypeField, desc string) error {
-	rte := RawRtdbbCreateNamedTypeWarp(c.ConnectHandle, name, fields, desc)
+func (c *RtdbConnect) AddNamedType(name string, desc string, fields ...RtdbDataTypeField) error {
+	rte := RawRtdbbCreateNamedTypeWarp(c.ConnectHandle, name, desc, fields...)
 	return rte.GoError()
 }
 
@@ -626,11 +626,16 @@ func (c *RtdbConnect) GetNamedTypes() ([]NamedType, error) {
 //
 // input:
 //   - name 自定义类型的名称
-//   - modifyName 要修改的自定义类型名称
-//   - modifyDesc 要修改的自定义类型的描述
-//   - modifyFieldName 要修改的自定义类型字段的名称
-//   - modifyFieldDesc 要修改的自定义类型字段的描述
-func (c *RtdbConnect) UpdateNamedType(name string, modifyName string, modifyDesc string, fieldNames []string, fieldDescs []string) error {
+//   - modifyName 要修改的 自定义类型名称
+//   - modifyDesc 要修改的 自定义类型的描述
+//   - modifyFields 要修改的 字段名称<->字段描述
+func (c *RtdbConnect) UpdateNamedType(name string, modifyName *string, modifyDesc *string, modifyFields map[string]string) error {
+	fieldNames := make([]string, 0)
+	fieldDescs := make([]string, 0)
+	for name, desc := range modifyFields {
+		fieldNames = append(fieldNames, name)
+		fieldDescs = append(fieldDescs, desc)
+	}
 	rte := RawRtdbbModifyNamedTypeWarp(c.ConnectHandle, name, modifyName, modifyDesc, fieldNames, fieldDescs)
 	return rte.GoError()
 }

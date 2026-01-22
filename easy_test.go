@@ -288,3 +288,64 @@ func TestRtdbConnect_User(t *testing.T) {
 		t.Error("删除用户失败：", err)
 	}
 }
+
+// 自定义类型
+func TestRtdbConnect_NamedType(t *testing.T) {
+	conn, err := Login(Hostname, Port, Username, Password)
+	if err != nil {
+		t.Fatal("登录用户失败", err)
+	}
+	defer func() { _ = conn.Logout() }()
+
+	err = conn.AddNamedType(
+		"abc",
+		"abc desc",
+		RtdbDataTypeField{
+			Name:   "A",
+			Type:   RtdbTypeReal64,
+			Length: 0,
+			Desc:   "A desc",
+		}, RtdbDataTypeField{
+			Name:   "B",
+			Type:   RtdbTypeReal64,
+			Length: 0,
+			Desc:   "B desc",
+		}, RtdbDataTypeField{
+			Name:   "C",
+			Type:   RtdbTypeReal64,
+			Length: 0,
+			Desc:   "C desc",
+		})
+	if err != nil {
+		t.Error("添加自定义类型失败")
+		return
+	}
+	defer func() {
+		err := conn.DeleteNamedType("abc")
+		if err != nil {
+			t.Error("删除自定义类型失败")
+			return
+		}
+	}()
+
+	types, err := conn.GetNamedTypes()
+	if err != nil {
+		t.Error("获取列表失败")
+		return
+	}
+	fmt.Println(types)
+
+	desc := "up abc desc"
+	err = conn.UpdateNamedType("abc", nil, &desc, nil)
+	if err != nil {
+		t.Error("更新列表失败")
+		return
+	}
+
+	types, err = conn.GetNamedTypes()
+	if err != nil {
+		t.Error("获取列表失败")
+		return
+	}
+	fmt.Println(types)
+}
