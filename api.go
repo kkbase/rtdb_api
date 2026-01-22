@@ -6469,25 +6469,6 @@ func RawRtdbDisconnectWarp(handle ConnectHandle) RtdbError {
 	return RtdbError(err)
 }
 
-// RawRtdbConnectionCountWarp 获取 RTDB 服务器当前连接个数
-//
-// input:
-//   - handle 连接句柄
-//   - nodeNumber 单机模式下写0, 双活模式下，指定节点编号，1为rtdb_connect中第1个IP，2为rtdb_connect中第2个IP
-//
-// output:
-//   - int32(count) 返回连接个数
-//
-// raw_fn:
-//   - rtdb_error RTDBAPI_CALLRULE rtdb_connection_count_warp(rtdb_int32 handle, rtdb_int32 node_number, rtdb_int32 *count)
-func RawRtdbConnectionCountWarp(handle ConnectHandle, nodeNumber int32) (int32, RtdbError) {
-	cHandle := C.rtdb_int32(handle)
-	cNodeNumber := C.rtdb_int32(nodeNumber)
-	cCount := C.rtdb_int32(0)
-	err := C.rtdb_connection_count_warp(cHandle, cNodeNumber, &cCount)
-	return int32(cCount), RtdbError(err)
-}
-
 // RawRtdbGetDbInfo1Warp 获得字符串型数据库系统参数
 //
 // input:
@@ -6562,6 +6543,25 @@ func RawRtdbSetDbInfo2Warp(handle ConnectHandle, param RtdbParam, value ParamInt
 	cValue := C.rtdb_uint32(value)
 	err := C.rtdb_set_db_info2_warp(cHandle, cParam, cValue)
 	return RtdbError(err)
+}
+
+// RawRtdbConnectionCountWarp 获取 RTDB 服务器当前连接个数
+//
+// input:
+//   - handle 连接句柄
+//   - nodeNumber 单机模式下写0, 双活模式下，指定节点编号，1为rtdb_connect中第1个IP，2为rtdb_connect中第2个IP
+//
+// output:
+//   - int32(count) 返回连接个数
+//
+// raw_fn:
+//   - rtdb_error RTDBAPI_CALLRULE rtdb_connection_count_warp(rtdb_int32 handle, rtdb_int32 node_number, rtdb_int32 *count)
+func RawRtdbConnectionCountWarp(handle ConnectHandle, nodeNumber int32) (int32, RtdbError) {
+	cHandle := C.rtdb_int32(handle)
+	cNodeNumber := C.rtdb_int32(nodeNumber)
+	cCount := C.rtdb_int32(0)
+	err := C.rtdb_connection_count_warp(cHandle, cNodeNumber, &cCount)
+	return int32(cCount), RtdbError(err)
 }
 
 // RawRtdbGetConnectionsWarp 列出 RTDB 服务器的所有socket连接句柄, 注意这里指的是socket连接，区分于ConnectHandle
