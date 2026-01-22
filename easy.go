@@ -863,3 +863,55 @@ func (c *RtdbConnect) CreateTable(name string, desc string) (*RtdbTable, error) 
 	}
 	return &table, nil
 }
+
+// DeleteTable 删除表
+//
+// input:
+//   - id 表ID
+func (c *RtdbConnect) DeleteTable(id TableID) error {
+	rte := RawRtdbbRemoveTableByIdWarp(c.ConnectHandle, id)
+	return rte.GoError()
+}
+
+// GetTables 获取表列表
+//
+// output:
+//   - []RtdbTable(tables) 表列表
+func (c *RtdbConnect) GetTables() ([]RtdbTable, error) {
+	count, rte := RawRtdbbTablesCountWarp(c.ConnectHandle)
+	if !RteIsOk(rte) {
+		return nil, rte.GoError()
+	}
+	ids, rte := RawRtdbbGetTablesWarp(c.ConnectHandle, count)
+	if !RteIsOk(rte) {
+		return nil, rte.GoError()
+	}
+	tables := make([]RtdbTable, 0)
+	for _, id := range ids {
+		table, rte := RawRtdbbGetTablePropertyByIdWarp(c.ConnectHandle, id)
+		if !RteIsOk(rte) {
+			return nil, rte.GoError()
+		}
+		tables = append(tables, table)
+	}
+	return tables, nil
+}
+
+// UpdateTableName 更新表名
+// input:
+//   - id 表ID
+//   - name 表名
+func (c *RtdbConnect) UpdateTableName(id TableID, name string) error {
+	rte := RawRtdbbUpdateTableNameWarp(c.ConnectHandle, id, name)
+	return rte.GoError()
+}
+
+// UpdateTableDesc 更新表描述
+//
+// input:
+//   - id 表ID
+//   - desc 表描述
+func (c *RtdbConnect) UpdateTableDesc(id TableID, desc string) error {
+	rte := RawRtdbbUpdateTableDescByIdWarp(c.ConnectHandle, id, desc)
+	return rte.GoError()
+}

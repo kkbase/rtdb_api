@@ -7668,23 +7668,20 @@ func RawRtdbbTablesCountWarp(handle ConnectHandle) (int32, RtdbError) {
 //
 // input:
 //   - handle 连接句柄
+//   - count 最大返回表总数
 //
 // output:
 //   - []TableID(table_ids) 获取表ID列表
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_get_tables_warp(rtdb_int32 handle, rtdb_int32 *ids, rtdb_int32 *count)
-func RawRtdbbGetTablesWarp(handle ConnectHandle) ([]TableID, RtdbError) {
+func RawRtdbbGetTablesWarp(handle ConnectHandle, count int32) ([]TableID, RtdbError) {
 	cHandle := C.rtdb_int32(handle)
-	count, err := RawRtdbbTablesCountWarp(handle)
-	if !errors.Is(err, RteOk) {
-		return nil, err
-	}
 	ids := make([]TableID, count)
 	cgoIDs := (*C.rtdb_int32)(unsafe.Pointer(&ids[0]))
 	cgoCount := C.rtdb_int32(count)
-	err2 := C.rtdbb_get_tables_warp(cHandle, cgoIDs, &cgoCount)
-	return ids[:cgoCount], RtdbError(err2)
+	err := C.rtdbb_get_tables_warp(cHandle, cgoIDs, &cgoCount)
+	return ids[:cgoCount], RtdbError(err)
 }
 
 // RawRtdbbGetTableSizeByIdWarp 根据表 id 获取表中包含的标签点数量(大概数量, 包含被标记删除的点)
