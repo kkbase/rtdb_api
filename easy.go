@@ -640,6 +640,106 @@ func PointInfoFromRaw(handle ConnectHandle, base *RtdbPoint, scan *RtdbScan, cal
 	return info, nil
 }
 
+type PointInfoField string
+
+const (
+	// PointInfoFieldName 标签点名称
+	PointInfoFieldName = PointInfoField("name")
+
+	// PointInfoFieldClass 标签点类别
+	PointInfoFieldClass = PointInfoField("class")
+
+	// PointInfoFieldDesc 标签点描述
+	PointInfoFieldDesc = PointInfoField("desc")
+
+	// PointInfoFieldUnit 标签点单位
+	PointInfoFieldUnit = PointInfoField("unit")
+
+	// PointInfoFieldArchive 是否存档
+	PointInfoFieldArchive = PointInfoField("archive")
+
+	// PointInfoFieldDigits 数值位数
+	PointInfoFieldDigits = PointInfoField("digits")
+
+	// PointInfoFieldShutdown 停机状态字
+	PointInfoFieldShutdown = PointInfoField("shutdown")
+
+	// PointInfoFieldLowLimit 量程下限
+	PointInfoFieldLowLimit = PointInfoField("low_limit")
+
+	// PointInfoFieldHighLimit 量程上限
+	PointInfoFieldHighLimit = PointInfoField("high_limit")
+
+	// PointInfoFieldStep 是否阶跃
+	PointInfoFieldStep = PointInfoField("step")
+
+	// PointInfoFieldTypical 典型值
+	PointInfoFieldTypical = PointInfoField("typical")
+
+	// PointInfoFieldCompress 是否压缩
+	PointInfoFieldCompress = PointInfoField("compress")
+
+	// PointInfoFieldCompDev 压缩偏差
+	PointInfoFieldCompDev = PointInfoField("comp_dev")
+
+	// PointInfoFieldCompDevPercent 压缩偏差百分比
+	PointInfoFieldCompDevPercent = PointInfoField("comp_dev_percent")
+
+	// PointInfoFieldCompTimeMax 最大压缩间隔
+	PointInfoFieldCompTimeMax = PointInfoField("comp_time_max")
+
+	// PointInfoFieldCompTimeMin 最小压缩间隔
+	PointInfoFieldCompTimeMin = PointInfoField("comp_time_min")
+
+	// PointInfoFieldExcDev 例外偏差
+	PointInfoFieldExcDev = PointInfoField("exc_dev")
+
+	// PointInfoFieldExcDevPercent 例外偏差百分比
+	PointInfoFieldExcDevPercent = PointInfoField("exc_dev_percent")
+
+	// PointInfoFieldExcTimeMax 最大例外间隔
+	PointInfoFieldExcTimeMax = PointInfoField("exc_time_max")
+
+	// PointInfoFieldExcTimeMin 最小例外间隔
+	PointInfoFieldExcTimeMin = PointInfoField("exc_time_min")
+
+	// PointInfoFieldMirror 镜像收发控制
+	PointInfoFieldMirror = PointInfoField("mirror")
+
+	// PointInfoFieldSummary 统计加速
+	PointInfoFieldSummary = PointInfoField("summary")
+
+	// PointInfoFieldSource 数据源
+	PointInfoFieldSource = PointInfoField("source")
+
+	// PointInfoFieldScan 是否采集
+	PointInfoFieldScan = PointInfoField("scan")
+
+	// PointInfoFieldInstrument 设备标签
+	PointInfoFieldInstrument = PointInfoField("instrument")
+
+	// PointInfoFieldLocations 共包含五个设备位址
+	PointInfoFieldLocations = PointInfoField("locations")
+
+	// PointInfoFieldUserInts 共包含两个自定义整数
+	PointInfoFieldUserInts = PointInfoField("user_ints")
+
+	// PointInfoFieldUserReals 共包含两个自定义单精度浮点数
+	PointInfoFieldUserReals = PointInfoField("user_reals")
+
+	// PointInfoFieldEquation 实时方程式
+	PointInfoFieldEquation = PointInfoField("equation")
+
+	// PointInfoFieldTrigger 计算触发机制
+	PointInfoFieldTrigger = PointInfoField("trigger")
+
+	// PointInfoFieldTimeCopy 计算结果时间戳参考
+	PointInfoFieldTimeCopy = PointInfoField("time_copy")
+
+	// PointInfoFieldPeriod 触发周期
+	PointInfoFieldPeriod = PointInfoField("period")
+)
+
 ////////////////////////////////////////////////
 //////////////////上面是一些结构//////////////////
 ////////////////////摆烂的分隔线/////////////////
@@ -1480,6 +1580,215 @@ func (c *RtdbConnect) CreatePoint(info *PointInfo) (*PointInfo, error) {
 //   - id 点ID
 func (c *RtdbConnect) DeletePoint(id PointID) error {
 	rte := RawRtdbbRemovePointByIdWarp(c.ConnectHandle, id)
+	return rte.GoError()
+}
+
+// UpdatePoint 更新点
+func (c *RtdbConnect) UpdatePoint(id PointID, fields map[PointInfoField]any) error {
+	pointInfo, err := c.GetPoint(id)
+	if err != nil {
+		return err
+	}
+	for k, v := range fields {
+		switch k {
+		case PointInfoFieldName:
+			name, ok := v.(string)
+			if !ok {
+				return errors.New("Name应该为String类型")
+			}
+			pointInfo.Name = name
+		case PointInfoFieldClass:
+			class, ok := v.(PointClass)
+			if !ok {
+				return errors.New("Class应为PointClass类型")
+			}
+			pointInfo.Class = class
+		case PointInfoFieldDesc:
+			desc, ok := v.(string)
+			if !ok {
+				return errors.New("Desc应该为String类型")
+			}
+			pointInfo.Desc = desc
+		case PointInfoFieldUnit:
+			unit, ok := v.(string)
+			if !ok {
+				return errors.New("Unit应该为string类型")
+			}
+			pointInfo.Unit = unit
+		case PointInfoFieldArchive:
+			archive, ok := v.(Switch)
+			if !ok {
+				return errors.New("Archive应该为Switch类型")
+			}
+			pointInfo.Archive = archive
+		case PointInfoFieldDigits:
+			digits, ok := v.(int16)
+			if !ok {
+				return errors.New("Digits应该为Int16类型")
+			}
+			pointInfo.Digits = digits
+		case PointInfoFieldShutdown:
+			shutdown, ok := v.(Switch)
+			if !ok {
+				return errors.New("Shutdown应该为Switch类型")
+			}
+			pointInfo.Shutdown = shutdown
+		case PointInfoFieldLowLimit:
+			limit, ok := v.(float32)
+			if !ok {
+				return errors.New("LowLimit应该为float32类型")
+			}
+			pointInfo.LowLimit = limit
+		case PointInfoFieldHighLimit:
+			limit, ok := v.(float32)
+			if !ok {
+				return errors.New("HighLimit应该为float32类型")
+			}
+			pointInfo.HighLimit = limit
+		case PointInfoFieldStep:
+			step, ok := v.(Switch)
+			if !ok {
+				return errors.New("Step应该为Switch类型")
+			}
+			pointInfo.Step = step
+		case PointInfoFieldTypical:
+			typical, ok := v.(float32)
+			if !ok {
+				return errors.New("典型值应该为float32类型")
+			}
+			pointInfo.Typical = typical
+		case PointInfoFieldCompress:
+			compress, ok := v.(Switch)
+			if !ok {
+				return errors.New("Compress应该为Switch类型")
+			}
+			pointInfo.Compress = compress
+		case PointInfoFieldCompDev:
+			compDev, ok := v.(float32)
+			if !ok {
+				return errors.New("CompDev应该为float32类型")
+			}
+			pointInfo.CompDev = compDev
+		case PointInfoFieldCompDevPercent:
+			compDevPercent, ok := v.(float32)
+			if !ok {
+				return errors.New("CompDevPercent应该为float32类型")
+			}
+			pointInfo.CompDevPercent = compDevPercent
+		case PointInfoFieldCompTimeMax:
+			compTimeMax, ok := v.(int32)
+			if !ok {
+				return errors.New("CompTimeMax应为int32类型")
+			}
+			pointInfo.CompTimeMax = compTimeMax
+		case PointInfoFieldCompTimeMin:
+			compTimeMin, ok := v.(int32)
+			if !ok {
+				return errors.New("CompTimeMin应为int32类型")
+			}
+			pointInfo.CompTimeMin = compTimeMin
+		case PointInfoFieldExcDev:
+			excDev, ok := v.(float32)
+			if !ok {
+				return errors.New("ExcDev应为float32类型")
+			}
+			pointInfo.ExcDev = excDev
+		case PointInfoFieldExcDevPercent:
+			excDevPercent, ok := v.(float32)
+			if !ok {
+				return errors.New("ExcDevPercent应为float32类型")
+			}
+			pointInfo.ExcDevPercent = excDevPercent
+		case PointInfoFieldExcTimeMax:
+			excTimeMax, ok := v.(int32)
+			if !ok {
+				return errors.New("ExcTimeMax应为int32类型")
+			}
+			pointInfo.ExcTimeMax = excTimeMax
+		case PointInfoFieldExcTimeMin:
+			excTimeMin, ok := v.(int32)
+			if !ok {
+				return errors.New("ExcTimeMin应为int32类型")
+			}
+			pointInfo.ExcTimeMin = excTimeMin
+		case PointInfoFieldMirror:
+			mirror, ok := v.(RtdbMirror)
+			if !ok {
+				return errors.New("Mirror应该为RtdbMirror类型")
+			}
+			pointInfo.Mirror = mirror
+		case PointInfoFieldSummary:
+			summary, ok := v.(Switch)
+			if !ok {
+				return errors.New("Summary应该为Switch类型")
+			}
+			pointInfo.Summary = summary
+		case PointInfoFieldSource:
+			source, ok := v.(string)
+			if !ok {
+				return errors.New("Source应该为String类型")
+			}
+			pointInfo.Source = source
+		case PointInfoFieldScan:
+			scan, ok := v.(Switch)
+			if !ok {
+				return errors.New("scan应该为Switch类型")
+			}
+			pointInfo.Scan = scan
+		case PointInfoFieldInstrument:
+			instrument, ok := v.(string)
+			if !ok {
+				return errors.New("instrument应该为String类型")
+			}
+			pointInfo.Instrument = instrument
+		case PointInfoFieldLocations:
+			locations, ok := v.([RtdbConstLocationsSize]int32)
+			if !ok {
+				return errors.New("locations应该为[5]int32类型")
+			}
+			pointInfo.Locations = locations
+		case PointInfoFieldUserInts:
+			userInts, ok := v.([RtdbConstUserintSize]int32)
+			if !ok {
+				return errors.New("userInfos应该为[2]int32类型")
+			}
+			pointInfo.UserInts = userInts
+		case PointInfoFieldUserReals:
+			userReals, ok := v.([RtdbConstUserrealSize]float32)
+			if !ok {
+				return errors.New("userReals应该为[2]float32类型")
+			}
+			pointInfo.UserReals = userReals
+		case PointInfoFieldEquation:
+			equation, ok := v.(string)
+			if !ok {
+				return errors.New("equation应该为String类型")
+			}
+			pointInfo.Equation = equation
+		case PointInfoFieldTrigger:
+			trigger, ok := v.(RtdbTrigger)
+			if !ok {
+				return errors.New("trigger应该为RtdbTrigger类型")
+			}
+			pointInfo.Trigger = trigger
+		case PointInfoFieldTimeCopy:
+			timeCopy, ok := v.(RtdbTimeCopy)
+			if !ok {
+				return errors.New("timeCopy应该为RtdbTimeCopy类型")
+			}
+			pointInfo.TimeCopy = timeCopy
+		case PointInfoFieldPeriod:
+			period, ok := v.(int32)
+			if !ok {
+				return errors.New("period应该为int32类型")
+			}
+			pointInfo.Period = period
+		default:
+			return errors.New("未知的Field")
+		}
+	}
+	base, scan, calc, _ := PointInfoToRaw(pointInfo)
+	rte := RawRtdbbUpdateMaxPointPropertyWarp(c.ConnectHandle, base, scan, calc)
 	return rte.GoError()
 }
 
