@@ -232,6 +232,53 @@ func (vt ValueType) ToRawType() (RtdbType, string) {
 	}
 }
 
+func FromRawType(typ RtdbType, namedTypeName string) ValueType {
+	switch typ {
+	case RtdbTypeBool:
+		return ValueTypeBool
+	case RtdbTypeUint8:
+		return ValueTypeUint8
+	case RtdbTypeInt8:
+		return ValueTypeInt8
+	case RtdbTypeChar:
+		return ValueTypeChar
+	case RtdbTypeUint16:
+		return ValueTypeUint16
+	case RtdbTypeInt16:
+		return ValueTypeInt16
+	case RtdbTypeUint32:
+		return ValueTypeUint32
+	case RtdbTypeInt32:
+		return ValueTypeInt32
+	case RtdbTypeInt64:
+		return ValueTypeInt64
+	case RtdbTypeReal16:
+		return ValueTypeFloat16
+	case RtdbTypeReal32:
+		return ValueTypeFloat32
+	case RtdbTypeReal64:
+		return ValueTypeFloat64
+	case RtdbTypeCoor:
+		return ValueTypeCoor
+	case RtdbTypeString:
+		return ValueTypeString
+	case RtdbTypeBlob:
+		return ValueTypeBlob
+	case RtdbTypeNamedT:
+		return ValueType(namedTypeName)
+	case RtdbTypeDatetime:
+		return ValueTypeDatetime
+	case RtdbTypeFp16:
+		return ValueTypeFp16
+	case RtdbTypeFp32:
+		return ValueTypeFp32
+	case RtdbTypeFp64:
+		return ValueTypeFp64
+	default:
+		panic("分支不可达")
+	}
+}
+
 // PointClass 点类型
 type PointClass int32
 
@@ -315,14 +362,23 @@ type PointInfo struct {
 }
 
 // NewPointInfo 新建标签点属性, 备注：只需填写必要属性，其他都是默认，需要时可自行设置
-func NewPointInfo(name string, tableId TableID, valueType ValueType, class PointClass, precision RtdbPrecision, desc, unit string) *PointInfo {
+//
+// input:
+//   - name 点名
+//   - tableId 表ID
+//   - valueType 数值类型
+//   - class 点类型
+//   - precision 点时间戳精度
+//   - unit 点单位
+//   - desc 点描述
+func NewPointInfo(name string, tableId TableID, valueType ValueType, class PointClass, precision RtdbPrecision, unit, desc string) *PointInfo {
 	return &PointInfo{
 		Name:           name,
 		ValueType:      valueType,
 		TableID:        tableId,
 		Class:          class,
-		Desc:           desc,
 		Unit:           unit,
+		Desc:           desc,
 		Archive:        ON,
 		Digits:         -5,
 		Shutdown:       OFF,
@@ -343,6 +399,66 @@ func NewPointInfo(name string, tableId TableID, valueType ValueType, class Point
 		Summary:        OFF,
 		Precision:      precision,
 	}
+}
+
+// SetLimit 设置量程上下限
+//
+// input:
+//   - lowLimit 量程上限
+//   - highLimit 量程下限
+//   - typical 典型值(默认值)
+func (p *PointInfo) SetLimit(lowLimit float32, highLimit float32, typical float32) {
+	p.LowLimit = lowLimit
+	p.HighLimit = highLimit
+	p.Typical = typical
+}
+
+// SetStoreDisplay 设置存储显示
+//
+// input:
+//   - archive 是否存档
+//   - digits 数值显示位数
+//   - shutdown 是否停机补写
+//   - step 是否阶跃
+//   - mirror 镜像配置
+//   - summary 是否开启统计加速
+func (p *PointInfo) SetStoreDisplay(archive Switch, digits int16, shutdown Switch, step Switch, mirror RtdbMirror, summary Switch) {
+	p.Archive = archive
+	p.Digits = digits
+	p.Shutdown = shutdown
+	p.Step = step
+	p.Mirror = mirror
+	p.Summary = summary
+}
+
+// SetCompress 设置压缩
+//
+// input:
+//   - compress 是否压缩
+//   - compDev 压缩偏差
+//   - compDevPercent 压缩偏差百分比
+//   - compTimeMax 最大压缩间隔
+//   - compTimeMin 最小压缩间隔
+func (p *PointInfo) SetCompress(compress Switch, compDev float32, compDevPercent float32, compTimeMax int32, compTimeMin int32) {
+	p.Compress = compress
+	p.CompDev = compDev
+	p.CompDevPercent = compDevPercent
+	p.CompTimeMax = compTimeMax
+	p.CompTimeMin = compTimeMin
+}
+
+// SetException 设置例外偏差
+//
+// input:
+//   - excDev 例外偏差
+//   - excDevPercent 例外偏差百分比
+//   - excTimeMax 最大例外间隔
+//   - excTimeMin 最短例外间隔
+func (p *PointInfo) SetException(excDev float32, excDevPercent float32, excTimeMax int32, excTimeMin int32) {
+	p.ExcDev = excDev
+	p.ExcDevPercent = excDevPercent
+	p.ExcTimeMax = excTimeMax
+	p.ExcTimeMin = excTimeMin
 }
 
 // SetScan 设置采集点属性
@@ -380,6 +496,148 @@ func (p *PointInfo) SetCalc(equation string, trigger RtdbTrigger, timeCopy RtdbT
 	p.Trigger = trigger
 	p.TimeCopy = timeCopy
 	p.Period = period
+}
+
+// PointInfoToRaw 点信息转换为Raw点属性表
+func PointInfoToRaw(info *PointInfo) (*RtdbPoint, *RtdbScan, *RtdbCalc, string) {
+	rtdbType, namedTypeName := info.ValueType.ToRawType()
+	milliSecond := int8(0)
+	if info.Precision != RtdbPrecisionSecond {
+		milliSecond = 1
+	}
+	base := &RtdbPoint{
+		Tag:            info.Name,
+		Type:           rtdbType,
+		Table:          info.TableID,
+		Desc:           info.Desc,
+		Unit:           info.Unit,
+		Archive:        info.Archive,
+		Digits:         info.Digits,
+		Shutdown:       info.Shutdown,
+		LowLimit:       info.LowLimit,
+		HighLimit:      info.HighLimit,
+		Step:           info.Step,
+		Typical:        info.Typical,
+		Compress:       info.Compress,
+		CompDev:        info.CompDev,
+		CompDevPercent: info.CompDevPercent,
+		CompTimeMax:    info.CompTimeMax,
+		CompTimeMin:    info.CompTimeMin,
+		ExcDev:         info.ExcDev,
+		ExcDevPercent:  info.ExcDevPercent,
+		ExcTimeMin:     info.ExcTimeMin,
+		ExcTimeMax:     info.ExcTimeMax,
+		Class:          RtdbClass(info.Class),
+		Mirror:         info.Mirror,
+		Summary:        info.Summary,
+		Precision:      info.Precision,
+		MilliSecond:    milliSecond,
+	}
+	scan := (*RtdbScan)(nil)
+	if info.Class.IsScan() {
+		scan = &RtdbScan{
+			Source:     info.Source,
+			Scan:       info.Scan,
+			Instrument: info.Instrument,
+			Locations:  info.Locations,
+			UserInts:   info.UserInts,
+			UserReals:  info.UserReals,
+		}
+	}
+	calc := (*RtdbCalc)(nil)
+	if info.Class.IsCalc() {
+		calc = &RtdbCalc{
+			Equation: info.Equation,
+			Trigger:  info.Trigger,
+			TimeCopy: info.TimeCopy,
+			Period:   info.Period,
+		}
+	}
+	return base, scan, calc, namedTypeName
+}
+
+// PointInfoFromRaw 点属性表转换为点信息
+func PointInfoFromRaw(handle ConnectHandle, base *RtdbPoint, scan *RtdbScan, calc *RtdbCalc, isRecycled bool) (*PointInfo, error) {
+	typ := (*NamedType)(nil)
+	if base.Type == RtdbTypeNamedT {
+		if !isRecycled {
+			names, counts, rtes, rte := RawRtdbbGetNamedTypeNamesPropertyWarp(handle, []PointID{base.ID})
+			if !RteIsOk(rte) {
+				return nil, rte.GoError()
+			}
+			if !RteIsOk(rtes[0]) {
+				return nil, rte.GoError()
+			}
+			fields, tLen, desc, rte := RawRtdbbGetNamedTypeWarp(handle, names[0], counts[0])
+			typ = &NamedType{Name: names[0], Fields: fields, Desc: desc, Length: tLen}
+		} else {
+			names, counts, rtes, rte := RawRtdbbGetRecycledNamedTypeNamesPropertyWarp(handle, []PointID{base.ID})
+			if !RteIsOk(rte) {
+				return nil, rte.GoError()
+			}
+			if !RteIsOk(rtes[0]) {
+				return nil, rte.GoError()
+			}
+			fields, tLen, desc, rte := RawRtdbbGetNamedTypeWarp(handle, names[0], counts[0])
+			typ = &NamedType{Name: names[0], Fields: fields, Desc: desc, Length: tLen}
+		}
+	}
+	namedTypeName := ""
+	if typ != nil {
+		namedTypeName = typ.Name
+	}
+	info := &PointInfo{
+		ID:             base.ID,
+		TableID:        base.Table,
+		Name:           base.Tag,
+		ValueType:      FromRawType(base.Type, namedTypeName),
+		Class:          PointClass(base.Class),
+		Precision:      base.Precision,
+		Desc:           base.Desc,
+		Unit:           base.Unit,
+		Archive:        base.Archive,
+		Digits:         base.Digits,
+		Shutdown:       base.Shutdown,
+		LowLimit:       base.LowLimit,
+		HighLimit:      base.HighLimit,
+		Step:           base.Step,
+		Typical:        base.Typical,
+		Compress:       base.Compress,
+		CompDev:        base.CompDev,
+		CompDevPercent: base.CompDevPercent,
+		CompTimeMax:    base.CompTimeMax,
+		CompTimeMin:    base.CompTimeMin,
+		ExcDev:         base.ExcDev,
+		ExcDevPercent:  base.ExcDevPercent,
+		ExcTimeMax:     base.ExcTimeMax,
+		ExcTimeMin:     base.ExcTimeMin,
+		Mirror:         base.Mirror,
+		Summary:        base.Summary,
+		TableDotTag:    base.TableDotTag,
+		ChangeDate:     base.ChangeDate,
+		Changer:        base.Changer,
+		CreateDate:     base.CreateDate,
+		Creator:        base.Creator,
+	}
+	if typ != nil {
+		info.NamedType = *typ
+	}
+	if scan != nil {
+		info.Source = scan.Source
+		info.Scan = scan.Scan
+		info.Instrument = scan.Instrument
+		info.Locations = scan.Locations
+		info.UserInts = scan.UserInts
+		info.UserReals = scan.UserReals
+	}
+	if calc != nil {
+		info.Equation = calc.Equation
+		info.Trigger = calc.Trigger
+		info.TimeCopy = calc.TimeCopy
+		info.Period = calc.Period
+	}
+
+	return info, nil
 }
 
 ////////////////////////////////////////////////
@@ -1185,36 +1443,34 @@ func (c *RtdbConnect) UpdateTableDesc(id TableID, desc string) error {
 	return rte.GoError()
 }
 
-/*
 // CreatePoint 创建点
 //
 // input:
-//   - base 点的基本属性设置
-//   - scan 点的采集属性设置, 当 base.Class & RtdbClassScan != 0 时表示点为采集点，此时scan属性生效
-//   - calc 点的计算属性设置, 当 base.Class & RtdbClassCalc != 0 时表示点为采集点，此时scan属性生效
-//   - 备注：base.Class 是一个真值表
-func (c *RtdbConnect) CreatePoint(base *RtdbPoint, scan *RtdbScan, calc *RtdbCalc) (*RtdbPoint, *RtdbScan, *RtdbCalc, error) {
+//   - info 输入点信息
+//
+// output:
+//   - PointInfo(info) 输出点信息
+func (c *RtdbConnect) CreatePoint(info *PointInfo) (*PointInfo, error) {
+	base, scan, calc, tName := PointInfoToRaw(info)
 	if base.Type == RtdbTypeNamedT {
-		if base.NamedTypeName == "" {
-			return nil, nil, nil, errors.New("点数值类型为RtdbTypeNamedT, 此时NamedTypeName不能为空")
+		if tName == "" {
+			return nil, errors.New("点数值类型为RtdbTypeNamedT, 此时NamedTypeName不能为空")
 		}
-		_, err := c.GetNamedType(base.NamedTypeName)
+		_, err := c.GetNamedType(tName)
 		if err != nil {
-			return nil, nil, nil, err
+			return nil, err
 		}
-		namedTypeName := base.NamedTypeName
-		base, scan, rte := RawRtdbbInsertNamedTypePointWarp(c.ConnectHandle, base, scan, namedTypeName)
-		base.NamedTypeName = namedTypeName
+		base, scan, rte := RawRtdbbInsertNamedTypePointWarp(c.ConnectHandle, base, scan, tName)
 		if !RteIsOk(rte) {
-			return nil, nil, nil, rte.GoError()
+			return nil, rte.GoError()
 		}
-		return base, scan, nil, nil
+		return PointInfoFromRaw(c.ConnectHandle, base, scan, nil, false)
 	} else {
 		base, scan, calc, rte := RawRtdbbInsertMaxPointWarp(c.ConnectHandle, base, scan, calc)
 		if !RteIsOk(rte) {
-			return nil, nil, nil, rte.GoError()
+			return nil, rte.GoError()
 		}
-		return base, scan, calc, nil
+		return PointInfoFromRaw(c.ConnectHandle, base, scan, calc, false)
 	}
 }
 
@@ -1231,27 +1487,18 @@ func (c *RtdbConnect) DeletePoint(id PointID) error {
 //
 // input:
 //   - id 点ID
-func (c *RtdbConnect) GetPoint(id PointID) (*RtdbPoint, *RtdbScan, *RtdbCalc, error) {
+//
+// output:
+//   - PointInfo(info) 返回点信息
+func (c *RtdbConnect) GetPoint(id PointID) (*PointInfo, error) {
 	bases, scans, calcs, rtes, rte := RawRtdbbGetMaxPointsPropertyWarp(c.ConnectHandle, []PointID{id})
 	if !RteIsOk(rte) {
-		return nil, nil, nil, rte.GoError()
+		return nil, rte.GoError()
 	}
-	if !RteIsOk(rtes[0]) {
-		return nil, nil, nil, rtes[0].GoError()
-	}
-	base := bases[0]
-	if base.Type == RtdbTypeNamedT {
-		names, _, rtes, rte := RawRtdbbGetNamedTypeNamesPropertyWarp(c.ConnectHandle, []PointID{id})
+	for _, rte := range rtes {
 		if !RteIsOk(rte) {
-			return nil, nil, nil, rte.GoError()
+			return nil, rte.GoError()
 		}
-		if !RteIsOk(rtes[0]) {
-			return nil, nil, nil, rtes[0].GoError()
-		}
-		base.NamedTypeName = names[0]
 	}
-	scan := scans[0]
-	calc := calcs[0]
-	return &base, &scan, &calc, nil
+	return PointInfoFromRaw(c.ConnectHandle, &bases[0], &scans[0], &calcs[0], false)
 }
-*/
