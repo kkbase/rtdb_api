@@ -1975,7 +1975,30 @@ func (c *RtdbConnect) PurgePoint(id PointID) error {
 }
 
 // SearchRecycledPoint 从回收站中搜索点
-func (c *RtdbConnect) SearchRecycledPoint() error {
-	//	RawRtdbbSearchRecycledPointsInBatchesWarp()
-	return nil
+func (c *RtdbConnect) SearchRecycledPoint(start int32, count int32, tagMask, fullMask, source, unit, desc, instrument string, mode RtdbSortFlag) (int32, []*PointInfo, []error, error) {
+	maxCount, rte := RawRtdbbGetRecycledPointsCountWarp(c.ConnectHandle)
+	if !RteIsOk(rte) {
+		return 0, nil, nil, rte.GoError()
+	}
+	ids, rte := RawRtdbbSearchRecycledPointsInBatchesWarp(c.ConnectHandle, start, maxCount, tagMask, fullMask, source, unit, desc, instrument, mode)
+	if !RteIsOk(rte) {
+		return 0, nil, nil, rte.GoError()
+	}
+	maxCount = int32(len(ids))
+	rtnIds := SafeSlice(ids, start, count)
+
+	infos := make([]*PointInfo, 0)
+	errs := make([]error, 0)
+	for _, id := range rtnIds {
+		base, scan, calc, rte := RawRtdbbGetRecycledMaxPointPropertyWarp(c.ConnectHandle, id)
+		info, _ := PointInfoFromRaw(c.ConnectHandle, base, scan, calc, true)
+		infos = append(infos, info)
+		if !RteIsOk(rte) {
+			errs = append(errs, rte.GoError())
+		} else {
+			errs = append(errs, nil)
+		}
+	}
+
+	return maxCount, infos, errs, nil
 }

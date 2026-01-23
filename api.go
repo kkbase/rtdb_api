@@ -8508,7 +8508,7 @@ func RawRtdbbGetRecycledPointsWarp(handle ConnectHandle, count int32) ([]PointID
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_search_recycled_points_in_batches_warp(rtdb_int32 handle, rtdb_int32 start, const char *tagmask, const char *fullmask, const char *source, const char *unit, const char *desc, const char *instrument, rtdb_int32 mode, rtdb_int32 *ids, rtdb_int32 *count)
-func RawRtdbbSearchRecycledPointsInBatchesWarp(handle ConnectHandle, start int32, tagMask, fullMask, source, unit, desc, instrument string, mode RtdbSortFlag) ([]PointID, RtdbError) {
+func RawRtdbbSearchRecycledPointsInBatchesWarp(handle ConnectHandle, start int32, count int32, tagMask, fullMask, source, unit, desc, instrument string, mode RtdbSortFlag) ([]PointID, RtdbError) {
 	cHandle := C.rtdb_int32(handle)
 	cStart := C.rtdb_int32(start)
 	cTagMask := C.CString(tagMask)
@@ -8524,7 +8524,7 @@ func RawRtdbbSearchRecycledPointsInBatchesWarp(handle ConnectHandle, start int32
 	cInstrument := C.CString(instrument)
 	defer C.free(unsafe.Pointer(cInstrument))
 	cMode := C.rtdb_int32(mode)
-	ids := make([]PointID, 1024)
+	ids := make([]PointID, count)
 	cIds := (*C.rtdb_int32)(unsafe.Pointer(&ids[0]))
 	cCount := C.rtdb_int32(len(ids))
 	err := C.rtdbb_search_recycled_points_in_batches_warp(cHandle, cStart, cTagMask, cFullMask, cSource, cUnit, cDesc, cInstrument, cMode, cIds, &cCount)
