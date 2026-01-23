@@ -1917,3 +1917,14 @@ func (c *RtdbConnect) SearchPoint(start int32, count int32, tagMask, tableMask, 
 	}
 	return count, infos, errs, nil
 }
+
+// ClearRecycler 清空回收站
+func (c *RtdbConnect) ClearRecycler() error {
+	rte := RawRtdbbClearRecyclerWarp(c.ConnectHandle)
+	return rte.GoError()
+}
+
+// GetRecycledPoints 分段获取回收站中的点
+func (c *RtdbConnect) GetRecycledPoints(start int32, count int32) {
+	// RawRtdbbGetRecycledPointsWarp()
+}

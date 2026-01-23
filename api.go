@@ -8453,14 +8453,14 @@ func RawRtdbbGetRecycledPointsCountWarp(handle ConnectHandle) (int32, RtdbError)
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_get_recycled_points_warp(rtdb_int32 handle, rtdb_int32 *ids, rtdb_int32 *count)
-func RawRtdbbGetRecycledPointsWarp(handle ConnectHandle, count int32) ([]RtdbPoint, RtdbError) {
+func RawRtdbbGetRecycledPointsWarp(handle ConnectHandle, count int32) ([]PointID, RtdbError) {
 	if count == 0 {
 		return nil, RteOk
 	}
 
 	cHandle := C.rtdb_int32(handle)
 	cCount := C.rtdb_int32(count)
-	points := make([]RtdbPoint, cCount)
+	points := make([]PointID, cCount)
 	cPoints := (*C.rtdb_int32)(unsafe.Pointer(&points[0]))
 	err := C.rtdbb_get_recycled_points_warp(cHandle, cPoints, &cCount)
 
