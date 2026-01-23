@@ -925,6 +925,12 @@ func (c *RtdbConnect) UpdateTableDesc(id TableID, desc string) error {
 }
 
 // CreatePoint 创建点
+//
+// input:
+//   - base 点的基本属性设置
+//   - scan 点的采集属性设置, 当 base.Class & RtdbClassScan != 0 时表示点为采集点，此时scan属性生效
+//   - calc 点的计算属性设置, 当 base.Class & RtdbClassCalc != 0 时表示点为采集点，此时scan属性生效
+//   - 备注：base.Class 是一个真值表
 func (c *RtdbConnect) CreatePoint(base *RtdbPoint, scan *RtdbScan, calc *RtdbCalc) (*RtdbPoint, *RtdbScan, *RtdbCalc, error) {
 	if base.Type == RtdbTypeNamedT {
 		if base.NamedTypeName == "" {
@@ -934,7 +940,9 @@ func (c *RtdbConnect) CreatePoint(base *RtdbPoint, scan *RtdbScan, calc *RtdbCal
 		if err != nil {
 			return nil, nil, nil, err
 		}
-		base, scan, rte := RawRtdbbInsertNamedTypePointWarp(c.ConnectHandle, base, scan, base.NamedTypeName)
+		namedTypeName := base.NamedTypeName
+		base, scan, rte := RawRtdbbInsertNamedTypePointWarp(c.ConnectHandle, base, scan, namedTypeName)
+		base.NamedTypeName = namedTypeName
 		if !RteIsOk(rte) {
 			return nil, nil, nil, rte.GoError()
 		}
@@ -946,4 +954,41 @@ func (c *RtdbConnect) CreatePoint(base *RtdbPoint, scan *RtdbScan, calc *RtdbCal
 		}
 		return base, scan, calc, nil
 	}
+}
+
+// DeletePoint 删除点
+//
+// input:
+//   - id 点ID
+func (c *RtdbConnect) DeletePoint(id PointID) error {
+	rte := RawRtdbbRemovePointByIdWarp(c.ConnectHandle, id)
+	return rte.GoError()
+}
+
+// GetPoint 获取点
+//
+// input:
+//   - id 点ID
+func (c *RtdbConnect) GetPoint(id PointID) (*RtdbPoint, *RtdbScan, *RtdbCalc, error) {
+	bases, scans, calcs, rtes, rte := RawRtdbbGetMaxPointsPropertyWarp(c.ConnectHandle, []PointID{id})
+	if !RteIsOk(rte) {
+		return nil, nil, nil, rte.GoError()
+	}
+	if !RteIsOk(rtes[0]) {
+		return nil, nil, nil, rtes[0].GoError()
+	}
+	base := bases[0]
+	if base.Type == RtdbTypeNamedT {
+		names, _, rtes, rte := RawRtdbbGetNamedTypeNamesPropertyWarp(c.ConnectHandle, []PointID{id})
+		if !RteIsOk(rte) {
+			return nil, nil, nil, rte.GoError()
+		}
+		if !RteIsOk(rtes[0]) {
+			return nil, nil, nil, rtes[0].GoError()
+		}
+		base.NamedTypeName = names[0]
+	}
+	scan := scans[0]
+	calc := calcs[0]
+	return &base, &scan, &calc, nil
 }
