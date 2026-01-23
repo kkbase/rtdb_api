@@ -1483,6 +1483,30 @@ func (c *RtdbConnect) DeletePoint(id PointID) error {
 	return rte.GoError()
 }
 
+// GetPoints 批量获取标签点
+//
+// input:
+//   - ids 标签点列表
+//
+// output:
+//   - []PointInfo(infos) 标签点属性列表
+func (c *RtdbConnect) GetPoints(ids []PointID) ([]*PointInfo, []error, error) {
+	bases, scans, calcs, rtes, rte := RawRtdbbGetMaxPointsPropertyWarp(c.ConnectHandle, []PointID{id})
+	if !RteIsOk(rte) {
+		return nil, nil, rte.GoError()
+	}
+	errs := RtdbErrorListToErrorList(rtes)
+	infos := make([]*PointInfo, 0)
+	for i := 0; i < len(ids); i++ {
+		info, err := PointInfoFromRaw(c.ConnectHandle, &bases[i], &scans[i], &calcs[i], false)
+		if err != nil {
+			errs[i] = err
+		}
+		infos = append(infos, info)
+	}
+	return infos, errs, nil
+}
+
 // GetPoint 获取点
 //
 // input:
