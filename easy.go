@@ -1385,6 +1385,15 @@ func (c *RtdbConnect) StringToTime(strTime string) (*time.Time, error) {
 	return &goTime, nil
 }
 
+// GetQualityDesc 获取质量码说明
+func (c *RtdbConnect) GetQualityDesc(qualities []Quality) ([]string, error) {
+	descs, rte := RawRtdbFormatQualityWarp(c.ConnectHandle, qualities)
+	if !RteIsOk(rte) {
+		return nil, rte.GoError()
+	}
+	return descs, nil
+}
+
 // GetDriveLetterList 获取盘符列表, windows平台是C、D、E、F这些盘符，linux平台是 / 盘符
 //
 // output:

@@ -405,6 +405,23 @@ func TestRtdbConnect_Time(t *testing.T) {
 	fmt.Println(ts)
 }
 
+// 质量
+func TestRtdbConnect_Quality(t *testing.T) {
+	conn, err := Login(Hostname, Port, Username, Password)
+	if err != nil {
+		t.Fatal("登录用户失败", err)
+	}
+	defer func() { _ = conn.Logout() }()
+
+	// 获取质量码对应的说明
+	descs, err := conn.GetQualityDesc([]Quality{1})
+	if err != nil {
+		t.Error("获取质量码失败: ", err)
+		return
+	}
+	fmt.Println(descs)
+}
+
 // 磁盘
 func TestRtdbConnect_Disk(t *testing.T) {
 	conn, err := Login(Hostname, Port, Username, Password)
