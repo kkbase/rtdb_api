@@ -121,6 +121,51 @@ type NamedType struct {
 	Length int32               // 自定义类型长度(所有字段长度的累加和)
 }
 
+type PointInfo struct {
+	ID        PointID       // 标签点ID
+	TableID   TableID       // 当前标签点所属表ID
+	Name      string        // 标签点名称
+	ValueType RtdbType      // 数值类型
+	Class     RtdbClass     // 标签点类别
+	Precision RtdbPrecision // 时间戳精度
+
+	// 基本点配置
+	Desc           string     // 标签点描述
+	Unit           string     // 工程单位
+	Archive        Switch     // 是否存档
+	Digits         int16      // 数值位数
+	Shutdown       Switch     // 停机状态字
+	LowLimit       float32    // 量程下限
+	HighLimit      float32    // 量程上限
+	Step           Switch     // 是否阶跃
+	Typical        float32    // 典型值
+	Compress       Switch     // 是否压缩
+	CompDev        float32    // 压缩偏差
+	CompDevPercent float32    // 压缩偏差百分比
+	CompTimeMax    int32      // 最大压缩间隔
+	CompTimeMin    int32      // 最短压缩间隔
+	ExcDev         float32    // 例外偏差
+	ExcDevPercent  float32    // 例外偏差百分比
+	ExcTimeMax     int32      // 最大例外间隔
+	ExcTimeMin     int32      // 最短例外间隔
+	Mirror         RtdbMirror // 镜像收发控制
+	Summary        Switch     // 统计加速
+
+	// 采集点配置
+	Source     string                         // 数据源
+	Scan       Switch                         // 是否采集
+	Instrument string                         // 设备标签
+	Locations  [RtdbConstLocationsSize]int32  // 共包含五个设备位址
+	UserInts   [RtdbConstUserintSize]int32    // 共包含两个自定义整数
+	UserReals  [RtdbConstUserrealSize]float32 // 共包含两个自定义单精度浮点数
+
+	// 计算点配置
+	Equation string       // 实时方程式
+	Trigger  RtdbTrigger  // 计算触发机制
+	TimeCopy RtdbTimeCopy // 计算结果时间戳参考
+	Period   int32        // 触发周期
+}
+
 ////////////////////////////////////////////////
 //////////////////上面是一些结构//////////////////
 ////////////////////摆烂的分隔线/////////////////
