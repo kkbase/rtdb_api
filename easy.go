@@ -1584,6 +1584,10 @@ func (c *RtdbConnect) DeletePoint(id PointID) error {
 }
 
 // UpdatePoint 更新点
+//
+// input:
+//   - id 点ID
+//   - fields 需要更新的字段
 func (c *RtdbConnect) UpdatePoint(id PointID, fields map[PointInfoField]any) error {
 	pointInfo, err := c.GetPoint(id)
 	if err != nil {
@@ -1834,4 +1838,30 @@ func (c *RtdbConnect) GetPoint(id PointID) (*PointInfo, error) {
 		}
 	}
 	return PointInfoFromRaw(c.ConnectHandle, &bases[0], &scans[0], &calcs[0], false)
+}
+
+// FindPoints 根据 表名.点名 搜索标签点
+//
+// input:
+//   - tableDotPoints 点全名， 表名.点名
+//
+// output:
+//   - []*PointInfo(infos) 点信息列表
+//   - []error 报错信息
+func (c *RtdbConnect) FindPoints(tableDotPoints []string) ([]*PointInfo, []error, error) {
+	ids, _, _, _, _, rte := RawRtdbbFindPointsExWarp(c.ConnectHandle, tableDotPoints)
+	if !RteIsOk(rte) {
+		return nil, nil, rte.GoError()
+	}
+	return c.GetPoints(ids)
+}
+
+// MovePoint 移动点到指定表
+//
+// input:
+//   - id 点ID
+//   - tableName 表名称
+func (c *RtdbConnect) MovePoint(id PointID, tableName string) error {
+	rte := RawRtdbbMovePointByIdWarp(c.ConnectHandle, id, tableName)
+	return rte.GoError()
 }
