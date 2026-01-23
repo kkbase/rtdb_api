@@ -506,6 +506,7 @@ func PointInfoToRaw(info *PointInfo) (*RtdbPoint, *RtdbScan, *RtdbCalc, string) 
 		milliSecond = 1
 	}
 	base := &RtdbPoint{
+		ID:             info.ID,
 		Tag:            info.Name,
 		Type:           rtdbType,
 		Table:          info.TableID,
@@ -1556,14 +1557,14 @@ func (c *RtdbConnect) UpdateTableDesc(id TableID, desc string) error {
 	return rte.GoError()
 }
 
-// CreatePoint 创建点
+// AddPoint 创建点
 //
 // input:
 //   - info 输入点信息
 //
 // output:
 //   - PointInfo(info) 输出点信息
-func (c *RtdbConnect) CreatePoint(info *PointInfo) (*PointInfo, error) {
+func (c *RtdbConnect) AddPoint(info *PointInfo) (*PointInfo, error) {
 	base, scan, calc, tName := PointInfoToRaw(info)
 	if base.Type == RtdbTypeNamedT {
 		if tName == "" {
@@ -1900,22 +1901,19 @@ func (c *RtdbConnect) MovePoint(id PointID, tableName string) error {
 // output:
 //   - int32(count) 点总数
 //   - []*PointInfo(infos) 点信息列表
-func (c *RtdbConnect) SearchPoint(start int32, count int32, tagMask, tableMask, source, unit, desc, instrument, typeMask string, classOfMask RtdbType, timeUnitMask RtdbPrecision, otherTypeMask RtdbSearch, otherTypeMaskValue string, model RtdbSortFlag) (int32, []*PointInfo, error) {
+func (c *RtdbConnect) SearchPoint(start int32, count int32, tagMask, tableMask, source, unit, desc, instrument, typeMask string, classOfMask RtdbType, timeUnitMask RtdbPrecision, otherTypeMask RtdbSearch, otherTypeMaskValue string, model RtdbSortFlag) (int32, []*PointInfo, []error, error) {
 	count, rte := RawRtdbbSearchPointsCountWarp(c.ConnectHandle, tagMask, tableMask, source, unit, desc, instrument, typeMask, classOfMask, timeUnitMask, otherTypeMask, otherTypeMaskValue)
 	if !RteIsOk(rte) {
-		return 0, nil, rte.GoError()
+		return 0, nil, nil, rte.GoError()
 	}
 	ids, rte := RawRtdbbSearchExWarp(c.ConnectHandle, count, tagMask, tableMask, source, unit, desc, instrument, typeMask, classOfMask, timeUnitMask, otherTypeMask, otherTypeMaskValue, model)
 	if !RteIsOk(rte) {
-		return 0, nil, rte.GoError()
+		return 0, nil, nil, rte.GoError()
 	}
 	ids = SafeSlice(ids, start, count)
 	infos, errs, err := c.GetPoints(ids)
 	if err != nil {
-		return 0, nil, err
+		return 0, nil, nil, err
 	}
-	for _, err := range errs {
-		return 0, nil, err
-	}
-	return count, infos, nil
+	return count, infos, errs, nil
 }

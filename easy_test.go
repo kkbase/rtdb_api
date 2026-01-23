@@ -511,3 +511,89 @@ func TestRtdbConnect_Table(t *testing.T) {
 	}
 	fmt.Println(table2)
 }
+
+// 标签点
+func TestRtdbConnect_Point(t *testing.T) {
+	conn, err := Login(Hostname, Port, Username, Password)
+	if err != nil {
+		t.Fatal("登录用户失败", err)
+	}
+	defer func() { _ = conn.Logout() }()
+
+	// 创建表
+	table, err := conn.CreateTable("ppp", "ppp desc")
+	if err != nil {
+		t.Error("创建表失败：", err)
+		return
+	}
+	// 删除表
+	defer func() { _ = conn.DeleteTable(table.ID) }()
+
+	// 添加点
+	info := NewPointInfo("aaa", table.ID, ValueTypeInt32, PointBase, RtdbPrecisionMicro, "", "")
+	info.SetLimit(-100, 100, 0)
+	pInfo, err := conn.AddPoint(info)
+	if err != nil {
+		t.Error("添加点失败: ", err)
+		return
+	}
+
+	// 删除点
+	defer func() { _ = conn.DeletePoint(pInfo.ID) }()
+
+	// 获取单个点
+	pInfo2, err := conn.GetPoint(pInfo.ID)
+	if err != nil {
+		t.Error("获取点失败: ", err)
+		return
+	}
+	fmt.Println(pInfo2)
+
+	// 修改点
+	err = conn.UpdatePoint(pInfo.ID, map[PointInfoField]any{
+		PointInfoFieldDesc: "point desc ???",
+	})
+	if err != nil {
+		t.Error("修改点失败：", err)
+		return
+	}
+
+	// 获取多个点
+	pInfos, _, err := conn.GetPoints([]PointID{pInfo.ID})
+	if err != nil {
+		t.Error("获取点失败: ", err)
+		return
+	}
+	fmt.Println(pInfos)
+
+	// 移动点
+	table2, err := conn.CreateTable("pp2", "pp2 desc")
+	if err != nil {
+		t.Error("创建表2失败：", err)
+		return
+	}
+	defer func() { _ = conn.DeleteTable(table2.ID) }()
+	err = conn.MovePoint(pInfo.ID, table2.Name)
+	if err != nil {
+		t.Error("移动点失败：", err)
+		return
+	}
+	time.Sleep(time.Second)
+
+	// 查找点
+	ps, _, err := conn.FindPoints([]string{"pp2.aaa"})
+	if err != nil {
+		t.Error("查找点失败")
+		return
+	}
+	fmt.Println(ps)
+
+	// 搜索点
+	count, ps2, _, err := conn.SearchPoint(0, 100, "", "pp2", "", "", "", "", "", -1, -1, 0, "", RtdbSortFlagDescend)
+	if err != nil {
+		t.Error("搜索点失败：", err)
+		return
+	}
+	fmt.Println("点总数：", count)
+	fmt.Println(ps2)
+}
