@@ -1954,3 +1954,28 @@ func (c *RtdbConnect) GetRecycledPoints(start int32, count int32) (int32, []*Poi
 	}
 	return count, infos, errs, nil
 }
+
+// RecoverPoint 从回收站中恢复点到某个表
+//
+// input:
+//   - tableID 点恢复到这个表
+//   - pointID 需要恢复的点
+func (c *RtdbConnect) RecoverPoint(tableId TableID, pointId PointID) error {
+	rte := RawRtdbbRecoverPointWarp(c.ConnectHandle, tableId, pointId)
+	return rte.GoError()
+}
+
+// PurgePoint 从回收站中清除点
+//
+// input:
+//   - id 点ID
+func (c *RtdbConnect) PurgePoint(id PointID) error {
+	rte := RawRtdbbPurgePointWarp(c.ConnectHandle, id)
+	return rte.GoError()
+}
+
+// SearchRecycledPoint 从回收站中搜索点
+func (c *RtdbConnect) SearchRecycledPoint() error {
+	//	RawRtdbbSearchRecycledPointsInBatchesWarp()
+	return nil
+}
