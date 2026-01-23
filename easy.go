@@ -1492,6 +1492,10 @@ func (c *RtdbConnect) DeleteTable(id TableID) error {
 	return rte.GoError()
 }
 
+// GetTable
+//
+// input:
+//   - id 获取表
 func (c *RtdbConnect) GetTable(id TableID) (*RtdbTable, error) {
 	table, rte := RawRtdbbGetTablePropertyByIdWarp(c.ConnectHandle, id)
 	if !RteIsOk(rte) {
