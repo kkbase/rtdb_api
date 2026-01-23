@@ -49,3 +49,30 @@ func RtdbErrorListToErrorList(errs []RtdbError) []error {
 	}
 	return rtn
 }
+
+// SafeSlice 安全获取切片子集，自动处理越界问题
+func SafeSlice[T any](slice []T, start, count int32) []T {
+	// 处理空切片或无效参数
+	if slice == nil || start < 0 || count <= 0 {
+		return []T{}
+	}
+
+	// 转换为 int 类型便于操作
+	s := int(start)
+	c := int(count)
+	length := len(slice)
+
+	// 检查起始位置是否超出范围
+	if s >= length {
+		return []T{}
+	}
+
+	// 计算实际结束位置
+	end := s + c
+	if end > length {
+		end = length
+	}
+
+	// 返回有效的子切片
+	return slice[s:end]
+}

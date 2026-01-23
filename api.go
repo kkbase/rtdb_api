@@ -8023,6 +8023,7 @@ func RawRtdbbGetMaxPointsPropertyWarp(handle ConnectHandle, ids []PointID) ([]Rt
 // input:
 //   - handle 连接句柄
 //   - start 搜索起始位置。
+//   - count 最多获取数量
 //   - tagMask 标签点名称掩码，支持"*"和"?"通配符，缺省设置为"*"，长度不得超过 RTDB_TAG_SIZE，支持多个搜索条件，以空格分隔。
 //   - tableMask 标签点表名称掩码，支持"*"和"?"通配符，缺省设置为"*"，长度不得超过 RTDB_TAG_SIZE，支持多个搜索条件，以空格分隔。
 //   - source 数据源集合，字符串中的每个字符均表示一个数据源，空字符串表示不用数据源作搜索条件，缺省设置为空，长度不得超过 RTDB_DESC_SIZE。
@@ -8038,7 +8039,7 @@ func RawRtdbbGetMaxPointsPropertyWarp(handle ConnectHandle, ids []PointID) ([]Rt
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_search_in_batches_warp(rtdb_int32 handle, rtdb_int32 start, const char *tagmask, const char *tablemask, const char *source, const char *unit, const char *desc, const char *instrument, rtdb_int32 mode, rtdb_int32 *ids, rtdb_int32 *count)
-func RawRtdbbSearchInBatchesWarp(handle ConnectHandle, start int32, tagMask, tableMask, source, unit, desc, instrument string, model RtdbSortFlag) ([]PointID, RtdbError) {
+func RawRtdbbSearchInBatchesWarp(handle ConnectHandle, start int32, count int32, tagMask, tableMask, source, unit, desc, instrument string, model RtdbSortFlag) ([]PointID, RtdbError) {
 	cHandle := C.rtdb_int32(handle)
 	cStart := C.rtdb_int32(start)
 	if strings.TrimSpace(tagMask) == "" {
@@ -8059,7 +8060,7 @@ func RawRtdbbSearchInBatchesWarp(handle ConnectHandle, start int32, tagMask, tab
 	defer C.free(unsafe.Pointer(cDesc))
 	cInstrument := C.CString(instrument)
 	defer C.free(unsafe.Pointer(cInstrument))
-	cCount := C.rtdb_int32(1024) // 固定1024，因为是批量获取的，这里就不指定了
+	cCount := C.rtdb_int32(count)
 	ids := make([]PointID, cCount)
 	cIds := (*C.rtdb_int32)(unsafe.Pointer(&ids[0]))
 	cModel := C.rtdb_int32(model)

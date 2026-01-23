@@ -1865,3 +1865,44 @@ func (c *RtdbConnect) MovePoint(id PointID, tableName string) error {
 	rte := RawRtdbbMovePointByIdWarp(c.ConnectHandle, id, tableName)
 	return rte.GoError()
 }
+
+// SearchPoint 分页搜索点
+//
+// input:
+//   - handle 连接句柄
+//   - tagMask 标签点名称掩码，支持"*"和"?"通配符，缺省设置为"*"，长度不得超过 RTDB_TAG_SIZE，支持多个搜索条件，以空格分隔。
+//   - tableMask 标签点表名称掩码，支持"*"和"?"通配符，缺省设置为"*"，长度不得超过 RTDB_TAG_SIZE，支持多个搜索条件，以空格分隔。
+//   - source 数据源集合，字符串中的每个字符均表示一个数据源，空字符串表示不用数据源作搜索条件，缺省设置为空，长度不得超过 RTDB_DESC_SIZE。
+//   - unit 标签点工程单位的子集，工程单位中包含该参数的标签点均满足条件，空字符串表示不用工程单位作搜索条件，缺省设置为空，长度不得超过 RTDB_UNIT_SIZE。
+//   - desc 标签点描述的子集，描述中包含该参数的标签点均满足条件，空字符串表示不用描述作搜索条件，缺省设置为空，长度不得超过 RTDB_SOURCE_SIZE。
+//   - instrument 标签点设备名称。缺省设置为空，长度不得超过 RTDB_INSTRUMENT_SIZE。
+//   - typeMask 标签点类型名称。缺省设置为空，长度不得超过 RTDB_TYPE_NAME_SIZE,内置的普通数据类型可以使用 bool、uint8、datetime等字符串表示，不区分大小写，支持模糊搜索。
+//   - classOfMask 标签点的类别，缺省设置为-1，表示可以是任意类型的标签点，当使用标签点类型作为搜索条件时，必须是RTDB_CLASS枚举中的一项或者多项的组合。
+//   - timeUnitMask 标签点的时间戳精度，缺省设置为-1，表示可以是任意时间戳精度，当使用此时间戳精度作为搜索条件时，timeunitmask的值可以为0或1，0表示时间戳精度为秒，1表示纳秒
+//   - otherTypeMask 使用其他标签点属性作为搜索条件，缺省设置为0，表示不作为搜索条件，当使用此参数作为搜索条件时，othertypemaskvalue作为对应的搜索值，此参数的取值可以参考rtdb.h文件中的RTDB_SEARCH_MASK。
+//   - otherTypeMaskValue 字符串，输入参数，当使用其他标签点属性作为搜索条件时，此参数作为对应的搜索值，缺省设置为0，表示不作为搜索条件，如果othertypemask的值为0，或者RTDB_SEARCH_NULL，则此参数被忽略, 当othertypemask对应的标签点属性为数值类型时，此搜索值只支持相等判断，当othertypemask对应的标签点属性为字符串类型时，此搜索值支持模糊搜索。
+//   - mode 搜索结果排序模式
+//   - 备注：多个搜索条件可以通过空格分隔，比如"demo_*1 demo_*2"，会将满足demo_*1或者demo_*2条件的标签点搜索出来。
+//
+// output:
+//   - int32(count) 点总数
+//   - []*PointInfo(infos) 点信息列表
+func (c *RtdbConnect) SearchPoint(start int32, count int32, tagMask, tableMask, source, unit, desc, instrument, typeMask string, classOfMask RtdbType, timeUnitMask RtdbPrecision, otherTypeMask RtdbSearch, otherTypeMaskValue string, model RtdbSortFlag) (int32, []*PointInfo, error) {
+	count, rte := RawRtdbbSearchPointsCountWarp(c.ConnectHandle, tagMask, tableMask, source, unit, desc, instrument, typeMask, classOfMask, timeUnitMask, otherTypeMask, otherTypeMaskValue)
+	if !RteIsOk(rte) {
+		return 0, nil, rte.GoError()
+	}
+	ids, rte := RawRtdbbSearchExWarp(c.ConnectHandle, count, tagMask, tableMask, source, unit, desc, instrument, typeMask, classOfMask, timeUnitMask, otherTypeMask, otherTypeMaskValue, model)
+	if !RteIsOk(rte) {
+		return 0, nil, rte.GoError()
+	}
+	ids = SafeSlice(ids, start, count)
+	infos, errs, err := c.GetPoints(ids)
+	if err != nil {
+		return 0, nil, err
+	}
+	for _, err := range errs {
+		return 0, nil, err
+	}
+	return count, infos, nil
+}
