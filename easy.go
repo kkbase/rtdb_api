@@ -924,6 +924,7 @@ func (c *RtdbConnect) UpdateTableDesc(id TableID, desc string) error {
 	return rte.GoError()
 }
 
+/*
 // CreatePoint 创建点
 //
 // input:
@@ -992,3 +993,4 @@ func (c *RtdbConnect) GetPoint(id PointID) (*RtdbPoint, *RtdbScan, *RtdbCalc, er
 	calc := calcs[0]
 	return &base, &scan, &calc, nil
 }
+*/

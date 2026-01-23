@@ -4677,9 +4677,6 @@ type RtdbPoint struct {
 	// 标签点对应自定义类型id，只用标签点类别为自定义类型时，才有意义。
 	NamedTypeID uint16
 
-	// 自定义点类型名称, 创建自定义点类型的时候此参数必填
-	NamedTypeName string
-
 	// 时间戳精度，0秒、1毫秒、2微秒、3纳秒
 	Precision RtdbPrecision
 }
