@@ -1491,7 +1491,7 @@ func (c *RtdbConnect) DeletePoint(id PointID) error {
 // output:
 //   - []PointInfo(infos) 标签点属性列表
 func (c *RtdbConnect) GetPoints(ids []PointID) ([]*PointInfo, []error, error) {
-	bases, scans, calcs, rtes, rte := RawRtdbbGetMaxPointsPropertyWarp(c.ConnectHandle, []PointID{id})
+	bases, scans, calcs, rtes, rte := RawRtdbbGetMaxPointsPropertyWarp(c.ConnectHandle, ids)
 	if !RteIsOk(rte) {
 		return nil, nil, rte.GoError()
 	}
