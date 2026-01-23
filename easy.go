@@ -121,12 +121,152 @@ type NamedType struct {
 	Length int32               // 自定义类型长度(所有字段长度的累加和)
 }
 
+// ValueType 数值类型
+type ValueType string
+
+// 基本数值类型
+const (
+	// ValueTypeBool 布尔类型
+	ValueTypeBool = ValueType("bool")
+
+	// ValueTypeUint8 无符号8位整数
+	ValueTypeUint8 = ValueType("uint8")
+
+	// ValueTypeInt8 有符号8位整数
+	ValueTypeInt8 = ValueType("int8")
+
+	// ValueTypeChar 单字节字符
+	ValueTypeChar = ValueType("char")
+
+	// ValueTypeUint16 无符号16位整数
+	ValueTypeUint16 = ValueType("uint16")
+
+	// ValueTypeInt16 有符号16位整数
+	ValueTypeInt16 = ValueType("int16")
+
+	// ValueTypeUint32 无符号32位整数
+	ValueTypeUint32 = ValueType("uint32")
+
+	// ValueTypeInt32 有符号32位整数
+	ValueTypeInt32 = ValueType("int32")
+
+	// ValueTypeUint64 无符号64位整数
+	ValueTypeUint64 = ValueType("uint64")
+
+	// ValueTypeInt64 有符号64位整数
+	ValueTypeInt64 = ValueType("int64")
+
+	// ValueTypeFloat16 16位浮点数
+	ValueTypeFloat16 = ValueType("float16")
+
+	// ValueTypeFloat32 32位浮点数
+	ValueTypeFloat32 = ValueType("float32")
+
+	// ValueTypeFloat64 64位浮点数
+	ValueTypeFloat64 = ValueType("float64")
+
+	// ValueTypeCoor 二维坐标
+	ValueTypeCoor = ValueType("coor")
+
+	// ValueTypeString 字符串
+	ValueTypeString = ValueType("string")
+
+	// ValueTypeBlob 数据块
+	ValueTypeBlob = ValueType("blob")
+
+	// ValueTypeDatetime 时间
+	ValueTypeDatetime = ValueType("datetime")
+
+	// ValueTypeFp16 16位定点数
+	ValueTypeFp16 = ValueType("fp16")
+
+	// ValueTypeFp32 32位定点数
+	ValueTypeFp32 = ValueType("fp32")
+
+	// ValueTypeFp64 64位定点数
+	ValueTypeFp64 = ValueType("fp64")
+)
+
+func (vt ValueType) ToRawType() (RtdbType, string) {
+	switch vt {
+	case ValueTypeBool:
+		return RtdbTypeBool, "bool"
+	case ValueTypeUint8:
+		return RtdbTypeUint8, "uint8"
+	case ValueTypeInt8:
+		return RtdbTypeInt8, "int8"
+	case ValueTypeChar:
+		return RtdbTypeChar, "char"
+	case ValueTypeUint16:
+		return RtdbTypeUint16, "uint16"
+	case ValueTypeInt16:
+		return RtdbTypeInt16, "int16"
+	case ValueTypeUint32:
+		return RtdbTypeUint32, "uint32"
+	case ValueTypeInt32:
+		return RtdbTypeInt32, "int32"
+	case ValueTypeInt64:
+		return RtdbTypeInt64, "int64"
+	case ValueTypeFloat16:
+		return RtdbTypeReal16, "float16"
+	case ValueTypeFloat32:
+		return RtdbTypeReal32, "float32"
+	case ValueTypeFloat64:
+		return RtdbTypeReal64, "float64"
+	case ValueTypeCoor:
+		return RtdbTypeCoor, "coor"
+	case ValueTypeString:
+		return RtdbTypeString, "string"
+	case ValueTypeBlob:
+		return RtdbTypeBlob, "blob"
+	case ValueTypeDatetime:
+		return RtdbTypeDatetime, "datetime"
+	case ValueTypeFp16:
+		return RtdbTypeFp16, "fp16"
+	case ValueTypeFp32:
+		return RtdbTypeFp32, "fp32"
+	case ValueTypeFp64:
+		return RtdbTypeFp64, "fp64"
+	default:
+		return RtdbTypeNamedT, string(vt)
+	}
+}
+
+// PointClass 点类型
+type PointClass int32
+
+const (
+	// PointBase 基本点
+	PointBase = PointClass(RtdbClassBase)
+
+	// PointScan 采集点
+	PointScan = PointClass(RtdbClassBase | RtdbClassScan)
+
+	// PointCalc 计算点
+	PointCalc = PointClass(RtdbClassBase | RtdbClassCalc)
+
+	// PointScanCalc 计算采集点
+	PointScanCalc = PointClass(RtdbClassBase | RtdbClassScan | RtdbClassCalc)
+)
+
+// IsScan 是否为采集点
+func (pc PointClass) IsScan() bool {
+	return pc&PointScan != 0
+}
+
+// IsCalc 是否为计算点
+func (pc PointClass) IsCalc() bool {
+	return pc&PointCalc != 0
+}
+
+// PointInfo 点属性
 type PointInfo struct {
+	// 核心配置
 	ID        PointID       // 标签点ID
 	TableID   TableID       // 当前标签点所属表ID
 	Name      string        // 标签点名称
-	ValueType RtdbType      // 数值类型
-	Class     RtdbClass     // 标签点类别
+	ValueType ValueType     // 数值类型
+	Class     PointClass    // 标签点类别
 	Precision RtdbPrecision // 时间戳精度
 
 	// 基本点配置
@@ -151,7 +291,7 @@ type PointInfo struct {
 	Mirror         RtdbMirror // 镜像收发控制
 	Summary        Switch     // 统计加速
 
-	// 采集点配置
+	// 采集点配置，仅采集点有效
 	Source     string                         // 数据源
 	Scan       Switch                         // 是否采集
 	Instrument string                         // 设备标签
@@ -159,11 +299,87 @@ type PointInfo struct {
 	UserInts   [RtdbConstUserintSize]int32    // 共包含两个自定义整数
 	UserReals  [RtdbConstUserrealSize]float32 // 共包含两个自定义单精度浮点数
 
-	// 计算点配置
+	// 计算点配置, 仅计算点有效
 	Equation string       // 实时方程式
 	Trigger  RtdbTrigger  // 计算触发机制
 	TimeCopy RtdbTimeCopy // 计算结果时间戳参考
 	Period   int32        // 触发周期
+
+	// 只读属性
+	NamedType   NamedType    // 自定义类型结构, 仅自定义类型有效
+	TableDotTag string       // 标签点全名，格式为“表名称.标签点名称”
+	ChangeDate  DateTimeType // 标签点属性最后一次被修改的时间
+	Changer     string       // 标签点属性最后一次被修改的用户名
+	CreateDate  DateTimeType // 标签点被创建的时间
+	Creator     string       // 标签点创建者的用户名
+}
+
+// NewPointInfo 新建标签点属性, 备注：只需填写必要属性，其他都是默认，需要时可自行设置
+func NewPointInfo(name string, tableId TableID, valueType ValueType, class PointClass, precision RtdbPrecision, desc, unit string) *PointInfo {
+	return &PointInfo{
+		Name:           name,
+		ValueType:      valueType,
+		TableID:        tableId,
+		Class:          class,
+		Desc:           desc,
+		Unit:           unit,
+		Archive:        ON,
+		Digits:         -5,
+		Shutdown:       OFF,
+		LowLimit:       0,
+		HighLimit:      100,
+		Step:           OFF,
+		Typical:        50,
+		Compress:       ON,
+		CompDev:        1,
+		CompDevPercent: 0,
+		CompTimeMax:    28800,
+		CompTimeMin:    0,
+		ExcDev:         0.5,
+		ExcDevPercent:  0,
+		ExcTimeMax:     600,
+		ExcTimeMin:     0,
+		Mirror:         RtdbMirrorPointOff,
+		Summary:        OFF,
+		Precision:      precision,
+	}
+}
+
+// SetScan 设置采集点属性
+//
+// input:
+//   - source 数据源
+//   - scan 是否采集
+//   - instrument 设备标签
+//   - locations 共包含五个设备地址
+//   - userInts 共包含两个自定义整数
+//   - userReals 共包含两个自定义单精度浮点数
+func (p *PointInfo) SetScan(
+	source string, scan Switch, instrument string, locations [RtdbConstLocationsSize]int32,
+	userInts [RtdbConstUserintSize]int32, userReals [RtdbConstUserrealSize]float32,
+) {
+	p.Class |= PointClass(RtdbClassScan)
+	p.Source = source
+	p.Scan = scan
+	p.Instrument = instrument
+	p.Locations = locations
+	p.UserInts = userInts
+	p.UserReals = userReals
+}
+
+// SetCalc 设置计算点
+//
+// input:
+//   - equation 实时方程式
+//   - trigger 计算触发机制
+//   - timeCopy 计算结果时间戳参考
+//   - period 触发周期
+func (p *PointInfo) SetCalc(equation string, trigger RtdbTrigger, timeCopy RtdbTimeCopy, period int32) {
+	p.Class |= PointClass(RtdbClassCalc)
+	p.Equation = equation
+	p.Trigger = trigger
+	p.TimeCopy = timeCopy
+	p.Period = period
 }
 
 ////////////////////////////////////////////////
