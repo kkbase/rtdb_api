@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"path"
 	"strconv"
 	"time"
 )
@@ -2046,4 +2047,22 @@ func (c *RtdbConnect) GetPointCountFromValueType(valueType ValueType) (int32, er
 		}
 		return count, nil
 	}
+}
+
+func (c *RtdbConnect) GetArchiveFileList() error {
+	count, rte := RawRtdbaGetArchivesCountWarp(c.ConnectHandle)
+	if !RteIsOk(rte) {
+		return rte.GoError()
+	}
+
+	paths, files, states, rte := RawRtdbaGetArchivesWarp(c.ConnectHandle, count)
+	if !RteIsOk(rte) {
+		return rte.GoError()
+	}
+
+	for i := 0; i < len(paths); i++ {
+		fmt.Println(path.Join(paths[i], files[0]), states[i])
+	}
+
+	return nil
 }

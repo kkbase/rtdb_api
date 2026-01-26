@@ -719,3 +719,18 @@ func TestRtdbConnect_GetPointCountFromValueType(t *testing.T) {
 	}
 	fmt.Println(count)
 }
+
+// 存档
+func TestRtdbConnect_Archive(t *testing.T) {
+	conn, err := Login(Hostname, Port, Username, Password)
+	if err != nil {
+		t.Fatal("登录用户失败", err)
+	}
+	defer func() { _ = conn.Logout() }()
+
+	err = conn.GetArchiveFileList()
+	if err != nil {
+		t.Error("获取存档列表失败：", err)
+		return
+	}
+}
