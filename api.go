@@ -5478,7 +5478,7 @@ const (
 )
 
 // RtdbArchiveState 历史存档文件状态
-type RtdbArchiveState uint32
+type RtdbArchiveState int32
 
 const (
 	// RtdbArchiveStateInvalid 无效
@@ -9845,6 +9845,9 @@ func RawRtdbaShiftActivedWarp(handle ConnectHandle) RtdbError {
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdba_get_archives_warp(rtdb_int32 handle, rtdb_int32* count, rtdb_path_string* paths, rtdb_filename_string* files, rtdb_int32 *states)
 func RawRtdbaGetArchivesWarp(handle ConnectHandle, maxCount int32) ([]string, []string, []RtdbArchiveState, RtdbError) {
+	if maxCount == 0 {
+		return []string{}, []string{}, []RtdbArchiveState{}, RteOk
+	}
 	cHandle := C.rtdb_int32(handle)
 	cCount := C.rtdb_int32(maxCount)
 	paths := make([]C.rtdb_path_string, maxCount)
@@ -9852,9 +9855,6 @@ func RawRtdbaGetArchivesWarp(handle ConnectHandle, maxCount int32) ([]string, []
 	states := make([]RtdbArchiveState, maxCount)
 	cStates := (*C.rtdb_int32)(unsafe.Pointer(&states[0]))
 	e := C.rtdba_get_archives_warp(cHandle, &cCount, &paths[0], &files[0], cStates)
-	if cCount == 0 {
-		return []string{}, []string{}, []RtdbArchiveState{}, RtdbError(e)
-	}
 	goPaths := make([]string, 0)
 	for i := int32(0); i < int32(cCount); i++ {
 		str := C.GoString((*C.char)(unsafe.Pointer(&paths[i][0])))
