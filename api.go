@@ -6576,6 +6576,9 @@ func RawRtdbConnectionCountWarp(handle ConnectHandle, nodeNumber int32) (int32, 
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdb_get_connections_warp(rtdb_int32 handle, rtdb_int32 node_number, rtdb_int32 *sockets, rtdb_int32 *count)
 func RawRtdbGetConnectionsWarp(handle ConnectHandle, nodeNumber int32, count int32) ([]SocketHandle, RtdbError) {
+	if count == 0 {
+		return []SocketHandle{}, RteOk
+	}
 	cHandle := C.rtdb_int32(handle)
 	cNodeNumber := C.rtdb_int32(nodeNumber)
 	cCount := C.rtdb_int32(count)
@@ -7676,6 +7679,9 @@ func RawRtdbbTablesCountWarp(handle ConnectHandle) (int32, RtdbError) {
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_get_tables_warp(rtdb_int32 handle, rtdb_int32 *ids, rtdb_int32 *count)
 func RawRtdbbGetTablesWarp(handle ConnectHandle, count int32) ([]TableID, RtdbError) {
+	if count == 0 {
+		return []TableID{}, RteOk
+	}
 	cHandle := C.rtdb_int32(handle)
 	ids := make([]TableID, count)
 	cgoIDs := (*C.rtdb_int32)(unsafe.Pointer(&ids[0]))
@@ -8094,6 +8100,9 @@ func RawRtdbbSearchInBatchesWarp(handle ConnectHandle, start int32, count int32,
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_search_ex_warp(rtdb_int32 handle, const char *tagmask, const char *tablemask, const char *source, const char *unit, const char *desc, const char *instrument, const char *typemask, rtdb_int32 classofmask, rtdb_int32 timeunitmask, rtdb_int32 othertypemask, const char *othertypemaskvalue, rtdb_int32 mode, rtdb_int32 *ids, rtdb_int32 *count)
 func RawRtdbbSearchExWarp(handle ConnectHandle, maxCount int32, tagMask, tableMask, source, unit, desc, instrument, typeMask string, classOfMask RtdbType, timeUnitMask RtdbPrecision, otherTypeMask RtdbSearch, otherTypeMaskValue string, model RtdbSortFlag) ([]PointID, RtdbError) {
+	if maxCount == 0 {
+		return []PointID{}, RteOk
+	}
 	cHandle := C.rtdb_int32(handle)
 	if strings.TrimSpace(tagMask) == "" {
 		tagMask = "*"
@@ -8509,6 +8518,9 @@ func RawRtdbbGetRecycledPointsWarp(handle ConnectHandle, count int32) ([]PointID
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_search_recycled_points_in_batches_warp(rtdb_int32 handle, rtdb_int32 start, const char *tagmask, const char *fullmask, const char *source, const char *unit, const char *desc, const char *instrument, rtdb_int32 mode, rtdb_int32 *ids, rtdb_int32 *count)
 func RawRtdbbSearchRecycledPointsInBatchesWarp(handle ConnectHandle, start int32, count int32, tagMask, fullMask, source, unit, desc, instrument string, mode RtdbSortFlag) ([]PointID, RtdbError) {
+	if count == 0 {
+		return []PointID{}, RteOk
+	}
 	cHandle := C.rtdb_int32(handle)
 	cStart := C.rtdb_int32(start)
 	cTagMask := C.CString(tagMask)
@@ -8677,6 +8689,9 @@ func RawRtdbbGetNamedTypesCountWarp(handle ConnectHandle) (int32, RtdbError) {
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbb_get_all_named_types_warp(rtdb_int32 handle, rtdb_int32* count, char* name[RTDB_TYPE_NAME_SIZE], rtdb_int32* field_counts)
 func RawRtdbbGetAllNamedTypesWarp(handle ConnectHandle, count int32) ([]string, []int32, RtdbError) {
+	if count == 0 {
+		return []string{}, []int32{}, RteOk
+	}
 	cHandle := C.rtdb_int32(handle)
 	cCount := C.rtdb_int32(count)
 	names := make([]*C.char, count)

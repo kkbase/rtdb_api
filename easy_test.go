@@ -720,7 +720,7 @@ func TestRtdbConnect_GetPointCountFromValueType(t *testing.T) {
 	fmt.Println(count)
 }
 
-// 存档
+// 存档, TODO
 func TestRtdbConnect_Archive(t *testing.T) {
 	conn, err := Login(Hostname, Port, Username, Password)
 	if err != nil {
