@@ -5,6 +5,8 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"golang.org/x/text/encoding/simplifiedchinese"
+	"golang.org/x/text/transform"
 	"path"
 	"strconv"
 	"time"
@@ -994,6 +996,11 @@ func (v *TVQ) GetRtdbString() string {
 
 // GetRtdbBlob 获取[]byte类型数值
 func (v *TVQ) GetRtdbBlob() []byte {
+	return v.Value.BytesValue
+}
+
+// GetRtdbNamedObj 获取自定义类型数值
+func (v *TVQ) GetRtdbNamedObj() []byte {
 	return v.Value.BytesValue
 }
 
@@ -2329,5 +2336,83 @@ func (c *RtdbConnect) GetArchiveFileList() error {
 
 // WriteValue 写入值
 func (c *RtdbConnect) WriteValue(id PointID, tvq TVQ) error {
+	rtdbType, _ := tvq.GetRtdbType()
+	datetime, subtime := tvq.GetRtdbTimestamp()
+	quality := tvq.GetRtdbQuality()
+	switch rtdbType {
+	case RtdbTypeBool, RtdbTypeUint8, RtdbTypeInt8, RtdbTypeChar, RtdbTypeUint16, RtdbTypeInt16, RtdbTypeUint32, RtdbTypeInt32, RtdbTypeInt64:
+		value := tvq.GetRtdbInt()
+		rtes, rte := RawRtdbsPutSnapshots64Warp(c.ConnectHandle, []PointID{id}, []TimestampType{datetime}, []SubtimeType{subtime}, []float64{0}, []int64{value}, []Quality{quality})
+		if !RteIsOk(rte) {
+			return rte.GoError()
+		}
+		if len(rtes) != 1 {
+			return errors.New("rtes != 1")
+		}
+		if !RteIsOk(rtes[0]) {
+			return rtes[0].GoError()
+		}
+	case RtdbTypeReal16, RtdbTypeReal32, RtdbTypeReal64, RtdbTypeFp16, RtdbTypeFp32, RtdbTypeFp64:
+		value := tvq.GetRtdbFloat()
+		rtes, rte := RawRtdbsPutSnapshots64Warp(c.ConnectHandle, []PointID{id}, []TimestampType{datetime}, []SubtimeType{subtime}, []float64{value}, []int64{0}, []Quality{quality})
+		if !RteIsOk(rte) {
+			return rte.GoError()
+		}
+		if len(rtes) != 1 {
+			return errors.New("rtes != 1")
+		}
+		if !RteIsOk(rtes[0]) {
+			return rtes[0].GoError()
+		}
+	case RtdbTypeCoor:
+		value := tvq.GetRtdbCoordinates()
+		rtes, rte := RawRtdbsPutCoorSnapshots64Warp(c.ConnectHandle, []PointID{id}, []TimestampType{datetime}, []SubtimeType{subtime}, []float32{value.X}, []float32{value.Y}, []Quality{quality})
+		if !RteIsOk(rte) {
+			return rte.GoError()
+		}
+		if len(rtes) != 1 {
+			return errors.New("rtes != 1")
+		}
+		if !RteIsOk(rtes[0]) {
+			return rtes[0].GoError()
+		}
+	case RtdbTypeString:
+		str := tvq.GetRtdbString()
+		var data []byte
+		if c.ServerOsType == RtdbOsLinux {
+			data = []byte(str)
+		} else if c.ServerOsType == RtdbOsWindows {
+			encoder := simplifiedchinese.GBK.NewEncoder()
+			buf, n, err := transform.Bytes(encoder, []byte(str))
+			if err != nil {
+				return errors.New("str转换成GBK格式[]byte报错：" + err.Error())
+			}
+			data = buf[:n]
+		} else {
+			panic("分支不可达, 未知的OsType")
+		}
+		rte := RawRtdbsPutBlobSnapshot64Warp(c.ConnectHandle, id, datetime, subtime, data, quality)
+		if !RteIsOk(rte) {
+			return rte.GoError()
+		}
+	case RtdbTypeBlob, RtdbTypeNamedT:
+		data := tvq.GetRtdbBlob()
+		rte := RawRtdbsPutBlobSnapshot64Warp(c.ConnectHandle, id, datetime, subtime, data, quality)
+		if !RteIsOk(rte) {
+			return rte.GoError()
+		}
+	case RtdbTypeDatetime:
+		date := tvq.GetRtdbString()
+		rtes, rte := RawRtdbsPutDatetimeSnapshots64Warp(c.ConnectHandle, []PointID{id}, []TimestampType{datetime}, []SubtimeType{subtime}, []string{date}, []Quality{quality})
+		if !RteIsOk(rte) {
+			return rte.GoError()
+		}
+		if len(rtes) != 1 {
+			return errors.New("rtes != 1")
+		}
+		if !RteIsOk(rtes[0]) {
+			return rtes[0].GoError()
+		}
+	}
 	return nil
 }
