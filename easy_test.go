@@ -703,3 +703,19 @@ func TestRtdbConnect_Recycler(t *testing.T) {
 		return
 	}
 }
+
+// 获取某个数值类型对应的点数量
+func TestRtdbConnect_GetPointCountFromValueType(t *testing.T) {
+	conn, err := Login(Hostname, Port, Username, Password)
+	if err != nil {
+		t.Fatal("登录用户失败", err)
+	}
+	defer func() { _ = conn.Logout() }()
+
+	count, err := conn.GetPointCountFromValueType(ValueTypeInt32)
+	if err != nil {
+		t.Error("获取int32类型对应的count失败:", err)
+		return
+	}
+	fmt.Println(count)
+}

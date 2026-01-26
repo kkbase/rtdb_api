@@ -2023,3 +2023,27 @@ func (c *RtdbConnect) SearchRecycledPoint(start int32, count int32, tagMask, tab
 
 	return maxCount, infos, errs, nil
 }
+
+// GetPointCountFromValueType 获取某个数据类型的点个数 (可以是内置类型，也可以是自定义类型)
+//
+// input:
+//   - valueType 数值类型
+//
+// output:
+//   - int32(count) 该数值类型对应的点数量
+func (c *RtdbConnect) GetPointCountFromValueType(valueType ValueType) (int32, error) {
+	rtdbType, name := valueType.ToRawType()
+	if rtdbType == RtdbTypeNamedT {
+		count, rte := RawRtdbbGetNamedTypePointsCountWarp(c.ConnectHandle, name)
+		if !RteIsOk(rte) {
+			return 0, rte.GoError()
+		}
+		return count, nil
+	} else {
+		count, rte := RawRtdbbGetBaseTypePointsCountWarp(c.ConnectHandle, rtdbType)
+		if !RteIsOk(rte) {
+			return 0, rte.GoError()
+		}
+		return count, nil
+	}
+}
