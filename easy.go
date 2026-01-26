@@ -2335,48 +2335,93 @@ func (c *RtdbConnect) GetArchiveFileList() error {
 }
 
 // WriteValue 写入值
-func (c *RtdbConnect) WriteValue(id PointID, tvq TVQ) error {
+func (c *RtdbConnect) WriteValue(id PointID, fix bool, tvq TVQ) error {
 	rtdbType, _ := tvq.GetRtdbType()
 	datetime, subtime := tvq.GetRtdbTimestamp()
 	quality := tvq.GetRtdbQuality()
 	switch rtdbType {
 	case RtdbTypeBool, RtdbTypeUint8, RtdbTypeInt8, RtdbTypeChar, RtdbTypeUint16, RtdbTypeInt16, RtdbTypeUint32, RtdbTypeInt32, RtdbTypeInt64:
-		value := tvq.GetRtdbInt()
-		rtes, rte := RawRtdbsPutSnapshots64Warp(c.ConnectHandle, []PointID{id}, []TimestampType{datetime}, []SubtimeType{subtime}, []float64{0}, []int64{value}, []Quality{quality})
-		if !RteIsOk(rte) {
-			return rte.GoError()
-		}
-		if len(rtes) != 1 {
-			return errors.New("rtes != 1")
-		}
-		if !RteIsOk(rtes[0]) {
-			return rtes[0].GoError()
+		if fix {
+			value := tvq.GetRtdbInt()
+			rtes, rte := RawRtdbsFixSnapshots64Warp(c.ConnectHandle, []PointID{id}, []TimestampType{datetime}, []SubtimeType{subtime}, []float64{0}, []int64{value}, []Quality{quality})
+			if !RteIsOk(rte) {
+				return rte.GoError()
+			}
+			if len(rtes) != 1 {
+				return errors.New("rtes != 1")
+			}
+			if !RteIsOk(rtes[0]) {
+				return rtes[0].GoError()
+			}
+		} else {
+			value := tvq.GetRtdbInt()
+			rtes, rte := RawRtdbsPutSnapshots64Warp(c.ConnectHandle, []PointID{id}, []TimestampType{datetime}, []SubtimeType{subtime}, []float64{0}, []int64{value}, []Quality{quality})
+			if !RteIsOk(rte) {
+				return rte.GoError()
+			}
+			if len(rtes) != 1 {
+				return errors.New("rtes != 1")
+			}
+			if !RteIsOk(rtes[0]) {
+				return rtes[0].GoError()
+			}
 		}
 	case RtdbTypeReal16, RtdbTypeReal32, RtdbTypeReal64, RtdbTypeFp16, RtdbTypeFp32, RtdbTypeFp64:
-		value := tvq.GetRtdbFloat()
-		rtes, rte := RawRtdbsPutSnapshots64Warp(c.ConnectHandle, []PointID{id}, []TimestampType{datetime}, []SubtimeType{subtime}, []float64{value}, []int64{0}, []Quality{quality})
-		if !RteIsOk(rte) {
-			return rte.GoError()
-		}
-		if len(rtes) != 1 {
-			return errors.New("rtes != 1")
-		}
-		if !RteIsOk(rtes[0]) {
-			return rtes[0].GoError()
+		if fix {
+			value := tvq.GetRtdbFloat()
+			rtes, rte := RawRtdbsFixSnapshots64Warp(c.ConnectHandle, []PointID{id}, []TimestampType{datetime}, []SubtimeType{subtime}, []float64{value}, []int64{0}, []Quality{quality})
+			if !RteIsOk(rte) {
+				return rte.GoError()
+			}
+			if len(rtes) != 1 {
+				return errors.New("rtes != 1")
+			}
+			if !RteIsOk(rtes[0]) {
+				return rtes[0].GoError()
+			}
+		} else {
+			value := tvq.GetRtdbFloat()
+			rtes, rte := RawRtdbsPutSnapshots64Warp(c.ConnectHandle, []PointID{id}, []TimestampType{datetime}, []SubtimeType{subtime}, []float64{value}, []int64{0}, []Quality{quality})
+			if !RteIsOk(rte) {
+				return rte.GoError()
+			}
+			if len(rtes) != 1 {
+				return errors.New("rtes != 1")
+			}
+			if !RteIsOk(rtes[0]) {
+				return rtes[0].GoError()
+			}
 		}
 	case RtdbTypeCoor:
-		value := tvq.GetRtdbCoordinates()
-		rtes, rte := RawRtdbsPutCoorSnapshots64Warp(c.ConnectHandle, []PointID{id}, []TimestampType{datetime}, []SubtimeType{subtime}, []float32{value.X}, []float32{value.Y}, []Quality{quality})
-		if !RteIsOk(rte) {
-			return rte.GoError()
-		}
-		if len(rtes) != 1 {
-			return errors.New("rtes != 1")
-		}
-		if !RteIsOk(rtes[0]) {
-			return rtes[0].GoError()
+		if fix {
+			value := tvq.GetRtdbCoordinates()
+			rtes, rte := RawRtdbsFixCoorSnapshots64Warp(c.ConnectHandle, []PointID{id}, []TimestampType{datetime}, []SubtimeType{subtime}, []float32{value.X}, []float32{value.Y}, []Quality{quality})
+			if !RteIsOk(rte) {
+				return rte.GoError()
+			}
+			if len(rtes) != 1 {
+				return errors.New("rtes != 1")
+			}
+			if !RteIsOk(rtes[0]) {
+				return rtes[0].GoError()
+			}
+		} else {
+			value := tvq.GetRtdbCoordinates()
+			rtes, rte := RawRtdbsPutCoorSnapshots64Warp(c.ConnectHandle, []PointID{id}, []TimestampType{datetime}, []SubtimeType{subtime}, []float32{value.X}, []float32{value.Y}, []Quality{quality})
+			if !RteIsOk(rte) {
+				return rte.GoError()
+			}
+			if len(rtes) != 1 {
+				return errors.New("rtes != 1")
+			}
+			if !RteIsOk(rtes[0]) {
+				return rtes[0].GoError()
+			}
 		}
 	case RtdbTypeString:
+		if fix {
+			return errors.New("string类型不支持fix")
+		}
 		str := tvq.GetRtdbString()
 		var data []byte
 		if c.ServerOsType == RtdbOsLinux {
@@ -2391,17 +2436,24 @@ func (c *RtdbConnect) WriteValue(id PointID, tvq TVQ) error {
 		} else {
 			panic("分支不可达, 未知的OsType")
 		}
+
 		rte := RawRtdbsPutBlobSnapshot64Warp(c.ConnectHandle, id, datetime, subtime, data, quality)
 		if !RteIsOk(rte) {
 			return rte.GoError()
 		}
 	case RtdbTypeBlob, RtdbTypeNamedT:
+		if fix {
+			return errors.New("blob|typeNamedT类型不支持fix")
+		}
 		data := tvq.GetRtdbBlob()
 		rte := RawRtdbsPutBlobSnapshot64Warp(c.ConnectHandle, id, datetime, subtime, data, quality)
 		if !RteIsOk(rte) {
 			return rte.GoError()
 		}
 	case RtdbTypeDatetime:
+		if fix {
+			return errors.New("datetime类型不支持fix")
+		}
 		date := tvq.GetRtdbString()
 		rtes, rte := RawRtdbsPutDatetimeSnapshots64Warp(c.ConnectHandle, []PointID{id}, []TimestampType{datetime}, []SubtimeType{subtime}, []string{date}, []Quality{quality})
 		if !RteIsOk(rte) {
