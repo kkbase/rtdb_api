@@ -734,3 +734,40 @@ func TestRtdbConnect_Archive(t *testing.T) {
 		return
 	}
 }
+
+// 点值(TVQ)读写
+func TestRtdbConnect_Value(t *testing.T) {
+	conn, err := Login(Hostname, Port, Username, Password)
+	if err != nil {
+		t.Fatal("登录用户失败", err)
+	}
+	defer func() { _ = conn.Logout() }()
+
+	// 创建表
+	table, err := conn.CreateTable("ppp", "ppp desc")
+	if err != nil {
+		t.Error("创建表失败：", err)
+		return
+	}
+	// 删除表
+	defer func() { _ = conn.DeleteTable(table.ID) }()
+
+	// 添加点
+	info := NewPointInfo("aaa", table.ID, ValueTypeInt32, PointBase, RtdbPrecisionMicro, "", "")
+	info.SetLimit(-100, 100, 0)
+	pInfo, err := conn.AddPoint(info)
+	if err != nil {
+		t.Error("添加点失败: ", err)
+		return
+	}
+
+	// 删除点
+	defer func() { _ = conn.DeletePoint(pInfo.ID) }()
+
+	// 写入数据
+	err = conn.WriteValue(pInfo.ID, NewTvqInt32(time.Now().AddDate(0, 0, 1), 1, Quality(0)))
+	if err != nil {
+		t.Error("写入数据失败：", err)
+		return
+	}
+}
