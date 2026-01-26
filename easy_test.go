@@ -597,3 +597,109 @@ func TestRtdbConnect_Point(t *testing.T) {
 	fmt.Println("点总数：", count)
 	fmt.Println(ps2)
 }
+
+// 回收站 (标签点删除后会先进入回收站，从回收站清楚后才算是彻底删除)
+func TestRtdbConnect_Recycler(t *testing.T) {
+	conn, err := Login(Hostname, Port, Username, Password)
+	if err != nil {
+		t.Fatal("登录用户失败", err)
+	}
+	defer func() { _ = conn.Logout() }()
+
+	// 清空回收站
+	err = conn.ClearRecycler()
+	if err != nil {
+		t.Error("清空回收站失败：", err)
+		return
+	}
+
+	// 创建表
+	table, err := conn.CreateTable("ppp", "ppp desc")
+	if err != nil {
+		t.Error("创建表失败：", err)
+		return
+	}
+	// 删除表
+	defer func() { _ = conn.DeleteTable(table.ID) }()
+
+	// 添加点
+	info := NewPointInfo("aaa", table.ID, ValueTypeInt32, PointBase, RtdbPrecisionMicro, "", "")
+	info.SetLimit(-100, 100, 0)
+	pInfo, err := conn.AddPoint(info)
+	if err != nil {
+		t.Error("添加点失败: ", err)
+		return
+	}
+
+	// 删除点, 注意，此时回收站中应该有一个点的
+	err = conn.DeletePoint(pInfo.ID)
+	if err != nil {
+		t.Error("删除点失败: ", err)
+		return
+	}
+
+	// 分批获取回收站中的点
+	rCount, infos, errs, err := conn.GetRecycledPoints(0, 1024)
+	if err != nil {
+		t.Error("获取点失败：", err)
+		return
+	}
+	if rCount != 1 {
+		t.Error("回收站中点数量不为1")
+		return
+	}
+	if errs[0] != nil {
+		t.Error("获取点信息失败：", errs[0])
+		return
+	}
+	fmt.Println(infos)
+
+	// 恢复点到表
+	err = conn.RecoverPoint(table.ID, infos[0].ID)
+	if err != nil {
+		t.Error("恢复点失败:", err)
+		return
+	}
+
+	// 查找已恢复的点
+	infos, errs, err = conn.FindPoints([]string{"ppp.aaa"})
+	if err != nil {
+		t.Error("查找点失败：", err)
+		return
+	}
+	if errs[0] != nil {
+		t.Error("获取点信息失败：", errs[0])
+		return
+	}
+	fmt.Println(infos)
+
+	// 删除点, 此时回收站中点个数应该为1
+	err = conn.DeletePoint(infos[0].ID)
+	if err != nil {
+		t.Error("删除点失败：", err)
+		return
+	}
+
+	// 在回收站中搜索点
+	rCount, infos, errs, err = conn.SearchRecycledPoint(0, 1024, "", "", "", "", "", "", RtdbSortFlagDescend)
+	if err != nil {
+		t.Error("查找点失败：", err)
+		return
+	}
+	if errs[0] != nil {
+		t.Error("获取点信息失败：", errs[0])
+		return
+	}
+	if rCount != 1 {
+		t.Error("回收站中的点应为1")
+		return
+	}
+	fmt.Println(infos[0])
+
+	// 从回收站中清除点，此时点会被彻底删除
+	err = conn.PurgePoint(infos[0].ID)
+	if err != nil {
+		t.Error("从回收站中清除点失败：", err)
+		return
+	}
+}

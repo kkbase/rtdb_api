@@ -1930,6 +1930,11 @@ func (c *RtdbConnect) ClearRecycler() error {
 // input:
 //   - start 开始ID
 //   - count 一次最多返回点个数
+//
+// output:
+//   - int32(count) 回收站中的总点数
+//   - []*PointInfo(infos) 点信息列表
+//   - []error(errs) 获取点信息时的错误列表
 func (c *RtdbConnect) GetRecycledPoints(start int32, count int32) (int32, []*PointInfo, []error, error) {
 	count, rte := RawRtdbbGetRecycledPointsCountWarp(c.ConnectHandle)
 	if !RteIsOk(rte) {
@@ -1975,12 +1980,28 @@ func (c *RtdbConnect) PurgePoint(id PointID) error {
 }
 
 // SearchRecycledPoint 从回收站中搜索点
-func (c *RtdbConnect) SearchRecycledPoint(start int32, count int32, tagMask, fullMask, source, unit, desc, instrument string, mode RtdbSortFlag) (int32, []*PointInfo, []error, error) {
+//
+// input:
+//   - start 分页开始位置
+//   - count 分页获取个数
+//   - tagMask 标签点名称掩码，支持"*"和"?"通配符，缺省设置为"*"，长度不得超过 RTDB_TAG_SIZE，支持多个搜索条件，以空格分隔。
+//   - tableMask 标签点表名称掩码，支持"*"和"?"通配符，缺省设置为"*"，长度不得超过 RTDB_TAG_SIZE，支持多个搜索条件，以空格分隔。
+//   - source 数据源集合，字符串中的每个字符均表示一个数据源，空字符串表示不用数据源作搜索条件，缺省设置为空，长度不得超过 RTDB_DESC_SIZE。
+//   - unit 标签点工程单位的子集，工程单位中包含该参数的标签点均满足条件，空字符串表示不用工程单位作搜索条件，缺省设置为空，长度不得超过 RTDB_UNIT_SIZE。
+//   - desc 标签点描述的子集，描述中包含该参数的标签点均满足条件，空字符串表示不用描述作搜索条件，缺省设置为空，长度不得超过 RTDB_SOURCE_SIZE。
+//   - instrument 标签点设备名称。缺省设置为空，长度不得超过 RTDB_INSTRUMENT_SIZE。
+//   - mode 搜索结果排序模式
+//
+// output:
+//   - int32(count) 回收站中的总点数
+//   - []*PointInfo(infos) 点信息列表
+//   - []error(errs) 获取点信息时的错误列表
+func (c *RtdbConnect) SearchRecycledPoint(start int32, count int32, tagMask, tableMask, source, unit, desc, instrument string, mode RtdbSortFlag) (int32, []*PointInfo, []error, error) {
 	maxCount, rte := RawRtdbbGetRecycledPointsCountWarp(c.ConnectHandle)
 	if !RteIsOk(rte) {
 		return 0, nil, nil, rte.GoError()
 	}
-	ids, rte := RawRtdbbSearchRecycledPointsInBatchesWarp(c.ConnectHandle, start, maxCount, tagMask, fullMask, source, unit, desc, instrument, mode)
+	ids, rte := RawRtdbbSearchRecycledPointsInBatchesWarp(c.ConnectHandle, start, maxCount, tagMask, tableMask, source, unit, desc, instrument, mode)
 	if !RteIsOk(rte) {
 		return 0, nil, nil, rte.GoError()
 	}
