@@ -2335,6 +2335,11 @@ func (c *RtdbConnect) GetArchiveFileList() error {
 }
 
 // WriteValue 写入值
+//
+// input:
+//   - id 标签点ID
+//   - fix 是否覆盖写入，备注：只有Int、Float和Coor支持
+//   - tvq 时间戳+数值+质量码
 func (c *RtdbConnect) WriteValue(id PointID, fix bool, tvq TVQ) error {
 	rtdbType, _ := tvq.GetRtdbType()
 	datetime, subtime := tvq.GetRtdbTimestamp()
