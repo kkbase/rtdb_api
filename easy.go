@@ -739,24 +739,6 @@ const (
 	PointInfoFieldPeriod = PointInfoField("period")
 )
 
-/*
-// GetRtdbTimestamp 获取时间戳
-func (v *TVQ) GetRtdbTimestamp() (TimestampType, SubtimeType) {
-	return TimestampType(v.Timestamp.Unix()), SubtimeType(v.Timestamp.Nanosecond())
-}
-
-// GetRtdbValue 获取值
-func (v *TVQ) GetRtdbValue() (float64, int64, []byte, RtdbType) {
-	rtdbType, _ := v.ValueType.ToRawType()
-	return v.FloatValue, v.IntValue, v.BytesValue, rtdbType
-}
-
-// GetRtdbQuality 获取质量码
-func (v *TVQ) GetRtdbQuality() Quality {
-	return v.Quality
-}
-*/
-
 // Coordinates 坐标类型Value
 type Coordinates struct {
 	X float32
@@ -765,8 +747,8 @@ type Coordinates struct {
 
 // AnyValue 任意Value, 理想状态下这是一个内联语意(union)，但由于Golang的语法限制，因此这里只能是一个结构
 type AnyValue struct {
-	FloatValue       float64
 	IntValue         int64
+	FloatValue       float64
 	CoordinatesValue Coordinates
 	StringValue      string
 	BytesValue       []byte
@@ -978,6 +960,46 @@ func NewTvqNamed(timestamp time.Time, valueType ValueType, data []byte, quality 
 		Value:     AnyValue{BytesValue: data},
 		Quality:   quality,
 	}
+}
+
+// GetRtdbTimestamp 获取时间戳
+func (v *TVQ) GetRtdbTimestamp() (TimestampType, SubtimeType) {
+	return TimestampType(v.Timestamp.Unix()), SubtimeType(v.Timestamp.Nanosecond())
+}
+
+// GetRtdbType 获取数值类型
+func (v *TVQ) GetRtdbType() (RtdbType, string) {
+	return v.Type.ToRawType()
+}
+
+// GetRtdbInt 获取Int类型数值
+func (v *TVQ) GetRtdbInt() int64 {
+	return v.Value.IntValue
+}
+
+// GetRtdbFloat 获取Float类型数值
+func (v *TVQ) GetRtdbFloat() float64 {
+	return v.Value.FloatValue
+}
+
+// GetRtdbCoordinates 获取坐标类型数值
+func (v *TVQ) GetRtdbCoordinates() Coordinates {
+	return v.Value.CoordinatesValue
+}
+
+// GetRtdbString 获取string类型数值
+func (v *TVQ) GetRtdbString() string {
+	return v.Value.StringValue
+}
+
+// GetRtdbBlob 获取[]byte类型数值
+func (v *TVQ) GetRtdbBlob() []byte {
+	return v.Value.BytesValue
+}
+
+// GetRtdbQuality 获取质量码
+func (v *TVQ) GetRtdbQuality() Quality {
+	return v.Quality
 }
 
 ////////////////////////////////////////////////
