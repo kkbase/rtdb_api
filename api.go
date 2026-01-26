@@ -9844,25 +9844,21 @@ func RawRtdbaShiftActivedWarp(handle ConnectHandle) RtdbError {
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdba_get_archives_warp(rtdb_int32 handle, rtdb_int32* count, rtdb_path_string* paths, rtdb_filename_string* files, rtdb_int32 *states)
-func RawRtdbaGetArchivesWarp(handle ConnectHandle) ([]string, []string, []RtdbArchiveState, RtdbError) {
+func RawRtdbaGetArchivesWarp(handle ConnectHandle, maxCount int32) ([]string, []string, []RtdbArchiveState, RtdbError) {
 	cHandle := C.rtdb_int32(handle)
-	count, err := RawRtdbaGetArchivesCountWarp(handle)
-	if !errors.Is(err, RteOk) {
-		return nil, nil, nil, err
-	}
-	cCount := C.rtdb_int32(count)
-	paths := make([]C.rtdb_path_string, count)
-	files := make([]C.rtdb_filename_string, count)
-	states := make([]RtdbArchiveState, count)
+	cCount := C.rtdb_int32(maxCount)
+	paths := make([]C.rtdb_path_string, maxCount)
+	files := make([]C.rtdb_filename_string, maxCount)
+	states := make([]RtdbArchiveState, maxCount)
 	cStates := (*C.rtdb_int32)(unsafe.Pointer(&states[0]))
 	e := C.rtdba_get_archives_warp(cHandle, &cCount, &paths[0], &files[0], cStates)
 	goPaths := make([]string, 0)
-	for i := int32(0); i < count; i++ {
+	for i := int32(0); i < cCount; i++ {
 		str := C.GoString((*C.char)(unsafe.Pointer(&paths[i][0])))
 		goPaths = append(goPaths, str)
 	}
 	goFiles := make([]string, 0)
-	for i := int32(0); i < count; i++ {
+	for i := int32(0); i < cCount; i++ {
 		str := C.GoString((*C.char)(unsafe.Pointer(&files[i][0])))
 		goFiles = append(goFiles, str)
 	}
