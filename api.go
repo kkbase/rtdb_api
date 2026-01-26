@@ -9853,12 +9853,12 @@ func RawRtdbaGetArchivesWarp(handle ConnectHandle, maxCount int32) ([]string, []
 	cStates := (*C.rtdb_int32)(unsafe.Pointer(&states[0]))
 	e := C.rtdba_get_archives_warp(cHandle, &cCount, &paths[0], &files[0], cStates)
 	goPaths := make([]string, 0)
-	for i := int32(0); i < cCount; i++ {
+	for i := int32(0); i < int32(cCount); i++ {
 		str := C.GoString((*C.char)(unsafe.Pointer(&paths[i][0])))
 		goPaths = append(goPaths, str)
 	}
 	goFiles := make([]string, 0)
-	for i := int32(0); i < cCount; i++ {
+	for i := int32(0); i < int32(cCount); i++ {
 		str := C.GoString((*C.char)(unsafe.Pointer(&files[i][0])))
 		goFiles = append(goFiles, str)
 	}
