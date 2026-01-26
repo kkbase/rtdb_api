@@ -764,6 +764,16 @@ func TestRtdbConnect_Value(t *testing.T) {
 	// 删除点
 	defer func() { _ = conn.DeletePoint(pInfo.ID) }()
 
+	serverTime, err := conn.ServerHostTime()
+	if err != nil {
+		t.Error("获取系统时间失败：", err)
+	}
+	fmt.Println("server time:", serverTime.Format(time.RFC3339))
+	fmt.Println("client time:", time.Now().Format(time.RFC3339))
+
+	tt := time.Now()
+	fmt.Println(TimestampType(tt.Unix()), SubtimeType(tt.Nanosecond()))
+
 	/*
 		RtE_TIMESTAMP_EQUALTO_SNAPSHOT                                            = 0xFFFF1048,  //!< 写入的时间与快照时间相同
 		RtE_TIMESTAMP_EARLIER_THAN_SNAPSHOT                                       = 0xFFFF1049,  //!< 写入的时间比当前快照时间较早
