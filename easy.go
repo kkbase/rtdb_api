@@ -739,264 +739,6 @@ const (
 	PointInfoFieldPeriod = PointInfoField("period")
 )
 
-type TVQ struct {
-	ValueType   ValueType
-	Timestamp   time.Time
-	IntValue    int64
-	FloatValue1 float64
-	FloatValue2 float64
-	StringValue string
-	BytesValue  []byte
-	Quality     Quality
-}
-
-func NewTvqBool(timestamp time.Time, value bool, quality Quality) TVQ {
-	return TVQ{
-		ValueType:   ValueTypeBool,
-		Timestamp:   timestamp,
-		IntValue:    BoolToInt64(value),
-		FloatValue1: 0,
-		FloatValue2: 0,
-		StringValue: "",
-		BytesValue:  nil,
-		Quality:     quality,
-	}
-}
-
-func NewTvqUint8(timestamp time.Time, value uint8, quality Quality) TVQ {
-	return TVQ{
-		ValueType:   ValueTypeUint8,
-		Timestamp:   timestamp,
-		IntValue:    int64(value),
-		FloatValue1: 0,
-		FloatValue2: 0,
-		StringValue: "",
-		BytesValue:  nil,
-		Quality:     quality,
-	}
-}
-
-func NewTvqInt8(timestamp time.Time, value int8, quality Quality) TVQ {
-	return TVQ{
-		ValueType:   ValueTypeInt8,
-		Timestamp:   timestamp,
-		IntValue:    int64(value),
-		FloatValue1: 0,
-		FloatValue2: 0,
-		StringValue: "",
-		BytesValue:  nil,
-		Quality:     quality,
-	}
-}
-
-func NewTvqChar(timestamp time.Time, value byte, quality Quality) TVQ {
-	return TVQ{
-		ValueType:   ValueTypeChar,
-		Timestamp:   timestamp,
-		IntValue:    int64(value),
-		FloatValue1: 0,
-		FloatValue2: 0,
-		StringValue: "",
-		BytesValue:  nil,
-		Quality:     quality,
-	}
-}
-
-func NewTvqUint16(timestamp time.Time, value uint16, quality Quality) TVQ {
-	return TVQ{
-		ValueType:   ValueTypeUint16,
-		Timestamp:   timestamp,
-		IntValue:    int64(value),
-		FloatValue1: 0,
-		FloatValue2: 0,
-		StringValue: "",
-		BytesValue:  nil,
-		Quality:     quality,
-	}
-}
-
-func NewTvqInt16(timestamp time.Time, value int16, quality Quality) TVQ {
-	return TVQ{
-		ValueType:   ValueTypeInt16,
-		Timestamp:   timestamp,
-		IntValue:    int64(value),
-		FloatValue1: 0,
-		FloatValue2: 0,
-		StringValue: "",
-		BytesValue:  nil,
-		Quality:     quality,
-	}
-}
-
-func NewTvqUint32(timestamp time.Time, value uint32, quality Quality) TVQ {
-	return TVQ{
-		ValueType:   ValueTypeUint32,
-		Timestamp:   timestamp,
-		IntValue:    int64(value),
-		FloatValue1: 0,
-		FloatValue2: 0,
-		StringValue: "",
-		BytesValue:  nil,
-		Quality:     quality,
-	}
-}
-
-func NewTvqInt32(timestamp time.Time, value int32, quality Quality) TVQ {
-	return TVQ{
-		ValueType:   ValueTypeInt32,
-		Timestamp:   timestamp,
-		IntValue:    int64(value),
-		FloatValue1: 0,
-		FloatValue2: 0,
-		StringValue: "",
-		BytesValue:  nil,
-		Quality:     quality,
-	}
-}
-
-func NewTvqInt64(timestamp time.Time, value int64, quality Quality) TVQ {
-	return TVQ{
-		ValueType:   ValueTypeInt64,
-		Timestamp:   timestamp,
-		IntValue:    value,
-		FloatValue1: 0,
-		FloatValue2: 0,
-		StringValue: "",
-		BytesValue:  nil,
-		Quality:     quality,
-	}
-}
-
-func NewTvqFloat16(timestamp time.Time, value float32, quality Quality) TVQ {
-	return TVQ{
-		ValueType:   ValueTypeFloat16,
-		Timestamp:   timestamp,
-		IntValue:    0,
-		FloatValue1: float64(value),
-		FloatValue2: 0,
-		StringValue: "",
-		BytesValue:  nil,
-		Quality:     quality,
-	}
-}
-
-func NewTvqFloat32(timestamp time.Time, value float32, quality Quality) TVQ {
-	return TVQ{
-		ValueType:   ValueTypeFloat32,
-		Timestamp:   timestamp,
-		IntValue:    0,
-		FloatValue1: float64(value),
-		FloatValue2: 0,
-		StringValue: "",
-		BytesValue:  nil,
-		Quality:     quality,
-	}
-}
-
-func NewTvqFloat64(timestamp time.Time, value float64, quality Quality) TVQ {
-	return TVQ{
-		ValueType:   ValueTypeFloat64,
-		Timestamp:   timestamp,
-		IntValue:    0,
-		FloatValue1: value,
-		FloatValue2: 0,
-		StringValue: "",
-		BytesValue:  nil,
-		Quality:     quality,
-	}
-}
-
-func NewTvqCoordinates(timestamp time.Time, x, y float32, quality Quality) TVQ {
-	return TVQ{
-		ValueType:   ValueTypeCoor,
-		Timestamp:   timestamp,
-		IntValue:    0,
-		FloatValue1: float64(x),
-		FloatValue2: float64(y),
-		StringValue: "",
-		BytesValue:  nil,
-		Quality:     quality,
-	}
-}
-
-func NewTvqString(timestamp time.Time, str string, quality Quality) TVQ {
-	return TVQ{
-		ValueType:   ValueTypeString,
-		Timestamp:   timestamp,
-		IntValue:    0,
-		FloatValue1: 0,
-		FloatValue2: 0,
-		StringValue: str,
-		BytesValue:  nil,
-		Quality:     quality,
-	}
-}
-
-func NewTvqBlob(timestamp time.Time, data []byte, quality Quality) TVQ {
-	return TVQ{
-		ValueType:   ValueTypeBlob,
-		Timestamp:   timestamp,
-		IntValue:    0,
-		FloatValue1: 0,
-		FloatValue2: 0,
-		StringValue: "",
-		BytesValue:  data,
-		Quality:     quality,
-	}
-}
-
-func NewTvqDatetime(timestamp time.Time, datetime string, quality Quality) TVQ {
-	return TVQ{
-		ValueType:   ValueTypeDatetime,
-		Timestamp:   timestamp,
-		IntValue:    0,
-		FloatValue1: 0,
-		FloatValue2: 0,
-		StringValue: datetime,
-		BytesValue:  nil,
-		Quality:     quality,
-	}
-}
-
-func NewTvqFp16(timestamp time.Time, value float32, quality Quality) TVQ {
-	return TVQ{
-		ValueType:   ValueTypeFp16,
-		Timestamp:   timestamp,
-		IntValue:    0,
-		FloatValue1: float64(value),
-		FloatValue2: 0,
-		StringValue: "",
-		BytesValue:  nil,
-		Quality:     quality,
-	}
-}
-
-func NewTvqFp32(timestamp time.Time, value float32, quality Quality) TVQ {
-	return TVQ{
-		ValueType:   ValueTypeFp32,
-		Timestamp:   timestamp,
-		IntValue:    0,
-		FloatValue1: float64(value),
-		FloatValue2: 0,
-		StringValue: "",
-		BytesValue:  nil,
-		Quality:     quality,
-	}
-}
-
-func NewTvqFp64(timestamp time.Time, value float64, quality Quality) TVQ {
-	return TVQ{
-		ValueType:   ValueTypeFp64,
-		Timestamp:   timestamp,
-		IntValue:    0,
-		FloatValue1: value,
-		FloatValue2: 0,
-		StringValue: "",
-		BytesValue:  nil,
-		Quality:     quality,
-	}
-}
-
 /*
 // GetRtdbTimestamp 获取时间戳
 func (v *TVQ) GetRtdbTimestamp() (TimestampType, SubtimeType) {
@@ -1014,6 +756,229 @@ func (v *TVQ) GetRtdbQuality() Quality {
 	return v.Quality
 }
 */
+
+// Coordinates 坐标类型Value
+type Coordinates struct {
+	X float32
+	Y float32
+}
+
+// AnyValue 任意Value, 理想状态下这是一个内联语意(union)，但由于Golang的语法限制，因此这里只能是一个结构
+type AnyValue struct {
+	FloatValue       float64
+	IntValue         int64
+	CoordinatesValue Coordinates
+	StringValue      string
+	BytesValue       []byte
+}
+
+// TVQ Timestamp + Value + Quality, 单个点值, 兼容所有类型
+type TVQ struct {
+	Timestamp time.Time // 时间戳
+	Type      ValueType // 数值类型
+	Value     AnyValue  // 数值
+	Quality   Quality   // 质量码
+}
+
+// NewTvqBool 新建一个bool类型的TVQ
+func NewTvqBool(timestamp time.Time, value bool, quality Quality) TVQ {
+	return TVQ{
+		Timestamp: timestamp,
+		Type:      ValueTypeBool,
+		Value:     AnyValue{IntValue: BoolToInt64(value)},
+		Quality:   quality,
+	}
+}
+
+// NewTvqUint8 新建一个uint8类型的TVQ
+func NewTvqUint8(timestamp time.Time, value uint8, quality Quality) TVQ {
+	return TVQ{
+		Timestamp: timestamp,
+		Type:      ValueTypeUint8,
+		Value:     AnyValue{IntValue: int64(value)},
+		Quality:   quality,
+	}
+}
+
+// NewTvqInt8 新建一个int8类型的TVQ
+func NewTvqInt8(timestamp time.Time, value int8, quality Quality) TVQ {
+	return TVQ{
+		Timestamp: timestamp,
+		Type:      ValueTypeInt8,
+		Value:     AnyValue{IntValue: int64(value)},
+		Quality:   quality,
+	}
+}
+
+// NewTvqChar 新建一个char类型的TVQ
+func NewTvqChar(timestamp time.Time, value byte, quality Quality) TVQ {
+	return TVQ{
+		Timestamp: timestamp,
+		Type:      ValueTypeChar,
+		Value:     AnyValue{IntValue: int64(value)},
+		Quality:   quality,
+	}
+}
+
+// NewTvqUint16 新建一个uint16类型的TVQ
+func NewTvqUint16(timestamp time.Time, value uint16, quality Quality) TVQ {
+	return TVQ{
+		Timestamp: timestamp,
+		Type:      ValueTypeUint16,
+		Value:     AnyValue{IntValue: int64(value)},
+		Quality:   quality,
+	}
+}
+
+// NewTvqInt16 新建一个int16类型的TVQ
+func NewTvqInt16(timestamp time.Time, value int16, quality Quality) TVQ {
+	return TVQ{
+		Timestamp: timestamp,
+		Type:      ValueTypeInt16,
+		Value:     AnyValue{IntValue: int64(value)},
+		Quality:   quality,
+	}
+}
+
+// NewTvqUint32 新建一个uint32类型的TVQ
+func NewTvqUint32(timestamp time.Time, value uint32, quality Quality) TVQ {
+	return TVQ{
+		Timestamp: timestamp,
+		Type:      ValueTypeUint32,
+		Value:     AnyValue{IntValue: int64(value)},
+		Quality:   quality,
+	}
+}
+
+// NewTvqInt32 新建一个int32类型的TVQ
+func NewTvqInt32(timestamp time.Time, value int32, quality Quality) TVQ {
+	return TVQ{
+		Timestamp: timestamp,
+		Type:      ValueTypeInt32,
+		Value:     AnyValue{IntValue: int64(value)},
+		Quality:   quality,
+	}
+}
+
+// NewTvqInt64 新建一个int64类型的TVQ
+func NewTvqInt64(timestamp time.Time, value int64, quality Quality) TVQ {
+	return TVQ{
+		Timestamp: timestamp,
+		Type:      ValueTypeInt64,
+		Value:     AnyValue{IntValue: value},
+		Quality:   quality,
+	}
+}
+
+// NewTvqFloat16 新建一个float16类型的TVQ (由于golang中没有float16，所以这里用的是float32)
+func NewTvqFloat16(timestamp time.Time, value float32, quality Quality) TVQ {
+	return TVQ{
+		Timestamp: timestamp,
+		Type:      ValueTypeFloat16,
+		Value:     AnyValue{FloatValue: float64(value)},
+		Quality:   quality,
+	}
+}
+
+// NewTvqFloat32 新建一个float32类型的TVQ
+func NewTvqFloat32(timestamp time.Time, value float32, quality Quality) TVQ {
+	return TVQ{
+		Timestamp: timestamp,
+		Type:      ValueTypeFloat32,
+		Value:     AnyValue{FloatValue: float64(value)},
+		Quality:   quality,
+	}
+}
+
+// NewTvqFloat64 新建一个float64类型的TVQ
+func NewTvqFloat64(timestamp time.Time, value float64, quality Quality) TVQ {
+	return TVQ{
+		Timestamp: timestamp,
+		Type:      ValueTypeFloat64,
+		Value:     AnyValue{FloatValue: value},
+		Quality:   quality,
+	}
+}
+
+// NewTvqCoordinates 新建一个坐标(x,y)类型的TVQ
+func NewTvqCoordinates(timestamp time.Time, x, y float32, quality Quality) TVQ {
+	return TVQ{
+		Timestamp: timestamp,
+		Type:      ValueTypeCoor,
+		Value:     AnyValue{CoordinatesValue: Coordinates{X: x, Y: y}},
+		Quality:   quality,
+	}
+}
+
+// NewTvqString 新建一个string类型的TVQ
+func NewTvqString(timestamp time.Time, str string, quality Quality) TVQ {
+	return TVQ{
+		Timestamp: timestamp,
+		Type:      ValueTypeString,
+		Value:     AnyValue{StringValue: str},
+		Quality:   quality,
+	}
+}
+
+// NewTvqBlob 新建一个blob([]byte)类型的TVQ
+func NewTvqBlob(timestamp time.Time, blob []byte, quality Quality) TVQ {
+	return TVQ{
+		Timestamp: timestamp,
+		Type:      ValueTypeBlob,
+		Value:     AnyValue{BytesValue: blob},
+		Quality:   quality,
+	}
+}
+
+// NewTvqDatetime 新建一个时间类型的TVQ
+func NewTvqDatetime(timestamp time.Time, datetime string, quality Quality) TVQ {
+	return TVQ{
+		Timestamp: timestamp,
+		Type:      ValueTypeDatetime,
+		Value:     AnyValue{StringValue: datetime},
+		Quality:   quality,
+	}
+}
+
+// NewTvqFp16 新建一个FP16的TVQ (定点数还没对外开放, 不建议使用)
+func NewTvqFp16(timestamp time.Time, value float32, quality Quality) TVQ {
+	return TVQ{
+		Timestamp: timestamp,
+		Type:      ValueTypeFp16,
+		Value:     AnyValue{FloatValue: float64(value)},
+		Quality:   quality,
+	}
+}
+
+// NewTvqFp32 新建一个FP32的TVQ (定点数还没对外开放, 不建议使用)
+func NewTvqFp32(timestamp time.Time, value float32, quality Quality) TVQ {
+	return TVQ{
+		Timestamp: timestamp,
+		Type:      ValueTypeFp32,
+		Value:     AnyValue{FloatValue: float64(value)},
+		Quality:   quality,
+	}
+}
+
+// NewTvqFp64 新建一个FP64的TVQ (定点数还没对外开放, 不建议使用)
+func NewTvqFp64(timestamp time.Time, value float64, quality Quality) TVQ {
+	return TVQ{
+		Timestamp: timestamp,
+		Type:      ValueTypeFp64,
+		Value:     AnyValue{FloatValue: value},
+		Quality:   quality,
+	}
+}
+
+// NewTvqNamed 新建一个自定义类型的TVQ
+func NewTvqNamed(timestamp time.Time, valueType ValueType, data []byte, quality Quality) TVQ {
+	return TVQ{
+		Timestamp: timestamp,
+		Type:      valueType,
+		Value:     AnyValue{BytesValue: data},
+		Quality:   quality,
+	}
+}
 
 ////////////////////////////////////////////////
 //////////////////上面是一些结构//////////////////
@@ -2342,6 +2307,5 @@ func (c *RtdbConnect) GetArchiveFileList() error {
 
 // WriteValue 写入值
 func (c *RtdbConnect) WriteValue(id PointID, tvq TVQ) error {
-	// rtes, rte := RawRtdbsPutSnapshots64Warp(c.ConnectHandle)
 	return nil
 }
