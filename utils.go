@@ -76,3 +76,11 @@ func SafeSlice[T any](slice []T, start, count int32) []T {
 	// 返回有效的子切片
 	return slice[s:end]
 }
+
+// BoolToInt64 bool转换为Int
+func BoolToInt64(b bool) int64 {
+	if b {
+		return 1
+	}
+	return 0
+}
