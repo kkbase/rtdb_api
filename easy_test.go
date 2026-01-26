@@ -764,6 +764,11 @@ func TestRtdbConnect_Value(t *testing.T) {
 	// 删除点
 	defer func() { _ = conn.DeletePoint(pInfo.ID) }()
 
+	/*
+		RtE_TIMESTAMP_EQUALTO_SNAPSHOT                                            = 0xFFFF1048,  //!< 写入的时间与快照时间相同
+		RtE_TIMESTAMP_EARLIER_THAN_SNAPSHOT                                       = 0xFFFF1049,  //!< 写入的时间比当前快照时间较早
+		RtE_TIMESTAMP_GREATER_THAN_ALLOW                                          = 0xFFFF104A,  //!< 写入的时间超过了允许的时间
+	*/
 	// 写入数据
 	err = conn.WriteValue(pInfo.ID, NewTvqInt32(time.Now().AddDate(0, 0, 1), 1, Quality(0)))
 	if err != nil {
