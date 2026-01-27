@@ -764,6 +764,8 @@ func TestRtdbConnect_Value(t *testing.T) {
 	// 删除点
 	defer func() { _ = conn.DeletePoint(pInfo.ID) }()
 
+	time.Sleep(time.Second)
+
 	serverTime, err := conn.ServerHostTime()
 	if err != nil {
 		t.Error("获取系统时间失败：", err)
@@ -780,7 +782,7 @@ func TestRtdbConnect_Value(t *testing.T) {
 		RtE_TIMESTAMP_GREATER_THAN_ALLOW                                          = 0xFFFF104A,  //!< 写入的时间超过了允许的时间
 	*/
 	// 写入数据
-	err = conn.WriteValue(pInfo.ID, false, NewTvqInt32(time.Now().AddDate(0, 0, 0), 1, Quality(0)))
+	err = conn.WriteValue(pInfo.ID, false, NewTvqInt32(time.Now(), 1, Quality(0)))
 	if err != nil {
 		t.Error("写入数据失败：", err)
 		return

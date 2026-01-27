@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-const Hostname = "127.0.0.1"
+const Hostname = "159.75.187.68"
 const Port = 6327
 const Username = "sa"
 const Password = "golden"
