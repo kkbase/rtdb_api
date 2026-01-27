@@ -752,6 +752,8 @@ func TestRtdbConnect_Value(t *testing.T) {
 	// 删除表
 	defer func() { _ = conn.DeleteTable(table.ID) }()
 
+	time.Sleep(time.Second)
+
 	// 添加点
 	info := NewPointInfo("aaa", table.ID, ValueTypeInt32, PointBase, RtdbPrecisionMicro, "", "")
 	info.SetLimit(-100, 100, 0)
