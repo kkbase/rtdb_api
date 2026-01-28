@@ -778,11 +778,6 @@ func TestRtdbConnect_Value(t *testing.T) {
 	tt := time.Now()
 	fmt.Println(TimestampType(tt.Unix()), SubtimeType(tt.Nanosecond()))
 
-	/*
-		RtE_TIMESTAMP_EQUALTO_SNAPSHOT                                            = 0xFFFF1048,  //!< 写入的时间与快照时间相同
-		RtE_TIMESTAMP_EARLIER_THAN_SNAPSHOT                                       = 0xFFFF1049,  //!< 写入的时间比当前快照时间较早
-		RtE_TIMESTAMP_GREATER_THAN_ALLOW                                          = 0xFFFF104A,  //!< 写入的时间超过了允许的时间
-	*/
 	// 写入数据
 	n := 10
 	for i := 0; i < n; i++ {
