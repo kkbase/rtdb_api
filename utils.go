@@ -18,27 +18,17 @@ func GoStringToCCharArray(s string, p *C.char, n int) {
 		return
 	}
 
-	b := []byte(s)
+	// 直接使用C.CString的理念，但限制长度
+	cStr := C.CString(s)
+	defer C.free(unsafe.Pointer(cStr))
 
-	// 最多拷贝 n-1 个字节，预留 '\0'
-	max := n - 1
-	if len(b) > max {
-		b = b[:max]
-	}
+	// 安全拷贝
+	dst := unsafe.Slice(unsafe.Pointer(p), n)
+	src := unsafe.Slice(unsafe.Pointer(cStr), len(s)+1) // 包含'\0'
 
-	base := uintptr(unsafe.Pointer(p))
-
-	// 逐字节拷贝
-	for i := 0; i < len(b); i++ {
-		*(*byte)(unsafe.Pointer(base + uintptr(i))) = b[i]
-	}
-
-	// 补 '\0'
-	*(*byte)(unsafe.Pointer(base + uintptr(len(b)))) = 0
-
-	// （可选）清零剩余空间
-	for i := len(b) + 1; i < n; i++ {
-		*(*byte)(unsafe.Pointer(base + uintptr(i))) = 0
+	copied := copy(dst, src)
+	if copied == n {
+		dst[n-1] = 0 // 确保终止符
 	}
 }
 
