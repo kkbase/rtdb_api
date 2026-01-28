@@ -2474,10 +2474,6 @@ func (c *RtdbConnect) GetArchiveFileList() error {
 		return rte.GoError()
 	}
 
-	for i := 0; i < len(paths); i++ {
-		fmt.Println(path.Join(paths[i], files[0]), states[i])
-	}
-
 	return nil
 }
 
@@ -2488,7 +2484,6 @@ func (c *RtdbConnect) GetArchiveFileList() error {
 //   - fix 是否覆盖写入，备注：只有Int、Float和Coor支持
 //   - tvq 时间戳+数值+质量码
 func (c *RtdbConnect) WriteValue(info *PointInfo, fix bool, tvq TVQ) error {
-	fmt.Println("tvq:", tvq)
 	errs, err := c.WriteValues(info, fix, []TVQ{tvq})
 	if errs[0] != nil {
 		return errs[0]
@@ -2634,7 +2629,6 @@ func (c *RtdbConnect) WriteSection(fix bool, ptvqs []PTVQ) ([]error, error) {
 			rtes, rte = RawRtdbsPutSnapshots64Warp(c.ConnectHandle, numberIds, numberDatetimes, numberSubtimes, numberValues, numberStates, numberQualities)
 		}
 		if !RteIsOk(rte) {
-			fmt.Println("1111111111111")
 			return nil, rte.GoError()
 		}
 		aIndex := make([]int, 0)
@@ -2655,21 +2649,16 @@ func (c *RtdbConnect) WriteSection(fix bool, ptvqs []PTVQ) ([]error, error) {
 				aQualities = append(aQualities, numberQualities[i])
 			}
 		}
-		fmt.Println("snap_rtes: ", rtes)
 		if len(aIds) != 0 {
 			aRtes, aRte := RawRtdbhPutArchivedValues64Warp(c.ConnectHandle, aIds, aDatetimes, aSubtimes, aValues, aStates, aQualities)
-			fmt.Println("&&&&&&&", aRtes)
 			if !RteIsOk(aRte) {
-				fmt.Println("222222222")
 				return nil, aRte.GoError()
 			}
 			for i, e := range aRtes {
 				rtes[aIndex[i]] = e
-				fmt.Println("!!!!!!", rtes)
 			}
 			for i, e := range rtes {
 				rtnRtes[numberIdx[i]] = e
-				fmt.Println("???????", rtnRtes)
 			}
 		}
 	}
@@ -2683,7 +2672,6 @@ func (c *RtdbConnect) WriteSection(fix bool, ptvqs []PTVQ) ([]error, error) {
 			rtes, rte = RawRtdbsPutCoorSnapshots64Warp(c.ConnectHandle, coorIds, coorDatetimes, coorSubtimes, coorXs, coorYs, coorQualities)
 		}
 		if !RteIsOk(rte) {
-			fmt.Println("33333333333")
 			return nil, rte.GoError()
 		}
 		aIndex := make([]int, 0)
@@ -2707,7 +2695,6 @@ func (c *RtdbConnect) WriteSection(fix bool, ptvqs []PTVQ) ([]error, error) {
 		if len(aIds) != 0 {
 			aRtes, aRte := RawRtdbhPutArchivedCoorValues64Warp(c.ConnectHandle, aIds, aDatetimes, aSubtimes, aXs, aYs, aQualities)
 			if !RteIsOk(aRte) {
-				fmt.Println("444444444444")
 				return nil, aRte.GoError()
 			}
 			for i, e := range aRtes {
@@ -2722,7 +2709,6 @@ func (c *RtdbConnect) WriteSection(fix bool, ptvqs []PTVQ) ([]error, error) {
 	if len(bIds) != 0 {
 		rtes, rte := RawRtdbsPutBlobSnapshots64Warp(c.ConnectHandle, bIds, bDatetimes, bSubtimes, bDatas, bQualities)
 		if !RteIsOk(rte) {
-			fmt.Println("5555555555")
 			return nil, rte.GoError()
 		}
 		aIndex := make([]int, 0)
@@ -2744,7 +2730,6 @@ func (c *RtdbConnect) WriteSection(fix bool, ptvqs []PTVQ) ([]error, error) {
 		if len(aIds) != 0 {
 			aRtes, aRte := RawRtdbhPutArchivedBlobValues64Warp(c.ConnectHandle, aIds, aDatetimes, aSubtimes, aDatas, aQualities)
 			if !RteIsOk(aRte) {
-				fmt.Println("666666666666666666")
 				return nil, aRte.GoError()
 			}
 			for i, e := range aRtes {
@@ -2759,7 +2744,6 @@ func (c *RtdbConnect) WriteSection(fix bool, ptvqs []PTVQ) ([]error, error) {
 	if len(namedIds) != 0 {
 		rtes, rte := RawRtdbsPutNamedTypeSnapshots64Warp(c.ConnectHandle, namedIds, namedDatetimes, namedSubtimes, namedDatas, namedQualities)
 		if !RteIsOk(rte) {
-			fmt.Println("777777777777")
 			return nil, rte.GoError()
 		}
 		aIndex := make([]int, 0)
@@ -2781,7 +2765,6 @@ func (c *RtdbConnect) WriteSection(fix bool, ptvqs []PTVQ) ([]error, error) {
 		if len(aIds) != 0 {
 			aRtes, aRte := RawRtdbhPutArchivedNamedTypeValues64Warp(c.ConnectHandle, aIds, aDatetimes, aSubtimes, aDatas, aQualities)
 			if !RteIsOk(aRte) {
-				fmt.Println("888888888888")
 				return nil, aRte.GoError()
 			}
 			for i, e := range aRtes {
@@ -2796,7 +2779,6 @@ func (c *RtdbConnect) WriteSection(fix bool, ptvqs []PTVQ) ([]error, error) {
 	if len(dtIds) != 0 {
 		rtes, rte := RawRtdbsPutDatetimeSnapshots64Warp(c.ConnectHandle, dtIds, dtDatetimes, dtSubtimes, dtDates, dtQualities)
 		if !RteIsOk(rte) {
-			fmt.Println("99999999999")
 			return nil, rte.GoError()
 		}
 		aIndex := make([]int, 0)
@@ -2818,7 +2800,6 @@ func (c *RtdbConnect) WriteSection(fix bool, ptvqs []PTVQ) ([]error, error) {
 		if len(aIds) != 0 {
 			aRtes, aRte := RawRtdbhPutArchivedDatetimeValues64Warp(c.ConnectHandle, aIds, aDatetimes, aSubtimes, aDates, aQualities)
 			if !RteIsOk(aRte) {
-				fmt.Println("101010101010")
 				return nil, aRte.GoError()
 			}
 			for i, e := range aRtes {
@@ -2830,6 +2811,5 @@ func (c *RtdbConnect) WriteSection(fix bool, ptvqs []PTVQ) ([]error, error) {
 		}
 	}
 
-	fmt.Println("11_11_11_11_11")
 	return RtdbErrorListToErrorList(rtnRtes), nil
 }
