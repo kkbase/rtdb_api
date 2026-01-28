@@ -1063,8 +1063,13 @@ func NewTvqNamed(timestamp time.Time, valueType ValueType, data []byte, quality 
 
 // GetRtdbTimestamp 获取时间戳
 func (v *TVQ) GetRtdbTimestamp(precision RtdbPrecision) (TimestampType, SubtimeType) {
-	datetime := TimestampType(v.Timestamp.Unix())
-	subtime := SubtimeType(v.Timestamp.Nanosecond())
+	return GoTimeToRtdbTimestamp(v.Timestamp, precision)
+}
+
+// GoTimeToRtdbTimestamp time.Time 转换成 (TimestampType, SubtimeType)
+func GoTimeToRtdbTimestamp(timestamp time.Time, precision RtdbPrecision) (TimestampType, SubtimeType) {
+	datetime := TimestampType(timestamp.Unix())
+	subtime := SubtimeType(timestamp.Nanosecond())
 	switch precision {
 	case RtdbPrecisionSecond:
 		subtime = SubtimeType(0)
@@ -1073,8 +1078,21 @@ func (v *TVQ) GetRtdbTimestamp(precision RtdbPrecision) (TimestampType, SubtimeT
 	case RtdbPrecisionMicro:
 		subtime = subtime / 1000
 	}
-	fmt.Println(v.Timestamp, datetime, subtime)
+	fmt.Println(timestamp, datetime, subtime)
 	return datetime, subtime
+}
+
+// RtdbTimestampToGoTime (TimestampType, SubtimeType) 转换成 time.Time
+func RtdbTimestampToGoTime(datetime TimestampType, subtime SubtimeType, precision RtdbPrecision) time.Time {
+	switch precision {
+	case RtdbPrecisionSecond:
+		subtime = SubtimeType(0)
+	case RtdbPrecisionMilli:
+		subtime = subtime * 1000000
+	case RtdbPrecisionMicro:
+		subtime = subtime * 1000
+	}
+	return time.Unix(int64(datetime), int64(subtime))
 }
 
 // GetRtdbType 获取数值类型
@@ -2826,4 +2844,50 @@ func (c *RtdbConnect) WriteSection(fix bool, ptvqs []PTVQ) ([]error, error) {
 	}
 
 	return RtdbErrorListToErrorList(rtnRtes), nil
+}
+
+func (c *RtdbConnect) ReadValue(info *PointInfo, mode RtdbHisMode, timestamp time.Time) (TVQ, error) {
+	rtdbType, _ := info.ValueType.ToRawType()
+	datetime, subtime := GoTimeToRtdbTimestamp(timestamp, info.Precision)
+	switch rtdbType {
+	case RtdbTypeBool, RtdbTypeUint8, RtdbTypeInt8, RtdbTypeChar, RtdbTypeUint16, RtdbTypeInt16, RtdbTypeUint32, RtdbTypeInt32, RtdbTypeInt64, RtdbTypeReal16, RtdbTypeReal32, RtdbTypeReal64, RtdbTypeFp16, RtdbTypeFp32, RtdbTypeFp64:
+		dt, ms, value, state, quality, rte := RawRtdbhGetSingleValue64Warp(c.ConnectHandle, info.ID, mode, datetime, subtime)
+		if !RteIsOk(rte) {
+			return TVQ{}, rte.GoError()
+		}
+		ts := RtdbTimestampToGoTime(dt, ms, info.Precision)
+		switch rtdbType {
+		case RtdbTypeBool:
+			return NewTvqBool(ts, Int64ToBool(state), quality), nil
+		case RtdbTypeUint8:
+			return NewTvqUint8(ts, uint8(state), quality), nil
+		case RtdbTypeInt8:
+			return NewTvqInt8(ts, int8(state), quality), nil
+		case RtdbTypeChar:
+			return NewTvqChar(ts, byte(state), quality), nil
+		case RtdbTypeUint16:
+			return NewTvqUint16(ts, uint16(state), quality), nil
+		case RtdbTypeInt16:
+			return NewTvqInt16(ts, int16(state), quality), nil
+		case RtdbTypeUint32:
+			return NewTvqUint32(ts, uint32(state), quality), nil
+		case RtdbTypeInt32:
+			return NewTvqInt32(ts, int32(state), quality), nil
+		case RtdbTypeInt64:
+			return NewTvqInt64(ts, state, quality), nil
+		case RtdbTypeReal16:
+			return NewTvqFloat16(ts, float32(value), quality), nil
+		case RtdbTypeReal32:
+			return NewTvqFloat32(ts, float32(value), quality), nil
+		case RtdbTypeReal64:
+			return NewTvqFloat64(ts, value, quality), nil
+		case RtdbTypeFp16:
+			return NewTvqFp16(ts, float32(value), quality), nil
+		case RtdbTypeFp32:
+			return NewTvqFp32(ts, float32(value), quality), nil
+		case RtdbTypeFp64:
+			return NewTvqFp64(ts, value, quality), nil
+		}
+	}
+	return TVQ{}, nil
 }

@@ -76,3 +76,12 @@ func BoolToInt64(b bool) int64 {
 	}
 	return 0
 }
+
+// Int64ToBool Int转换为bool
+func Int64ToBool(v int64) bool {
+	if v == 0 {
+		return false
+	} else {
+		return true
+	}
+}
