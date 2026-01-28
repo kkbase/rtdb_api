@@ -513,6 +513,53 @@ func (p *PointInfo) SetCalc(equation string, trigger RtdbTrigger, timeCopy RtdbT
 	p.Period = period
 }
 
+func (p *PointInfo) NewTVQ(timestamp time.Time, value any, quality Quality) TVQ {
+	rawType, name := p.ValueType.ToRawType()
+	switch rawType {
+	case RtdbTypeBool:
+		return NewTvqBool(timestamp, value.(bool), quality)
+	case RtdbTypeUint8:
+		return NewTvqUint8(timestamp, value.(uint8), quality)
+	case RtdbTypeInt8:
+		return NewTvqInt8(timestamp, value.(int8), quality)
+	case RtdbTypeChar:
+		return NewTvqChar(timestamp, value.(byte), quality)
+	case RtdbTypeUint16:
+		return NewTvqUint16(timestamp, value.(uint16), quality)
+	case RtdbTypeInt16:
+		return NewTvqInt16(timestamp, value.(int16), quality)
+	case RtdbTypeUint32:
+		return NewTvqUint32(timestamp, value.(uint32), quality)
+	case RtdbTypeInt32:
+		return NewTvqInt32(timestamp, value.(int32), quality)
+	case RtdbTypeInt64:
+		return NewTvqInt64(timestamp, value.(int64), quality)
+	case RtdbTypeReal16:
+		return NewTvqFloat16(timestamp, value.(float32), quality)
+	case RtdbTypeReal32:
+		return NewTvqFloat32(timestamp, value.(float32), quality)
+	case RtdbTypeReal64:
+		return NewTvqFloat64(timestamp, value.(float64), quality)
+	case RtdbTypeCoor:
+		coordinates := value.(Coordinates)
+		return NewTvqCoordinates(timestamp, coordinates.X, coordinates.Y, quality)
+	case RtdbTypeString:
+		return NewTvqString(timestamp, value.(string), quality)
+	case RtdbTypeBlob:
+		return NewTvqBlob(timestamp, value.([]byte), quality)
+	case RtdbTypeDatetime:
+		return NewTvqDatetime(timestamp, value.(string), quality)
+	case RtdbTypeFp16:
+		return NewTvqFp16(timestamp, value.(float32), quality)
+	case RtdbTypeFp32:
+		return NewTvqFp32(timestamp, value.(float32), quality)
+	case RtdbTypeFp64:
+		return NewTvqFp64(timestamp, value.(float64), quality)
+	default:
+		return NewTvqNamed(timestamp, ValueType(name), value.([]byte), quality)
+	}
+}
+
 // PointInfoToRaw 点信息转换为Raw点属性表
 func PointInfoToRaw(info *PointInfo) (*RtdbPoint, *RtdbScan, *RtdbCalc, string) {
 	rtdbType, namedTypeName := info.ValueType.ToRawType()
