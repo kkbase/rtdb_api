@@ -2,11 +2,14 @@
   <dictionary name="project">
     <words>
       <w>calcs</w>
+      <w>datetimes</w>
       <w>descs</w>
       <w>priv</w>
+      <w>qualitys</w>
       <w>rtdb</w>
       <w>rtes</w>
       <w>subtime</w>
+      <w>subtimes</w>
       <w>tvqs</w>
     </words>
   </dictionary>
