@@ -2607,6 +2607,14 @@ func (c *RtdbConnect) WriteValue(point *PointInfo, fix bool, tvq TVQ) error {
 }
 
 // WriteValues 批量写入值
+//
+// input:
+//   - point 标签点信息
+//   - fix 是否覆盖写入
+//   - tvqs TVQ列表
+//
+// output:
+//   - []error(errs) 错误列表
 func (c *RtdbConnect) WriteValues(point *PointInfo, fix bool, tvqs []TVQ) ([]error, error) {
 	if point.ID == 0 {
 		return nil, errors.New("无效的标签点ID")
