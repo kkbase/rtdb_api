@@ -9305,7 +9305,7 @@ func RawRtdbsPutBlobSnapshot64Warp(handle ConnectHandle, id PointID, datetime Ti
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbs_put_blob_snapshots64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, const rtdb_byte* const* blobs, const rtdb_length_type* lens, const rtdb_int16* qualities, rtdb_error* errors)
-func RawRtdbsPutBlobSnapshots64Warp(handle ConnectHandle, ids []PointID, datetimes []TimestampType, subtimes []SubtimeType, blobs []string, qualities []Quality) ([]RtdbError, RtdbError) {
+func RawRtdbsPutBlobSnapshots64Warp(handle ConnectHandle, ids []PointID, datetimes []TimestampType, subtimes []SubtimeType, blobs [][]byte, qualities []Quality) ([]RtdbError, RtdbError) {
 	cHandle := C.rtdb_int32(handle)
 	cCount := C.rtdb_int32(len(ids))
 	cIds := (*C.rtdb_int32)(&ids[0])
