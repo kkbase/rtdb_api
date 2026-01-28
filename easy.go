@@ -2918,7 +2918,6 @@ func (c *RtdbConnect) WriteValues(point *PointInfo, fix bool, tvqs []TVQ) ([]err
 
 // WriteSection 写断面(批量写入多个Point，每个Point写入一个TVQ)
 func (c *RtdbConnect) WriteSection(fix bool, ptvqs []PTVQ) ([]error, error) {
-
 	// ids := make([]PointID, 0)
 	// datetimes := make([]TimestampType, 0)
 	// subtimes := make([]SubtimeType, 0)
