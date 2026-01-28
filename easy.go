@@ -2653,18 +2653,20 @@ func (c *RtdbConnect) WriteSection(fix bool, ptvqs []PTVQ) ([]error, error) {
 				aQualities = append(aQualities, numberQualities[i])
 			}
 		}
-		aRtes, aRte := RawRtdbhPutArchivedValues64Warp(c.ConnectHandle, aIds, aDatetimes, aSubtimes, aValues, aStates, aQualities)
-		if !RteIsOk(aRte) {
-			return nil, aRte.GoError()
-		}
-		for i, e := range aRtes {
-			if !RteIsOk(e) {
-				rtes[aIndex[i]] = e
+		if len(aIds) != 0 {
+			aRtes, aRte := RawRtdbhPutArchivedValues64Warp(c.ConnectHandle, aIds, aDatetimes, aSubtimes, aValues, aStates, aQualities)
+			if !RteIsOk(aRte) {
+				return nil, aRte.GoError()
 			}
-		}
-		for i, e := range rtes {
-			if !RteIsOk(e) {
-				rtnRtes[numberIdx[i]] = e
+			for i, e := range aRtes {
+				if !RteIsOk(e) {
+					rtes[aIndex[i]] = e
+				}
+			}
+			for i, e := range rtes {
+				if !RteIsOk(e) {
+					rtnRtes[numberIdx[i]] = e
+				}
 			}
 		}
 	}
@@ -2698,18 +2700,20 @@ func (c *RtdbConnect) WriteSection(fix bool, ptvqs []PTVQ) ([]error, error) {
 				aQualities = append(aQualities, coorQualities[i])
 			}
 		}
-		aRtes, aRte := RawRtdbhPutArchivedCoorValues64Warp(c.ConnectHandle, aIds, aDatetimes, aSubtimes, aXs, aYs, aQualities)
-		if !RteIsOk(aRte) {
-			return nil, aRte.GoError()
-		}
-		for i, e := range aRtes {
-			if !RteIsOk(e) {
-				rtes[aIndex[i]] = e
+		if len(aIds) != 0 {
+			aRtes, aRte := RawRtdbhPutArchivedCoorValues64Warp(c.ConnectHandle, aIds, aDatetimes, aSubtimes, aXs, aYs, aQualities)
+			if !RteIsOk(aRte) {
+				return nil, aRte.GoError()
 			}
-		}
-		for i, e := range rtes {
-			if !RteIsOk(e) {
-				rtnRtes[coorIdx[i]] = e
+			for i, e := range aRtes {
+				if !RteIsOk(e) {
+					rtes[aIndex[i]] = e
+				}
+			}
+			for i, e := range rtes {
+				if !RteIsOk(e) {
+					rtnRtes[coorIdx[i]] = e
+				}
 			}
 		}
 	}
@@ -2735,17 +2739,19 @@ func (c *RtdbConnect) WriteSection(fix bool, ptvqs []PTVQ) ([]error, error) {
 				aQualities = append(aQualities, bQualities[i])
 			}
 		}
-		aRtes, aRte := RawRtdbhPutArchivedBlobValues64Warp(c.ConnectHandle, aIds, aDatetimes, aSubtimes, aDatas, aQualities)
-		if !RteIsOk(aRte) {
-			return nil, aRte.GoError()
-		}
-		for i, e := range aRtes {
-			if !RteIsOk(e) {
-				rtes[aIndex[i]] = e
+		if len(aIds) != 0 {
+			aRtes, aRte := RawRtdbhPutArchivedBlobValues64Warp(c.ConnectHandle, aIds, aDatetimes, aSubtimes, aDatas, aQualities)
+			if !RteIsOk(aRte) {
+				return nil, aRte.GoError()
 			}
-		}
-		for i, e := range rtes {
-			rtnRtes[bIdx[i]] = e
+			for i, e := range aRtes {
+				if !RteIsOk(e) {
+					rtes[aIndex[i]] = e
+				}
+			}
+			for i, e := range rtes {
+				rtnRtes[bIdx[i]] = e
+			}
 		}
 	}
 
@@ -2770,18 +2776,20 @@ func (c *RtdbConnect) WriteSection(fix bool, ptvqs []PTVQ) ([]error, error) {
 				aQualities = append(aQualities, namedQualities[i])
 			}
 		}
-		aRtes, aRte := RawRtdbhPutArchivedNamedTypeValues64Warp(c.ConnectHandle, aIds, aDatetimes, aSubtimes, aDatas, aQualities)
-		if !RteIsOk(aRte) {
-			return nil, aRte.GoError()
-		}
-		for i, e := range aRtes {
-			if !RteIsOk(e) {
-				rtes[aIndex[i]] = e
+		if len(aIds) != 0 {
+			aRtes, aRte := RawRtdbhPutArchivedNamedTypeValues64Warp(c.ConnectHandle, aIds, aDatetimes, aSubtimes, aDatas, aQualities)
+			if !RteIsOk(aRte) {
+				return nil, aRte.GoError()
 			}
-		}
-		for i, e := range rtes {
-			if !RteIsOk(e) {
-				rtnRtes[namedIdx[i]] = e
+			for i, e := range aRtes {
+				if !RteIsOk(e) {
+					rtes[aIndex[i]] = e
+				}
+			}
+			for i, e := range rtes {
+				if !RteIsOk(e) {
+					rtnRtes[namedIdx[i]] = e
+				}
 			}
 		}
 	}
@@ -2807,17 +2815,19 @@ func (c *RtdbConnect) WriteSection(fix bool, ptvqs []PTVQ) ([]error, error) {
 				aQualities = append(aQualities, dtQualities[i])
 			}
 		}
-		aRtes, aRte := RawRtdbhPutArchivedDatetimeValues64Warp(c.ConnectHandle, aIds, aDatetimes, aSubtimes, aDates, aQualities)
-		if !RteIsOk(aRte) {
-			return nil, aRte.GoError()
-		}
-		for i, e := range aRtes {
-			if !RteIsOk(e) {
-				rtes[aIndex[i]] = e
+		if len(aIds) != 0 {
+			aRtes, aRte := RawRtdbhPutArchivedDatetimeValues64Warp(c.ConnectHandle, aIds, aDatetimes, aSubtimes, aDates, aQualities)
+			if !RteIsOk(aRte) {
+				return nil, aRte.GoError()
 			}
-		}
-		for i, e := range rtes {
-			rtnRtes[dtIdx[i]] = e
+			for i, e := range aRtes {
+				if !RteIsOk(e) {
+					rtes[aIndex[i]] = e
+				}
+			}
+			for i, e := range rtes {
+				rtnRtes[dtIdx[i]] = e
+			}
 		}
 	}
 
