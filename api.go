@@ -9311,16 +9311,16 @@ func RawRtdbsPutBlobSnapshots64Warp(handle ConnectHandle, ids []PointID, datetim
 	cIds := (*C.rtdb_int32)(&ids[0])
 	cDatetimes := (*C.rtdb_timestamp_type)(unsafe.Pointer(&datetimes[0]))
 	cSubtimes := (*C.rtdb_subtime_type)(&subtimes[0])
-	bs := make([]*C.char, len(ids))
+	cBlobs := make([]*C.rtdb_byte, 0)
 	for i := 0; i < len(ids); i++ {
-		bs[i] = C.CString(blobs[i])
+		cBlobs = append(cBlobs, (*C.rtdb_byte)(C.CBytes(blobs[i])))
 	}
 	defer func() {
-		for i := 0; i < len(ids); i++ {
-			C.free(unsafe.Pointer(bs[i]))
+		for _, b := range cBlobs {
+			C.free(unsafe.Pointer(b))
 		}
 	}()
-	cBs := (**C.uchar)(unsafe.Pointer(&bs[0]))
+	ccBlobs := (**C.uchar)(unsafe.Pointer(&cBlobs[0]))
 	lens := make([]C.rtdb_length_type, 0)
 	for _, b := range blobs {
 		lens = append(lens, C.rtdb_length_type(len(b)))
@@ -9330,7 +9330,7 @@ func RawRtdbsPutBlobSnapshots64Warp(handle ConnectHandle, ids []PointID, datetim
 	errs := make([]RtdbError, len(ids))
 	cErrs := (*C.rtdb_error)(unsafe.Pointer(&errs[0]))
 
-	err := C.rtdbs_put_blob_snapshots64_warp(cHandle, &cCount, cIds, cDatetimes, cSubtimes, cBs, cLens, cQualities, cErrs)
+	err := C.rtdbs_put_blob_snapshots64_warp(cHandle, &cCount, cIds, cDatetimes, cSubtimes, ccBlobs, cLens, cQualities, cErrs)
 	return errs, RtdbError(err)
 }
 
@@ -10974,7 +10974,7 @@ func RawRtdbhGetArchivedDatetimeValues64Warp(handle ConnectHandle, id PointID, m
 //
 // raw_fn:
 //   - rtdb_error RTDBAPI_CALLRULE rtdbh_put_archived_datetime_values64_warp(rtdb_int32 handle, rtdb_int32* count, const rtdb_int32* ids, const rtdb_timestamp_type* datetimes, const rtdb_subtime_type* subtimes, const rtdb_byte* const* dtvalues, const rtdb_length_type* dtlens, const rtdb_int16* qualities, rtdb_error* errors)
-func RawRtdbhPutArchivedDatetimeValues64Warp(handle ConnectHandle, ids []PointID, datetimes []TimestampType, subtimes []SubtimeType, dtValues [][]byte, qualities []Quality) ([]RtdbError, RtdbError) {
+func RawRtdbhPutArchivedDatetimeValues64Warp(handle ConnectHandle, ids []PointID, datetimes []TimestampType, subtimes []SubtimeType, dtValues []string, qualities []Quality) ([]RtdbError, RtdbError) {
 	cHandle := C.rtdb_int32(handle)
 	cCount := C.rtdb_int32(len(ids))
 	cIds := (*C.rtdb_int32)(unsafe.Pointer(&ids[0]))
@@ -10982,7 +10982,7 @@ func RawRtdbhPutArchivedDatetimeValues64Warp(handle ConnectHandle, ids []PointID
 	cSubtimes := (*C.rtdb_subtime_type)(unsafe.Pointer(&subtimes[0]))
 	cDtValues := make([]*C.rtdb_byte, 0)
 	for i := 0; i < len(ids); i++ {
-		cDtValues = append(cDtValues, (*C.rtdb_byte)(unsafe.Pointer(C.CBytes(dtValues[i]))))
+		cDtValues = append(cDtValues, (*C.rtdb_byte)(unsafe.Pointer(C.CString(dtValues[i]))))
 	}
 	defer func() {
 		for i := 0; i < len(ids); i++ {

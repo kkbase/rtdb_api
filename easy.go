@@ -2880,7 +2880,7 @@ func (c *RtdbConnect) WriteValues(point *PointInfo, fix bool, tvqs []TVQ) ([]err
 		aIds := make([]PointID, 0)
 		aDatetimes := make([]TimestampType, 0)
 		aSubtimes := make([]SubtimeType, 0)
-		aDates := make([][]byte, 0)
+		aDates := make([]string, 0)
 		aQualities := make([]Quality, 0)
 		for i, e := range rtes {
 			if errors.Is(e, RteTimestampEarlierThanSnapshot) {
