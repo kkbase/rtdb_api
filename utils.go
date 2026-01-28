@@ -1,5 +1,7 @@
 package rtdb_api
 
+// #include<stdlib.h>
+// #include<string.h>
 import "C"
 import "unsafe"
 
@@ -18,6 +20,19 @@ func GoStringToCCharArray(s string, p *C.char, n int) {
 		return
 	}
 
+	cStr := C.CString(s)
+	defer C.free(unsafe.Pointer(cStr))
+
+	C.strncpy(p, cStr, C.size_t(n-1))
+	p[n-1] = 0 // 确保以'\0'结尾
+}
+
+/*
+func GoStringToCCharArray(s string, p *C.char, n int) {
+	if p == nil || n <= 0 {
+		return
+	}
+
 	// 直接使用C.CString的理念，但限制长度
 	cStr := C.CString(s)
 	defer C.free(unsafe.Pointer(cStr))
@@ -31,6 +46,8 @@ func GoStringToCCharArray(s string, p *C.char, n int) {
 		dst[n-1] = 0 // 确保终止符
 	}
 }
+
+*/
 
 func RtdbErrorListToErrorList(errs []RtdbError) []error {
 	rtn := make([]error, 0)

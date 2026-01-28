@@ -70,7 +70,7 @@ func TestRtdbConnect_GetSetServerOption(t *testing.T) {
 	fmt.Println(opt.GetLiteralValue())
 
 	// 设置服务端选项
-	err = conn.SetServerOption(RtdbParamLockedPagesMem, *opt)
+	err = conn.SetServerOption(RtdbParamLockedPagesMem, NewServerOption(opt.GetLiteralValue()))
 	if err != nil {
 		t.Error("设置服务端选项失败", err)
 		return

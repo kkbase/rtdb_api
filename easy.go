@@ -31,9 +31,9 @@ type ServerOption struct {
 func NewServerOption(option string) ServerOption {
 	intOption, err := strconv.Atoi(option)
 	if err != nil {
-		return ServerOption{StringOption: ParamString(option), IsString: true}
+		return NewStringServerOption(ParamString(option))
 	} else {
-		return ServerOption{IntOption: ParamInt(intOption), IsString: false}
+		return NewIntServerOption(ParamInt(intOption))
 	}
 }
 
@@ -295,6 +295,21 @@ const (
 	// PointScanCalc 计算采集点
 	PointScanCalc = PointClass(RtdbClassBase | RtdbClassScan | RtdbClassCalc)
 )
+
+func (p PointClass) Desc() string {
+	switch p {
+	case PointBase:
+		return "基本点"
+	case PointScan:
+		return "采集点"
+	case PointCalc:
+		return "计算点"
+	case PointScanCalc:
+		return "采集计算点"
+	default:
+		return "未知点类型"
+	}
+}
 
 // IsScan 是否为采集点
 func (pc PointClass) IsScan() bool {
