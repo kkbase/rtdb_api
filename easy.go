@@ -312,13 +312,13 @@ func (p PointClass) Desc() string {
 }
 
 // IsScan 是否为采集点
-func (pc PointClass) IsScan() bool {
-	return pc&PointScan != 0
+func (p PointClass) IsScan() bool {
+	return p&PointScan != 0
 }
 
 // IsCalc 是否为计算点
-func (pc PointClass) IsCalc() bool {
-	return pc&PointCalc != 0
+func (p PointClass) IsCalc() bool {
+	return p&PointCalc != 0
 }
 
 // PointInfo 点属性
@@ -513,6 +513,15 @@ func (p *PointInfo) SetCalc(equation string, trigger RtdbTrigger, timeCopy RtdbT
 	p.Period = period
 }
 
+// NewTVQ 新建TVQ
+//
+// input:
+//   - timestamp: 时间戳
+//   - value: 数值， 这个是泛型的，value类型需和p.Type相同
+//   - quality: 质量码
+//
+// output:
+//   - TVQ(tvq) TVQ值
 func (p *PointInfo) NewTVQ(timestamp time.Time, value any, quality Quality) TVQ {
 	rawType, name := p.ValueType.ToRawType()
 	switch rawType {
@@ -558,6 +567,18 @@ func (p *PointInfo) NewTVQ(timestamp time.Time, value any, quality Quality) TVQ 
 	default:
 		return NewTvqNamed(timestamp, ValueType(name), value.([]byte), quality)
 	}
+}
+
+// NewNowTVQ 新建TVQ, 使用当前时间戳
+//
+// input:
+//   - value: 数值， 这个是泛型的，value类型需和p.Type相同
+//   - quality: 质量码
+//
+// output:
+//   - TVQ(tvq) TVQ值
+func (p *PointInfo) NewNowTVQ(value any, quality Quality) TVQ {
+	return p.NewTVQ(time.Now(), value, quality)
 }
 
 // PointInfoToRaw 点信息转换为Raw点属性表
@@ -2648,7 +2669,16 @@ func (c *RtdbConnect) WriteValue(point *PointInfo, fix bool, tvq TVQ) error {
 	return nil
 }
 
-func (c *RtdbConnect) WriteValues(id PointID, fix bool, tvqs []TVQ) error {
+// WriteValues 批量写入值
+func (c *RtdbConnect) WriteValues(point *PointInfo, fix bool, tvqs []TVQ) error {
+	if point.ID == 0 {
+		return errors.New("无效的标签点ID")
+	}
+	for _, tvq := range tvqs {
+		if tvq.Type != point.ValueType {
+			return fmt.Errorf("tvq类型与point类型不同, %v <-> %v", tvq.Type, point.ValueType)
+		}
+	}
 	/*
 		rtdbType, _ := tvq.GetRtdbType()
 		datetime, subtime := tvq.GetRtdbTimestamp()

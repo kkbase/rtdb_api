@@ -781,7 +781,7 @@ func TestRtdbConnect_Value(t *testing.T) {
 	// 写入数据
 	n := 10
 	for i := 0; i < n; i++ {
-		err := conn.WriteValue(pInfo, false, pInfo.NewTVQ(time.Now(), int32(1), Quality(0)))
+		err := conn.WriteValue(pInfo, false, pInfo.NewNowTVQ(int32(1), Quality(0)))
 		if err != nil {
 			t.Error("写入数据失败：", err)
 			return
