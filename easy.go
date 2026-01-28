@@ -2664,9 +2664,7 @@ func (c *RtdbConnect) WriteSection(fix bool, ptvqs []PTVQ) ([]error, error) {
 				}
 			}
 			for i, e := range rtes {
-				if !RteIsOk(e) {
-					rtnRtes[numberIdx[i]] = e
-				}
+				rtnRtes[numberIdx[i]] = e
 			}
 		}
 	}
@@ -2711,9 +2709,7 @@ func (c *RtdbConnect) WriteSection(fix bool, ptvqs []PTVQ) ([]error, error) {
 				}
 			}
 			for i, e := range rtes {
-				if !RteIsOk(e) {
-					rtnRtes[coorIdx[i]] = e
-				}
+				rtnRtes[coorIdx[i]] = e
 			}
 		}
 	}
@@ -2787,9 +2783,7 @@ func (c *RtdbConnect) WriteSection(fix bool, ptvqs []PTVQ) ([]error, error) {
 				}
 			}
 			for i, e := range rtes {
-				if !RteIsOk(e) {
-					rtnRtes[namedIdx[i]] = e
-				}
+				rtnRtes[namedIdx[i]] = e
 			}
 		}
 	}
