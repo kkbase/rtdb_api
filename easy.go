@@ -2431,7 +2431,7 @@ func (c *RtdbConnect) WriteValue(point *PointInfo, fix bool, tvq TVQ) error {
 		return fmt.Errorf("tvq类型与point类型不同, %v <-> %v", tvq.Type, point.ValueType)
 	}
 
-	rtdbType, _ := tvq.GetRtdbType()
+	rtdbType, _ := point.ValueType.ToRawType()
 	datetime, subtime := tvq.GetRtdbTimestamp()
 	quality := tvq.GetRtdbQuality()
 	switch rtdbType {
@@ -2679,6 +2679,7 @@ func (c *RtdbConnect) WriteValues(point *PointInfo, fix bool, tvqs []TVQ) error 
 			return fmt.Errorf("tvq类型与point类型不同, %v <-> %v", tvq.Type, point.ValueType)
 		}
 	}
+	// []PointID{id}, []TimestampType{datetime}, []SubtimeType{subtime}, []float64{0}, []int64{value}, []Quality{quality}
 	/*
 		rtdbType, _ := tvq.GetRtdbType()
 		datetime, subtime := tvq.GetRtdbTimestamp()
