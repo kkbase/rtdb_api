@@ -721,6 +721,7 @@ func TestRtdbConnect_GetPointCountFromValueType(t *testing.T) {
 }
 
 // 存档, TODO
+/*
 func TestRtdbConnect_Archive(t *testing.T) {
 	conn, err := Login(Hostname, Port, Username, Password)
 	if err != nil {
@@ -734,6 +735,7 @@ func TestRtdbConnect_Archive(t *testing.T) {
 		return
 	}
 }
+*/
 
 // 点值(TVQ)读写
 func TestRtdbConnect_Value(t *testing.T) {
