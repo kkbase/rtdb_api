@@ -2503,7 +2503,7 @@ func (c *RtdbConnect) WriteValue(point *PointInfo, fix bool, tvq TVQ) error {
 			}
 
 			// 时间戳小于Last，此时调用写历史接口
-			rtes, rte := RawRtdbhPutArchivedValues64Warp(c.ConnectHandle, []PointID{point.ID}, []TimestampType{datetime}, []SubtimeType{subtime}, []float64{0}, []int64{value}, []Quality{quality})
+			rtes, rte := RawRtdbhPutArchivedValues64Warp(c.ConnectHandle, []PointID{point.ID}, []TimestampType{datetime}, []SubtimeType{subtime}, values, states, []Quality{quality})
 			if !RteIsOk(rte) {
 				return rte.GoError()
 			}
