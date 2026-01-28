@@ -2778,27 +2778,36 @@ func (c *RtdbConnect) WriteValues(point *PointInfo, fix bool, tvqs []TVQ) ([]err
 		}
 		errs := RtdbErrorListToErrorList(rtes)
 		return errs, nil
-	case RtdbTypeString:
+	case RtdbTypeString, RtdbTypeBlob:
 		if fix {
 			return nil, errors.New("string类型不支持fix")
 		}
 		datas := make([][]byte, 0)
-		for _, tvq := range tvqs {
-			str := tvq.GetRtdbString()
-			var data []byte
-			if c.ServerOsType == RtdbOsLinux {
-				data = []byte(str)
-			} else if c.ServerOsType == RtdbOsWindows {
-				encoder := simplifiedchinese.GBK.NewEncoder()
-				buf, n, err := transform.Bytes(encoder, []byte(str))
-				if err != nil {
-					return nil, errors.New("str转换成GBK格式[]byte报错：" + err.Error())
+		if rtdbType == RtdbTypeString {
+			for _, tvq := range tvqs {
+				str := tvq.GetRtdbString()
+				var data []byte
+				if c.ServerOsType == RtdbOsLinux {
+					data = []byte(str)
+				} else if c.ServerOsType == RtdbOsWindows {
+					encoder := simplifiedchinese.GBK.NewEncoder()
+					buf, n, err := transform.Bytes(encoder, []byte(str))
+					if err != nil {
+						return nil, errors.New("str转换成GBK格式[]byte报错：" + err.Error())
+					}
+					data = buf[:n]
+				} else {
+					panic("分支不可达, 未知的OsType")
 				}
-				data = buf[:n]
-			} else {
-				panic("分支不可达, 未知的OsType")
+				datas = append(datas, data)
 			}
-			datas = append(datas, data)
+		} else if rtdbType == RtdbTypeBlob {
+			for _, tvq := range tvqs {
+				data := tvq.GetRtdbBlob()
+				datas = append(datas, data)
+			}
+		} else {
+			panic("分支不可达")
 		}
 		rtes, rte := RawRtdbsPutBlobSnapshots64Warp(c.ConnectHandle, ids, datetimes, subtimes, datas, qualities)
 		if !RteIsOk(rte) {
@@ -2831,7 +2840,7 @@ func (c *RtdbConnect) WriteValues(point *PointInfo, fix bool, tvqs []TVQ) ([]err
 		}
 		errs := RtdbErrorListToErrorList(rtes)
 		return errs, nil
-	case RtdbTypeBlob, RtdbTypeNamedT:
+	case RtdbTypeNamedT:
 		if fix {
 			return nil, errors.New("blob|typeNamedT类型不支持fix")
 		}
@@ -2840,7 +2849,7 @@ func (c *RtdbConnect) WriteValues(point *PointInfo, fix bool, tvqs []TVQ) ([]err
 			data := tvq.GetRtdbBlob()
 			datas = append(datas, data)
 		}
-		rtes, rte := RawRtdbsPutBlobSnapshots64Warp(c.ConnectHandle, ids, datetimes, subtimes, datas, qualities)
+		rtes, rte := RawRtdbsPutNamedTypeSnapshots64Warp(c.ConnectHandle, ids, datetimes, subtimes, datas, qualities)
 		if !RteIsOk(rte) {
 			return nil, rte.GoError()
 		}
@@ -2860,7 +2869,7 @@ func (c *RtdbConnect) WriteValues(point *PointInfo, fix bool, tvqs []TVQ) ([]err
 				aQualities = append(aQualities, qualities[i])
 			}
 		}
-		aRtes, aRte := RawRtdbhPutArchivedBlobValues64Warp(c.ConnectHandle, aIds, aDatetimes, aSubtimes, aDatas, aQualities)
+		aRtes, aRte := RawRtdbhPutArchivedNamedTypeValues64Warp(c.ConnectHandle, aIds, aDatetimes, aSubtimes, aDatas, aQualities)
 		if !RteIsOk(aRte) {
 			return nil, aRte.GoError()
 		}
