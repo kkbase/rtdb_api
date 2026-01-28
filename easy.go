@@ -1069,10 +1069,9 @@ func (v *TVQ) GetRtdbTimestamp(precision RtdbPrecision) (TimestampType, SubtimeT
 	case RtdbPrecisionSecond:
 		subtime = SubtimeType(0)
 	case RtdbPrecisionMilli:
-		subtime /= 1000000
+		subtime = subtime / 1000000
 	case RtdbPrecisionMicro:
-		subtime /= 1000
-	case RtdbPrecisionNano:
+		subtime = subtime / 1000
 	}
 	fmt.Println(v.Timestamp, datetime, subtime)
 	return datetime, subtime
