@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"golang.org/x/text/encoding/simplifiedchinese"
 	"golang.org/x/text/transform"
-	"path"
 	"sort"
 	"strconv"
 	"time"
@@ -2463,6 +2462,8 @@ func (c *RtdbConnect) GetPointCountFromValueType(valueType ValueType) (int32, er
 	}
 }
 
+/*
+// TODO
 func (c *RtdbConnect) GetArchiveFileList() error {
 	count, rte := RawRtdbaGetArchivesCountWarp(c.ConnectHandle)
 	if !RteIsOk(rte) {
@@ -2476,6 +2477,7 @@ func (c *RtdbConnect) GetArchiveFileList() error {
 
 	return nil
 }
+*/
 
 // WriteValue 写入值
 //
