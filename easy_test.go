@@ -757,7 +757,7 @@ func TestRtdbConnect_Value(t *testing.T) {
 	time.Sleep(time.Second)
 
 	// 添加点
-	info := NewPointInfo("bbb", table.ID, ValueTypeInt32, PointBase, RtdbPrecisionMicro, "", "")
+	info := NewPointInfo("bbb", table.ID, ValueTypeInt32, PointBase, RtdbPrecisionNano, "", "")
 	info.SetLimit(-100, 100, 0)
 	pInfo, err := conn.AddPoint(info)
 	if err != nil {
