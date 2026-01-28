@@ -1062,8 +1062,19 @@ func NewTvqNamed(timestamp time.Time, valueType ValueType, data []byte, quality 
 }
 
 // GetRtdbTimestamp 获取时间戳
-func (v *TVQ) GetRtdbTimestamp() (TimestampType, SubtimeType) {
-	return TimestampType(v.Timestamp.Unix()), SubtimeType(v.Timestamp.Nanosecond())
+func (v *TVQ) GetRtdbTimestamp(precision RtdbPrecision) (TimestampType, SubtimeType) {
+	datetime := TimestampType(v.Timestamp.Unix())
+	subtime := SubtimeType(v.Timestamp.Nanosecond())
+	switch precision {
+	case RtdbPrecisionSecond:
+		subtime = SubtimeType(0)
+	case RtdbPrecisionMilli:
+		subtime /= 1000000
+	case RtdbPrecisionMicro:
+		subtime /= 1000
+	case RtdbPrecisionNano:
+	}
+	return datetime, subtime
 }
 
 // GetRtdbType 获取数值类型
@@ -2568,7 +2579,7 @@ func (c *RtdbConnect) WriteSection(fix bool, ptvqs []PTVQ) ([]error, error) {
 		switch rtdbType {
 		case RtdbTypeBool, RtdbTypeUint8, RtdbTypeInt8, RtdbTypeChar, RtdbTypeUint16, RtdbTypeInt16, RtdbTypeUint32, RtdbTypeInt32, RtdbTypeInt64, RtdbTypeReal16, RtdbTypeReal32, RtdbTypeReal64, RtdbTypeFp16, RtdbTypeFp32, RtdbTypeFp64:
 			numberIds = append(numberIds, ptvq.PointInfo.ID)
-			datetime, subtime := ptvq.TVQ.GetRtdbTimestamp()
+			datetime, subtime := ptvq.TVQ.GetRtdbTimestamp(ptvq.PointInfo.Precision)
 			numberDatetimes = append(numberDatetimes, datetime)
 			numberSubtimes = append(numberSubtimes, subtime)
 			numberQualities = append(numberQualities, ptvq.TVQ.GetRtdbQuality())
@@ -2583,7 +2594,7 @@ func (c *RtdbConnect) WriteSection(fix bool, ptvqs []PTVQ) ([]error, error) {
 			numberIdx = append(numberIdx, i)
 		case RtdbTypeCoor:
 			coorIds = append(coorIds, ptvq.PointInfo.ID)
-			datetime, subtime := ptvq.TVQ.GetRtdbTimestamp()
+			datetime, subtime := ptvq.TVQ.GetRtdbTimestamp(ptvq.PointInfo.Precision)
 			coorDatetimes = append(coorDatetimes, datetime)
 			coorSubtimes = append(coorSubtimes, subtime)
 			coorQualities = append(coorQualities, ptvq.TVQ.GetRtdbQuality())
@@ -2593,7 +2604,7 @@ func (c *RtdbConnect) WriteSection(fix bool, ptvqs []PTVQ) ([]error, error) {
 			coorIdx = append(coorIdx, i)
 		case RtdbTypeString, RtdbTypeBlob:
 			bIds = append(bIds, ptvq.PointInfo.ID)
-			datetime, subtime := ptvq.TVQ.GetRtdbTimestamp()
+			datetime, subtime := ptvq.TVQ.GetRtdbTimestamp(ptvq.PointInfo.Precision)
 			bDatetimes = append(bDatetimes, datetime)
 			bSubtimes = append(bSubtimes, subtime)
 			bQualities = append(bQualities, ptvq.TVQ.GetRtdbQuality())
@@ -2605,7 +2616,7 @@ func (c *RtdbConnect) WriteSection(fix bool, ptvqs []PTVQ) ([]error, error) {
 			bIdx = append(bIdx, i)
 		case RtdbTypeNamedT:
 			namedIds = append(namedIds, ptvq.PointInfo.ID)
-			datetime, subtime := ptvq.TVQ.GetRtdbTimestamp()
+			datetime, subtime := ptvq.TVQ.GetRtdbTimestamp(ptvq.PointInfo.Precision)
 			namedDatetimes = append(namedDatetimes, datetime)
 			namedSubtimes = append(namedSubtimes, subtime)
 			namedQualities = append(namedQualities, ptvq.TVQ.GetRtdbQuality())
@@ -2613,7 +2624,7 @@ func (c *RtdbConnect) WriteSection(fix bool, ptvqs []PTVQ) ([]error, error) {
 			namedIdx = append(namedIdx, i)
 		case RtdbTypeDatetime:
 			dtIds = append(dtIds, ptvq.PointInfo.ID)
-			datetime, subtime := ptvq.TVQ.GetRtdbTimestamp()
+			datetime, subtime := ptvq.TVQ.GetRtdbTimestamp(ptvq.PointInfo.Precision)
 			dtDatetimes = append(dtDatetimes, datetime)
 			dtSubtimes = append(dtSubtimes, subtime)
 			dtQualities = append(dtQualities, ptvq.TVQ.GetRtdbQuality())
@@ -2652,6 +2663,7 @@ func (c *RtdbConnect) WriteSection(fix bool, ptvqs []PTVQ) ([]error, error) {
 			}
 		}
 		if len(aIds) != 0 {
+			fmt.Println("??????????!!!!")
 			aRtes, aRte := RawRtdbhPutArchivedValues64Warp(c.ConnectHandle, aIds, aDatetimes, aSubtimes, aValues, aStates, aQualities)
 			if !RteIsOk(aRte) {
 				return nil, aRte.GoError()

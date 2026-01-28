@@ -789,7 +789,7 @@ func TestRtdbConnect_Value(t *testing.T) {
 			return
 		}
 		if i != n-1 {
-			time.Sleep(2 * time.Second)
+			time.Sleep(1 * time.Second)
 		}
 	}
 }
