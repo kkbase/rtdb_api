@@ -570,6 +570,20 @@ func (p *PointInfo) NewTVQ(timestamp time.Time, value any, quality Quality) TVQ 
 	}
 }
 
+// NewPTVQ 新建PTVQ
+//
+// input:
+//   - timestamp: 时间戳
+//   - value: 数值， 这个是泛型的，value类型需和p.Type相同
+//   - quality: 质量码
+//
+// output:
+//   - PTVQ(tvq) PTVQ值
+func (p *PointInfo) NewPTVQ(timestamp time.Time, value any, quality Quality) PTVQ {
+	tvq := p.NewTVQ(timestamp, value, quality)
+	return NewPTVQ(p, tvq)
+}
+
 // NewNowTVQ 新建TVQ, 使用当前时间戳
 //
 // input:
@@ -1078,6 +1092,11 @@ func (v *TVQ) GetRtdbString() string {
 	return v.Value.StringValue
 }
 
+// GetRtdbDatetime 获取日期类型数值
+func (v *TVQ) GetRtdbDatetime() string {
+	return v.Value.StringValue
+}
+
 // GetRtdbBlob 获取[]byte类型数值
 func (v *TVQ) GetRtdbBlob() []byte {
 	return v.Value.BytesValue
@@ -1091,6 +1110,24 @@ func (v *TVQ) GetRtdbNamedObj() []byte {
 // GetRtdbQuality 获取质量码
 func (v *TVQ) GetRtdbQuality() Quality {
 	return v.Quality
+}
+
+// PTVQ PointInfo + TVQ
+type PTVQ struct {
+	PointInfo *PointInfo // 点信息
+	TVQ       TVQ        // timestamp + value + quality
+}
+
+// NewPTVQ 新建PTVQ
+//
+// input:
+//   - info 点信息
+//   - tvq timestamp + value + quality
+//
+// output:
+//   - PTVQ(ptvq) PTVQ值
+func NewPTVQ(info *PointInfo, tvq TVQ) PTVQ {
+	return PTVQ{PointInfo: info, TVQ: tvq}
 }
 
 ////////////////////////////////////////////////
@@ -2642,56 +2679,18 @@ func (c *RtdbConnect) WriteValues(point *PointInfo, fix bool, tvqs []TVQ) ([]err
 	}
 	rtdbType, _ := point.ValueType.ToRawType()
 	switch rtdbType {
-	case RtdbTypeBool, RtdbTypeUint8, RtdbTypeInt8, RtdbTypeChar, RtdbTypeUint16, RtdbTypeInt16, RtdbTypeUint32, RtdbTypeInt32, RtdbTypeInt64: // 写入Int
-		values := make([]float64, len(tvqs))
+	case RtdbTypeBool, RtdbTypeUint8, RtdbTypeInt8, RtdbTypeChar, RtdbTypeUint16, RtdbTypeInt16, RtdbTypeUint32, RtdbTypeInt32, RtdbTypeInt64, RtdbTypeReal16, RtdbTypeReal32, RtdbTypeReal64, RtdbTypeFp16, RtdbTypeFp32, RtdbTypeFp64: // 写入Int or Float
+		values := make([]float64, 0)
 		states := make([]int64, 0)
 		for _, tvq := range tvqs {
-			states = append(states, tvq.GetRtdbInt())
-		}
-		rtes := make([]RtdbError, 0)
-		rte := RtdbError(0)
-		if fix {
-			rtes, rte = RawRtdbsFixSnapshots64Warp(c.ConnectHandle, ids, datetimes, subtimes, values, states, qualities)
-		} else {
-			rtes, rte = RawRtdbsPutSnapshots64Warp(c.ConnectHandle, ids, datetimes, subtimes, values, states, qualities)
-		}
-		if !RteIsOk(rte) {
-			return nil, rte.GoError()
-		}
-		aIndex := make([]int, 0)
-		aIds := make([]PointID, 0)
-		aDatetimes := make([]TimestampType, 0)
-		aSubtimes := make([]SubtimeType, 0)
-		aValues := make([]float64, 0)
-		aStates := make([]int64, 0)
-		aQualities := make([]Quality, 0)
-		for i, e := range rtes {
-			if errors.Is(e, RteTimestampEarlierThanSnapshot) {
-				aIndex = append(aIndex, i)
-				aIds = append(aIds, ids[i])
-				aDatetimes = append(aDatetimes, datetimes[i])
-				aSubtimes = append(aSubtimes, subtimes[i])
-				aValues = append(aValues, values[i])
-				aStates = append(aStates, states[i])
-				aQualities = append(aQualities, qualities[i])
+			switch rtdbType {
+			case RtdbTypeBool, RtdbTypeUint8, RtdbTypeInt8, RtdbTypeChar, RtdbTypeUint16, RtdbTypeInt16, RtdbTypeUint32, RtdbTypeInt32, RtdbTypeInt64:
+				values = append(values, 0)
+				states = append(states, tvq.GetRtdbInt())
+			case RtdbTypeReal16, RtdbTypeReal32, RtdbTypeReal64, RtdbTypeFp16, RtdbTypeFp32, RtdbTypeFp64:
+				values = append(values, tvq.GetRtdbFloat())
+				states = append(states, 0)
 			}
-		}
-		aRtes, aRte := RawRtdbhPutArchivedValues64Warp(c.ConnectHandle, aIds, aDatetimes, aSubtimes, aValues, aStates, aQualities)
-		if !RteIsOk(aRte) {
-			return nil, aRte.GoError()
-		}
-		for i, e := range aRtes {
-			if !RteIsOk(e) {
-				rtes[aIndex[i]] = e
-			}
-		}
-		errs := RtdbErrorListToErrorList(rtes)
-		return errs, nil
-	case RtdbTypeReal16, RtdbTypeReal32, RtdbTypeReal64, RtdbTypeFp16, RtdbTypeFp32, RtdbTypeFp64:
-		values := make([]float64, 0)
-		states := make([]int64, len(tvqs))
-		for _, tvq := range tvqs {
-			values = append(values, tvq.GetRtdbFloat())
 		}
 		rtes := make([]RtdbError, 0)
 		rte := RtdbError(0)
@@ -2878,7 +2877,7 @@ func (c *RtdbConnect) WriteValues(point *PointInfo, fix bool, tvqs []TVQ) ([]err
 		}
 		dates := make([]string, 0)
 		for _, tvq := range tvqs {
-			dates = append(dates, tvq.GetRtdbString())
+			dates = append(dates, tvq.GetRtdbDatetime())
 		}
 		rtes, rte := RawRtdbsPutDatetimeSnapshots64Warp(c.ConnectHandle, ids, datetimes, subtimes, dates, qualities)
 		if !RteIsOk(rte) {
@@ -2914,5 +2913,18 @@ func (c *RtdbConnect) WriteValues(point *PointInfo, fix bool, tvqs []TVQ) ([]err
 	default:
 		return nil, errors.New("未知类型")
 	}
+	return nil, nil
+}
+
+// WriteSection 写断面(批量写入多个Point，每个Point写入一个TVQ)
+func (c *RtdbConnect) WriteSection(fix bool, ptvqs []PTVQ) ([]error, error) {
+
+	// ids := make([]PointID, 0)
+	// datetimes := make([]TimestampType, 0)
+	// subtimes := make([]SubtimeType, 0)
+	// qualities := make([]Quality, 0)
+	// for _, ptvq := range ptvqs {
+	// 	ids = append(ids, ptvq.PointInfo.ID)
+	// }
 	return nil, nil
 }
