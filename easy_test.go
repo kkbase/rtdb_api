@@ -755,7 +755,7 @@ func TestRtdbConnect_Value(t *testing.T) {
 	time.Sleep(time.Second)
 
 	// 添加点
-	info := NewPointInfo("aaa", table.ID, ValueTypeInt32, PointBase, RtdbPrecisionMicro, "", "")
+	info := NewPointInfo("bbb", table.ID, ValueTypeInt32, PointBase, RtdbPrecisionMicro, "", "")
 	info.SetLimit(-100, 100, 0)
 	pInfo, err := conn.AddPoint(info)
 	if err != nil {
@@ -784,9 +784,15 @@ func TestRtdbConnect_Value(t *testing.T) {
 		RtE_TIMESTAMP_GREATER_THAN_ALLOW                                          = 0xFFFF104A,  //!< 写入的时间超过了允许的时间
 	*/
 	// 写入数据
-	err = conn.WriteValue(pInfo.ID, false, NewTvqInt32(time.Now(), 1, Quality(0)))
-	if err != nil {
-		t.Error("写入数据失败：", err)
-		return
+	n := 10
+	for i := 0; i < n; i++ {
+		err := conn.WriteValue(pInfo.ID, false, NewTvqInt32(time.Now(), 1, Quality(0)))
+		if err != nil {
+			t.Error("写入数据失败：", err)
+			return
+		}
+		if i != n-1 {
+			time.Sleep(time.Second)
+		}
 	}
 }
