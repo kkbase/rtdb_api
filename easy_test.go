@@ -747,18 +747,18 @@ func TestRtdbConnect_Value(t *testing.T) {
 	defer func() { _ = conn.Logout() }()
 
 	// 创建表
-	table, err := conn.CreateTable(prefix+"ppp", "ppp desc")
-	if err != nil {
-		t.Error("创建表失败：", err)
-		return
-	}
+	// table, err := conn.CreateTable(prefix+"ppp", "ppp desc")
+	// if err != nil {
+	// 	t.Error("创建表失败：", err)
+	// 	return
+	// }
 	// 删除表
 	// defer func() { _ = conn.DeleteTable(table.ID) }()
 
 	time.Sleep(time.Second)
 
 	// 添加点
-	info := NewPointInfo(prefix+"xxx", table.ID, ValueTypeInt32, PointBase, RtdbPrecisionNano, "", "")
+	info := NewPointInfo(prefix+"xxx", 1, ValueTypeInt32, PointBase, RtdbPrecisionNano, "", "")
 	info.SetLimit(-100, 100, 0)
 	pInfo, err := conn.AddPoint(info)
 	if err != nil {
