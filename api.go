@@ -4152,13 +4152,13 @@ const (
 )
 
 // DateTimeType 32位时间戳类型，秒级时间戳
-type DateTimeType int32
+type DateTimeType C.rtdb_datetime_type
 
 // TimestampType 64位时间戳类型，秒级时间戳
-type TimestampType int64
+type TimestampType C.rtdb_timestamp_type
 
 // SubtimeType 时间戳，小于秒的部分，根据设置的全局时间戳精度，表示毫秒、微秒、纳秒的部分
-type SubtimeType int32
+type SubtimeType C.rtdb_subtime_type
 
 // RtdbHostConnectInfo 连接到RTDB数据库服务器的连接信息
 // 备注， IPv6版本兼容此 RtdbHostConnectInfo ， 因此暂时注释掉

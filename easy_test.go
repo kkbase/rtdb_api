@@ -746,18 +746,18 @@ func TestRtdbConnect_Value(t *testing.T) {
 	defer func() { _ = conn.Logout() }()
 
 	// 创建表
-	table, err := conn.CreateTable("ppp", "ppp desc")
+	table, err := conn.CreateTable("ppp2", "ppp desc")
 	if err != nil {
 		t.Error("创建表失败：", err)
 		return
 	}
 	// 删除表
-	defer func() { _ = conn.DeleteTable(table.ID) }()
+	// defer func() { _ = conn.DeleteTable(table.ID) }()
 
 	time.Sleep(time.Second)
 
 	// 添加点
-	info := NewPointInfo("xxx", table.ID, ValueTypeInt32, PointBase, RtdbPrecisionNano, "", "")
+	info := NewPointInfo("xxx2", table.ID, ValueTypeInt32, PointBase, RtdbPrecisionNano, "", "")
 	info.SetLimit(-100, 100, 0)
 	pInfo, err := conn.AddPoint(info)
 	if err != nil {
@@ -766,7 +766,7 @@ func TestRtdbConnect_Value(t *testing.T) {
 	}
 
 	// 删除点
-	defer func() { _ = conn.DeletePoint(pInfo.ID) }()
+	// defer func() { _ = conn.DeletePoint(pInfo.ID) }()
 
 	time.Sleep(time.Second)
 
@@ -781,7 +781,7 @@ func TestRtdbConnect_Value(t *testing.T) {
 	fmt.Println(TimestampType(tt.Unix()), SubtimeType(tt.Nanosecond()))
 
 	// 写入数据
-	n := 10
+	n := 100
 	for i := 0; i < n; i++ {
 		err := conn.WriteValue(pInfo, false, pInfo.NewNowTVQ(int32(1), Quality(0)))
 		if err != nil {

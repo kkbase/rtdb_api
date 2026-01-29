@@ -1070,28 +1070,28 @@ func (v *TVQ) GetRtdbTimestamp(precision RtdbPrecision) (TimestampType, SubtimeT
 func GoTimeToRtdbTimestamp(timestamp time.Time, precision RtdbPrecision) (TimestampType, SubtimeType) {
 	datetime := TimestampType(timestamp.Unix())
 	subtime := SubtimeType(timestamp.Nanosecond())
-	switch precision {
-	case RtdbPrecisionSecond:
-		subtime = SubtimeType(0)
-	case RtdbPrecisionMilli:
-		subtime = subtime / 1000000
-	case RtdbPrecisionMicro:
-		subtime = subtime / 1000
-	}
+	// switch precision {
+	// case RtdbPrecisionSecond:
+	// 	subtime = SubtimeType(0)
+	// case RtdbPrecisionMilli:
+	// 	subtime = subtime / 1000000
+	// case RtdbPrecisionMicro:
+	// 	subtime = subtime / 1000
+	// }
 	fmt.Println(timestamp, datetime, subtime)
 	return datetime, subtime
 }
 
 // RtdbTimestampToGoTime (TimestampType, SubtimeType) 转换成 time.Time
 func RtdbTimestampToGoTime(datetime TimestampType, subtime SubtimeType, precision RtdbPrecision) time.Time {
-	switch precision {
-	case RtdbPrecisionSecond:
-		subtime = SubtimeType(0)
-	case RtdbPrecisionMilli:
-		subtime = subtime * 1000000
-	case RtdbPrecisionMicro:
-		subtime = subtime * 1000
-	}
+	// switch precision {
+	// case RtdbPrecisionSecond:
+	// 	subtime = SubtimeType(0)
+	// case RtdbPrecisionMilli:
+	// 	subtime = subtime * 1000000
+	// case RtdbPrecisionMicro:
+	// 	subtime = subtime * 1000
+	// }
 	return time.Unix(int64(datetime), int64(subtime))
 }
 
