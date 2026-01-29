@@ -739,6 +739,7 @@ func TestRtdbConnect_Archive(t *testing.T) {
 
 // 点值(TVQ)读写
 func TestRtdbConnect_Value(t *testing.T) {
+	prefix := "p1_"
 	conn, err := Login(Hostname, Port, Username, Password)
 	if err != nil {
 		t.Fatal("登录用户失败", err)
@@ -746,7 +747,7 @@ func TestRtdbConnect_Value(t *testing.T) {
 	defer func() { _ = conn.Logout() }()
 
 	// 创建表
-	table, err := conn.CreateTable("ppp2", "ppp desc")
+	table, err := conn.CreateTable(prefix+"ppp", "ppp desc")
 	if err != nil {
 		t.Error("创建表失败：", err)
 		return
@@ -757,7 +758,7 @@ func TestRtdbConnect_Value(t *testing.T) {
 	time.Sleep(time.Second)
 
 	// 添加点
-	info := NewPointInfo("xxx2", table.ID, ValueTypeInt32, PointBase, RtdbPrecisionNano, "", "")
+	info := NewPointInfo(prefix+"xxx", table.ID, ValueTypeInt32, PointBase, RtdbPrecisionNano, "", "")
 	info.SetLimit(-100, 100, 0)
 	pInfo, err := conn.AddPoint(info)
 	if err != nil {
