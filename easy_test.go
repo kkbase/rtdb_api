@@ -739,7 +739,7 @@ func TestRtdbConnect_Archive(t *testing.T) {
 
 // 点值(TVQ)读写
 func TestRtdbConnect_Value(t *testing.T) {
-	prefix := "p4_"
+	prefix := "p6_"
 	conn, err := Login(Hostname, Port, Username, Password)
 	if err != nil {
 		t.Fatal("登录用户失败", err)
@@ -758,7 +758,7 @@ func TestRtdbConnect_Value(t *testing.T) {
 	time.Sleep(time.Second)
 
 	// 添加点
-	info := NewPointInfo(prefix+"xxx", 1, ValueTypeInt32, PointBase, RtdbPrecisionNano, "", "")
+	info := NewPointInfo(prefix+"xxx", 1, ValueTypeCoor, PointBase, RtdbPrecisionNano, "", "")
 	info.SetLimit(-100, 100, 0)
 	pInfo, err := conn.AddPoint(info)
 	if err != nil {
@@ -784,7 +784,7 @@ func TestRtdbConnect_Value(t *testing.T) {
 	// 写入数据
 	n := 100
 	for i := 0; i < n; i++ {
-		err := conn.WriteValue(pInfo, true, pInfo.NewNowTVQ(int32(1), Quality(0)))
+		err := conn.WriteValue(pInfo, true, pInfo.NewNowTVQ(Coordinates{X: 1.0, Y: 2.0}, Quality(0)))
 		if err != nil {
 			t.Error("写入数据失败：", err)
 			return
