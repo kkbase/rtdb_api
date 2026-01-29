@@ -739,7 +739,7 @@ func TestRtdbConnect_Archive(t *testing.T) {
 
 // 点值(TVQ)读写
 func TestRtdbConnect_Value(t *testing.T) {
-	prefix := "p3_"
+	prefix := "p4_"
 	conn, err := Login(Hostname, Port, Username, Password)
 	if err != nil {
 		t.Fatal("登录用户失败", err)
